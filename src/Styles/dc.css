@@ -805,7 +805,7 @@ input:checked+.slider:before {
     background-color: #6282b3 !important;
     color: white !important;
 }
-/* Nav Open/Close */
+/* Nav Open/Close-- */
 .nav-close {
     float: right;
     position: relative;
