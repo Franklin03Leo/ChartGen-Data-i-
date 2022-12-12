@@ -1,0 +1,819 @@
+.dc-chart path.dc-symbol, .dc-legend g.dc-legend-item.fadeout {
+    fill-opacity: 0.5;
+    stroke-opacity: 0.5;
+}
+
+.dc-chart rect.bar {
+    stroke: none;
+    cursor: pointer;
+}
+
+.dc-chart rect.bar:hover {
+    fill-opacity: .5;
+}
+
+.dc-chart rect.deselected {
+    stroke: none;
+    fill: #ccc;
+}
+
+.dc-chart .pie-slice {
+    fill: #fff;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.dc-chart .pie-slice.external {
+    fill: #000;
+}
+
+.dc-chart .pie-slice :hover, .dc-chart .pie-slice.highlight {
+    fill-opacity: .8;
+}
+
+.dc-chart .pie-path {
+    fill: none;
+    stroke-width: 2px;
+    stroke: #000;
+    opacity: 0.4;
+}
+
+.dc-chart .selected path, .dc-chart .selected circle {
+    stroke-width: 3;
+    stroke: #ccc;
+    fill-opacity: 1;
+}
+
+.dc-chart .deselected path, .dc-chart .deselected circle {
+    stroke: none;
+    fill-opacity: .5;
+    fill: #ccc;
+}
+
+.dc-chart .axis path, .dc-chart .axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+.dc-chart .axis text {
+    font: 10px sans-serif;
+}
+
+.dc-chart .grid-line, .dc-chart .axis .grid-line, .dc-chart .grid-line line, .dc-chart .axis .grid-line line {
+    fill: none;
+    stroke: #ccc;
+    shape-rendering: crispEdges;
+}
+
+.dc-chart .brush rect.selection {
+    fill: #4682b4;
+    fill-opacity: .125;
+}
+
+.dc-chart .brush .custom-brush-handle {
+    fill: #eee;
+    stroke: #666;
+    cursor: ew-resize;
+}
+
+.dc-chart path.line {
+    fill: none;
+    stroke-width: 1.5px;
+}
+
+.dc-chart path.area {
+    fill-opacity: .3;
+    stroke: none;
+}
+
+.dc-chart path.highlight {
+    stroke-width: 3;
+    fill-opacity: 1;
+    stroke-opacity: 1;
+}
+
+.dc-chart g.state {
+    cursor: pointer;
+}
+
+.dc-chart g.state :hover {
+    fill-opacity: .8;
+}
+
+.dc-chart g.state path {
+    stroke: #fff;
+}
+
+.dc-chart g.deselected path {
+    fill: #808080;
+}
+
+.dc-chart g.deselected text {
+    display: none;
+}
+
+.dc-chart g.row rect {
+    fill-opacity: 0.8;
+    cursor: pointer;
+}
+
+.dc-chart g.row rect:hover {
+    fill-opacity: 0.6;
+}
+
+.dc-chart g.row text {
+    fill: #fff;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.dc-chart g.dc-tooltip path {
+    fill: none;
+    stroke: #808080;
+    stroke-opacity: .8;
+}
+
+.dc-chart g.county path {
+    stroke: #fff;
+    fill: none;
+}
+
+.dc-chart g.debug rect {
+    fill: #00f;
+    fill-opacity: .2;
+}
+
+.dc-chart g.axis text {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    pointer-events: none;
+}
+
+.dc-chart .node {
+    font-size: 0.7em;
+    cursor: pointer;
+}
+
+.dc-chart .node :hover {
+    fill-opacity: .8;
+}
+
+.dc-chart .bubble {
+    stroke: none;
+    fill-opacity: 0.6;
+}
+
+.dc-chart .highlight {
+    fill-opacity: 1;
+    stroke-opacity: 1;
+}
+
+.dc-chart .fadeout {
+    fill-opacity: 0.2;
+    stroke-opacity: 0.2;
+}
+
+.dc-chart .box text {
+    font: 10px sans-serif;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    pointer-events: none;
+}
+
+.dc-chart .box line {
+    fill: #fff;
+}
+
+.dc-chart .box rect, .dc-chart .box line, .dc-chart .box circle {
+    stroke: #000;
+    stroke-width: 1.5px;
+}
+
+.dc-chart .box .center {
+    stroke-dasharray: 3, 3;
+}
+
+.dc-chart .box .data {
+    stroke: none;
+    stroke-width: 0px;
+}
+
+.dc-chart .box .outlier {
+    fill: none;
+    stroke: #ccc;
+}
+
+.dc-chart .box .outlierBold {
+    fill: red;
+    stroke: none;
+}
+
+.dc-chart .box.deselected {
+    opacity: 0.5;
+}
+
+.dc-chart .box.deselected .box {
+    fill: #ccc;
+}
+
+.dc-chart .symbol {
+    stroke: none;
+}
+
+.dc-chart .heatmap .box-group.deselected rect {
+    stroke: none;
+    fill-opacity: 0.5;
+    fill: #ccc;
+}
+
+.dc-chart .heatmap g.axis text {
+    pointer-events: all;
+    cursor: pointer;
+}
+
+.dc-chart .empty-chart .pie-slice {
+    cursor: default;
+}
+
+.dc-chart .empty-chart .pie-slice path {
+    fill: #fee;
+    cursor: default;
+}
+
+.dc-data-count {
+    float: right;
+    margin-top: 15px;
+    margin-right: 15px;
+}
+
+.dc-data-count .filter-count, .dc-data-count .total-count {
+    color: #3182bd;
+    font-weight: bold;
+}
+
+.dc-legend {
+    font-size: 11px;
+}
+
+.dc-legend .dc-legend-item {
+    cursor: pointer;
+}
+
+.dc-hard .number-display {
+    float: none;
+}
+
+div.dc-html-legend {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: inherit;
+    float: right;
+    padding-right: 2px;
+}
+
+div.dc-html-legend .dc-legend-item-horizontal {
+    display: inline-block;
+    margin-left: 5px;
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+div.dc-html-legend .dc-legend-item-horizontal.selected {
+    background-color: #3182bd;
+    color: white;
+}
+
+div.dc-html-legend .dc-legend-item-vertical {
+    display: block;
+    margin-top: 5px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    cursor: pointer;
+}
+
+div.dc-html-legend .dc-legend-item-vertical.selected {
+    background-color: #3182bd;
+    color: white;
+}
+
+div.dc-html-legend .dc-legend-item-color {
+    display: table-cell;
+    width: 12px;
+    height: 12px;
+}
+
+div.dc-html-legend .dc-legend-item-label {
+    line-height: 12px;
+    display: table-cell;
+    vertical-align: middle;
+    padding-left: 3px;
+    padding-right: 3px;
+    font-size: 0.75em;
+}
+
+.dc-html-legend-container {
+    height: inherit;
+}
+
+table {
+    border-collapse: collapse;
+    font-size: 0.9em;
+    font-family: sans-serif;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+table tbody tr:nth-child(odd) td, table tbody tr:nth-child(odd) th {
+    background-color: #f3f3f3;
+}
+
+thead tr {
+    background-color: #6282b3;
+    color: #ffffff;
+}
+
+.table-wrap:last-of-type {
+    border-bottom: 2px solid 6282b3;
+}
+
+
+.table-scroll {
+    position: relative;
+    max-width: 100%;
+    margin: auto;
+    overflow: hidden;
+}
+
+.table-wrap {
+    width: 100%;
+    overflow: auto;
+    max-height: 40vh;
+}
+
+.table-scroll table {
+    width: 100%;
+    margin: auto;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.table-scroll th, .table-scroll td {
+    padding: 5px 10px;
+    /* background:#fff; */
+    white-space: nowrap;
+    vertical-align: top;
+}
+
+/* .table-wrap::-webkit-scrollbar {
+    -webkit-appearance: none;
+}
+.table-wrap::-webkit-scrollbar:vertical {
+    width: 11px;
+}
+.table-wrap::-webkit-scrollbar:horizontal {
+    height: 11px;
+}
+.table-wrap::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    border: 2px solid white;
+    background-color: rgba(0, 0, 0, .5);
+}
+.table-wrap::-webkit-scrollbar-track { 
+    background-color: #fff; 
+    border-radius: 8px; 
+}  */
+
+
+
+
+.drop-container {
+    position: relative;
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    padding: 20px;
+    border-radius: 10px;
+    border: 2px dashed #555;
+    color: #444;
+    cursor: pointer;
+    transition: background .2s ease-in-out, border .2s ease-in-out;
+    width: 90%;
+}
+
+.drop-container:hover {
+    background: #eee;
+    border-color: #111;
+}
+
+.drop-container:hover .drop-title {
+    color: #222;
+}
+
+.drop-title {
+    color: #444;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    transition: color .2s ease-in-out;
+}
+
+input[type=file] {
+    width: 350px;
+    max-width: 100%;
+    color: #444;
+    padding: 1px;
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #555;
+    font-size: 14px !important;
+}
+
+input[type=file]::file-selector-button {
+    margin-right: 20px;
+    border: none;
+    background: #6282b3;
+    padding: 10px 20px;
+    border-radius: 10px;
+    color: #fff;
+    cursor: pointer;
+    transition: background .2s ease-in-out;
+}
+
+input[type=file]::file-selector-button:hover {
+    background: #6282b3;
+}
+
+.tick text {
+    /* stroke: rgb(0, 0, 0);
+    stroke-width:1px;
+    fill: none; */
+    /* font-size: 12px !important;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+    font-weight: bold !important; */
+}
+
+#paging {
+    /* font-family: Helvetica Neue,Helvetica,Arial,sans-serif; */
+    font-size: 12px !important;
+}
+
+div.tooltip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    text-align: center;
+    min-width: 80px;
+    width: auto;
+    min-height: 40px;
+    height: fit-content;
+    padding: 2px;
+    color: white;
+    font: 12px sans-serif;
+    background: #6282b3;
+    border-radius: 5px;
+    pointer-events: none;
+    padding: 10px;
+    text-align: left;
+    z-index: 999;
+}
+
+div.row {
+    margin-right: 0 !important;
+}
+
+html,
+body {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    padding-top: 81px;
+    padding-bottom: 40px;
+}
+
+.fixed-header {
+    width: 100%;
+    position: fixed;
+    background-image: linear-gradient(-225deg, #77FFD2 0%, #6297DB 48%, #1EECFF 100%);
+    /* background-image: linear-gradient(to top, #0c3483 0%, #a2b6df 100%, #6b8cce 100%, #a2b6df 100%); */
+    color: #fff;
+    /* box-shadow: rgba(0, 0, 0, 0.25) 0px 25px 50px -12px; */
+    z-index: 99999;
+}
+
+.fixed-header {
+    top: 0;
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+    margin-top: 11px;
+    font-size: 33px;
+    font-weight: bold;
+    font-family: 'Arial'
+}
+
+@media (max-width: 988px) {
+    div.row {
+        margin-top: 10px;
+    }
+}
+
+.site-identity {
+    float: left;
+}
+
+.site-identity img {
+    max-width: 100%;
+    float: left;
+    height: 80px;
+    /* margin: 0 10px 0 0; */
+}
+
+a {
+    text-decoration: none;
+    color: #000;
+}
+
+.Icon {
+    padding: 10px 5px 10px 5px;
+    font-size: medium;
+}
+
+/* .nav-bar{
+    min-width: 3%;
+} */
+.Icon_:hover {
+    background-color: rgb(235, 228, 228);
+    border-radius: 5px;
+}
+
+p {
+    margin-bottom: 6px;
+}
+
+.inputfield {
+    margin-bottom: 14px;
+}
+
+.accordion {
+    font-weight: 600;
+}
+
+.exptbutton {
+    padding: 4px !important;
+    font-size: 11px !important;
+    cursor: pointer
+}
+
+.acd {
+    width: 97%;
+    margin-bottom: 10px;
+    border-radius: 7px !important;
+}
+
+.acd:hover {
+    background-image: linear-gradient(to top, #dfe9f3 0%, white 100%);
+
+
+}
+
+.acdsummary {
+    border-bottom: 1px solid rgb(0 0 0 / 13%) !important;
+}
+
+.acdTitle {
+    font-weight: bold !important;
+}
+
+.acdDetails {
+    /* background-color: white !important; */
+
+}
+
+.divchart {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 87vh;
+    transition: all 0.5s ease;
+}
+
+.css-1elwnq4-MuiPaper-root-MuiAccordion-root:before {
+    background-color: white !important;
+}
+
+
+
+[type='color'] {
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    padding: 0;
+    width: 46px;
+    height: 46px;
+    border: 5px #e9e1e1 solid;
+    border-radius: 6px;
+}
+
+[type='color']::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+[type='color']::-webkit-color-swatch {
+    border: none;
+}
+
+.color-picker {
+    padding: 10px 15px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    background-color: #f8f9f9;
+}
+
+code {
+    padding: 5px 8px;
+    border-radius: 10px;
+    background-color: #f8f9f9;
+    color: #CC0066;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 49px;
+    height: 23px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 3px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked+.slider {
+    background-color: #2196F3;
+}
+
+input:focus+.slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked+.slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+.acdswatch {
+    padding-left: 55%
+}
+
+.container-template {
+    background-color: #F2F2F2;
+    border-radius: 9px;
+    margin-bottom: 15px;
+    position: relative;
+    border-bottom: 1px solid rgb(0 0 0 / 13%) !important;
+}
+
+.container-title {
+    padding: 2% 0% 2% 2%;
+}
+
+.container-template:hover {
+    background-image: linear-gradient(to top, #dfe9f3 0%, white 100%);
+}
+
+/* .element.dimensions .margin:after {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 60px;
+    width: 26%;
+    border: 1px solid #000000;
+    content: 'Chart';
+    padding-top: 6%;
+}
+.element {
+    display: flex;
+    align-items: center;
+    position: relative;
+    margin-bottom: 1rem;
+}
+.element.dimensions .margin {
+    position: relative;
+    height: 134px;
+    width: 100%;
+    margin: 0 50px;
+}
+.element.dimensions .margin-top, .element.dimensions .margin-bottom {
+    left: 29%;
+    transform: translateX(-20%);
+}
+.element.dimensions .input {
+    position: absolute;
+}
+.element.dimensions .margin-right, .element.dimensions .margin-left {
+    top: 50%;
+    transform: translateY(-50%);
+}
+.element.dimensions .margin-bottom {
+    bottom: -2PX;
+}
+.element.dimensions .margin-left {
+    left: -14%;
+}
+.element.dimensions .margin-right {
+    right: -14%;
+}
+.element.dimensions .margin-top {
+    top: -12px;
+}
+.element .input-field{
+    padding: 0 6px;
+    color: #000000;
+    background: none;
+    font-size: 0.875rem;
+     padding: 4px 8px; 
+    height: 28px;
+    border-radius: 6px;
+    width: 40%;
+    margin: 0;
+    transition: 0.3s border-color, background-color 0.3s;
+} */
+
+.MuiTableRow-root td {
+    line-height: 1.3rem !important;
+    padding: 6px 16px 6px 16px !important;
+    font-size: 14px !important;
+}
+
+.tss-131sses-MUIDataTable-responsiveScroll {
+    max-height: 68vh !important;
+    margin: 0px 20px;
+}
+
+.MuiTableCell-head {
+    background-color: #6282b3 !important;
+    color: white !important;
+}
+
+.nav-close {
+    float: right;
+    position: relative;
+    right: -12px;
+}
+.nav-inputarea{
+    font-weight: bold;
+    transform: rotate(-90deg);
+    top: -18%;
+    position: relative;
+}

@@ -2,37 +2,32 @@
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.MuiInputLabel-root,.MuiMenuItem-root {
+  font-size: 14px !important;
+  line-height: 13.5px !important
+}
+.MuiSelect-select,p,.MuiInputBase-input{
+  font-size: 14px !important;
+  
+}
+.MuiInputBase-input{
+  height: inherit !important;
+}
+.Mui-error{
+  margin-left : 0 !important;
+
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.MuiInputBase-input {
+  padding: 9.5px 15px !important
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+input[type=file] {
+  font-size: 14px !important;
+  padding: 1px !important;
 }
 
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+[type='color'] {
+  width: 41px !important;
+  height: 41px !important;
 }
