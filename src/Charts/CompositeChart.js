@@ -229,15 +229,8 @@ const Compose = ({ params }) => {
             .group(function (d) { return '' })
             .showGroups(false)
             .showSections(false)
-            // .section(d => {
-            //     return d['Region'] == 'South'
 
-            // })
-            //.showGroups(true)
-            // .filter(function(d) { 
-            //     console.log('sdf',d)
-            //     return d.Region == 'South'})
-            .columns(params.XAxis_)
+            .columns(params.XAxis_.map((e) => e.split(' ').slice(1, 3).join(' ')))
             .sortBy(function (d) {
                 return [fmt(+d.Region)];
             })

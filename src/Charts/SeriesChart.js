@@ -85,13 +85,14 @@ const SeriesChart = ({ params }) => {
             .keyAccessor(function (d) { return d.key[1]; })
             .valueAccessor(function (d) { return +d.value; })
             .colors(d3.scaleOrdinal(getRandomColor(params.GroupByValues.length)))
-            .legend(dc.legend().x(0).y(5).itemHeight(13).gap(5).horizontal(params.LengendPosition))
-            .title(function (y) {
-                var tooltip = params.XAxis + ': ' + y.key + '\n'
-                    + params.YAxis + ': ' + y.value
+        if (params.Legendswatch !== undefined)
+            chart.legend(dc.legend().x(0).y(5).itemHeight(13).gap(5).horizontal(params.LengendPosition))
+        chart.title(function (y) {
+            var tooltip = params.XAxis + ': ' + y.key + '\n'
+                + params.YAxis + ': ' + y.value
 
-                return ''
-            })
+            return ''
+        })
             //.legend(dc.legend().x(0).y(10).itemHeight(13).gap(5).horizontal(true).legendWidth(140).itemWidth(70))
             .renderlet(function (chart) {
                 //X-Axis 
@@ -188,6 +189,7 @@ const SeriesChart = ({ params }) => {
 
         d3.selectAll(".dc-legend")
             .style("display", params.Legendswatch === undefined ? 'none' : params.Legendswatch)
+
 
         d3.select('body').on('mouseover', function () {
 

@@ -125,7 +125,7 @@ const Scatter = ({ params }) => {
             .dimension(table_)
             .size(Infinity)
             .showSections(false)
-            .columns(params.XAxis_)
+            .columns(params.XAxis_.map((e) => e.split(' ').slice(1, 3).join(' ')))
             .order(d3.ascending)
 
             .on('preRender', update_offset)

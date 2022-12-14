@@ -5,6 +5,7 @@ import Scatter from "../Charts/ScatterPlot";
 import LineChart from "../Charts/LineChart";
 import Compose from "../Charts/CompositeChart";
 import SeriesChart from "../Charts/SeriesChart";
+import BarLineChart from "../Charts/BarLineChart";
 
 
 import DownloadIcon from '@mui/icons-material/Download';
@@ -51,14 +52,14 @@ const ChartBlock = ({ enable, state }) => {
     const exportInputs = () => {
 
         var copystate = {}
-        var PieChart = ['Uploaded_file', 'Chart', 'Heigth_','Width_', 'Title', 'Innerradius', 'SlicesCap', 'ExternalRadiusPadding', 'XAxis', 'YAxis', 'XAxis_', 'YAxis_']
+        var PieChart = ['Uploaded_file', 'Chart', 'Heigth_', 'Width_', 'Title', 'Innerradius', 'SlicesCap', 'ExternalRadiusPadding', 'XAxis', 'YAxis', 'XAxis_', 'YAxis_']
         var BarChart = ['Uploaded_file', 'Chart', 'Heigth_', 'Width_', 'Title', 'Color', 'XAxisLabel', 'YAxisLabel', 'XAxis', 'YAxis', 'YAxisPadding', 'XAxis_', 'YAxis_']
         var ScatterPlot = ['Uploaded_file', 'Chart', 'Heigth_', 'Width_', 'Title', 'Color', 'XAxisLabel', 'YAxisLabel', 'XAxis', 'YAxis', 'SymbolSize', 'XAxis_', 'YAxis_']
         var LineChart = ['Uploaded_file', 'Chart', 'Heigth_', 'Width_', 'Title', 'Color', 'XAxisLabel', 'YAxisLabel', 'XAxis', 'YAxis', 'XAxis_', 'YAxis_']
         var CompositeChart = ['Uploaded_file', 'Chart', 'Heigth_', 'Width_', 'Title', 'Color', 'XAxisLabel', 'YAxisLabel', 'XAxis', 'YAxis', 'GroupBy', 'XAxis_', 'YAxis_', 'GroupByValues']
         var Common = ['BGColor', 'LegendColor', 'LegendFont', 'LegendSize', 'LengendPosition', 'TitleColor', 'TitleFont', 'TitleSize', 'TooltipBGColor', 'TooltipColor',
-            'TooltipFont', 'TooltipSize', 'TooltipThickness', 'TooltipTickColor', 'xFont', 'xSize', 'xColor', 'xlColor', 'xlFont', 'xlSize', 'yFont', 'yColor', 'ySize', 
-            'ylColor', 'ylFont', 'ylSize','Axesswatch','Axesswatch_','Titleswatch','Titleswatch_','Tooltipswatch','Tooltipswatch_','Legendswatch','Legendswatch_']
+            'TooltipFont', 'TooltipSize', 'TooltipThickness', 'TooltipTickColor', 'xFont', 'xSize', 'xColor', 'xlColor', 'xlFont', 'xlSize', 'yFont', 'yColor', 'ySize',
+            'ylColor', 'ylFont', 'ylSize', 'Axesswatch', 'Axesswatch_', 'Titleswatch', 'Titleswatch_', 'Tooltipswatch', 'Tooltipswatch_', 'Legendswatch', 'Legendswatch_', 'InputType']
         for (let i = 0; i < Object.keys(state).length; i++) {
             if (state.Chart === 'Pie Chart') {
                 if (PieChart.indexOf(Object.keys(state)[i]) !== -1) {
@@ -87,8 +88,15 @@ const ChartBlock = ({ enable, state }) => {
             }
 
             if (Common.indexOf(Object.keys(state)[i]) !== -1) {
-                copystate[Object.keys(state)[i]] = state[Object.keys(state)[i]]
+                if (Object.keys(state)[i] === 'InputType') {
+
+                    copystate['InputType'] = 'Import Inputs'
+                }
+                else {
+                    copystate[Object.keys(state)[i]] = state[Object.keys(state)[i]]
+                }
             }
+
         }
         const json = JSON.stringify(copystate, null, 2);
         const blob = new Blob([json], { type: "application/json" });
@@ -144,6 +152,8 @@ const ChartBlock = ({ enable, state }) => {
                         <Compose params={state} />}
                     {state.Chart === 'Series Chart' &&
                         <SeriesChart params={state} />}
+                    {state.Chart === 'Bar Line Chart' &&
+                        <BarLineChart params={state} />}
                 </div>
             </>
         )

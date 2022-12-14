@@ -1,18 +1,15 @@
 import React, { useCallback } from "react";
-// import Grid from '@material-ui/core/Grid';
 
 //MUI
 import './Styles/Custom.css';
-
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 //NPM's
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-
 import DatasetTable from "./Charts/DatasetTable";
 
+//Components
 import InputBlock from "./Components/InputBlock";
 import ChartBlock from "./Components/ChartBlock";
 
@@ -61,11 +58,13 @@ const HomePage = () => {
                     <InputBlock ChildtoParentHandshake={data} ExpandData={expand} dataTable={DataTable} />
 
                     <div className="" style={{ backgroundColor: '#e9ecef', height: '87vh', width: navwidth.ChartArea }}>
-                        {filedata.data !== undefined &&
+                        {/* {filedata.data !== undefined &&
                             <DatasetTable params={filedata.data} />
-                        }
-                        {filedata.data === undefined &&
+                        } */}
+                        {filedata.data === undefined ?
                             <ChartBlock enable={enable} state={state} />
+                            :
+                            <DatasetTable params={filedata.data} />
                         }
 
                     </div>

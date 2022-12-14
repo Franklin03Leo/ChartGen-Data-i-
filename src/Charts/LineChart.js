@@ -99,7 +99,7 @@ const LineChart = ({ params }) => {
             .dimension(table_)
             .size(Infinity)
             .showSections(false)
-            .columns(params.XAxis_)
+            .columns(params.XAxis_.map((e) => e.split(' ').slice(1, 3).join(' ')))
             //  .sortBy(function (d) { return [fmt(+d.Expt), fmt(+d.Run)]; })
             .order(d3.ascending)
 

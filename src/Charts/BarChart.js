@@ -39,7 +39,7 @@ const BarChart = ({ params }) => {
     var datatabel = new dc.dataTable(div1.current);
 
     var experiments = params.Uploaded_file
-
+  
     var chart = new dc.barChart(div.current)
       .title(function (y) {
         var tooltip = params.XAxis + ': ' + y.key + '\n'
@@ -127,7 +127,7 @@ const BarChart = ({ params }) => {
       .dimension(table_)
       .size(Infinity)
       .showSections(false)
-      .columns(params.XAxis_)
+      .columns(params.XAxis_.map((e) => e.split(' ').slice(1, 3).join(' ')))
       .order(d3.ascending)
       .on('preRender', update_offset)
       .on('preRedraw', update_offset)
