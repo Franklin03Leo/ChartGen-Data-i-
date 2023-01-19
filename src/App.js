@@ -3,9 +3,9 @@ import HomePage from './HomePage';
 
 function App() {
   return (
-    <div className="App">
-      <HomePage/>
-    </div>
+      <div  className="App">
+        <HomePage />
+      </div>
   );
 }
 

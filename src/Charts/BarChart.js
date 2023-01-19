@@ -33,13 +33,12 @@ const BarChart = ({ params }) => {
       .style("background-color", params.TooltipBGColor)
       .style("border", params.TooltipThickness + 'px ' + params.TooltipTickColor + ' solid')
 
-
     IsString_(params.Uploaded_file[0])
     var ndx;
     var datatabel = new dc.dataTable(div1.current);
 
     var experiments = params.Uploaded_file
-  
+
     var chart = new dc.barChart(div.current)
       .title(function (y) {
         var tooltip = params.XAxis + ': ' + y.key + '\n'
@@ -49,19 +48,101 @@ const BarChart = ({ params }) => {
     const Max = experiments.map(object => {
       return object[params.XAxis];
     });
-    experiments.forEach(function (x) {
-      x.Speed = +x.Speed;
-    });
+
 
     ndx = crossfilter(experiments)
     var runDimension = ndx.dimension(function (d) {
       return d[params.XAxis];
     })
+    var YKey = function (d) { return +d[params.YAxis] }
+    var offsetHeight = document.getElementById('Charts').offsetHeight;
+    var offsetWidth = document.getElementById('Charts').offsetWidth;
+    let sizing = chart => {
+      chart.width(offsetWidth).height(offsetHeight).redraw();
+    };
+    let resizing = chart => window.onresize = () => sizing(chart);
+    function groupArrayAdd(keyfn) {
+      var bisect = d3.bisector(keyfn);
+      return function (elements, item) {
+        var pos = bisect.right(elements, keyfn(item));
+        elements.splice(pos, 0, item);
+        return elements;
+      };
+    }
+
+    function groupArrayRemove(keyfn) {
+      var bisect = d3.bisector(keyfn);
+      return function (elements, item) {
+        var pos = bisect.left(elements, keyfn(item));
+        if (keyfn(elements[pos]) === keyfn(item))
+          elements.splice(pos, 1);
+        return elements;
+      };
+    }
+
+    function groupArrayInit() {
+      return [];
+    }
+    function minSpeed(kv) {
+      return d3.min(kv.value, YKey);
+    }
+    function maxSpeed(kv) {
+      return d3.max(kv.value, YKey);
+    }
     var speedSumGroup = ''
-    if (params.YAxis !== undefined && params.YAxis !== 'Select')
-      speedSumGroup = runDimension.group().reduceSum(function (d) { return d[params.YAxis] });
-    else
+    if (params.YAxis !== undefined && params.YAxis !== 'Select') {
+      if (params.GroupByCol === 'Sum') {
+        speedSumGroup = runDimension.group().reduceSum(function (d) { return d[params.YAxis] });
+      }
+      else if (params.GroupByCol === 'Count') {
+        speedSumGroup = runDimension.group().reduceCount(function (d) { return d[params.YAxis] });
+      }
+      else if (params.GroupByCol === 'Average') {
+        speedSumGroup = runDimension.group().reduce(
+          //return d.fdl_UniyPrice;
+          //add
+          function (p, v) {
+            ++p.count;
+            p.total += parseInt(v[params.YAxis]);
+            if (p.count == 0) {
+              p.average = 0;
+            } else {
+              p.average = p.total / p.count;
+            }
+            return p;
+          },
+          // remove
+          function (p, v) {
+            --p.count;
+            p.total -= parseInt(v[params.YAxis]);
+            if (p.count == 0) {
+              p.average = 0;
+            } else {
+              p.average = p.total / p.count;
+            }
+            return p;
+          },
+          // initial
+          function () {
+            return {
+              count: 0,
+              total: 0,
+              average: 0
+            };
+          }
+        );
+      }
+      else if (params.GroupByCol === 'Minimum') {
+        speedSumGroup = runDimension.group().reduce(groupArrayAdd(YKey), groupArrayRemove(YKey), groupArrayInit);
+      }
+      else if (params.GroupByCol === 'Maximum') {
+        speedSumGroup = runDimension.group().reduce(groupArrayAdd(YKey), groupArrayRemove(YKey), groupArrayInit);
+      }
+    }
+    else {
       speedSumGroup = runDimension.group().reduceCount(function (d) { return d[params.XAxis] });
+    }
+
 
     var fmt = d3.format('02d');
     var table_ = ndx.dimension(function (d) { return [fmt(+d[params.XAxis]), fmt(+d[params.YAxis])]; });
@@ -73,8 +154,8 @@ const BarChart = ({ params }) => {
     if (isString === true) {
       chart
         .ordinalColors([params.Barswatch === 'show' ? params.Color : '#6282b3'])
-        .margins({ top: parseInt(10) + parseInt(PadTop), right: parseInt(30) + parseInt(PadRight), bottom: parseInt(50) + parseInt(PadBottom), left: parseInt(30) + parseInt(PadLeft) })
-        .width(params.Width_)
+        .margins({ top: parseInt(10) + parseInt(PadTop), right: parseInt(30) + parseInt(PadRight), bottom: parseInt(50) + parseInt(PadBottom), left: parseInt(40) + parseInt(PadLeft) })
+        .width(params.Width_ === null ? null : params.Width_)
         .height(params.Heigth_)
         .x(d3.scaleLinear().domain([Math.min(...Max), Math.max(...Max) + Math.min(...Max)]))
         .x(d3.scaleBand())
@@ -84,57 +165,91 @@ const BarChart = ({ params }) => {
         .outerPadding(0.2)
         .yAxisLabel(params.YAxisLabel)
         .xAxisLabel(params.XAxisLabel)
-        // .colors(["#79CED7", "#66AFB2", "#C96A23", "#D3D1C5", "#F5821F", "grey", "purple"])
-        // .colorAccessor(d => d.key)
         .yAxisPadding(params.YAxisPadding)
         .group(speedSumGroup)
         .dimension(runDimension)
         .elasticY(true)
-        .xAxis()
-      // chart.legend(new legend().legendText(function (d, i) { return d.name; }))
-      chart.yAxis().tickFormat(function (v) { return BMK(v); })
+      if (params.Labelsswatch !== undefined)
+        chart.renderLabel(true)
+          .label(function (d) {
+            if (params.LabelsContent === 'X')
+              return d.x
+            else if (params.LabelsContent === 'Y')
+              return d.y.toFixed(2)
+            else if (params.LabelsContent === 'Title')
+              return params.YAxis
+          })
 
-      // .ticks(4)
+          .xAxis()
+      if (params.GroupByCol === 'Average') {
+        chart.valueAccessor(function (d) {
+          return d.value.average;
+        })
+      }
+      else if (params.GroupByCol === 'Minimum') {
+        chart.valueAccessor(minSpeed)
+      }
+      else if (params.GroupByCol === 'Maximum') {
+        chart.valueAccessor(maxSpeed)
+      }
+      chart.yAxis().tickFormat(function (v) { return BMK(v); })
     }
     else {
       chart
-        .margins({ top: 10 + parseInt(PadTop), right: 20 + parseInt(PadRight), bottom: 50 + parseInt(PadBottom), left: 10 + parseInt(PadLeft) })
-        .width(params.Width_)
+        .margins({ top: 10 + parseInt(PadTop), right: 20 + parseInt(PadRight), bottom: 50 + parseInt(PadBottom), left: 40 + parseInt(PadLeft) })
+        .width(params.Width_ === null ? null : params.Width_)
         .height(params.Heigth_)
         //.useViewBoxResizing(true)
         .x(d3.scaleBand())
         .xUnits(dc.units.ordinal)
         .brushOn(false)
-
         .barPadding(0.4)
         .outerPadding(0.2)
         .ordinalColors([params.Barswatch === 'show' ? params.Color : '#6282b3'])
-        // .colorAccessor(d => d.key)
-        // .ordinalColors(["#79CED7", "#66AFB2", "#C96A23", "#D3D1C5", "#F5821F", "grey", "purple"])
         .yAxisPadding(params.YAxisPadding)
         .group(speedSumGroup)
         .dimension(runDimension)
         .elasticY(true)
-
         .yAxisLabel(params.YAxisLabel)
         .xAxisLabel(params.XAxisLabel)
+      if (params.Labelsswatch !== undefined)
+        chart.renderLabel(true)
+          .label(function (d) {
+            if (params.LabelsContent === 'X')
+              return d.x
+            else if (params.LabelsContent === 'Y')
+              return d.y.toFixed(2)
+            else if (params.LabelsContent === 'Title')
+              return params.YAxis
+          })
+      if (params.GroupByCol === 'Average') {
+        chart.valueAccessor(function (d) {
+          return d.value.average;
+        })
+      }
+      else if (params.GroupByCol === 'Minimum') {
+        chart.valueAccessor(minSpeed)
+      }
+      else if (params.GroupByCol === 'Maximum') {
+        chart.valueAccessor(maxSpeed)
+      }
       chart.yAxis().tickFormat(function (v) { return BMK(v); })
-      //  chart.legend(new legend().legendText(function (d, i) { return d.name; }))
     }
+
     datatabel
       .width(300)
       .height(480)
       .dimension(table_)
       .size(Infinity)
       .showSections(false)
-      .columns(params.XAxis_.map((e) => e.split(' ').slice(1, 3).join(' ')))
+      .columns(params.GroupByCopy_.map((e) => e.split(' ').slice(1, 3).join(' ')))
       .order(d3.ascending)
       .on('preRender', update_offset)
       .on('preRedraw', update_offset)
       .on('pretransition', display);
 
-
     dc.renderAll();
+    resizing(chart);
     d3.select('body').on('mouseover', function () {
 
       d3.selectAll('rect.bar')
@@ -142,11 +257,6 @@ const BarChart = ({ params }) => {
           div2.transition()
             .duration(500)
             .style("opacity", params.Tooltipswatch)
-          // .style("font-family", params.TooltipFont)
-          // .style("color", params.TooltipColor)
-          // .style("font-size", params.TooltipSize + "px")
-          // .style("background-color", params.TooltipBGColor)
-          // .style("border", params.TooltipThickness + 'px ' + params.TooltipTickColor + ' solid')
           if (params.TooltipContent === 'X') {
             div2.html('<div><div><b>'
               + params.XAxis + '</b> : ' + d.target.__data__.x + '</div><div>')
@@ -154,23 +264,21 @@ const BarChart = ({ params }) => {
           else if (params.TooltipContent === 'Y') {
             if (params.YAxis === undefined || params.YAxis === 'Select') {
               div2.html('<div><div><b>'
-                + 'Count </b> : ' + d.target.__data__.y + '</div><div>')
+                + 'Count </b> : ' + parseFloat(d.target.__data__.y).toFixed(2) + '</div><div>')
             }
             else {
               div2.html('<div><div><b>'
-                + params.YAxis + '</b> : ' + d.target.__data__.y + '</div><div>')
+                + params.YAxis + '</b> : ' + parseFloat(d.target.__data__.y).toFixed(2) + '</div><div>')
             }
           }
           else if (params.TooltipContent === 'All') {
             if (params.YAxis === undefined || params.YAxis === 'Select') {
               div2.html('<div><div><b>'
                 + params.XAxis + '</b> : ' + d.target.__data__.x + '</div><div><b>'
-                + 'Count </b> : ' + d.target.__data__.y + '</div></div>')
+                + 'Count </b> : ' + parseFloat(d.target.__data__.y).toFixed(2) + '</div></div>')
             }
             else {
-              div2.html('<div><div><b>'
-                + params.XAxis + '</b> : ' + d.target.__data__.x + '</div><div><b>'
-                + params.YAxis + '</b> : ' + d.target.__data__.y.toFixed(2) + '</div></div>')
+              div2.html('<div><div><b>' + params.XAxis + '</b> : ' + d.target.__data__.x + '</div><div><b>' + params.YAxis + '</b> : ' + parseFloat(d.target.__data__.y).toFixed(2) + '</div></div>')
             }
           }
           div2.style("left", (d.pageX) + "px")
@@ -182,40 +290,45 @@ const BarChart = ({ params }) => {
             .style("opacity", 0);
         });
 
-      chart.renderlet(function (chart) {
-        //X-Axis 
-        chart.selectAll("g.x g.tick text")
-          .attr('dx', params.Rotate === undefined || params.Rotate === '' ? '' : '-10')
-          .attr('text-anchor', params.Rotate === undefined || params.Rotate === '' ? '' : 'end')
-          .attr('transform', `rotate(${params.Rotate})`)
-          .style("font-family", params.xFont)
-          .style("color", params.xColor)
-          .style("font-size", params.xSize + "px")
+      // chart.renderlet(function (chart) {
+      //X-Axis 
+      chart.selectAll("g.x g.tick text")
+        .attr('dx', params.Rotate === undefined || params.Rotate === '' ? '' : '-10')
+        .attr('text-anchor', params.Rotate === undefined || params.Rotate === '' ? '' : 'end')
+        .attr('transform', `rotate(${params.Rotate})`)
+        .style("font-family", params.xFont)
+        .style("color", params.xColor)
+        .style("font-size", params.xSize + "px")
 
-        //y-Axis 
-        chart.selectAll("g.y g.tick text")
-          .attr('dx', '-10')
-          .attr('text-anchor', 'end')
-          // .attr('transform', `rotate(${params.Rotate})`)
-          .style("font-family", params.yFont)
-          .style("color", params.yColor)
-          .style("font-size", params.ySize + "px")
+      //y-Axis 
+      chart.selectAll("g.y g.tick text")
+        .attr('dx', '-10')
+        .attr('text-anchor', 'end')
+        // .attr('transform', `rotate(${params.Rotate})`)
+        .style("font-family", params.yFont)
+        .style("color", params.yColor)
+        .style("font-size", params.ySize + "px")
 
-        //X-Axis Label
-        chart.selectAll(".x-axis-label")
-          .style("font-family", params.xlFont)
-          .style("fill", params.xlColor)
-          .style("font-size", params.xlSize + "px")
-          .style("display", params.Axesswatch !== undefined ? params.Axesswatch : 'none')
+      //X-Axis Label
+      chart.selectAll(".x-axis-label")
+        .style("font-family", params.xlFont)
+        .style("fill", params.xlColor)
+        .style("font-size", params.xlSize + "px")
+        .style("display", params.Axesswatch !== undefined ? params.Axesswatch : 'none')
 
-        //Y-Axis Label
-        chart.selectAll(".y-axis-label")
-          .style("font-family", params.ylFont)
-          .style("fill", params.ylColor)
-          .style("font-size", params.ylSize + "px")
-          .style("display", params.Axesswatch !== undefined ? params.Axesswatch : 'none')
+      //Y-Axis Label
+      chart.selectAll(".y-axis-label")
+        .style("font-family", params.ylFont)
+        .style("fill", params.ylColor)
+        .style("font-size", params.ylSize + "px")
+        .style("display", params.Axesswatch !== undefined ? params.Axesswatch : 'none')
 
-      })
+      chart.selectAll(".barLabel")
+        .style("font-family", params.LabelsFont)
+        .style("fill", params.LabelsColor)
+        .style("font-size", params.Labelsize + "px")
+        .style("display", params.Labelsswatch !== undefined ? params.Labelsswatch : 'none')
+      // })
 
     });
     //});
@@ -250,6 +363,7 @@ const BarChart = ({ params }) => {
 
     function update_offset() {
       var totFilteredRecs = ndx.groupAll().value();
+      pag = totFilteredRecs;
       var end = ofs + pag > totFilteredRecs ? totFilteredRecs : ofs + pag;
       if (ofs == undefined || pag == undefined) {
         ofs = 0;
@@ -304,8 +418,8 @@ const BarChart = ({ params }) => {
   };
 
   return (
-    <Grid item xs={12} md={12} xl={4} lg={12}>
-      <Grid item className="cardbox" style={{ padding: '0px 10px' }}>
+    <Grid item xs={12} md={12} xl={12} lg={12}>
+      <Grid item className="cardbox chartbox" style={{ padding: '0px 10px' }}>
         <Chartheader />
         <div style={{ backgroundColor: params.Barswatch === 'show' ? params.BGColor : '' }}>
           <div id="Charts" ref={div} className="boxcenter">
@@ -313,7 +427,7 @@ const BarChart = ({ params }) => {
         </div>
       </Grid>
 
-      <Grid item className="cardbox">
+      <Grid item className="cardbox chartbox" style={{ padding: '5px 15px 0px 15px', display: params.Width_ === null ? 'none' : 'block' }}>
         {/* <input id="last" className="btn" type="Button" value="Last" />
           <input id="next" className="btn" type="button" value="Next" /> */}
         <div id="table-scroll" className="table-scroll">

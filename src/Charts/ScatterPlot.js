@@ -10,7 +10,6 @@ const Scatter = ({ params }) => {
     const div = React.useRef(null);
     const div1 = React.useRef(null)
 
-    var chart = null;
     React.useEffect(() => {
         var div2 = d3.select("#Charts").append("div")
             .attr("class", "tooltip")
@@ -28,12 +27,92 @@ const Scatter = ({ params }) => {
         var ndx = crossfilter(experiments),
             runDimension = ndx.dimension(function (d) {
                 return [+d[params.XAxis], +d[params.YAxis]];
-            }),
-            speedSumGroup = runDimension.group()
+            })
+
+        var YKey = function (d) { return +d[params.YAxis] }
+        function groupArrayAdd(keyfn) {
+            var bisect = d3.bisector(keyfn);
+            return function (elements, item) {
+                var pos = bisect.right(elements, keyfn(item));
+                elements.splice(pos, 0, item);
+                return elements;
+            };
+        }
+
+        function groupArrayRemove(keyfn) {
+            var bisect = d3.bisector(keyfn);
+            return function (elements, item) {
+                var pos = bisect.left(elements, keyfn(item));
+                if (keyfn(elements[pos]) === keyfn(item))
+                    elements.splice(pos, 1);
+                return elements;
+            };
+        }
+
+        function groupArrayInit() {
+            return [];
+        }
+        function minSpeed(kv) {
+            return d3.min(kv.value, YKey);
+        }
+        function maxSpeed(kv) {
+            return d3.max(kv.value, YKey);
+        }
+        var speedSumGroup = ''
+        if (params.YAxis !== undefined && params.YAxis !== 'Select') {
+            if (params.GroupByCol === 'Sum') {
+                speedSumGroup = runDimension.group().reduceSum(function (d) { return d[params.YAxis] });
+            }
+            else if (params.GroupByCol === 'Count') {
+                speedSumGroup = runDimension.group().reduceCount(function (d) { return d[params.YAxis] });
+            }
+            else if (params.GroupByCol === 'Average') {
+                speedSumGroup = runDimension.group().reduce(
+                    function (p, v) {
+                        ++p.count;
+                        p.total += parseInt(v[params.YAxis]);
+                        if (p.count == 0) {
+                            p.average = 0;
+                        } else {
+                            p.average = p.total / p.count;
+                        }
+                        return p;
+                    },
+                    // remove
+                    function (p, v) {
+                        --p.count;
+                        p.total -= parseInt(v[params.YAxis]);
+                        if (p.count == 0) {
+                            p.average = 0;
+                        } else {
+                            p.average = p.total / p.count;
+                        }
+                        return p;
+                    },
+                    // initial
+                    function () {
+                        return {
+                            count: 0,
+                            total: 0,
+                            average: 0
+                        };
+                    }
+                );
+            }
+            else if (params.GroupByCol === 'Minimum') {
+                speedSumGroup = runDimension.group().reduce(groupArrayAdd(YKey), groupArrayRemove(YKey), groupArrayInit);
+            }
+            else if (params.GroupByCol === 'Maximum') {
+                speedSumGroup = runDimension.group().reduce(groupArrayAdd(YKey), groupArrayRemove(YKey), groupArrayInit);
+            }
+        }
+        else {
+            speedSumGroup = runDimension.group().reduceCount(function (d) { return d[params.XAxis] });
+        }
 
         var fmt = d3.format('02d');
         var table_ = ndx.dimension(function (d) { return [fmt(+d[params.XAxis]), fmt(+d[params.YAxis])]; });
-        chart = new dc.scatterPlot(div.current);
+        var chart = new dc.scatterPlot(div.current);
         var datatabel = new dc.dataTable(div1.current);
         let PadTop, PadRight, PadBottom, PadLeft = 0
         if (params.PadTop === undefined || params.PadTop === '') PadTop = 0; else PadTop = params.PadTop
@@ -49,21 +128,23 @@ const Scatter = ({ params }) => {
             .brushOn(false)
             .symbolSize(params.SymbolSize)
             .clipPadding(10)
-
             .dimension(runDimension, params.YAxis)
             .group(speedSumGroup, params.YAxis)
-            // .colorAccessor(function (d) {
-            //     if (d != undefined) {
-            //         debugger
-            //         return d.key[1] >= 0 ? 'blue' : 'red'
-            //     }
-            // })
-            // .colorAccessor(['red', 'blue'])
             .title(function (y) {
                 var tooltip = params.XAxis + ': ' + y.key[0] + '\n'
                     + params.YAxis + ': ' + y.key[1]
 
                 return ''
+            })
+            .elasticY(true)
+            .renderLabel(true)
+            .label(function (d) {
+                if (params.LabelsContent === 'X')
+                    return d.x
+                else if (params.LabelsContent === 'Y')
+                    return d.y.toFixed(2)
+                else if (params.LabelsContent === 'Title')
+                    return params.YAxis
             })
             .renderlet(function (chart) {
                 chart.selectAll("path.symbol")
@@ -111,11 +192,27 @@ const Scatter = ({ params }) => {
                     .style("font-size", params.ylSize + "px")
                     .style("display", params.Axesswatch === undefined ? 'none' : params.Axesswatch)
 
+                chart.selectAll(".barLabel")
+                    .style("font-family", params.LabelsFont)
+                    .style("fill", params.LabelsColor)
+                    .style("font-size", params.Labelsize + "px")
+                    .style("display", params.Labelsswatch !== undefined ? params.Labelsswatch : 'none')
 
 
             })
             .yAxisLabel(params.YAxisLabel)
             .xAxisLabel(params.XAxisLabel)
+        if (params.GroupByCol === 'Average') {
+            chart.valueAccessor(function (d) {
+                return d.value.average;
+            })
+        }
+        else if (params.GroupByCol === 'Minimum') {
+            chart.valueAccessor(minSpeed)
+        }
+        else if (params.GroupByCol === 'Maximum') {
+            chart.valueAccessor(maxSpeed)
+        }
         chart.yAxis().tickFormat(function (v) { return BMK(v); })
         // .legend(new legend().x(0).y(10).itemHeight(13).gap(5).horizontal(true))
 
@@ -125,7 +222,7 @@ const Scatter = ({ params }) => {
             .dimension(table_)
             .size(Infinity)
             .showSections(false)
-            .columns(params.XAxis_.map((e) => e.split(' ').slice(1, 3).join(' ')))
+            .columns(params.GroupByCopy_.map((e) => e.split(' ').slice(1, 3).join(' ')))
             .order(d3.ascending)
 
             .on('preRender', update_offset)
@@ -231,15 +328,15 @@ const Scatter = ({ params }) => {
     };
 
     return (
-        <Grid item xs={12} sm={12} md={12} xl={4} lg={12}>
-            <Grid item className="cardbox">
+        <Grid item xs={12} sm={12} md={12} xl={12} lg={12}>
+            <Grid item className="cardbox chartbox">
                 <Chartheader />
                 <div style={{ backgroundColor: params.Scatterswatch === 'show' ? params.BGColor : '' }}>
                     <div id="Charts" ref={div} className="boxcenter">
                     </div>
                 </div>
             </Grid>
-            <Grid item className="cardbox">
+            <Grid item className="cardbox chartbox" style={{display: params.Width_ === null ? 'none' : 'block' }}>
 
                 <div id="table-scroll" className="table-scroll">
                     <div className="table-wrap">

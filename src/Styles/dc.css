@@ -340,9 +340,9 @@ thead tr {
     color: #ffffff;
 }
 
-.table-wrap:last-of-type {
-    border-bottom: 2px solid 6282b3;
-}
+/* .table-wrap:last-of-type {
+    border-bottom: 2px solid #6282b3;
+} */
 
 
 .table-scroll {
@@ -507,10 +507,10 @@ body {
 .fixed-header {
     width: 100%;
     position: fixed;
-    background-image: linear-gradient(-225deg, #77FFD2 0%, #6297DB 48%, #1EECFF 100%);
-    /* background-image: linear-gradient(to top, #0c3483 0%, #a2b6df 100%, #6b8cce 100%, #a2b6df 100%); */
+    /* background-image: linear-gradient(-225deg, #77FFD2 0%, #6297DB 48%, #1EECFF 100%); */
+    background-image: linear-gradient(to top, #0c3483 0%, #a2b6df 100%, #6b8cce 100%, #a2b6df 100%);
     color: #fff;
-    /* box-shadow: rgba(0, 0, 0, 0.25) 0px 25px 50px -12px; */
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
     z-index: 99999;
 }
 
@@ -608,7 +608,7 @@ p {
 .divchart {
     overflow-y: auto;
     overflow-x: hidden;
-    height: 87vh;
+    /* height: 87vh; */
     transition: all 0.5s ease;
 }
 
@@ -716,19 +716,36 @@ input:checked+.slider:before {
 }
 
 .container-template {
-    background-color: #F2F2F2;
+    background-color: white;
     border-radius: 9px;
     margin-bottom: 15px;
     position: relative;
     border-bottom: 1px solid rgb(0 0 0 / 13%) !important;
+    box-shadow: rgb(0 0 0 / 5%) 0px 0px 0px 1px, rgb(209 213 219) 0px 0px 0px 1px inset;
+    background-image: linear-gradient(to top, #bce6ff 0%, #e7edf1 100%);
+    padding-bottom: 10px;
+    width: 96%;
 }
 
 .container-title {
     padding: 2% 0% 2% 2%;
 }
 
-.container-template:hover {
+.container-description {
+    padding: 2% 2% 2% 0%;
+    overflow-wrap: break-word;
+    max-height: 100px;
+    overflow-y: auto;
+    text-align: start;
+    font-size: 14px;
+    border-top: 1px #c7c0c0 solid
+}
+
+/* .container-template:hover {
     background-image: linear-gradient(to top, #dfe9f3 0%, white 100%);
+} */
+.temp-icon {
+    cursor: pointer;
 }
 
 /* .element.dimensions .margin:after {
@@ -797,7 +814,7 @@ input:checked+.slider:before {
 }
 
 .tss-131sses-MUIDataTable-responsiveScroll {
-    max-height: 68vh !important;
+    /* max-height: 68vh !important; */
     margin: 0px 20px;
 }
 
@@ -805,15 +822,192 @@ input:checked+.slider:before {
     background-color: #6282b3 !important;
     color: white !important;
 }
+
 /* Nav Open/Close+ */
 .nav-close {
     float: right;
     position: relative;
     right: -12px;
 }
-.nav-inputarea{
+
+.nav-inputarea {
     font-weight: bold;
     transform: rotate(-90deg);
     top: -18%;
     position: relative;
+}
+
+#TempDescription {
+    padding: 0 !important;
+    overflow-y: auto !important;
+    height: 80px !important;
+}
+
+.Datatypeicon {
+    width: 100% !important;
+    height: inherit !important;
+    background-color: aliceblue;
+    border-radius: 11px;
+    cursor: pointer;
+}
+
+.chartbox {
+    box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px !important;
+    padding: 12px 12px 0px 12px !important;
+}
+
+.Mui-selected {
+    background-color: white !important;
+    /* box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px; */
+}
+
+.borderstyle {
+    border-bottom: 1px solid rgb(0 0 0 / 13%) !important;
+    font-size: 14px;
+    padding: 0px 0px 8px 0px !important;
+    display: flex !important;
+    margin-bottom: 25px;
+    font-weight: bold;
+}
+
+.borderdivstyle {
+    border: 1px rgb(212, 206, 206) solid;
+    padding: 15px 5px;
+    border-radius: 10px;
+
+}
+
+.demoVideo {
+    height: inherit;
+    width: auto;
+    padding: 10px 0;
+    box-shadow: rgb(50 50 93 / 25%) 0px 6px 12px -2px, rgb(0 0 0 / 30%) 0px 3px 7px -3px;
+}
+
+.box {
+    border-radius: 5px;
+    box-shadow: 0px 30px 40px -20px #6282b3;
+    padding: 20px;
+    margin: 10px 10px 10px 0px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+}
+
+.header {
+    text-align: center;
+    line-height: 0.8;
+    margin-bottom: 50px;
+    margin-top: 100px;
+}
+
+.header p {
+    margin: 0 auto;
+    line-height: 2;
+    color: #6282b3;
+}
+
+
+.box p {
+    color: var(--grayishBlue);
+}
+
+.cyan {
+    border-top: 3px solid #6282b3;
+}
+
+.row1-container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.css-13xfq8m-MuiTabPanel-root {
+    padding: 10px !important;
+}
+
+.divdashboard {
+    /* width: 350px; */
+    height: 300px;
+    padding: 10px;
+    margin: 10px 0px;
+    border: 1px solid #e7dada;
+}
+
+.filterswt {
+    border-top: 2px solid #6282b3;
+    margin-top: 10px;
+    background-color: inherit;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: rgb(17 17 26 / 5%) 0px 1px 0px, rgb(17 17 26 / 10%) 0px 0px 8px;
+}
+
+.filterDiv {
+    border-top: 3px solid #6282b3;
+    margin: 0px 10px;
+    background-color: inherit;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: rgb(17 17 26 / 5%) 0px 1px 0px, rgb(17 17 26 / 10%) 0px 0px 8px;
+}
+
+.filteredProp {
+    background: #d5e5ff;
+    background: #d5e5ff;
+    border-radius: 10px;
+    padding: 3px 10px;
+    font-size: 13px;
+}
+
+.Prt-filteredProp {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: inherit;
+}
+.Dashboardtab{
+    position: relative;
+    border-bottom: 1px #e0d1d1 solid;
+    margin: 8px 0px 5px 0px;
+    padding: 0px 0px 5px 0px;
+    display: flex;
+    flex-direction: row-reverse
+
+}
+.Dash-icon:hover{
+    padding: 6px;
+    background: #bbcff7;
+    border-radius: 5px;
+    margin-left: 5px;
+    cursor: pointer;
+}
+.Dash-icon{
+    padding: 6px;
+    background: #e2e2e2;
+    border-radius: 5px;
+    margin-left: 5px;
+}
+.Dashboardlayout-1{
+    padding: 10px 0px 10px 10px ;
+    border: 1px solid #000;
+    margin: 5px;
+    cursor: pointer;
+}
+.layoutContainer{
+    height: 50px;
+    border: 1px solid #000;
+     margin: 0.5%
+    
+}
+.prt-dashboardLayouts{
+    max-height: 41vh;
+    overflow-y: auto;
+    border-radius: 10px;
+    margin: 10px 0px 0px 0px;
+}
+.Dashboardlayout-1.active{
+    background-color: rgb(225, 225, 248) !important;
+    border: 1px rgb(221, 113, 158) solid;
+}
+.feedback div.tss-131sses-MUIDataTable-responsiveScroll{
+    max-height: 300px
 }

@@ -31,8 +31,90 @@ const SeriesChart = ({ params }) => {
         var ndx = crossfilter(experiments),
             runDimension = ndx.dimension(function (d) {
                 return [d[params.GroupBy], d[params.XAxis]];
-            }),
-            speedSumGroup = runDimension.group().reduceSum(function (d) { return d[params.YAxis] });
+            })
+
+        var YKey = function (d) { return +d[params.YAxis] }
+        function groupArrayAdd(keyfn) {
+            var bisect = d3.bisector(keyfn);
+            return function (elements, item) {
+                var pos = bisect.right(elements, keyfn(item));
+                elements.splice(pos, 0, item);
+                return elements;
+            };
+        }
+
+        function groupArrayRemove(keyfn) {
+            var bisect = d3.bisector(keyfn);
+            return function (elements, item) {
+                var pos = bisect.left(elements, keyfn(item));
+                if (keyfn(elements[pos]) === keyfn(item))
+                    elements.splice(pos, 1);
+                return elements;
+            };
+        }
+
+        function groupArrayInit() {
+            return [];
+        }
+        function minSpeed(kv) {
+            return d3.min(kv.value, YKey);
+        }
+        function maxSpeed(kv) {
+            return d3.max(kv.value, YKey);
+        }
+        var speedSumGroup = ''
+        if (params.YAxis !== undefined && params.YAxis !== 'Select') {
+            if (params.GroupByCol === 'Sum') {
+                speedSumGroup = runDimension.group().reduceSum(function (d) { return d[params.YAxis] });
+            }
+            else if (params.GroupByCol === 'Count') {
+                speedSumGroup = runDimension.group().reduceCount(function (d) { return d[params.YAxis] });
+            }
+            else if (params.GroupByCol === 'Average') {
+                speedSumGroup = runDimension.group().reduce(
+                    //return d.fdl_UniyPrice;
+                    //add
+                    function (p, v) {
+                        ++p.count;
+                        p.total += parseInt(v[params.YAxis]);
+                        if (p.count == 0) {
+                            p.average = 0;
+                        } else {
+                            p.average = p.total / p.count;
+                        }
+                        return p;
+                    },
+                    // remove
+                    function (p, v) {
+                        --p.count;
+                        p.total -= parseInt(v[params.YAxis]);
+                        if (p.count == 0) {
+                            p.average = 0;
+                        } else {
+                            p.average = p.total / p.count;
+                        }
+                        return p;
+                    },
+                    // initial
+                    function () {
+                        return {
+                            count: 0,
+                            total: 0,
+                            average: 0
+                        };
+                    }
+                );
+            }
+            else if (params.GroupByCol === 'Minimum') {
+                speedSumGroup = runDimension.group().reduce(groupArrayAdd(YKey), groupArrayRemove(YKey), groupArrayInit);
+            }
+            else if (params.GroupByCol === 'Maximum') {
+                speedSumGroup = runDimension.group().reduce(groupArrayAdd(YKey), groupArrayRemove(YKey), groupArrayInit);
+            }
+        }
+        else {
+            speedSumGroup = runDimension.group().reduceCount(function (d) { return d[params.XAxis] });
+        }
 
 
         var runDimension_ = ndx.dimension(function (d) {
@@ -42,6 +124,8 @@ const SeriesChart = ({ params }) => {
 
         var minDate = d3.min(experiments, function (d) { return d[params.XAxis]; });
         var maxDate = d3.max(experiments, function (d) { return d[params.XAxis]; });
+        var YminDate = d3.min(experiments, function (d) { return d[params.YAxis]; });
+        var YmaxDate = d3.max(experiments, function (d) { return d[params.YAxis]; })
 
         function static_copy_group(group) {
             var all = group.all().map(kv => ({ key: kv.key, value: kv.value }));
@@ -67,14 +151,13 @@ const SeriesChart = ({ params }) => {
             .width(params.Width_)
             .height(params.Heigth_)
             .margins({ top: parseInt(10) + parseInt(PadTop), right: parseInt(30) + parseInt(PadRight), bottom: parseInt(50) + parseInt(PadBottom), left: parseInt(30) + parseInt(PadLeft) })
-
             .chart(function (c) { return new dc.lineChart(c).curve(d3.curveCardinal).evadeDomainFilter(true) })
             .x(d3.scaleTime().domain([new Date(minDate), new Date(maxDate)]))
+            .y(d3.scaleLinear().domain([YminDate, 1000]))
+
             .round(d3.timeMonth.round)
             .xUnits(d3.timeMonths)
             .brushOn(false)
-
-            //.clipPadding(10)
             .elasticY(true)
             .transitionDuration(1000)
             .dimension(runDimension)
@@ -85,6 +168,26 @@ const SeriesChart = ({ params }) => {
             .keyAccessor(function (d) { return d.key[1]; })
             .valueAccessor(function (d) { return +d.value; })
             .colors(d3.scaleOrdinal(getRandomColor(params.GroupByValues.length)))
+            .renderLabel(true)
+            .label(function (d) {
+                if (params.LabelsContent === 'X')
+                    return d.x
+                else if (params.LabelsContent === 'Y')
+                    return d.y.toFixed(2)
+                else if (params.LabelsContent === 'Title')
+                    return params.YAxis
+            })
+        if (params.GroupByCol === 'Average') {
+            chart.valueAccessor(function (d) {
+                return d.value.average;
+            })
+        }
+        else if (params.GroupByCol === 'Minimum') {
+            chart.valueAccessor(minSpeed)
+        }
+        else if (params.GroupByCol === 'Maximum') {
+            chart.valueAccessor(maxSpeed)
+        }
         if (params.Legendswatch !== undefined)
             chart.legend(dc.legend().x(0).y(5).itemHeight(13).gap(5).horizontal(params.LengendPosition))
         chart.title(function (y) {
@@ -128,19 +231,22 @@ const SeriesChart = ({ params }) => {
                     .style("font-size", params.ylSize + "px")
                     .style("display", params.Axesswatch === undefined ? 'none' : params.Axesswatch)
 
+                    chart.selectAll(".barLabel")
+                    .style("font-family", params.LabelsFont)
+                    .style("fill", params.LabelsColor)
+                    .style("font-size", params.Labelsize + "px")
+                    .style("display", params.Labelsswatch !== undefined ? params.Labelsswatch : 'none')
+
+
             })
             .yAxisLabel(params.YAxisLabel)
             .xAxisLabel(params.XAxisLabel)
         chart.yAxis().tickFormat(function (v) { return BMK(v); })
 
-        // chart.xAxis().tickFormat(function (v) { return timeFormat(v); })
         volumeChart
             .width(params.Width_)
             .height(150)
             .margins({ top: parseInt(10) + parseInt(PadTop), right: parseInt(30) + parseInt(PadRight), bottom: parseInt(50) + parseInt(PadBottom), left: parseInt(30) + parseInt(PadLeft) })
-
-            // .brushOn(true)
-            //.xAxisPadding(50)
             .dimension(runDimension)
             .group(speedSumGroup_copy)
             .centerBar(true)
@@ -314,8 +420,8 @@ const SeriesChart = ({ params }) => {
     };
 
     return (
-        <Grid item xs={12} sm={12} md={12} xl={4} lg={12}>
-            <Grid item className="cardbox" xs={12} sm={12} md={12} xl={4} lg={12} >
+        <Grid item xs={12} sm={12} md={12} xl={12} lg={12}>
+            <Grid item className="cardbox chartbox" xs={12} sm={12} md={12} xl={12} lg={12}>
                 <Chartheader />
                 <div style={{ backgroundColor: params.Seriesswatch === 'show' ? params.BGColor : '' }} id="Charts">
                     <div ref={div} className="boxcenter">

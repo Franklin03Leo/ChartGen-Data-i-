@@ -14,29 +14,6 @@ const d3 = {
 const Compose = ({ params }) => {
     const div = React.useRef(null);
     const div1 = React.useRef(null);
-    var tipvalue = 'title';
-    var rowtip = d3.tip()
-        .attr('class', 'd3-tip')
-        .offset([-10, 0])
-        .html(function (d) {
-
-            var split = tipvalue.split("\n");
-            //var retdiv = '<div>';
-            var retdiv = '<div class="class_tooltip">';
-            for (var i = 0; i < split.length; i++) {
-                retdiv = retdiv + split[i] + '<br>';
-            }
-            retdiv = retdiv + '</div>';
-            return retdiv;
-            //return '<div>'+tipvalue+'</div>';
-        });
-    const tipremove = () => {
-        var tipelements = document.getElementsByClassName("class_tooltip");
-        var tiplength = tipelements.length;
-        for (var i = tiplength - 1; i >= 0; i--) {
-            tipelements[i].remove();
-        }
-    }
     // let compositeChart = null
     React.useEffect(() => {
 
@@ -45,33 +22,142 @@ const Compose = ({ params }) => {
         var ndx = crossfilter(experiments),
 
             runDimension = ndx.dimension(function (d) {
-                //return d.Run;
-                // return [d[params.XAxis],d[params.GroupBy]];
                 return d[params.XAxis];
             });
 
         var value = params.GroupByValues;
+
+        var YKey = function (d) { return +d[params.YAxis] }
+        function groupArrayAdd(keyfn) {
+            var bisect = d3.bisector(keyfn);
+            return function (elements, item) {
+                var pos = bisect.right(elements, keyfn(item));
+                elements.splice(pos, 0, item);
+                return elements;
+            };
+        }
+
+        function groupArrayRemove(keyfn) {
+            var bisect = d3.bisector(keyfn);
+            return function (elements, item) {
+                var pos = bisect.left(elements, keyfn(item));
+                if (keyfn(elements[pos]) === keyfn(item))
+                    elements.splice(pos, 1);
+                return elements;
+            };
+        }
+
+        function groupArrayInit() {
+            return [];
+        }
+        function minSpeed(kv) {
+            return d3.min(kv.value, YKey);
+        }
+        function maxSpeed(kv) {
+            return d3.max(kv.value, YKey);
+        }
+        //Dynamic Group Creation
         for (let i = 0; i < value.length; i++) {
-            window['grps' + i] = runDimension.group().reduceSum(function (d) { return d[params.GroupBy] == value[i] ? d[params.YAxis] : 0 });
-            // window['grps' + i] = runDimension.group().reduce(
-            //     function (p, v) {
-            //         ++p.count;
-            //         p[params.YAxis] = v[params.GroupBy] === value[i] ? v[params.YAxis] : 0;
-
-            //         return p
-            //     },
-            //     function (p, v) {
-            //         --p.count;
-
-            //         p[params.YAxis] = v[params.GroupBy] === value[i] ? v[params.YAxis] : 0;
-            //         return p
-            //     },
-            //     ()=>({
-            //         [params.YAxis]:0
-            //     }))
+            if (params.GroupByCol === 'Sum') {
+                window['grps' + i] = runDimension.group().reduceSum(function (d) { return d[params.GroupBy] == value[i] ? +d[params.YAxis] : 0 });
+            }
+            // else if (params.GroupByCol === 'Count') {
+            //     //window['grps' + i] = runDimension.group().reduceCount(function (d) { return d[params.GroupBy] == value[i] ? d[params.YAxis] : 0 });
+            //     window['grps' + i] = runDimension.group().reduce(
+            //         function (p, v) {
+            //             if (v[params.GroupBy] == value[i]) {
+            //                 ++p.count;
+            //                 p.total += parseInt(v[params.YAxis]);
+            //                 if (p.count == 0) {
+            //                     p.average = 0;
+            //                 } else {
+            //                     p.average = p.total / p.count;
+            //                 }
+            //             }
+            //             else {
+            //                 p.total = 0
+            //             }
+            //             return p;
+            //         },
+            //         // remove
+            //         function (p, v) {
+            //             if (v[params.GroupBy] == value[i]) {
+            //                 --p.count;
+            //                 p.total -= parseInt(v[params.YAxis]);
+            //                 if (p.count == 0) {
+            //                     p.average = 0;
+            //                 } else {
+            //                     p.average = p.total / p.count;
+            //                 }
+            //             }
+            //             else {
+            //                 p.total = 0
+            //             }
+            //             return p;
+            //         },
+            //         // initial
+            //         function () {
+            //             return {
+            //                 count: 0,
+            //                 total: 0,
+            //                 average: 0
+            //             };
+            //         }
+            //     );
+            // }
+            else if (params.GroupByCol === 'Average' || params.GroupByCol === 'Count') {
+                window['grps' + i] = runDimension.group().reduce(
+                    function (p, v) {
+                        if (v[params.GroupBy] == value[i]) {
+                            ++p.count;
+                            p.total += parseInt(v[params.YAxis]);
+                            if (p.count == 0) {
+                                p.average = 0;
+                            } else {
+                                p.average = p.total / p.count;
+                            }
+                        }
+                        else {
+                            p.total = 0
+                        }
+                        return p;
+                    },
+                    // remove
+                    function (p, v) {
+                        if (v[params.GroupBy] == value[i]) {
+                            --p.count;
+                            p.total -= parseInt(v[params.YAxis]);
+                            if (p.count == 0) {
+                                p.average = 0;
+                            } else {
+                                p.average = p.total / p.count;
+                            }
+                        }
+                        else {
+                            p.total = 0
+                        }
+                        return p;
+                    },
+                    // initial
+                    function () {
+                        return {
+                            count: 0,
+                            total: 0,
+                            average: 0
+                        };
+                    }
+                );
+            }
+            else if (params.GroupByCol === 'Minimum') {
+                window['grps' + i] = runDimension.group().reduce(groupArrayAdd(YKey), groupArrayRemove(YKey), groupArrayInit);
+            }
+            else if (params.GroupByCol === 'Maximum') {
+                window['grps' + i] = runDimension.group().reduce(groupArrayAdd(YKey), groupArrayRemove(YKey), groupArrayInit);
+            }
             Groups.push('grps' + i)
 
         }
+
 
 
 
@@ -101,6 +187,8 @@ const Compose = ({ params }) => {
             let startAt, endAt, subScale = d3.scaleLinear().domain([0, subs.size()]).range([0, 100]);
 
             subs.each(function (d, i) {
+                let x, y, h = 0
+
                 startAt = subScale(i + 1) - subScale(1);
                 endAt = subScale(i + 1);
                 startAt += barPadding;
@@ -108,6 +196,14 @@ const Compose = ({ params }) => {
                 d3.select(this)
                     .selectAll('rect')
                     .attr("clip-path", `polygon(${startAt}% 0%, ${endAt}% 0%, ${endAt}% 100%, ${startAt}% 100%)`);
+                // x = d3.select(this).select('rect').attr('x')
+                // y = d3.select(this).select('rect').attr('y')
+                // h = d3.select(this).select('rect').attr('height')
+                // d3.select(this)
+                //     .selectAll('text')
+                //     .attr("xy", x)
+                //     .attr("yx", y)
+                //     .attr("height", h)
             });
         };
         var div2 = d3.select("#Charts").append("div")
@@ -119,6 +215,7 @@ const Compose = ({ params }) => {
             .style("background-color", params.TooltipBGColor)
             .style("border", params.TooltipThickness + 'px ' + params.TooltipTickColor + ' solid')
 
+        // Dynamic Bar Charts generaion for composite chart
         var charts = []
         for (let i = 0; i < Groups.length; i++) {
             window['Chart' + i] = dc.barChart(compositeChart)
@@ -131,17 +228,43 @@ const Compose = ({ params }) => {
                 .colors(d3.scaleOrdinal([getRandomColor()]))
                 .dimension(runDimension)
                 .group(window[Groups[i]], value[i])
-                // .addFilterHandler(function (filters, filter) {
-                //     debugger
-                //     return [filter, 'South'];
-                // })
-
-                .title(function (y) {
-                    var tooltip = params.XAxis + ': ' + y.key + '\n'
-                        + params.YAxis + ': ' + y.value
-
-                    return ''
+                .renderLabel(true)
+                .label(function (d) {
+                    if (params.LabelsContent === 'X')
+                        return d.x
+                    else if (params.LabelsContent === 'Y')
+                        return d.y.toFixed(2)
+                    else if (params.LabelsContent === 'Title')
+                        return params.YAxis
                 })
+
+            if (params.GroupByCol === 'Average') {
+                window['Chart' + i].valueAccessor(function (d) {
+                    return d.value.average;
+                })
+            }
+            else if (params.GroupByCol === 'Count') {
+                window['Chart' + i].valueAccessor(function (d) {
+                    return d.value.count;
+                })
+            }
+            else if (params.GroupByCol === 'Minimum') {
+                window['Chart' + i].valueAccessor(minSpeed)
+            }
+            else if (params.GroupByCol === 'Maximum') {
+                window['Chart' + i].valueAccessor(maxSpeed)
+            }
+            // .addFilterHandler(function (filters, filter) {
+            //     debugger
+            //     return [filter, 'South'];
+            // })
+
+            window['Chart' + i].title(function (y) {
+                var tooltip = params.XAxis + ': ' + y.key + '\n'
+                    + params.YAxis + ': ' + y.value
+
+                return ''
+            })
 
             charts.push(window['Chart' + i])
         }
@@ -213,6 +336,12 @@ const Compose = ({ params }) => {
                     .style("font-size", params.ylSize + "px")
                     .style("display", params.Axesswatch === undefined ? 'none' : params.Axesswatch)
 
+                chart.selectAll(".barLabel")
+                    .style("font-family", params.LabelsFont)
+                    .style("fill", params.LabelsColor)
+                    .style("font-size", params.Labelsize + "px")
+                    .style("display", params.Labelsswatch !== undefined ? params.Labelsswatch : 'none')
+
             })
             .yAxisLabel(params.YAxisLabel)
             .xAxisLabel(params.XAxisLabel)
@@ -230,7 +359,7 @@ const Compose = ({ params }) => {
             .showGroups(false)
             .showSections(false)
 
-            .columns(params.XAxis_.map((e) => e.split(' ').slice(1, 3).join(' ')))
+            .columns(params.GroupByCopy_.map((e) => e.split(' ').slice(1, 3).join(' ')))
             .sortBy(function (d) {
                 return [fmt(+d.Region)];
             })
@@ -256,6 +385,7 @@ const Compose = ({ params }) => {
 
         d3.selectAll(".dc-legend")
             .style("display", params.Legendswatch === undefined ? 'none' : params.Legendswatch)
+
         d3.select('body').on('mouseover', function () {
 
             d3.selectAll('rect.bar')
@@ -399,15 +529,15 @@ const Compose = ({ params }) => {
     };
 
     return (
-        <Grid item xs={12} sm={12} md={12} xl={4} lg={12} >
-            <Grid item className="cardbox">
+        <Grid item xs={12} sm={12} md={12} xl={12} lg={12} >
+            <Grid item className="cardbox chartbox" >
                 <Chartheader />
                 <div style={{ backgroundColor: params.Compositeswatch === 'show' ? params.BGColor : '' }}>
                     <div ref={div} id="Charts" className="boxcenter">
                     </div>
                 </div>
             </Grid>
-            <Grid item className="cardbox">
+            <Grid item className="cardbox chartbox" style={{display: params.Width_ === null ? 'none' : 'block' }}>
                 <div id="table-scroll" className="table-scroll">
                     <div className="table-wrap">
 

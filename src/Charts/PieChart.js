@@ -25,11 +25,94 @@ const PieChart = ({ params }) => {
       runDimension = ndx.dimension(function (d) {
         return d[params.XAxis];
       })
-    var speedSumGroup = ''
-    if (params.YAxis !== undefined && params.YAxis !== 'Select')
+    // var speedSumGroup = ''
+    // if (params.YAxis !== undefined && params.YAxis !== 'Select')
+    //   speedSumGroup = runDimension.group().reduceSum(function (d) { return d[params.YAxis] });
+    // else
+    //   speedSumGroup = runDimension.group().reduceCount(function (d) { return d[params.XAxis] });
+
+    var YKey = function (d) { return +d[params.YAxis] }
+    function groupArrayAdd(keyfn) {
+      var bisect = d3.bisector(keyfn);
+      return function (elements, item) {
+        var pos = bisect.right(elements, keyfn(item));
+        elements.splice(pos, 0, item);
+        return elements;
+      };
+    }
+
+    function groupArrayRemove(keyfn) {
+      var bisect = d3.bisector(keyfn);
+      return function (elements, item) {
+        var pos = bisect.left(elements, keyfn(item));
+        if (keyfn(elements[pos]) === keyfn(item))
+          elements.splice(pos, 1);
+        return elements;
+      };
+    }
+
+    function groupArrayInit() {
+      return [];
+    }
+    function minSpeed(kv) {
+      return d3.min(kv.value, YKey);
+    }
+    function maxSpeed(kv) {
+      return d3.max(kv.value, YKey);
+    }
+  var speedSumGroup = ''
+  if (params.YAxis !== undefined && params.YAxis !== 'Select') {
+    if (params.GroupByCol === 'Sum') {
       speedSumGroup = runDimension.group().reduceSum(function (d) { return d[params.YAxis] });
-    else
-      speedSumGroup = runDimension.group().reduceCount(function (d) { return d[params.XAxis] });
+    }
+    else if (params.GroupByCol === 'Count') {
+      speedSumGroup = runDimension.group().reduceCount(function (d) { return d[params.YAxis] });
+    }
+    else if (params.GroupByCol === 'Average') {
+      speedSumGroup = runDimension.group().reduce(
+        //return d.fdl_UniyPrice;
+        //add
+        function (p, v) {
+          ++p.count;
+          p.total += parseInt(v[params.YAxis]);
+          if (p.count == 0) {
+            p.average = 0;
+          } else {
+            p.average = p.total / p.count;
+          }
+          return p;
+        },
+        // remove
+        function (p, v) {
+          --p.count;
+          p.total -= parseInt(v[params.YAxis]);
+          if (p.count == 0) {
+            p.average = 0;
+          } else {
+            p.average = p.total / p.count;
+          }
+          return p;
+        },
+        // initial
+        function () {
+          return {
+            count: 0,
+            total: 0,
+            average: 0
+          };
+        }
+      );
+    }
+    else if (params.GroupByCol === 'Minimum') {
+      speedSumGroup = runDimension.group().reduce(groupArrayAdd(YKey), groupArrayRemove(YKey), groupArrayInit);
+    }
+    else if (params.GroupByCol === 'Maximum') {
+      speedSumGroup = runDimension.group().reduce(groupArrayAdd(YKey), groupArrayRemove(YKey), groupArrayInit);
+    }
+  }
+  else {
+    speedSumGroup = runDimension.group().reduceCount(function (d) { return d[params.XAxis] });
+  }
 
     var fmt = d3.format('02d');
     var table_ = ndx.dimension(function (d) { return [fmt(+d[params.XAxis]), fmt(+d[params.YAxis])]; });
@@ -59,6 +142,17 @@ const PieChart = ({ params }) => {
           .style("fill", params.pColor)
           .style("font-size", params.pSize + "px")
       })
+      if (params.GroupByCol === 'Average') {
+        fileChart.valueAccessor(function (d) {
+          return d.value.average;
+        })
+      }
+      else if (params.GroupByCol === 'Minimum') {
+        fileChart.valueAccessor(minSpeed)
+      }
+      else if (params.GroupByCol === 'Maximum') {
+        fileChart.valueAccessor(maxSpeed)
+      }
     if (params.Legendswatch !== undefined)
       fileChart.legend(new legend().x(10).y(10).itemHeight(13).gap(5).horizontal(params.LengendPosition).legendText(function (d, i) { return d.name; }))
 
@@ -69,7 +163,7 @@ const PieChart = ({ params }) => {
       .dimension(table_)
       .size(Infinity)
       .showSections(false)
-      .columns(params.XAxis_.map((e) => e.split(' ').slice(1, 3).join(' ')))
+      .columns(params.GroupByCopy_.map((e) => e.split(' ').slice(1, 3).join(' ')))
       .sortBy(function (d) { return [fmt(+d.Expt), fmt(+d.Run)]; })
       .order(d3.ascending)
 
@@ -97,32 +191,27 @@ const PieChart = ({ params }) => {
           div2.transition()
             .duration(500)
             .style("opacity", params.Tooltipswatch)
-          // .style("font-family", params.TooltipFont)
-          // .style("color", params.TooltipColor)
-          // .style("font-size", params.TooltipSize + "px")
-          // .style("background-color", params.TooltipBGColor)
-          // .style("border", params.TooltipThickness + 'px ' + params.TooltipTickColor + ' solid')
           if (params.TooltipContent === 'X') {
             div2.html('<div><div><b>' + params.XAxis + '</b> : ' + d.target.__data__.data['key'] + '</div><div>')
           }
           else if (params.TooltipContent === 'Y') {
             if (params.YAxis === undefined || params.YAxis === 'Select') {
-              div2.html('<div><div><b>Count</b> : ' + d.target.__data__.data['value'] + '</div><div>')
+              div2.html('<div><div><b>Count</b> : ' + parseFloat(d.target.__data__.value).toFixed(2) + '</div><div>')
             }
             else {
-              div2.html('<div><div><b>' + params.YAxis + '</b> : ' + d.target.__data__.data['value'].toFixed(2) + '</div><div>')
+              div2.html('<div><div><b>' + params.YAxis + '</b> : ' + parseFloat(d.target.__data__.value).toFixed(2) + '</div><div>')
             }
           }
           else if (params.TooltipContent === 'All') {
             if (params.YAxis === undefined || params.YAxis === 'Select') {
               div2.html('<div><div><b>'
                 + params.XAxis + '</b> : ' + d.target.__data__.data['key'] + '</div><div><b>'
-                + 'Count </b> : ' + d.target.__data__.data['value'] + '</div></div>')
+                + 'Count </b> : ' + parseFloat(d.target.__data__.value).toFixed(2) + '</div></div>')
             }
             else {
               div2.html('<div><div><b>'
                 + params.XAxis + '</b> : ' + d.target.__data__.data['key'] + '</div><div><b>'
-                + params.YAxis + '</b> : ' + d.target.__data__.data['value'].toFixed(2) + '</div></div>')
+                + params.YAxis + '</b> : ' + parseFloat(d.target.__data__.value).toFixed(2) + '</div></div>')
             }
           }
           div2.style("left", (d.pageX) + "px")
@@ -207,16 +296,15 @@ const PieChart = ({ params }) => {
   };
 
   return (
-    <Grid item xs={12} sm={12} md={12} xl={4} lg={12}>
-      <Grid item className="cardbox">
+    <Grid item xs={12} sm={12} md={12} xl={12} lg={12}>
+      <Grid item className="cardbox chartbox">
         <Chartheader />
         <div style={{ backgroundColor: params.Pieswatch === 'show' ? params.BGColor : '' }}>
           <div id="Charts" ref={div} className="boxcenter">
           </div>
         </div>
       </Grid>
-      <Grid item className="cardbox">
-
+      <Grid item className="cardbox chartbox" style={{display: params.Width_ === null ?'none':'block'}}>
         <div id="table-scroll" className="table-scroll">
           <div className="table-wrap">
             <table ref={div1} className="main-table">
