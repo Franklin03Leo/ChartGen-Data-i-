@@ -9,7 +9,6 @@ import MenuItem from '@mui/material/MenuItem';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import styled from "@emotion/styled";
 import { Fade } from "@material-ui/core";
-import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
@@ -17,12 +16,14 @@ import TabPanel from '@mui/lab/TabPanel';
 import Check from '@mui/icons-material/Check';
 import Clear from '@mui/icons-material/Clear';
 import Alert from '@mui/material/Alert';
-
+import { Box, Modal } from "@mui/material";
+import Typography from '@mui/material/Typography';
+import Backdrop from '@mui/material/Backdrop';
 //NPM's
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
-
+import { useNavigate } from "react-router-dom";
 //Components
 import InputBlock from "./Components/InputBlock";
 import ChartBlock from "./Components/ChartBlock";
@@ -31,10 +32,7 @@ import DatasetTable from "./Charts/DatasetTable";
 import Demo from "./Charts/Demo";
 import Dashboard from "./Charts/Dashboard";
 import Feedback from "./Components/Feedback";
-
-
-//Logo
-import logo from '../src/Analytic_Brains_Logo.png';
+import Header from "./Components/Header";
 
 const HomePage = () => {
     const DataTypes = ['#', 'Da', 'Aa']
@@ -49,10 +47,11 @@ const HomePage = () => {
     const [value, setValue] = React.useState('1');
     const [changeType, setChangeType] = React.useState({ 'enableChange': false, 'Dimensions_': 'Select', 'DataTypes': '#' })
     const [error, setError] = React.useState({});
-    const [feedback, setFeedback] = React.useState({'Issues':undefined});
-
-
-
+    const [feedback, setFeedback] = React.useState({ 'Issues': undefined });
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const [project, setProject] = React.useState({});
+    const [open, setOpen] = React.useState({ 'SessionExpiry': false, 'StayConnected': false });
+    const [seconds, setSeconds] = React.useState();
     // Custom styles
     const BootstrapTooltip = styled(({ className, ...props }) => (
         <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -65,7 +64,42 @@ const HomePage = () => {
             backgroundColor: 'black',
         },
     }));
-
+    const style = {
+        position: 'absolute',
+        top: '35%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'background.paper',
+        boxShadow: 24,
+        p: 4,
+        borderRadius: '5px'
+    };
+    // React.useEffect(() => {
+    let timeout, downloadTimer
+    document.getElementById('root').addEventListener('mousemove', function () {
+        clearTimeout(timeout);
+        timeout = setTimeout(function () {
+            if (window.location.pathname === '/home') {
+                setOpen({ ...open, 'SessionExpiry': true })
+                // var timeleft = 10;
+                // downloadTimer = setInterval(function () {
+                //     if (timeleft <= 0) {
+                //         clearInterval(downloadTimer);
+                //         if (!open.SessionExpiry) {
+                //             navigate('/');
+                //         }
+                //     } else {
+                //         setSeconds(timeleft);
+                //     }
+                //     timeleft -= 1;
+                // }, 1000);
+                //alert('Your session has been expired !!!')
+            }
+        }, 1000 * 60 * 30);
+        // restart the timeout
+    });
+    // })
     // These functions which are used to get the data from the other components
     const data = (state, enable, navbar, file) => {
         // debugger
@@ -89,9 +123,8 @@ const HomePage = () => {
         //setFeedback(undefined)
     }
     const handleFeedback = (params) => {
-        setFeedback({'Issues':params})
+        setFeedback({ 'Issues': params })
     }
-
     //Tab change
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -168,26 +201,28 @@ const HomePage = () => {
             //  event.preven
         }
     }
+    //Get the project details for preview
+    const handleProject = (params) => {
+        setProject(params)
+        if (params.userID !== undefined) {
+            Isshow({ ...show, 'isShow': true, 'PreviewProject': true })
+            setData({ 'data': undefined })
+        }
+    }
+    const navigate = useNavigate();
 
+    // const Dashboard_ = React.useMemo(()=>)
     return (
         <div>
             <div className="col-lg-12" style={{ width: '100%' }}>
+                <div className="loader"></div>
                 <ToastContainer />
-                <div className="fixed-header">
-                    <div className="site-identity">
-                        <a href="#">
-                            <img src={logo} alt='Logo'></img>
-                        </a>
-                    </div>
-                    <div className="container">
-                        Data(i)
-                    </div>
-                </div>
-                <div className="row" style={{ marginRight: '0px', height: 'calc(100vh - 81px)' }}>
-                    <InputBlock ChildtoParentHandshake={data} ExpandData={expand} dataTable={DataTable} demoVideo={video} showDashboard={showDashboard} feedback_={handleFeedback} />
+                <Header />
+                <div className="row" style={{ marginRight: '0px', height: 'calc(100vh - 6vh)', paddingTop: '6vh' }}>
+                    <InputBlock ChildtoParentHandshake={data} ExpandData={expand} dataTable={DataTable} demoVideo={video} showDashboard={showDashboard} feedback_={handleFeedback} project_={handleProject} />
                     {/* <div className="" style={{ backgroundColor: '#e9ecef', height: '87vh', width: navwidth.ChartArea }}> */}
-                    <div className="" style={{ backgroundColor: '#e9ecef', width: `${navwidth.ChartArea === '63%' ? 'calc(70% - 90px)' : 'calc(100% - 90px)'}`, height: 'calc(100vh - 81px)' }}>
-                        {filedata.data === undefined && play.isPlay !== true && show.isShow !== true ?
+                    <div className="" style={{ backgroundColor: '#e9ecef', width: `${navwidth.ChartArea === '63%' ? 'calc(70% - 90px)' : 'calc(100% - 90px)'}`, height: 'calc(100vh - 6vh)' }}>
+                        {filedata.data === undefined && play.isPlay !== true && show.isShow !== true && feedback.Issues === undefined ?
                             <ChartBlock enable={enable} state={state} />
                             :
                             <>
@@ -292,7 +327,7 @@ const HomePage = () => {
                             ''
                         }
                         {show.isShow ?
-                            <Dashboard params={show} />
+                            <Dashboard params={show.PreviewProject ? project : show} />
                             :
                             ''
                         }
@@ -303,6 +338,47 @@ const HomePage = () => {
 
                     </div>
                 </div>
+            </div>
+            {/* Session Expiry */}
+            <div>
+                <Modal
+                    aria-labelledby="transition-modal-title"
+                    aria-describedby="transition-modal-description"
+                    open={open.SessionExpiry}
+                    onClose={(e) => { setOpen({ 'SessionExpiry': false }); navigate('/') }}
+                    closeAfterTransition
+                    BackdropComponent={Backdrop}
+                    BackdropProps={{
+                        timeout: 500,
+                    }}
+                >
+                    <Fade in={open.SessionExpiry}>
+                        <Box sx={style}>
+                            <Typography className="expiry-modal-title" variant="h6" component="h5">
+                                Session Timeout
+                            </Typography>
+                            <Typography id="transition-modal-description" sx={{ mt: 2 }} style={{ marginTop: '10px' }}>
+                                <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                    <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                        Your session is expired.
+                                    </div>
+                                </div>
+                            </Typography>
+                            {/* <Typography id="transition-modal-description" sx={{ mt: 5 }} style={{ marginTop: '10px' }}>
+                                <div className="col-xs-12 col-sm-12 col-md-12 col-lg-6" >
+                                    <Button variant="contained" margin="normal" className='input-field button' style={{ backgroundColor: '#6282b3', float: 'right' }} onClick={(e) => { navigate('/') }}>
+                                        Sign Out
+                                    </Button>
+                                </div>
+                                <div className="col-xs-12 col-sm-12 col-md-12 col-lg-6" >
+                                    <Button variant="contained" margin="normal" className='input-field button' style={{ backgroundColor: '#6282b3', float: 'right' }} onClick={(e) => { setOpen({ 'SessionExpiry': false, 'StayConnected': true }); }}>
+                                        Stay Connected
+                                    </Button>
+                                </div>
+                            </Typography> */}
+                        </Box>
+                    </Fade>
+                </Modal>
             </div>
         </div >
     )

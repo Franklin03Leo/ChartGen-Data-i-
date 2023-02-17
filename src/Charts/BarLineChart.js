@@ -262,7 +262,7 @@ const BarLineChart = ({ params }) => {
             .yAxisLabel(params.YAxisLabel)
             .xAxisLabel(params.XAxisLabel)
             .rightYAxisLabel(params.RYAxisLabel)
-        // .yAxis().tickFormat(function (v) { return BMK(v); })
+            .yAxis().tickFormat(function (v) { return v})
         datatabel
             .width(300)
             .height(480)
@@ -488,7 +488,7 @@ const BarLineChart = ({ params }) => {
 
     return (
         <Grid item xs={12} md={12} xl={12} lg={12}>
-            <Grid item className="cardbox" style={{ padding: '0px 10px' }}>
+            <Grid item className="cardbox chartbox" style={{ padding: '0px 10px' }}>
                 <Chartheader />
                 <div style={{ backgroundColor: params.Barswatch === 'show' ? params.BGColor : '' }}>
                     <div id="Charts" ref={div} className="boxcenter">
@@ -496,7 +496,7 @@ const BarLineChart = ({ params }) => {
                 </div>
             </Grid>
 
-            <Grid item className="cardbox" style={{display: params.Width_ === null ?'none':'block'}}>
+            <Grid item className="cardbox chartbox" style={{ display: params.Width_ === null ? 'none' : 'block' }}>
                 {/* <input id="last" className="btn" type="Button" value="Last" />
               <input id="next" className="btn" type="button" value="Next" /> */}
                 <div id="table-scroll" className="table-scroll">

@@ -11,6 +11,7 @@ const d3 = {
 
 const BarChart = ({ params }) => {
   const [isString, setString] = React.useState(false);
+  const [chartData, setchartData] = React.useState({});
 
   const div = React.useRef(null);
   const div1 = React.useRef(null);
@@ -151,90 +152,56 @@ const BarChart = ({ params }) => {
     if (params.PadRight === undefined || params.PadRight === '') PadRight = 0; else PadRight = params.PadRight
     if (params.PadBottom === undefined || params.PadBottom === '') PadBottom = 0; else PadBottom = params.PadBottom
     if (params.PadLeft === undefined || params.PadLeft === '') PadLeft = 0; else PadLeft = params.PadLeft
+
+    chart
+      .ordinalColors([params.Barswatch === 'show' ? params.Color : '#6282b3'])
+      .margins({ top: 10 + parseInt(PadTop), right: 20 + parseInt(PadRight), bottom: 50 + parseInt(PadBottom), left: 40 + parseInt(PadLeft) })
+      .width(params.Width_ === null ? null : params.Width_)
+      .height(params.Heigth_)
+    //.useViewBoxResizing(true)
     if (isString === true) {
-      chart
-        .ordinalColors([params.Barswatch === 'show' ? params.Color : '#6282b3'])
-        .margins({ top: parseInt(10) + parseInt(PadTop), right: parseInt(30) + parseInt(PadRight), bottom: parseInt(50) + parseInt(PadBottom), left: parseInt(40) + parseInt(PadLeft) })
-        .width(params.Width_ === null ? null : params.Width_)
-        .height(params.Heigth_)
-        .x(d3.scaleLinear().domain([Math.min(...Max), Math.max(...Max) + Math.min(...Max)]))
+      chart.x(d3.scaleLinear().domain([Math.min(...Max), Math.max(...Max) + Math.min(...Max)]))
         .x(d3.scaleBand())
         .xUnits(dc.units.ordinal)
-        .brushOn(false)
-        .barPadding(0.4)
-        .outerPadding(0.2)
-        .yAxisLabel(params.YAxisLabel)
-        .xAxisLabel(params.XAxisLabel)
-        .yAxisPadding(params.YAxisPadding)
-        .group(speedSumGroup)
-        .dimension(runDimension)
-        .elasticY(true)
-      if (params.Labelsswatch !== undefined)
-        chart.renderLabel(true)
-          .label(function (d) {
-            if (params.LabelsContent === 'X')
-              return d.x
-            else if (params.LabelsContent === 'Y')
-              return d.y.toFixed(2)
-            else if (params.LabelsContent === 'Title')
-              return params.YAxis
-          })
-
-          .xAxis()
-      if (params.GroupByCol === 'Average') {
-        chart.valueAccessor(function (d) {
-          return d.value.average;
-        })
-      }
-      else if (params.GroupByCol === 'Minimum') {
-        chart.valueAccessor(minSpeed)
-      }
-      else if (params.GroupByCol === 'Maximum') {
-        chart.valueAccessor(maxSpeed)
-      }
-      chart.yAxis().tickFormat(function (v) { return BMK(v); })
     }
     else {
-      chart
-        .margins({ top: 10 + parseInt(PadTop), right: 20 + parseInt(PadRight), bottom: 50 + parseInt(PadBottom), left: 40 + parseInt(PadLeft) })
-        .width(params.Width_ === null ? null : params.Width_)
-        .height(params.Heigth_)
-        //.useViewBoxResizing(true)
+      chart.xUnits(dc.units.ordinal)
         .x(d3.scaleBand())
-        .xUnits(dc.units.ordinal)
-        .brushOn(false)
-        .barPadding(0.4)
-        .outerPadding(0.2)
-        .ordinalColors([params.Barswatch === 'show' ? params.Color : '#6282b3'])
-        .yAxisPadding(params.YAxisPadding)
-        .group(speedSumGroup)
-        .dimension(runDimension)
-        .elasticY(true)
-        .yAxisLabel(params.YAxisLabel)
-        .xAxisLabel(params.XAxisLabel)
-      if (params.Labelsswatch !== undefined)
-        chart.renderLabel(true)
-          .label(function (d) {
-            if (params.LabelsContent === 'X')
-              return d.x
-            else if (params.LabelsContent === 'Y')
-              return d.y.toFixed(2)
-            else if (params.LabelsContent === 'Title')
-              return params.YAxis
-          })
-      if (params.GroupByCol === 'Average') {
-        chart.valueAccessor(function (d) {
-          return d.value.average;
-        })
-      }
-      else if (params.GroupByCol === 'Minimum') {
-        chart.valueAccessor(minSpeed)
-      }
-      else if (params.GroupByCol === 'Maximum') {
-        chart.valueAccessor(maxSpeed)
-      }
-      chart.yAxis().tickFormat(function (v) { return BMK(v); })
     }
+    chart
+      .brushOn(false)
+      .barPadding(0.4)
+      .outerPadding(0.2)
+      .ordinalColors([params.Barswatch === 'show' ? params.Color : '#6282b3'])
+      .yAxisPadding(params.YAxisPadding)
+      .group(speedSumGroup)
+      .dimension(runDimension)
+      .elasticY(true)
+      .yAxisLabel(params.YAxisLabel)
+      .xAxisLabel(params.XAxisLabel)
+    if (params.Labelsswatch !== undefined)
+      chart.renderLabel(true)
+        .label(function (d) {
+          if (params.LabelsContent === 'X')
+            return d.x
+          else if (params.LabelsContent === 'Y')
+            return d.y.toFixed(2)
+          else if (params.LabelsContent === 'Title')
+            return params.YAxis
+        })
+    if (params.GroupByCol === 'Average') {
+      chart.valueAccessor(function (d) {
+        return d.value.average;
+      })
+    }
+    else if (params.GroupByCol === 'Minimum') {
+      chart.valueAccessor(minSpeed)
+    }
+    else if (params.GroupByCol === 'Maximum') {
+      chart.valueAccessor(maxSpeed)
+    }
+    chart.yAxis().tickFormat(function (v) { return BMK(v); })
+    // }
 
     datatabel
       .width(300)
@@ -249,7 +216,7 @@ const BarChart = ({ params }) => {
       .on('pretransition', display);
 
     dc.renderAll();
-    resizing(chart);
+    // resizing(chart);
     d3.select('body').on('mouseover', function () {
 
       d3.selectAll('rect.bar')
@@ -295,7 +262,7 @@ const BarChart = ({ params }) => {
       chart.selectAll("g.x g.tick text")
         .attr('dx', params.Rotate === undefined || params.Rotate === '' ? '' : '-10')
         .attr('text-anchor', params.Rotate === undefined || params.Rotate === '' ? '' : 'end')
-        .attr('transform', `rotate(${params.Rotate})`)
+        .attr('transform', `rotate(${params.Rotate === undefined || params.Rotate === '' ? '0' : params.Rotate})`)
         .style("font-family", params.xFont)
         .style("color", params.xColor)
         .style("font-size", params.xSize + "px")
@@ -329,7 +296,10 @@ const BarChart = ({ params }) => {
         .style("font-size", params.Labelsize + "px")
         .style("display", params.Labelsswatch !== undefined ? params.Labelsswatch : 'none')
       // })
-
+      // Bar Border Radius
+      // chart.selectAll("rect")
+      //   .attr("rx", "20")
+      //   .attr("ry", "20");
     });
     //});
     function BMK(labelValue) {
@@ -405,7 +375,7 @@ const BarChart = ({ params }) => {
 
     // last();
     // next()
-  });
+  }, [params]);
 
 
 
@@ -445,4 +415,4 @@ const BarChart = ({ params }) => {
   );
 };
 
-export default BarChart;
+export default React.memo(BarChart);

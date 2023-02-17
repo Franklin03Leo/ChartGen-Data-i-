@@ -1,3 +1,5 @@
+import React, { useCallback, useEffect } from "react";
+
 //Charts
 import BarChart from "../Charts/BarChart";
 import PieChart from "../Charts/PieChart"
@@ -15,7 +17,6 @@ import { saveAs } from 'file-saver';
 import domtoimage from 'dom-to-image';
 import styled from "@emotion/styled";
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
-import { useCallback } from "react";
 import { Button } from "@mui/material";
 
 
@@ -122,7 +123,7 @@ const ChartBlock = ({ enable, state }) => {
                     <div className="row col-xs-1 col-sm-8 col-md-8 col-lg-8" >
                     </div>
                     {state.Chart !== undefined ?
-                        <div className="row col-xs-12 col-sm-4 col-md-4 col-lg-4" style={{ padding: '5px' }}>
+                        <div className="row col-xs-12 col-sm-4 col-md-4 col-lg-4" style={{ padding: '5px',height:'5vh' }}>
                             <div className="col-xs-5 col-sm-8 col-md-8 col-lg-8">
                                 <BootstrapTooltip title="Download" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
                                     <DownloadIcon style={{ float: 'right', cursor: 'pointer' }} onClick={saveChart} className="Icon_" />
@@ -165,4 +166,4 @@ const ChartBlock = ({ enable, state }) => {
         </>
     )
 }
-export default ChartBlock;
+export default React.memo(ChartBlock);

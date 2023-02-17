@@ -499,10 +499,9 @@ body {
     width: 100%;
 }
 
-body {
-    padding-top: 81px;
-    padding-bottom: 40px;
-}
+/* body {
+    padding-top: 6vh;
+} */
 
 .fixed-header {
     width: 100%;
@@ -512,6 +511,8 @@ body {
     color: #fff;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
     z-index: 99999;
+    display: flex;
+    height: 6vh;
 }
 
 .fixed-header {
@@ -519,10 +520,11 @@ body {
 }
 
 .container {
-    width: 80%;
+    /* width: 80%; */
+    width: auto;
     margin: 0 auto;
-    margin-top: 11px;
-    font-size: 33px;
+    /* margin-top: 11px; */
+    font-size: 25px;
     font-weight: bold;
     font-family: 'Arial'
 }
@@ -540,7 +542,8 @@ body {
 .site-identity img {
     max-width: 100%;
     float: left;
-    height: 80px;
+    height: 6vh;
+
     /* margin: 0 10px 0 0; */
 }
 
@@ -583,7 +586,8 @@ p {
 .acd {
     width: 97%;
     margin-bottom: 10px;
-    border-radius: 7px !important;
+    /* border-radius: 7px !important; */
+    border-top: 4px #7984c2 solid;
 }
 
 .acd:hover {
@@ -594,6 +598,7 @@ p {
 
 .acdsummary {
     border-bottom: 1px solid rgb(0 0 0 / 13%) !important;
+    padding: 0 !important;
 }
 
 .acdTitle {
@@ -716,15 +721,19 @@ input:checked+.slider:before {
 }
 
 .container-template {
-    background-color: white;
-    border-radius: 9px;
+    border-radius: 0.3rem;
     margin-bottom: 15px;
     position: relative;
-    border-bottom: 1px solid rgb(0 0 0 / 13%) !important;
-    box-shadow: rgb(0 0 0 / 5%) 0px 0px 0px 1px, rgb(209 213 219) 0px 0px 0px 1px inset;
-    background-image: linear-gradient(to top, #bce6ff 0%, #e7edf1 100%);
-    padding-bottom: 10px;
+    /* box-shadow: rgb(0 0 0 / 5%) 0px 0px 0px 1px, rgb(209 213 219) 0px 0px 0px 1px inset; */
+    /* background-image: linear-gradient(to top, #bce6ff 0%, #e7edf1 100%); */
+    padding-bottom: 5px;
     width: 96%;
+    border-top: 3px solid #6282b3;
+    /* background-image: linear-gradient(45deg, #93a5cf 0%, #e4efe9 100%); */
+    background-image: linear-gradient(to top, #fff1eb 0%, #ace0f9 100%);
+    /* box-shadow: rgb(17 17 26 / 5%) 0px 1px 0px, rgb(17 17 26 / 10%) 0px 0px 8px; */
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+
 }
 
 .container-title {
@@ -741,71 +750,9 @@ input:checked+.slider:before {
     border-top: 1px #c7c0c0 solid
 }
 
-/* .container-template:hover {
-    background-image: linear-gradient(to top, #dfe9f3 0%, white 100%);
-} */
 .temp-icon {
     cursor: pointer;
 }
-
-/* .element.dimensions .margin:after {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    height: 60px;
-    width: 26%;
-    border: 1px solid #000000;
-    content: 'Chart';
-    padding-top: 6%;
-}
-.element {
-    display: flex;
-    align-items: center;
-    position: relative;
-    margin-bottom: 1rem;
-}
-.element.dimensions .margin {
-    position: relative;
-    height: 134px;
-    width: 100%;
-    margin: 0 50px;
-}
-.element.dimensions .margin-top, .element.dimensions .margin-bottom {
-    left: 29%;
-    transform: translateX(-20%);
-}
-.element.dimensions .input {
-    position: absolute;
-}
-.element.dimensions .margin-right, .element.dimensions .margin-left {
-    top: 50%;
-    transform: translateY(-50%);
-}
-.element.dimensions .margin-bottom {
-    bottom: -2PX;
-}
-.element.dimensions .margin-left {
-    left: -14%;
-}
-.element.dimensions .margin-right {
-    right: -14%;
-}
-.element.dimensions .margin-top {
-    top: -12px;
-}
-.element .input-field{
-    padding: 0 6px;
-    color: #000000;
-    background: none;
-    font-size: 0.875rem;
-     padding: 4px 8px; 
-    height: 28px;
-    border-radius: 6px;
-    width: 40%;
-    margin: 0;
-    transition: 0.3s border-color, background-color 0.3s;
-} */
 
 .MuiTableRow-root td {
     line-height: 1.3rem !important;
@@ -814,7 +761,7 @@ input:checked+.slider:before {
 }
 
 .tss-131sses-MUIDataTable-responsiveScroll {
-    /* max-height: 68vh !important; */
+    max-height: 64.5vh  !important;
     margin: 0px 20px;
 }
 
@@ -853,7 +800,9 @@ input:checked+.slider:before {
 
 .chartbox {
     box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px !important;
-    padding: 12px 12px 0px 12px !important;
+    padding: 7px 12px 0px 12px !important;
+    max-height:43.5vh;
+    height: 43.5vh;
 }
 
 .Mui-selected {
@@ -866,7 +815,7 @@ input:checked+.slider:before {
     font-size: 14px;
     padding: 0px 0px 8px 0px !important;
     display: flex !important;
-    margin-bottom: 25px;
+    /* margin-bottom: 25px; */
     font-weight: bold;
 }
 
@@ -887,7 +836,7 @@ input:checked+.slider:before {
 .box {
     border-radius: 5px;
     box-shadow: 0px 30px 40px -20px #6282b3;
-    padding: 20px;
+    padding: 7px;
     margin: 10px 10px 10px 0px;
     box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
 }
@@ -912,8 +861,12 @@ input:checked+.slider:before {
 
 .cyan {
     border-top: 3px solid #6282b3;
+    transition-duration: 0.3s;
 }
 
+/* .cyan:hover{
+    transform: scale(1.1);
+} */
 .row1-container {
     display: flex;
     justify-content: flex-start;
@@ -926,10 +879,10 @@ input:checked+.slider:before {
 
 .divdashboard {
     /* width: 350px; */
-    height: 300px;
+    height: 38vh;
     padding: 10px;
     margin: 10px 0px;
-    border: 1px solid #e7dada;
+    border: 3px dotted #7c7c7c;
 }
 
 .filterswt {
@@ -937,8 +890,10 @@ input:checked+.slider:before {
     margin-top: 10px;
     background-color: inherit;
     padding: 15px;
-    border-radius: 10px;
+    /* border-radius: 10px; */
     box-shadow: rgb(17 17 26 / 5%) 0px 1px 0px, rgb(17 17 26 / 10%) 0px 0px 8px;
+    border-top: 3px #7984c2 solid;
+    transition: all 0.5s ease;
 }
 
 .filterDiv {
@@ -946,16 +901,17 @@ input:checked+.slider:before {
     margin: 0px 10px;
     background-color: inherit;
     padding: 15px;
-    border-radius: 10px;
+    border-radius: 0.3rem;
     box-shadow: rgb(17 17 26 / 5%) 0px 1px 0px, rgb(17 17 26 / 10%) 0px 0px 8px;
+    background-color: white;
 }
 
 .filteredProp {
     background: #d5e5ff;
-    background: #d5e5ff;
     border-radius: 10px;
     padding: 3px 10px;
     font-size: 13px;
+    margin-top: 6px;
 }
 
 .Prt-filteredProp {
@@ -964,50 +920,171 @@ input:checked+.slider:before {
     gap: 5px;
     margin-bottom: inherit;
 }
-.Dashboardtab{
+
+.Dashboardtab {
     position: relative;
     border-bottom: 1px #e0d1d1 solid;
-    margin: 8px 0px 5px 0px;
+    margin: 5px 0px 5px 0px;
     padding: 0px 0px 5px 0px;
     display: flex;
     flex-direction: row-reverse
-
 }
-.Dash-icon:hover{
+
+.Dash-icon:hover {
     padding: 6px;
     background: #bbcff7;
     border-radius: 5px;
     margin-left: 5px;
     cursor: pointer;
 }
-.Dash-icon{
+
+.Dash-icon {
     padding: 6px;
     background: #e2e2e2;
     border-radius: 5px;
     margin-left: 5px;
 }
-.Dashboardlayout-1{
-    padding: 10px 0px 10px 10px ;
-    border: 1px solid #000;
-    margin: 5px;
+
+.Dashboardlayout-1 {
+    padding: 4px 5px;
+    /* border: 1px solid #000; */
+    height: 10vh;
+    width: 7vw;
+    /* margin: 5px; */
     cursor: pointer;
+    border-radius: 9px;
 }
-.layoutContainer{
+
+.layoutContainer {
     height: 50px;
     border: 1px solid #000;
-     margin: 0.5%
-    
+    margin: 0.5%
 }
-.prt-dashboardLayouts{
+
+.prt-dashboardLayouts {
     max-height: 41vh;
     overflow-y: auto;
     border-radius: 10px;
     margin: 10px 0px 0px 0px;
 }
-.Dashboardlayout-1.active{
+
+.Dashboardlayout-1.active {
     background-color: rgb(225, 225, 248) !important;
     border: 1px rgb(221, 113, 158) solid;
 }
-.feedback div.tss-131sses-MUIDataTable-responsiveScroll{
+
+.feedback div.tss-131sses-MUIDataTable-responsiveScroll {
     max-height: 300px
+}
+
+.header-username {
+    font-size: 17px;
+    margin: 5% 0%;
+    cursor: pointer;
+}
+
+#menu-logout {
+    margin-top: 30px !important;
+    z-index: 999999 !important;
+}
+
+.PredefinedTempBody {
+    background-color: #eceff1;
+    border-radius: 5px;
+    margin: 0;
+    text-align: initial;
+    box-shadow: rgb(60 64 67 / 30%) 0px 1px 2px 0px, rgb(60 64 67 / 15%) 0px 2px 6px 2px;
+}
+
+.TemplateIcon {
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0.3s, opacity 0.5s ease-in-out;
+}
+
+.container-template:hover div.TemplateIcon {
+    visibility: visible;
+    opacity: 1;
+}
+
+.expiry-modal-title {
+    font-size: 18px !important;
+    font-weight: bold !important;
+    margin-bottom: 20px !important;
+    /* background: antiquewhite; */
+    /* padding: 25px 0px 25px 10px; */
+}
+
+.none-tamplate:hover {
+    text-decoration: underline;
+    color: blue;
+    cursor: pointer;
+}
+
+.Icon-hide-filter {
+    display: flex;
+    justify-content: flex-end;
+    cursor: pointer;
+}
+
+.MuiButton-root.MuiButton-containedPrimary {
+    flex: 1;
+    background-color: #6282b3 !important;
+    color: #fff !important;
+    border: 1px rgb(250, 239, 239) solid !important;
+    /* padding: 0.5rem !important; */
+    text-align: center !important;
+    text-decoration: none !important;
+    transition: all 0.5s ease-out !important;
+}
+
+.MuiButton-root.MuiButton-containedPrimary:hover {
+    background-color: #fff !important;
+    color: #333 !important;
+    border: 1px black solid !important;
+}
+
+.cyan {
+    transition: .3s;
+}
+
+.Collections:hover>:not(:hover) {
+    opacity: .2;
+}
+
+.MuiTableCell-head {
+    padding: 0px 16px !important;
+}
+
+.tss-1fbujeu-MUIDataTableHeadCell-toolButton {
+    width: max-content !important;
+}
+
+.loader::after {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 48%;
+    top: 40%;
+    width: 50px;
+    height: 50px;
+    border-style: solid;
+    border-color: #6282b3;
+    border-top-color: transparent;
+    border-width: 6px;
+    border-radius: 50%;
+    -webkit-animation: spin .8s linear infinite;
+    animation: spin 1s linear infinite;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+.loader {
+    position: fixed;
+    width: 100%;
+    background-color: #ffffffc7;
+    z-index: 9999;
+    height: 100vh;
+    display: none;
 }

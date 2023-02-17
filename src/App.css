@@ -1,7 +1,8 @@
 .App {
   text-align: center;
 }
-div{
+
+div {
   font-size: 14px
 }
 
@@ -28,7 +29,7 @@ div{
 }
 
 .MuiInputBase-input {
-  padding: 10.5px 15px 10.5px 15px !important
+  padding: 10.5px 24px 10.5px 15px !important
 }
 
 input[type=file] {
@@ -57,13 +58,28 @@ button {
   color: #5b78a6 !important;
 }
 
-/* .Mui-focused{
-  color: aqua !important;
-  border: #3ad35b !important;
+.Mui-error {
+  font-size: inherit !important
 }
-.Mui-focused.MuiOutlinedInput-notchedOutline{
-border-bottom: red !important;
-} */
-/* .css-o9k5xi-MuiInputBase-root-MuiOutlinedInput-root.Mui-focused{
-  border: px red solid;
-} */
+
+.css-194a1fa-MuiSelect-select-MuiInputBase-input .css-194a1fa-MuiSelect-select-MuiInputBase-input .css-194a1fa-MuiSelect-select-MuiInputBase-input {
+  padding-right: 24px !important;
+}
+
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #F5F5F5;
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+  background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  background-image: linear-gradient(to left, #BDBBBE 0%, #9D9EA3 100%), radial-gradient(88% 271%, rgba(255, 255, 255, 0.25) 0%, rgba(254, 254, 254, 0.25) 1%, rgba(0, 0, 0, 0.25) 100%), radial-gradient(50% 100%, rgba(255, 255, 255, 0.30) 0%, rgba(0, 0, 0, 0.30) 100%);
+  background-blend-mode: normal, lighten, soft-light;
+}

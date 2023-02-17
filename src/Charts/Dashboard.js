@@ -1,5 +1,5 @@
-import React, { useCallback } from "react";
-import { useEffect, useState } from "react";
+import React, { Fragment } from "react";
+import { useEffect } from "react";
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
@@ -21,34 +21,35 @@ import SeriesChart from "../Charts/SeriesChart";
 import BarLineChart from "../Charts/BarLineChart";
 import DashboardFilter from "../Components/DashboardFilter";
 import DatasetTable from "../Charts/DatasetTable";
-
 //NPM's
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Dashboard = ({ params }) => {
-    //    console.log('Dashboard rendering');
-    const [count, Setcount] = React.useState({ 'no': 0, 'Rendered': false });
+    console.log('Dashboard Rendering');
+    const [details, SetDetails] = React.useState({ 'ProjectName': 'Dashboard', 'ProjectDescription': 'Group of charts' });
     const [index, Setindex] = React.useState({});
     const [template, SetTemplate] = React.useState({});
-    const [filteredtemplate, Setfilteredtemplate] = React.useState({});
+    const [filteredtemplate, Setfilteredtemplate] = React.useState({ 'Render': true });
     const [chartsID, SetChartsID] = React.useState({});
-    const [open, SetOpen] = React.useState(false);
-    const [filter, setFilter] = React.useState({});
+    const [filter, setFilter] = React.useState({ 'showFilter': false });
     const [Tab, setTab] = React.useState({ 'Dashboard': true });
     const [filteringProps, setfilteringProps] = React.useState({});
     const [isBublished, setisBublished] = React.useState(false);
     const [layouts, setLayouts] = React.useState([]);
-
-
+    const [open, setOpen] = React.useState({ 'Chart': false, 'Dashboard': false, 'Loader': true });
+    const [other, setOther] = React.useState({});
 
     useEffect(() => {
         if (params.dashboard !== undefined) {
             SetTemplate(params.dashboard)
-            Setfilteredtemplate(params.dashboard)
+            if (params.dashboard != template)
+                Setfilteredtemplate(params.dashboard)
+            SetDetails({ 'ProjectName': params.DashboardName })
         }
         if (params.Filter !== undefined) {
             setFilter(params.Filter)
+            setOther({ 'showFilter': params.Filter.filterSwatch })
         }
         if (params.FilteringProps !== undefined) {
             setfilteringProps(params.FilteringProps)
@@ -61,7 +62,8 @@ const Dashboard = ({ params }) => {
                 var layout
                 if (params.selectedLayout !== undefined) {
                     layout = params.selectedLayout.split('X')
-                    setLayouts(layout)
+                    if (layouts.join(',') != layout.join(','))
+                        setLayouts(layout)
                 }
             }
             else {
@@ -76,8 +78,41 @@ const Dashboard = ({ params }) => {
                 setLayouts(custom)
             }
         }
-    }, [params])
+        if ((params.Build !== undefined && params.Build)) {
+            SetChartsID({})
+            setfilteringProps({})
+            setFilter({ 'showFilter': false })
+            // setTab({ 'data': undefined })
+        }
+        //Preview project
+        if (params.userID !== undefined) {
+            if (params.charts !== undefined) {
+                SetChartsID(params.charts)
+            }
+            if (params.Filter !== undefined) {
+                setFilter(params.Filter)
+            }
+            if (params.FilterProps !== undefined) {
+                setfilteringProps(params.FilterProps)
+            }
+            if (params.layoutOption === 'Static') {
+                layout = params.layouts.split('X')
+                setLayouts(layout)
+            }
+            else {
+                setLayouts(params.layouts[1])
+            }
+        }
 
+    }, [params])
+    useEffect(() => {
+        sessionStorage.setItem('IDs', JSON.stringify(chartsID))
+        // DashboardArea()
+    }, [chartsID])
+    useEffect(() => {
+        setOpen({ ...open, 'Loader': false })
+
+    }, [])
     //Custom
     const style = {
         position: 'absolute',
@@ -94,31 +129,38 @@ const Dashboard = ({ params }) => {
 
     //Components
     const Chart = ({ state }) => {
-        return (
-            <>
-                <div>
-                    {state.Chart === 'Bar Chart' &&
-                        <BarChart params={state} />}
-                    {state.Chart === 'Pie Chart' &&
-                        <PieChart params={state} />}
-                    {state.Chart === 'ScatterPlot' &&
-                        <Scatter params={state} />}
-                    {state.Chart === 'Line Chart' &&
-                        <LineChart params={state} />}
-                    {state.Chart === 'Composite Chart' &&
-                        <Compose params={state} />}
-                    {state.Chart === 'Series Chart' &&
-                        <SeriesChart params={state} />}
-                    {state.Chart === 'Bar Line Chart' &&
-                        <BarLineChart params={state} />}
-                </div>
-            </>
-        )
+        const chart = React.useMemo(() => {
+            return (
+                <>
+                    <div>
+                        {state.Chart === 'Bar Chart' &&
+                            <BarChart params={state} />}
+                        {state.Chart === 'Pie Chart' &&
+                            <PieChart params={state} />}
+                        {state.Chart === 'ScatterPlot' &&
+                            <Scatter params={state} />}
+                        {state.Chart === 'Line Chart' &&
+                            <LineChart params={state} />}
+                        {state.Chart === 'Composite Chart' &&
+                            <Compose params={state} />}
+                        {state.Chart === 'Series Chart' &&
+                            <SeriesChart params={state} />}
+                        {state.Chart === 'Bar Line Chart' &&
+                            <BarLineChart params={state} />}
+                    </div>
+                </>
+            )
+        }, [state])
+        return chart
     }
-    const CreatingUploadArea = React.memo(() => {
+    function CreatingUploadArea() {
+        console.log('charts re-rendered')
+        if (Object.keys(template).length !== 0)
+            setTimeout(() => {
+                document.querySelector('.loader').style.display = 'none';
+            }, 100);
         return (
             <>
-
                 {(() => {
                     let Item = [];
                     for (let i = 0; i < parseInt(layouts[0]); i++) {
@@ -130,8 +172,9 @@ const Dashboard = ({ params }) => {
                                         {template[chartsID["chart" + i]] !== undefined ?
                                             <>
                                                 <ZoomOut style={{ float: 'right', cursor: 'pointer', paddingTop: '6px' }} onClick={e => { handleOpen(i) }} />
-                                                {!isBublished &&
+                                                {(!isBublished && params.userID === undefined) || (params.action !== undefined && params.action === 'Edit') ?
                                                     <DeleteIcon style={{ float: 'right', cursor: 'pointer', paddingTop: '6px' }} onClick={e => { RemoveChart(i) }} />
+                                                    : ''
                                                 }
                                                 {filter.filterSwatch ?
                                                     <Chart state={filteredtemplate[chartsID["chart" + i]]} />
@@ -171,8 +214,9 @@ const Dashboard = ({ params }) => {
                                         {template[chartsID["chart" + i]] !== undefined ?
                                             <>
                                                 <ZoomOut style={{ float: 'right', cursor: 'pointer', paddingTop: '6px' }} onClick={e => { handleOpen(i) }} />
-                                                {!isBublished &&
+                                                {(!isBublished && params.userID === undefined) || (params.action !== undefined && params.action === 'Edit') ?
                                                     <DeleteIcon style={{ float: 'right', cursor: 'pointer', paddingTop: '6px' }} onClick={e => { RemoveChart(i) }} />
+                                                    : ''
                                                 }
                                                 {filter.filterSwatch ?
                                                     <Chart state={filteredtemplate[chartsID["chart" + i]]} />
@@ -211,8 +255,9 @@ const Dashboard = ({ params }) => {
                                         {template[chartsID["chart" + i]] !== undefined ?
                                             <>
                                                 <ZoomOut style={{ float: 'right', cursor: 'pointer', paddingTop: '6px' }} onClick={e => { handleOpen(i) }} />
-                                                {!isBublished &&
+                                                {(!isBublished && params.userID === undefined) || (params.action !== undefined && params.action === 'Edit') ?
                                                     <DeleteIcon style={{ float: 'right', cursor: 'pointer', paddingTop: '6px' }} onClick={e => { RemoveChart(i) }} />
+                                                    : ''
                                                 }
                                                 {filter.filterSwatch ?
                                                     <Chart state={filteredtemplate[chartsID["chart" + i]]} />
@@ -251,8 +296,9 @@ const Dashboard = ({ params }) => {
                                         {template[chartsID["chart" + i]] !== undefined ?
                                             <>
                                                 <ZoomOut style={{ float: 'right', cursor: 'pointer', paddingTop: '6px' }} onClick={e => { handleOpen(i) }} />
-                                                {!isBublished &&
+                                                {(!isBublished && params.userID === undefined) || (params.action !== undefined && params.action === 'Edit') ?
                                                     <DeleteIcon style={{ float: 'right', cursor: 'pointer', paddingTop: '6px' }} onClick={e => { RemoveChart(i) }} />
+                                                    : ''
                                                 }
                                                 {filter.filterSwatch ?
                                                     <Chart state={filteredtemplate[chartsID["chart" + i]]} />
@@ -287,14 +333,14 @@ const Dashboard = ({ params }) => {
                 })()}
             </>
         )
-    })
-    const PreviewModal = React.memo(() => {
+    }
+    const PreviewModal = () => {
         return (
-            <>
+            <Fragment>
                 <Modal
                     keepMounted
-                    open={open}
-                    onClose={handleClose}
+                    open={open.Chart}
+                    onClose={(e) => { setOpen({ 'Chart': false }) }}
                     aria-labelledby="keep-mounted-modal-title"
                     aria-describedby="keep-mounted-modal-description"
                 >
@@ -317,61 +363,70 @@ const Dashboard = ({ params }) => {
                         </div>
                     </Box>
                 </Modal>
-            </>
+            </Fragment>
         )
-    })
-    const Tabs = React.memo(() => {
+    }
+    const Tabs = () => {
         return (
             <>
                 <div className="row Dashboardtab">
-                    {/* <div className="col-lg-6"><h3>Dashboard</h3></div> */}
-                    <div className="col-lg-1 Dash-icon" id="data" onClick={handleTabChange} style={{ background: `${!Tab.Dashboard ? '#6282b3' : '#e2e2e2'}` }}>
-                        <DatasetIcon fontSize="large" />
-                    </div>
-                    <div className=" col-lg-1 Dash-icon" id="dashboard" onClick={handleTabChange} style={{ background: `${Tab.Dashboard ? '#6282b3' : '#e2e2e2'}` }}>
-                        <DashboardIcon fontSize="large" />
-                    </div>
-                    {/* <div className="col-lg-1" style={{marginTop:'10px'}}>
-                        <label style={{margin:'0px 5px'}}>
-                            Filter
-                        </label>
-                        <label className="switch">
-                            <input type="checkbox" name="Filterswatch" checked={filter.filterSwatch} onChange={(e) => { }}></input>
-                            <span className="slider round"></span>
-                        </label>
-                    </div> */}
+                    {params.isBublished || !other.Build || params.action === "Preview" ?
+                        <>
+                            <div className="col-lg-1 Dash-icon" id="data" onClick={(e) => { handleTabChange('Data') }} style={{ background: `${!Tab.Dashboard ? '#6282b3' : '#e2e2e2'}` }}>
+                                <DatasetIcon fontSize="large" />
+                            </div>
+                            <div className=" col-lg-1 Dash-icon" id="dashboard" onClick={(e) => { handleTabChange('Dashboard') }} style={{ background: `${Tab.Dashboard ? '#6282b3' : '#e2e2e2'}` }}>
+                                <DashboardIcon fontSize="large" />
+                            </div>
+                            {other.showFilter ?
+                                < div className="col-lg-1">
+                                    <label style={{ margin: '0px 5px' }}>
+                                        Filter
+                                    </label>
+                                    <label className="switch">
+                                        <input type="checkbox" name="Filterswatch" value={filter.filterSwatch} checked={(!filter.filterSwatch || filter.filterSwatch === undefined) ? false : true} onChange={(e) => { setFilter({ ...filter, 'filterSwatch': e.target.checked }) }}></input>
+                                        <span className="slider round"></span>
+                                    </label>
+                                </div>
+                                : ''
+                            }
+                        </>
+                        : ''
+                    }
+                    <div className={params.action !== "Preview" && !isBublished && other.Build ? "col-lg-12" : "col-lg-8"}> <h3>{details.ProjectName === undefined ? 'Dashboard' : details.ProjectName}</h3></div>
                 </div>
             </>
         )
-    })
-
+    }
 
     //Functions
     const drop = (event) => {
         // SetTemplate(params.template)
+        document.querySelector('.loader').style.display = 'block';
         SetChartsID({ ...chartsID, [event.currentTarget.id]: event.dataTransfer.getData('text') })
         if (Tab.data === undefined)
             setTab({ ...Tab, 'data': template[event.dataTransfer.getData('text')].Uploaded_file })
-
     }
     const allowDrop = (event) => {
         event.preventDefault();
     }
     const handleOpen = (index) => {
-        SetOpen(true)
+        setOpen({ 'Chart': true })
         Setindex({ 'i': index })
 
     };
-    const handleClose = () => SetOpen(false);
+    const handleClose = () => setOpen({ 'Chart': false });
     const handleFilter = (params) => {
         for (let i = 0; i < Object.keys(filteredtemplate).length; i++) {
-            filteredtemplate[Object.keys(filteredtemplate)[i]].Uploaded_file = params.data
+            if (Object.keys(filteredtemplate)[i] !== 'Render')
+                filteredtemplate[Object.keys(filteredtemplate)[i]].Uploaded_file = params.data
         }
+        Setfilteredtemplate({ ...filteredtemplate, 'Render': !filteredtemplate.Render })
         // if (params.isFiltered === 'Cancel Filter')
         //     setTab({ ...Tab, 'data': undefined })
         // else
-        setTab({ ...Tab, 'data': params.data })
-        Setcount({ ...count, 'Rendered': !count.Rendered })
+        // setTab({ ...Tab, 'data': params.data })
+        //document.querySelector('.loader').style.display = 'none'
     }
     const RemoveChart = (e) => {
         toast.success('Chart has been removed from the dashboard.', {
@@ -380,11 +435,14 @@ const Dashboard = ({ params }) => {
             autoClose: 2000
         })
         SetChartsID({ ...chartsID, ['chart' + e]: undefined })
-        //Object.keys(chartsID).every((e)=> chartsID[e] === undefined)
     }
-    const handleTabChange = (e) => {
-        if (e.currentTarget.id === 'dashboard') setTab({ ...Tab, 'Dashboard': true })
-        else setTab({ ...Tab, 'Dashboard': false })
+    const handleTabChange = (action) => {
+        // document.querySelector('.loader').style.display = 'block'
+        if (action === 'Dashboard')
+            setTab({ ...Tab, 'Dashboard': true })
+        else {
+            setTab({ ...Tab, 'Dashboard': false, 'data': template[Object.keys(template)[0]].Uploaded_file })
+        }
     }
     const resetDimension = () => {
         // SetIsrendered(params.isRendered)
@@ -400,38 +458,52 @@ const Dashboard = ({ params }) => {
         //     }
         // }
     }
+    const DashboardArea = React.useMemo(() => CreatingUploadArea(), [template, filteredtemplate, chartsID, layouts])
+    const NavTabs = React.useMemo(() => Tabs(), [Tab, filter])
+    //const charts = React.useMemo((state) => Chart({state}), [template])
+    //const handleClick = useCallback(() => onclick(DashboardArea), [DashboardArea, onclick]);
 
     return (
         <>
-
             <div className="row col-lg-12">
-                <Tabs />
-                {Tab.Dashboard ?
-                    <>
-                        {filter.filterSwatch &&
-                            <div className="row col-lg-3" style={{ marginTop: '10px', height: 'calc(100vh - 165px)' }}>
+                {NavTabs}
+                {/* {Tab.Dashboard && */}
+                <>
+                    {filter.filterSwatch &&
+                        <>
+                            {/* {filter.showFilter || filter.showFilter === undefined ? */}
+                            <div className="row col-lg-3" style={{ marginTop: '10px', height: 'calc(100vh - 128px)', display: (Tab.Dashboard) ? 'inline-flex' : 'none' }}>
                                 <DashboardFilter params={{ 'filter': filter, 'filteredProp': filteringProps }} paramfn={handleFilter} />
                             </div>
-                        }
-                        <div className={filter.filterSwatch ? "row col-lg-9" : "row col-lg-12"} style={{ display: 'inline-flex' }}>
-                            <CreatingUploadArea />
-                        </div>
-                    </>
-                    :
-                    <div className="row col-lg-12">
-                        {Tab.data !== undefined ?
-                            <DatasetTable params={Tab.data} filter={false} />
-                            :
-                            <div className="col-lg-12" style={{ paddingTop: '20%', fontWeight: 'bold' }}>
-                                There is no any filter applied.
-                            </div>
-                        }
+                            {/* } */}
+                        </>
+                    }
+                    {/* <div style={{ display: Tab.Dashboard ? 'block' : 'none' }}> */}
+                    <div className={(filter.filterSwatch !== undefined && filter.filterSwatch) ? "row col-lg-9" : "row col-lg-12"} style={{ display: Tab.Dashboard ? 'inline-flex' : 'none', maxHeight: 'calc(100vh - 14vh)', minHeight: 'calc(100vh - 16vh)', overflow: 'auto' }}>  {/*, transition: '0.3s ease-in' */}
+                        {/* <CreatingUploadArea /> */}
 
+                        {DashboardArea}
                     </div>
-                }
+                    {/* </div> */}
+
+                </>
+                {/* } */}
+                {/* {!Tab.Dashboard && */}
+                <div className="row col-lg-12" style={{ display: !Tab.Dashboard ? 'block' : 'none' }}>
+                    {Tab.data !== undefined ?
+                        <DatasetTable params={Tab.data} filter={false} />
+                        :
+                        <div className="col-lg-12" style={{ paddingTop: '20%', fontWeight: 'bold' }}>
+                            No rows found.
+                        </div>
+                    }
+
+                </div>
+                {/* } */}
                 <PreviewModal />
+
             </div>
         </>
     )
 }
-export default Dashboard
+export default React.memo(Dashboard)

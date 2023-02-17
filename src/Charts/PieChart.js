@@ -60,59 +60,59 @@ const PieChart = ({ params }) => {
     function maxSpeed(kv) {
       return d3.max(kv.value, YKey);
     }
-  var speedSumGroup = ''
-  if (params.YAxis !== undefined && params.YAxis !== 'Select') {
-    if (params.GroupByCol === 'Sum') {
-      speedSumGroup = runDimension.group().reduceSum(function (d) { return d[params.YAxis] });
-    }
-    else if (params.GroupByCol === 'Count') {
-      speedSumGroup = runDimension.group().reduceCount(function (d) { return d[params.YAxis] });
-    }
-    else if (params.GroupByCol === 'Average') {
-      speedSumGroup = runDimension.group().reduce(
-        //return d.fdl_UniyPrice;
-        //add
-        function (p, v) {
-          ++p.count;
-          p.total += parseInt(v[params.YAxis]);
-          if (p.count == 0) {
-            p.average = 0;
-          } else {
-            p.average = p.total / p.count;
+    var speedSumGroup = ''
+    if (params.YAxis !== undefined && params.YAxis !== 'Select') {
+      if (params.GroupByCol === 'Sum') {
+        speedSumGroup = runDimension.group().reduceSum(function (d) { return d[params.YAxis] });
+      }
+      else if (params.GroupByCol === 'Count') {
+        speedSumGroup = runDimension.group().reduceCount(function (d) { return d[params.YAxis] });
+      }
+      else if (params.GroupByCol === 'Average') {
+        speedSumGroup = runDimension.group().reduce(
+          //return d.fdl_UniyPrice;
+          //add
+          function (p, v) {
+            ++p.count;
+            p.total += parseInt(v[params.YAxis]);
+            if (p.count == 0) {
+              p.average = 0;
+            } else {
+              p.average = p.total / p.count;
+            }
+            return p;
+          },
+          // remove
+          function (p, v) {
+            --p.count;
+            p.total -= parseInt(v[params.YAxis]);
+            if (p.count == 0) {
+              p.average = 0;
+            } else {
+              p.average = p.total / p.count;
+            }
+            return p;
+          },
+          // initial
+          function () {
+            return {
+              count: 0,
+              total: 0,
+              average: 0
+            };
           }
-          return p;
-        },
-        // remove
-        function (p, v) {
-          --p.count;
-          p.total -= parseInt(v[params.YAxis]);
-          if (p.count == 0) {
-            p.average = 0;
-          } else {
-            p.average = p.total / p.count;
-          }
-          return p;
-        },
-        // initial
-        function () {
-          return {
-            count: 0,
-            total: 0,
-            average: 0
-          };
-        }
-      );
+        );
+      }
+      else if (params.GroupByCol === 'Minimum') {
+        speedSumGroup = runDimension.group().reduce(groupArrayAdd(YKey), groupArrayRemove(YKey), groupArrayInit);
+      }
+      else if (params.GroupByCol === 'Maximum') {
+        speedSumGroup = runDimension.group().reduce(groupArrayAdd(YKey), groupArrayRemove(YKey), groupArrayInit);
+      }
     }
-    else if (params.GroupByCol === 'Minimum') {
-      speedSumGroup = runDimension.group().reduce(groupArrayAdd(YKey), groupArrayRemove(YKey), groupArrayInit);
+    else {
+      speedSumGroup = runDimension.group().reduceCount(function (d) { return d[params.XAxis] });
     }
-    else if (params.GroupByCol === 'Maximum') {
-      speedSumGroup = runDimension.group().reduce(groupArrayAdd(YKey), groupArrayRemove(YKey), groupArrayInit);
-    }
-  }
-  else {
-    speedSumGroup = runDimension.group().reduceCount(function (d) { return d[params.XAxis] });
-  }
 
     var fmt = d3.format('02d');
     var table_ = ndx.dimension(function (d) { return [fmt(+d[params.XAxis]), fmt(+d[params.YAxis])]; });
@@ -142,17 +142,17 @@ const PieChart = ({ params }) => {
           .style("fill", params.pColor)
           .style("font-size", params.pSize + "px")
       })
-      if (params.GroupByCol === 'Average') {
-        fileChart.valueAccessor(function (d) {
-          return d.value.average;
-        })
-      }
-      else if (params.GroupByCol === 'Minimum') {
-        fileChart.valueAccessor(minSpeed)
-      }
-      else if (params.GroupByCol === 'Maximum') {
-        fileChart.valueAccessor(maxSpeed)
-      }
+    if (params.GroupByCol === 'Average') {
+      fileChart.valueAccessor(function (d) {
+        return d.value.average;
+      })
+    }
+    else if (params.GroupByCol === 'Minimum') {
+      fileChart.valueAccessor(minSpeed)
+    }
+    else if (params.GroupByCol === 'Maximum') {
+      fileChart.valueAccessor(maxSpeed)
+    }
     if (params.Legendswatch !== undefined)
       fileChart.legend(new legend().x(10).y(10).itemHeight(13).gap(5).horizontal(params.LengendPosition).legendText(function (d, i) { return d.name; }))
 
@@ -284,6 +284,7 @@ const PieChart = ({ params }) => {
 
     // last();
     // next()
+    document.querySelector('.loader').style.display = 'none';
 
   })
 
@@ -304,7 +305,7 @@ const PieChart = ({ params }) => {
           </div>
         </div>
       </Grid>
-      <Grid item className="cardbox chartbox" style={{display: params.Width_ === null ?'none':'block'}}>
+      <Grid item className="cardbox chartbox" style={{ display: params.Width_ === null ? 'none' : 'block' }}>
         <div id="table-scroll" className="table-scroll">
           <div className="table-wrap">
             <table ref={div1} className="main-table">
@@ -318,4 +319,4 @@ const PieChart = ({ params }) => {
     </Grid>
   );
 }
-export default PieChart;
+export default React.memo(PieChart);

@@ -13,20 +13,16 @@ import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import styled from "@emotion/styled";
-import { alpha } from '@mui/material/styles';
 import { Fade, InputAdornment } from "@material-ui/core";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Box, Modal } from "@mui/material";
 import Backdrop from '@mui/material/Backdrop';
-import CircularProgress from '@mui/material/CircularProgress';
 import ListItemText from '@mui/material/ListItemText';
 import Checkbox from '@mui/material/Checkbox';
 import FormControl from '@mui/material/FormControl';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
-import InputBase from '@mui/material/InputBase';
-
 //NPM's
 import Papa from "papaparse";
 import * as xlsx from "xlsx";
@@ -48,8 +44,6 @@ import Calendar from '@mui/icons-material/CalendarMonth';
 import Demo from '@mui/icons-material/YouTube';
 import Dashboard from '@mui/icons-material/Dashboard';
 import Reload from '@mui/icons-material/Cached';
-import FilterOn from '@mui/icons-material/FilterAltOutlined';
-import FilterOff from '@mui/icons-material/FilterAltOffOutlined';
 import Barchart from '@mui/icons-material/BarChart';
 import Piechart from '@mui/icons-material/PieChart';
 import Linechart from '@mui/icons-material/ShowChart';
@@ -58,9 +52,30 @@ import Scatterplot from '@mui/icons-material/ScatterPlot';
 import Barlinechart from '@mui/icons-material/StackedLineChart';
 import Serieschart from '@mui/icons-material/MultilineChart';
 import FeedbackIcon from '@mui/icons-material/Feedback';
+import Project from '@mui/icons-material/AutoAwesomeMotion';
+import Collections from '@mui/icons-material/Collections';
+import layout1 from '../../src/Images/layout1.svg';
+import layout2 from '../../src/Images/layout2.svg';
+import layout3 from '../../src/Images/layout3.svg';
+import layout4 from '../../src/Images/layout4.svg';
+import layout5 from '../../src/Images/layout5.svg';
+import layout6 from '../../src/Images/layout6.svg';
+import layout7 from '../../src/Images/layout7.svg';
+import layout8 from '../../src/Images/layout8.svg';
+import layout9 from '../../src/Images/layout9.svg';
+import layout10 from '../../src/Images/layout10.svg';
+import layout11 from '../../src/Images/layout11.svg';
+// import login from '../../src/L1.svg';
+// import login from '../../src/L1.svg';
+// import login from '../../src/L1.svg';
+// import login from '../../src/L1.svg';
+// import login from '../../src/L1.svg';
+// import login from '../../src/L1.svg';
 
+//Components
+import LoadingSpinner from "../Components/LoadingSpinner";
 
-const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, showDashboard, feedback_ }) => {
+const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, showDashboard, feedback_, project_ }) => {
 
     // Global variables declaration
     const ChartType = ['Select', 'Pie Chart', 'Bar Chart', 'ScatterPlot', 'Line Chart', 'Composite Chart', 'Series Chart', 'Bar Line Chart']
@@ -150,16 +165,17 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         }
 
     })
+    // const [Env, setEnv] = React.useState();
     const [disable, isDisable] = React.useState(true);
     const [error, setError] = React.useState({});
     const [state, setState] = React.useState({
-        'InputType': 'Enter Inputs', 'Heigth_': 300, 'Width_': 600, 'YAxisPadding': '10',
+        'InputType': 'Enter Inputs', 'Heigth_': 280, 'Width_': 600, 'YAxisPadding': '10',
         'SlicesCap': 10, 'Innerradius': 10, 'ExternalRadiusPadding': 60, 'SymbolSize': 7, 'TooltipContent': 'All', 'TooltipTickColor': '#000000', 'GroupByCol': 'Sum',
-        'LabelsContent': 'X'
+        'LabelsContent': 'X', 'userID': sessionStorage.getItem('UserName') !== null && sessionStorage.getItem('UserName').split(',')[1]
     });
     const [enable, setEnable] = React.useState({})
     const [colors, setColors] = React.useState([]);
-    const [navbar, setNavbar] = React.useState({ 'bar': 'Data' });
+    const [navbar, setNavbar] = React.useState({ 'bar': 'Project' });
     const [template, setTemplate] = React.useState({});
     const [dashboard, setDashboard] = React.useState({});
     const [enabletemplate, setEnableTemplate] = React.useState(false);
@@ -167,13 +183,22 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
     const [navopen, setNavOpen] = React.useState(true);
     const [navwidth, setNavWidth] = React.useState({ 'navArea': '90px', 'inuptArea': '30%', 'ChartArea': '63%' });
     const [isMobile, setIsMobile] = React.useState(false);
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = React.useState({ 'Template': false, 'Dashboard': false });
     const [progress, setProgress] = React.useState({ 'loader': false });
     const [filter, setFilter] = React.useState({});
     const [filteringProps, setfilteringProps] = React.useState({ 'customFilter': [] });
-    const [others, setOthers] = React.useState({});
-    const [feedback, setFeedback] = React.useState({});
+    const [others, setOthers] = React.useState({ 'StaticLayouts': true, 'selectedLayout': '1X2' });
+    const [feedback, setFeedback] = React.useState({
+        'Categories': ['UI', 'Performance', 'Dataset', 'Statistics', 'Data Dictionary', 'Template', 'Dashboard', 'User Guide', 'Suggestions', 'Other'],
+        'Reported By': sessionStorage.getItem('UserName').split(',')[0]
+    });
     const [feedbackIssue, setIssues] = React.useState(undefined);
+    const [dashboardCharts, setdashboardCharts] = React.useState();
+    const [projectDetails, setprojectDetails] = React.useState({})
+    const [project, setProject] = React.useState({});
+    const [postProject, setpostProject] = React.useState({});
+    const [TemplatesCollections, setTemplatesCollections] = React.useState({});
+    const [path, setPath] = React.useState({ 'Location': window.location.hostname }) //49.204.124.69/
     // Data passing
     const [filedata, setData] = React.useState({})
     const [play, setPlay] = React.useState({})
@@ -210,7 +235,12 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
             },
         },
     }
-
+    // React.useEffect(() => {
+    //     debugger
+    //     console.log('path',process.env.LOCAL_PATH);
+    //     if (window.location.hostname === 'localhost') setEnv(process.env.LOCAL_PATH)
+    //     else if(window.location.hostname === '49.204.124.69') setEnv(process.env.HOSTED_PATH)
+    // })
     //useEffects for re-rendering the component
     React.useEffect(() => {
         // GenerateChart();
@@ -233,6 +263,11 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         feedback_(feedbackIssue);
     }, [feedbackIssue]);
     React.useEffect(() => {
+        project_(postProject);
+    }, [postProject]);
+    React.useEffect(() => {
+        GetTemplate('Dashboard')
+        GetDashboard()
         const handleResize = () => {
 
             if (window.innerWidth < 1010) {
@@ -254,14 +289,9 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         return () => {
             window.removeEventListener("resize", handleResize);
         };
-
     }, [])
 
     //Functions
-    // For the modal
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
-
     //Every fields onChange for store the inputs
     const handleChange = (event) => {
         if (event.target.name === 'file') {
@@ -303,7 +333,6 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                 'GroupByCopy_': newArray,
                                 'CheckType': newArray
                             })
-                            //setChangeType({ ...changeType, 'Dimensions': newArray })
                             setError({ 'invalidFile': undefined })
                             ChildtoParentHandshake(state, enable, navbar, { 'newArray': newArray, 'Uploaded_file': results.data })
                             setfilteringProps({ ...filteringProps, 'Dimensions': newArray })
@@ -345,7 +374,6 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                 'GroupByCopy_': newArray,
                                 'CheckType': newArray
                             })
-                            //setChangeType({ ...changeType, 'Dimensions': newArray })
                             setError({ 'invalidFile': undefined })
                             setData({ 'data': data })
                             setIssues(undefined)
@@ -396,7 +424,6 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                             'GroupByCopy_': newArray,
                             'CheckType': newArray
                         })
-                        //setChangeType({ ...changeType, 'Dimensions': newArray })
                         setError({ 'invalidFile': undefined })
                         setData({ 'data': json })
                         setIssues(undefined)
@@ -436,7 +463,6 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         else if (event.target.name === 'InputType') {
 
             setState({ ...state, [event.target.name]: event.target.value })
-            // setData({'data':undefined})
         }
         else if (event.target.name === 'Title') {
             setState({
@@ -502,7 +528,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
     const handleValidation = (event) => {
         const numberValues = ['ExternalRadiusPadding', 'Heigth_', 'Width_', 'Innerradius', 'SlicesCap', 'YAxisPadding', 'SymbolSize', 'Rows']
         const mandatoryFields = ['Chart', 'InputType', 'ExternalRadiusPadding', 'Innerradius', 'Heigth_', 'Width_', 'SlicesCap',
-            'XAxisCopy', 'YAxisPadding', 'SymbolSize', 'GroupByCopy', 'UName', 'Issue']
+            'XAxisCopy', 'YAxisPadding', 'SymbolSize', 'GroupByCopy', 'Category', 'Issue']
         var CheckType = ''
         var CheckType_ = ''
 
@@ -700,7 +726,6 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         var CheckTypeYAxis = ''
         var CheckTypeGroupBy = ''
         var CheckType_ = ''
-
         // To check axis cols
         if (state.XAxisCopy !== undefined)
             CheckTypeXAxis = state.XAxisCopy.split(' ').splice(0, 1)[0]
@@ -829,7 +854,6 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
             }
 
         }
-
         if (state.Chart === 'Bar Chart') {
             if (state.YAxisPadding === undefined) {
                 setError({ 'mandatoryFields': `Please fill the YAxisPadding field` })
@@ -886,15 +910,13 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         setPlay({ "isPlay": undefined })
         setIsshow({ "isShow": undefined })
         setIssues(undefined)
-        console.log('Chart Props', state)
-        console.log('Template value', template)
-        console.log('Dashboard value', dashboard)
-        //setTimeout(() => {
+        // console.log('Chart Props', state)
+        // console.log('Template value', template)
+        // console.log('Dashboard value', dashboard)
+        setTimeout(() => {
 
-        setProgress({ 'loader': false })
-        // }, 2000);
-
-
+            document.querySelector('.loader').style.display = 'none';
+        }, 100);
     }
     //Import input process
     const importInputs = (event) => {
@@ -938,10 +960,11 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         else if (data === 'YouTubeIcon') bar = 'Demo'
         else if (data === 'DashboardIcon') bar = 'Dashboard'
         else if (data === 'FeedbackIcon') bar = 'Feedback'
+        else if (data === 'AutoAwesomeMotionIcon') bar = 'Project'
+        else if (data === 'CollectionsIcon') bar = 'Collections'
+
         setNavbar({ 'bar': bar })
         setEnable({ ...enable, 'Piechart': false, 'Barchart': false, 'Scatter': false, 'Linechart': false, 'Compositechart': false, 'Serieschart': false, 'Barlinechart': false })
-        // console.log('templates', template);
-        // if(!flag)
 
     }
     //property enabling for the swatch
@@ -973,7 +996,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
             setDashboard({ ...dashboard, [state.TempName]: { ...state, 'Width_': null, 'Heigth_': 250 } })
             if (flag) {
 
-                postMethod('Update')
+                PostTemplate('Update')
                 toast.success('Your template has been Updated', {
                     position: toast.POSITION.BOTTOM_RIGHT,
                     hideProgressBar: true,
@@ -991,7 +1014,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                 });
                 setOpen(false)
                 setNavbar({ 'bar': 'Templates' })
-                postMethod('Insert')
+                PostTemplate('Insert')
             }
         }
         else {
@@ -1016,7 +1039,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
             setTemplate({ ...template, [e.currentTarget.id]: undefined })
             setEnable({ ...enable, 'Piechart': false, 'Barchart': false, 'Scatter': false, 'Linechart': false, 'Compositechart': false, 'Serieschart': false, 'Barlinechart': false })
 
-            axios.delete(`http://localhost:8000/DeleteTemplate/${[e.currentTarget.id]}`).then((response) => {
+            axios.post(`http://${path.Location}:8000/DeleteTemplate`, { 'TempName': e.currentTarget.id, 'userID': state.userID }).then((response) => {
                 console.log('data', response);
             });
 
@@ -1027,17 +1050,20 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
             });
             setFlag(flag)
         }
-        else if (e.currentTarget.dataset.testid === 'RemoveRedEyeIcon') {
-            GetTemplate()
+        if (e.currentTarget.dataset.testid === 'RemoveRedEyeIcon' || e.currentTarget.dataset.testid === 'EditIcon') {
+            //GetTemplate()
+            document.querySelector('.loader').style.display = 'block';
             setEnable({ ...enable, 'Piechart': false, 'Barchart': false, 'Scatter': false, 'Linechart': false, 'Compositechart': false, 'Serieschart': false, 'Barlinechart': false })
             setEnableTemplate(!enabletemplate)
             setState(template[e.currentTarget.id])
-            setFlag(false)
+            if (e.currentTarget.dataset.testid === 'RemoveRedEyeIcon')
+                setFlag(false)
         }
     }
 
-    //Template draggin for dashboard
+    //Template dragging for dashboard
     const allowDrop = (event) => {
+        setdashboardCharts({ ...dashboardCharts, [event.target.id]: event.target.id })
         event.dataTransfer.setData("text", event.target.id);
     }
     //Show valid axis
@@ -1133,40 +1159,30 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         validGroupAxis = []
 
     }
-    const handleFilter = (template, action) => {
+    //Dynamic filtering for dashboard
+    const handleFilter = (action) => {
         var customFilter = filteringProps.customFilter
         var props_ = {}
         var props = []
+        let data = []
+        if (filter.data === undefined) data = dashboard[Object.keys(dashboard)[0]].Uploaded_file
+        else data = filter.data
         for (let i = 0; i < customFilter.length; i++) {
             const Dimensions = customFilter[i].split(' ').slice(1, 3).join(' ')
-            const unique = state.Uploaded_file.map((item) => item[Dimensions])
+            const unique = data.map((item) => item[Dimensions])
                 .filter((value, index, self) => self.indexOf(value) === index);
             props_[Dimensions] = unique;
             props_.Dimensions = Dimensions;
             props.push(props_)
             props_ = {}
         }
-        console.log('testing filter props', props);
-
-        // if (action !== "Apply Filter") {
-        //     if (action === "Off") {
-        //         if (dashboard[template].XAxisCopy === undefined) {
-        //             setError({ 'mandatoryFields': 'X-Axis is mandatory, Please update the template.' })
-        //             return
-        //         }
-        //         const Dimensions = dashboard[template].XAxisCopy.split(' ').slice(1, 3).join(' ')
-        //         const unique = dashboard[template].Uploaded_file.map((item) => item[Dimensions])
-        //             .filter((value, index, self) => self.indexOf(value) === index);
-
-        //         setFilter({ ...filter, [template]: { ...filter[template], 'Mode': true, 'Axis': unique, 'Dimensions': Dimensions } })
-        //         setError({ 'mandatoryFields': undefined })
-        //     }
-        //     else
-        //         setFilter({ ...filter, [template]: { ...filter[template], 'Mode': false } })
-        // }
-        // else {
-        setIsshow({ ...show, 'isShow': true, dashboard, 'NOCharts': others.NOCharts, 'Filter': filter, 'FilteringProps': props, 'isBublished': true })
-        // }
+        if (action === 'Dashboard Insert') {
+            return props
+        }
+        else {
+            //console.log('testing filter props', props);
+            setIsshow({ ...show, 'isShow': true, dashboard, 'NOCharts': others.NOCharts, 'Filter': filter, 'FilteringProps': props, 'isBublished': true, 'Build': false })
+        }
     }
     const handlecustomFilter = (event) => {
         const {
@@ -1174,6 +1190,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         } = event;
         setfilteringProps({ ...filteringProps, [event.target.name]: typeof value === 'string' ? value.split(',') : value, });
     }
+    //Expand/Collapse
     const ExpandCollapse = () => {
         if (navopen && !isMobile) {
             setNavWidth({ 'navArea': '90px', 'inuptArea': '0%', 'ChartArea': '95%' })
@@ -1192,78 +1209,45 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         //ExpandData(navwidth)
 
     }
+    //To store selected static layout
     const dashboardLayouts = (event) => {
         setOthers({ ...others, 'selectedLayout': event.currentTarget.id })
     }
 
-    const postMethod = (action) => {
+    // Service call's
+    const PostTemplate = (action) => {
         try {
-            var copystate = {}
-            var Common = ['Uploaded_file', 'TempDescription', 'TempName', 'Chart', 'Heigth_', 'Width_', 'XAxis', 'YAxis', 'XAxis_', 'YAxis_', 'YAxisCopy', 'XAxisCopy', 'GroupByCol', 'GroupByCopy_', 'Title', 'Innerradius', 'YAxisPadding', 'SlicesCap', 'XAxisLabel', 'YAxisLabel',
-                'SymbolSize', 'GroupBy', 'GroupByValues', 'ExternalRadiusPadding', 'BGColor', 'LegendColor', 'LegendFont', 'LegendSize', 'LengendPosition', 'TitleColor', 'TitleFont', 'TitleSize', 'TooltipBGColor', 'TooltipColor',
-                'TooltipFont', 'TooltipSize', 'TooltipThickness', 'TooltipTickColor', 'xFont', 'xSize', 'xColor', 'xlColor', 'xlFont', 'xlSize', 'yFont', 'yColor', 'ySize',
-                'ylColor', 'ylFont', 'ylSize', 'Axesswatch', 'Axesswatch_', 'Titleswatch', 'Titleswatch_', 'Tooltipswatch', 'Tooltipswatch_', 'Legendswatch', 'Legendswatch_', 'InputType']
-
-            for (let i = 0; i < Common.length; i++) {
-                if (state[Common[i]] !== undefined) {
-                    //if (typeof (state[Common[i]]) === 'object') {
-                    copystate[Common[i]] = JSON.parse(JSON.stringify(state[Common[i]]).replaceAll("#", 'Hash'))
-                    //}
-                    //else{
-                    // copystate[Common[i]] = state[Common[i]].replaceAll("#", 'Hash')
-
-                    // }
-                }
-            }
-            let doc_ = [];
-            var docs = state
-            // // doc_.push(docs)
-            //   doc_.push(JSON.parse(JSON.stringify(docs).replaceAll("#",'Hash')))
-            // for (const key in docs) {
-            //     if (docs.hasOwnProperty(key)) {
-            //         //if(typeof docs[key] === 'object'){
-            //         docs[key] = docs[key].replace("#", 'Hash')
-            //         //}
-            //     }
-            // }
-            //JSON.stringify(docs, null, 2)
-            console.log('file', docs);
-            // docs =  JSON.stringify(docs).replaceAll("\\",'').replaceAll("#",'Hash')
-            //doc_ = JSON.stringify(doc_); JSON.stringify(copystate, null, 2)
             if (action === 'Update') {
-                axios.delete(`http://localhost:8000/DeleteTemplate/${state.TempName}`).then((response) => {
-                    console.log('data', response);
+                axios.post(`http://${path.Location}:8000/DeleteTemplate`, { 'TempName': state.TempName, 'userID': state.userID }).then((response) => {
+                    axios.post(`http://${path.Location}:8000/InsertTemplate`, (state))
+                        .then((response) => {
+                            console.log('data', response.data);
+                            GetTemplate()
+                        })
+                        .catch(error => {
+                            console.log(error);
+                        });
                 });
-                let data = JSON.stringify(state)
-                data = data.replaceAll('Hash', '#')
-                data = JSON.parse(data)
-                let obj = {}
-                //for (let i = 0; i < data.length; i++) {
-                obj[data.TempName] = data
-                //}
-
-                setState({ ...state, [state.TempName]: obj })
             }
-            axios.post(`http://localhost:8000/InsertTemplate/${JSON.stringify(copystate)}`).then((response) => {
-                console.log('data', response.data);
-            });
+            else if (action === 'Insert') {
+                axios.post(`http://${path.Location}:8000/InsertTemplate`, (state))
+                    .then((response) => {
+                        console.log('data', response.data);
+                        GetTemplate()
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+            }
 
-
-
-            // axios.post(`http://localhost:8000/UpdateTemplate/${state.TempName}-${JSON.stringify(copystate)}`).then((response) => {
-            //     console.log('data', response);
-            // });
         }
         catch (error) {
             console.log('error', error.message)
         }
     }
-    const GetTemplate = async (Tab) => {
-        await axios.get(`http://localhost:8000/GetTemplate/`).then((response) => {
-            // debugger
-            let data = JSON.stringify(response.data)
-            data = data.replaceAll('Hash', '#')
-            data = JSON.parse(data)
+    const GetTemplate = (Tab) => {
+        axios.post(`http://${path.Location}:8000/GetTemplate`, { 'userID': state.userID }).then((response) => {
+            let data = response.data
             if (Tab === 'Dashboard') {
                 let obj = {}
                 for (let i = 0; i < data.length; i++) {
@@ -1272,7 +1256,6 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                     obj[data[i].TempName] = data[i]
                 }
                 setDashboard(obj)
-                //console.log('Template from DB', obj);
             }
             else {
                 let obj = {}
@@ -1281,30 +1264,28 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                 }
                 setTemplate(obj)
             }
-
-            // console.log('Template from DB', obj);
         });
     }
     const handleFeedback = (action) => {
-        if (action !== 'Get alone') {
-            if ((feedback['Reported By'] === undefined || feedback['Reported By'] === '') || (feedback.Issue === undefined || feedback.Issue === '')) {
+        if (action !== 'Fetch') {
+            if ((feedback['Category'] === 'Select' || feedback['Category'] === undefined) || (feedback.Issue === undefined || feedback.Issue === '')) {
                 setError({ 'mandatoryFields': 'Please fill the mandatory Fields' })
                 return
             }
-            axios.post(`http://localhost:8000/InsertFeedback/${JSON.stringify(feedback)}`).then((response) => {
+            axios.post(`http://${path.Location}:8000/InsertFeedback`, feedback).then((response) => {
                 console.log('data', response.data);
-                axios.get(`http://localhost:8000/GetFeedback/`).then((response) => {
-                    // debugger
+                axios.get(`http://${path.Location}:8000/GetFeedback`).then((response) => {
                     let data = response.data
                     setPlay({ "isPlay": undefined })
                     setIsshow({ "isShow": undefined })
                     setData({ 'data': undefined })
                     setIssues(data)
+                    setFeedback({ ...feedback, 'Issue': '' })
                 });
             });
         }
         else {
-            axios.get(`http://localhost:8000/GetFeedback/`).then((response) => {
+            axios.get(`http://${path.Location}:8000/GetFeedback/`).then((response) => {
                 // debugger
                 let data = response.data
                 setPlay({ "isPlay": undefined })
@@ -1315,6 +1296,178 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         }
         setError({ 'mandatoryFields': undefined })
     }
+    const handleDashboard = (action, e) => {
+        if (action === 'Save') {
+            setOpen({ 'Dashboard': false })
+            PostDashboard('Insert')
+            toast.success('Your Project has been Saved', {
+                position: toast.POSITION.BOTTOM_RIGHT,
+                hideProgressBar: true,
+                autoClose: 2000
+            });
+        }
+        else if (action === 'Edit') {
+            let data = project[e.currentTarget.id]
+            if (data.layoutOption === 'Static') {
+                setOthers({ ...others, 'StaticLayouts': true, 'CustomLayouts': false, 'selectedLayout': data.layouts, 'EditDashboard': true, 'EditingDashboardID': data.DashboardName })
+            }
+            else {
+                let Cols = {}
+                data.layouts[1].map((e, index) => (Cols['Cols' + (index + 1)] = e))
+                setOthers({ ...others, 'StaticLayouts': false, 'CustomLayouts': true, 'Rows': data.layouts[0], Cols, 'EditDashboard': true, 'EditingDashboardID': data.DashboardName })
+            }
+            setNavbar({ 'bar': 'Dashboard' })
+            setprojectDetails({ 'DashboardDescription': project[e.currentTarget.id].DashboardDescription })
+            setfilteringProps({ ...filteringProps, 'customFilter': data.selectedFilterDimensions, 'Dimensions': data.AvailableDimensions })
+            setFilter({ ...filter, 'filterSwatch': data.filter.filterSwatch, 'data': dashboard[Object.values(data.charts)[0]].Uploaded_file })
+        }
+        else if (action === 'Update') {
+            const filterProps = handleFilter('Dashboard Insert')
+            let obj = {}
+            obj.userID = state.userID
+            if (others.StaticLayouts) {
+                obj.layouts = others.selectedLayout
+                obj.layoutOption = 'Static'
+            }
+            else {
+                let a = []
+                Object.keys(others.Cols).map((e, i) => {
+                    if (i < parseInt(others.Rows)) {
+                        a.push(others.Cols[e])
+                    }
+                })
+                obj.layouts = [others.Rows, a]
+                obj.layoutOption = 'Custom'
+            }
+            // obj.layouts = JSON.parse(sessionStorage.getItem('dashboard'))['Layouts']
+            // obj.layoutOption = JSON.parse(sessionStorage.getItem('dashboard'))['LayoutOption']
+            obj.charts = JSON.parse(sessionStorage.getItem('IDs'))
+            obj.DashboardName = project[others.EditingDashboardID].DashboardName
+            obj.DashboardDescription = projectDetails.DashboardDescription
+
+            obj.Filter = filter
+            obj.FilterProps = filterProps
+            obj.selectedFilterDimensions = filteringProps.customFilter
+            obj.AvailableDimensions = filteringProps.Dimensions
+
+            axios.post(`http://${path.Location}:8000/UpdateDashboard`, obj).then((response) => {
+                toast.success('Your Project has been Updated.', {
+                    position: toast.POSITION.BOTTOM_RIGHT,
+                    hideProgressBar: true,
+                    autoClose: 2000
+                });
+                //GetDashboard();
+            })
+        }
+        else if (action === 'Delete') {
+            axios.post(`http://${path.Location}:8000/DeleteDashboard`, {
+                'userID': state.userID,
+                'DashboardName': e.currentTarget.id
+            }).then((response) => {
+                toast.success('Your Project has been Deleted.', {
+                    position: toast.POSITION.BOTTOM_RIGHT,
+                    hideProgressBar: true,
+                    autoClose: 2000
+                });
+                GetDashboard();
+            })
+        }
+        if (action === 'Preview' || action === 'Edit') {
+            // setProgress({'loader': true })
+            document.querySelector('.loader').style.display = 'block'
+            let data = project[e.currentTarget.id] //others.EditingDashboardID
+            let obj = {}
+            obj.userID = data.userID;
+            obj.layouts = data.layouts;
+            obj.layoutOption = data.layoutOption;
+            obj.charts = data.charts;
+            obj.DashboardName = data.DashboardName;
+            obj.DashboardDescription = data.DashboardDescription;
+            obj.dashboard = dashboard;
+            obj.Filter = { 'filterSwatch': data.filter.filterSwatch, 'data': dashboard[Object.values(data.charts)[0]].Uploaded_file };
+            obj.FilterProps = data.filterProps;
+            obj.action = action;
+            setpostProject(obj);
+            setPlay({ 'isPlay': undefined }); setIssues(undefined);
+            setIsshow({ ...show, 'isShow': true });
+
+
+        }
+    }
+    const PostDashboard = (action) => {
+        let obj = {}
+        const filterProps = handleFilter('Dashboard Insert')
+        if (action === 'Insert') {
+            obj.userID = state.userID
+            if (others.StaticLayouts) {
+                obj.layouts = others.selectedLayout
+                obj.layoutOption = 'Static'
+            }
+            else {
+                let a = []
+                Object.keys(others.Cols).map((e, i) => {
+                    if (i < parseInt(others.Rows)) {
+                        a.push(others.Cols[e])
+                    }
+                })
+                obj.layouts = [others.Rows, a]
+                obj.layoutOption = 'Custom'
+            }
+            // obj.layouts = JSON.parse(sessionStorage.getItem('dashboard'))['Layouts']
+            // obj.layoutOption = JSON.parse(sessionStorage.getItem('dashboard'))['LayoutOption']
+            obj.charts = JSON.parse(sessionStorage.getItem('IDs'))
+            obj.DashboardName = projectDetails.DashboardName
+            obj.DashboardDescription = projectDetails.DashboardDescription
+            obj.filter = filter
+            obj.filterProps = filterProps
+            obj.selectedFilterDimensions = filteringProps.customFilter
+            obj.AvailableDimensions = filteringProps.Dimensions
+        }
+        axios.post(`http://${path.Location}:8000/InsertDashboard`, obj).then((response) => {
+            GetDashboard()
+        })
+    }
+    const GetDashboard = () => {
+        axios.post(`http://${path.Location}:8000/GetDashboard`, { 'userID': state.userID }).then((response) => {
+            console.log('project data', response.data);
+            let data = response.data
+            let obj = {}
+            for (let i = 0; i < data.length; i++) {
+                // obj.DashboardDescription = data[i].DashboardDescription
+                // obj.DashboardName = data[i].DashboardName
+                // obj.charts = data[i].charts
+                // obj.layout = data[i].layout
+                // obj.userID = data[i].userID
+                obj[data[i].DashboardName] = data[i]
+            }
+            setProject(obj)
+            setNavbar({ 'bar': 'Project' })
+        })
+    }
+    const GetPreDefinedTemplates = (action, e) => {
+        if (action === 'Fetch') {
+            axios.post(`http://${path.Location}:8000/GetPreDefinedTemplate`)
+                .then((response) => {
+                    //console.log('PredefinedTemplates', response.data);
+                    let data = response.data
+                    let obj = {}
+                    for (let i = 0; i < data.length; i++) {
+                        obj[data[i].TempName] = data[i]
+                    }
+                    setTemplatesCollections(obj)
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        }
+        else {
+            setEnable({ ...enable, 'Piechart': false, 'Barchart': false, 'Scatter': false, 'Linechart': false, 'Compositechart': false, 'Serieschart': false, 'Barlinechart': false })
+            setEnableTemplate(!enabletemplate)
+            setState(TemplatesCollections[e.currentTarget.id])
+            setFlag(false)
+        }
+    }
+
 
     //Components
     const NavIcons = () => {
@@ -1336,24 +1489,32 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                         </div>
 
                     </div>
-                    <div className="Icon">
-                        <BootstrapTooltip title="Chart" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
-                            <SignalCellularAltIcon className="Icon_" fontSize="large" color={navbar.bar === 'Charts' ? 'primary' : '#979A9B'} onClick={handleNavbarChange} />
-                        </BootstrapTooltip>
-                    </div>
-                    {/* <div className="Icon">
-                    <BootstrapTooltip title="Dimensions" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
-                        <Grid3x3Icon className="Icon_" fontSize="large" color={navbar.bar === 'Dimensions' ? 'primary' : '#979A9B'} onClick={handleNavbarChange} />
-                    </BootstrapTooltip>
-                </div>
-                <div className="Icon">
-                    <BootstrapTooltip title="Axes" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
-                        <LineAxisIcon className="Icon_" fontSize="large" color={navbar.bar === 'Axes' ? 'primary' : '#979A9B'} onClick={handleNavbarChange} />
-                    </BootstrapTooltip>
-                </div> */}
+                    {state.Uploaded_file !== undefined &&
+                        <div className="Icon">
+                            <BootstrapTooltip title="Chart" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
+                                <SignalCellularAltIcon className="Icon_" fontSize="large" color={navbar.bar === 'Charts' ? 'primary' : '#979A9B'} onClick={handleNavbarChange} />
+                            </BootstrapTooltip>
+                        </div>
+                    }
                     <div className="Icon">
                         <BootstrapTooltip title="Templates" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
                             <ArticleIcon className="Icon_" fontSize="large" color={navbar.bar === 'Templates' ? 'primary' : '#979A9B'} onClick={(e) => { handleNavbarChange(e); GetTemplate() }} />
+                        </BootstrapTooltip>
+                    </div>
+
+                    <div className="Icon">
+                        <BootstrapTooltip title="Dashboard" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
+                            <Dashboard className="Icon_" fontSize="large" color={navbar.bar === 'Dashboard' ? 'primary' : '#979A9B'} onClick={(e) => { handleNavbarChange(e); GetTemplate('Dashboard') }} />
+                        </BootstrapTooltip>
+                    </div>
+                    <div className="Icon">
+                        <BootstrapTooltip title="Project" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
+                            <Project className="Icon_" fontSize="large" color={navbar.bar === 'Project' ? 'primary' : '#979A9B'} onClick={(e) => { handleNavbarChange(e); GetDashboard(); GetTemplate('Dashboard') }} />
+                        </BootstrapTooltip>
+                    </div>
+                    <div className="Icon">
+                        <BootstrapTooltip title="Template Collections" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
+                            <Collections className="Icon_" fontSize="large" color={navbar.bar === 'Collections' ? 'primary' : '#979A9B'} onClick={(e) => { handleNavbarChange(e); GetPreDefinedTemplates('Fetch', e) }} />
                         </BootstrapTooltip>
                     </div>
                     <div className="Icon">
@@ -1362,13 +1523,8 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                         </BootstrapTooltip>
                     </div>
                     <div className="Icon">
-                        <BootstrapTooltip title="Dashboard" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
-                            <Dashboard className="Icon_" fontSize="large" color={navbar.bar === 'Dashboard' ? 'primary' : '#979A9B'} onClick={(e) => { handleNavbarChange(e);; GetTemplate('Dashboard') }} />
-                        </BootstrapTooltip>
-                    </div>
-                    <div className="Icon">
                         <BootstrapTooltip title="Feedback" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
-                            <FeedbackIcon className="Icon_" fontSize="large" color={navbar.bar === 'Feedback' ? 'primary' : '#979A9B'} onClick={(e) => { handleNavbarChange(e); handleFeedback('Get alone') }} />
+                            <FeedbackIcon className="Icon_" fontSize="large" color={navbar.bar === 'Feedback' ? 'primary' : '#979A9B'} onClick={(e) => { handleNavbarChange(e); handleFeedback('Fetch') }} />
                         </BootstrapTooltip>
                     </div>
                 </div>
@@ -1413,57 +1569,56 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
 
     return (
         <>
+            {/* {progress.loader &&
+                < LoadingSpinner />
+            } */}
             <div className="nav-bar col-xs-1  col-sm-1 col-md-1 col-lg-1" style={{ width: navwidth.navArea, borderRight: navopen ? '1px solid rgb(0 0 0 / 13%)' : '', backgroundColor: '#f7f5f526' }}>
                 {/* {navopen && */}
                 <NavIcons />
                 {/* } */}
             </div>
-            <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12 divchart" style={{ height: 'calc(100vh - 81px)', width: navwidth.inuptArea, overflowY: `${!navopen ? 'hidden' : 'auto'}`, padding: `${navopen ? '' : '0px'}` }}>
+            <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12 divchart" style={{ height: 'calc(100vh - 6vh)', width: navwidth.inuptArea, overflowY: `${!navopen ? 'hidden' : 'auto'}`, padding: `${navopen ? '' : '0px'}` }}>
                 <div className="nav-close">
                     {navopen ?
                         <BootstrapTooltip title="Collapse Input Area" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
                             <ArrowLeftIcon onClick={(e) => { ExpandCollapse() }} fontSize="medium" style={{ cursor: 'pointer' }} />
                         </BootstrapTooltip>
                         : ''
-                        // <BootstrapTooltip title="Expand Input Area" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
-                        //     <ArrowRightIcon onClick={(e) => { ExpandCollapse() }} fontSize="medium" style={{ cursor: 'pointer' }} />
-                        // </BootstrapTooltip>
                     }
                 </div>
                 <>
                     <Chartheader param={navbar.bar} />
-                    {navbar.bar === 'Data' && <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ margin: "15px 0px 15px 13px" }}>
+                    {navbar.bar === 'Data' &&
+                        <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ margin: "15px 0px 15px 13px" }}>
+                            <div className="row col-sm-6 col-md-6 col-lg-5">
+                                <TextField
+                                    error={formValues.InputType.error}
+                                    helperText={formValues.InputType.error && formValues.InputType.errorMessage}
+                                    id="InputType"
+                                    select
+                                    name='InputType'
+                                    label="Input Type"
+                                    defaultValue={'Import Inputs'}
+                                    className='input-field '
+                                    onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                    value={state.InputType}
+                                >
+                                    <MenuItem key={1} value={'Import Inputs'} >Import Inputs</MenuItem>
+                                    <MenuItem key={2} value={'Enter Inputs'}>Enter Inputs</MenuItem>
 
-                        <div className="row col-sm-6 col-md-6 col-lg-5">
-                            <TextField
-                                error={formValues.InputType.error}
-                                helperText={formValues.InputType.error && formValues.InputType.errorMessage}
-                                id="InputType"
-                                select
-                                name='InputType'
-                                label="Input Type"
-                                defaultValue={'Import Inputs'}
-                                className='input-field '
-                                onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                value={state.InputType}
-                            >
-                                <MenuItem key={1} value={'Import Inputs'} >Import Inputs</MenuItem>
-                                <MenuItem key={2} value={'Enter Inputs'}>Enter Inputs</MenuItem>
+                                </TextField>
 
-                            </TextField>
-
-
-                        </div>
-                        {state.InputType === 'Import Inputs' || state.InputType === undefined ?
-                            <div className="row col-sm-6 col-md-6 col-lg-7">
-
-                                <input type="file" name="file" id="importInputs" accept=".json" onChange={importInputs}></input>
 
                             </div>
-                            : ''
-                        }
+                            {state.InputType === 'Import Inputs' || state.InputType === undefined ?
+                                <div className="row col-sm-6 col-md-6 col-lg-7">
 
-                    </div>
+                                    <input type="file" name="file" id="importInputs" accept=".json" onChange={importInputs}></input>
+
+                                </div>
+                                : ''
+                            }
+                        </div>
                     }
 
                     {error.invalidInputs !== undefined &&
@@ -1492,11 +1647,9 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                     {state.Uploaded_file !== undefined && navbar.bar === 'Data' ?
                         <>
                             <div className="row col-sm-6 col-md-3 col-lg-5" style={{ margin: "15px" }}>
-
                                 <Button variant="contained" className='input-field button' style={{ backgroundColor: '#6282b3', float: 'right' }} onClick={(e) => { setData({ 'data': state.Uploaded_file }); setIsshow({ "isShow": undefined }); setIssues(undefined) }}>
                                     Show Data
                                 </Button>
-
                             </div>
                         </>
                         :
@@ -1507,360 +1660,129 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                         : ''
                     }
                     {(state.Uploaded_file !== undefined && error.invalidInputs === undefined) || template !== undefined ?
-                        <div className="row col-sm-12 col-md-12 col-lg-12" style={{ margin: "15px 0px 15px 10px" }}>
-                            <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                {(enable.Imported || state.Uploaded_file !== undefined) && navbar.bar === 'Charts' ?
-                                    <>
-                                        <div className="row col-sm-6 col-md-6 col-lg-6 inputfield">
-                                            <TextField
-                                                error={formValues.Chart.error}
-                                                helperText={formValues.Chart.error && formValues.Chart.errorMessage}
-                                                id="ChartType"
-                                                select
-                                                name='Chart'
-                                                label="Chart Type"
-                                                value={state.Chart}
-                                                className='input-field '
-                                                onChange={(e) => { handleValidation(e); handleChange(e); setFlag(false) }}
-                                            >
-                                                {ChartType.map((option, index) => (
-                                                    <MenuItem key={option} value={option}>
-                                                        {option}
-                                                    </MenuItem>
-                                                ))}
-                                            </TextField>
-                                        </div>
-
-                                    </>
-                                    : ''
-                                }
-
-                                {(enable.Imported || state.Uploaded_file !== undefined) && (navbar.bar === 'Charts') ?
-                                    <>
+                        <>
+                            {navbar.bar === 'Charts' || navbar.bar === 'Templates' ?
+                                <div className="row col-sm-12 col-md-12 col-lg-12" style={{ margin: "15px 0px 15px 10px" }}>
+                                    {(enable.Imported || state.Uploaded_file !== undefined) && navbar.bar === 'Charts' ?
                                         <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12">
-
-                                            <div className="row col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                            <div className="row col-sm-6 col-md-6 col-lg-6 inputfield">
                                                 <TextField
-                                                    error={formValues.Heigth_.error}
-                                                    helperText={formValues.Heigth_.error && formValues.Heigth_.errorMessage}
-                                                    InputProps={{
-                                                        endAdornment: <InputAdornment position="start">Px</InputAdornment>,
-                                                    }}
-                                                    id="Height" className='input-field' name='Heigth_' label="Height*" variant="outlined"
-                                                    value={state.Heigth_}
-                                                    margin="dense"
-                                                    size="small"
-                                                    onChange={(e) => { handleChange(e) }}
-                                                    onBlur={(e) => { handleValidation(e) }}
-                                                />
+                                                    error={formValues.Chart.error}
+                                                    helperText={formValues.Chart.error && formValues.Chart.errorMessage}
+                                                    id="ChartType"
+                                                    select
+                                                    name='Chart'
+                                                    label="Chart Type"
+                                                    value={state.Chart}
+                                                    className='input-field '
+                                                    onChange={(e) => { handleValidation(e); handleChange(e); setFlag(false) }}
+                                                >
+                                                    {ChartType.map((option, index) => (
+                                                        <MenuItem key={option} value={option}>
+                                                            {option}
+                                                        </MenuItem>
+                                                    ))}
+                                                </TextField>
                                             </div>
-                                            <div className="row col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                                <TextField
-                                                    error={formValues.Width_.error}
-                                                    helperText={formValues.Width_.error && formValues.Width_.errorMessage}
+                                            <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                <div className="col-xs-12 col-sm-6 col-md-6 col-lg-6" style={{ paddingLeft: '0' }}>
+                                                    <TextField
+                                                        error={formValues.Heigth_.error}
+                                                        helperText={formValues.Heigth_.error && formValues.Heigth_.errorMessage}
+                                                        InputProps={{
+                                                            endAdornment: <InputAdornment position="start">Px</InputAdornment>,
+                                                        }}
+                                                        id="Height" className='input-field' name='Heigth_' label="Height*" variant="outlined"
+                                                        value={state.Heigth_}
+                                                        margin="dense"
+                                                        size="small"
+                                                        onChange={(e) => { handleChange(e) }}
+                                                        onBlur={(e) => { handleValidation(e) }}
+                                                    />
+                                                </div>
+                                                <div className="col-xs-12 col-sm-6 col-md-6 col-lg-6" style={{ paddingLeft: '0' }}>
+                                                    <TextField
+                                                        error={formValues.Width_.error}
+                                                        helperText={formValues.Width_.error && formValues.Width_.errorMessage}
 
-                                                    InputProps={{
-                                                        endAdornment: <InputAdornment position="start">Px</InputAdornment>,
-                                                    }}
-                                                    id="Width" className='input-field' name='Width_' label="Width*" variant="outlined"
-                                                    value={state.Width_}
-                                                    margin="dense"
+                                                        InputProps={{
+                                                            endAdornment: <InputAdornment position="start">Px</InputAdornment>,
+                                                        }}
+                                                        id="Width" className='input-field' name='Width_' label="Width*" variant="outlined"
+                                                        value={state.Width_}
+                                                        margin="dense"
 
-                                                    onChange={(e) => { handleChange(e) }}
-                                                    onBlur={(e) => { handleValidation(e) }}
-                                                />
+                                                        onChange={(e) => { handleChange(e) }}
+                                                        onBlur={(e) => { handleValidation(e) }}
+                                                    />
+                                                </div>
                                             </div>
                                         </div>
-                                    </>
-                                    : ''
-                                }
+                                        :
+                                        ''
+                                    }
+                                    {(enable.Imported || state.Uploaded_file !== undefined) && (navbar.bar === 'Charts') ?
+                                        <>
+                                            {(navbar.bar === 'Charts') && (enable.Imported || state.Uploaded_file !== undefined) ?
+                                                <Accordion className="acd">
+                                                    <AccordionSummary
+                                                        className="acdsummary"
+                                                        expandIcon={<ExpandMoreIcon />}
+                                                        aria-controls="panel1a-content"
+                                                        id="panel1a-header"
+                                                    >
+                                                        <Typography className="acdTitle">Dimensions</Typography>
 
-                            </div>
-                            {(enable.Imported || state.Uploaded_file !== undefined) && (navbar.bar === 'Charts') ?
-                                <>
-                                    {(navbar.bar === 'Charts') && (enable.Imported || state.Uploaded_file !== undefined) ?
-                                        <Accordion className="acd">
-                                            <AccordionSummary
-                                                className="acdsummary"
-                                                expandIcon={<ExpandMoreIcon />}
-                                                aria-controls="panel1a-content"
-                                                id="panel1a-header"
-                                            >
-                                                <Typography className="acdTitle">Dimensions</Typography>
+                                                    </AccordionSummary>
 
-                                            </AccordionSummary>
-
-                                            <AccordionDetails>
-                                                <Typography>
-                                                    <div className="row col-lg-12" style={{ margin: "10px 0px 15px 10px" }}>
-                                                        {(state.Chart === 'Pie Chart') &&
-                                                            <div className="col-lg-12">
-
-                                                                <div className="row col-lg-12" >
-                                                                    <div className="row col-lg-12">
-                                                                        <p className="row col-lg-12">X-Axis</p>
-                                                                        <div className="row col-sm-6 col-md-5 col-lg-6">
-                                                                            <TextField
-                                                                                error={formValues.XAxisCopy.error}
-                                                                                helperText={formValues.XAxisCopy.error && formValues.XAxisCopy.errorMessage}
-                                                                                id="XAxis"
-                                                                                select
-                                                                                name='XAxisCopy'
-                                                                                label={
-                                                                                    <Fragment>
-                                                                                        <BootstrapTooltip title="Accepts numbers" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
-                                                                                            <Numbers fontSize="small" />
-                                                                                        </BootstrapTooltip>
-
-                                                                                        &nbsp;
-                                                                                        <BootstrapTooltip title="Accepts strings" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
-                                                                                            {/* <Text style={{ height: '27px' }} /> */}
-                                                                                            <span style={{ fontWeight: '700' }}>ABC</span>
-                                                                                        </BootstrapTooltip>
-                                                                                        &nbsp;
-                                                                                        <span style={{ fontWeight: '900' }}>*</span>
-                                                                                    </Fragment>
-                                                                                }
-                                                                                className='input-field '
-                                                                                margin="dense"
-                                                                                onChange={(e) => { handleChange(e) }}
-                                                                                onBlur={(e) => { handleValidation(e) }}
-                                                                                value={state.XAxisCopy}
-                                                                                defaultValue={'Select'}
-                                                                            >
-                                                                                <MenuItem key={-1} value={'Select'}>
-                                                                                    {'Select'}
-                                                                                </MenuItem>
-                                                                                {state.XAxis_.map((option, index) => (
-                                                                                    <MenuItem key={option} value={option}>
-                                                                                        {option}
-                                                                                    </MenuItem>
-                                                                                ))}
-                                                                            </TextField>
-                                                                        </div>
-                                                                        <p className="row col-lg-12">Y-Axis</p>
-                                                                        <div className="row col-sm-6 col-md-5 col-lg-6" >
-                                                                            <TextField
-                                                                                error={formValues.YAxisCopy.error}
-                                                                                helperText={formValues.YAxisCopy.error && formValues.YAxisCopy.errorMessage}
-                                                                                id="YAxis"
-                                                                                select
-                                                                                name='YAxisCopy'
-                                                                                label={
-                                                                                    <Fragment>
-                                                                                        <BootstrapTooltip title="Accepts numbers" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
-                                                                                            <Numbers fontSize="small" />
-                                                                                        </BootstrapTooltip>
-                                                                                        <span style={{ fontWeight: '900' }}>*</span>
-                                                                                    </Fragment>
-                                                                                }
-                                                                                margin="dense"
-                                                                                className='input-field '
-                                                                                onChange={(e) => { handleChange(e) }}
-                                                                                onBlur={(e) => { handleValidation(e) }}
-                                                                                value={state.YAxisCopy}
-                                                                                defaultValue={'Select'}
-                                                                            >
-                                                                                <MenuItem key={-1} value={'Select'}>
-                                                                                    {'Select'}
-                                                                                </MenuItem>
-                                                                                {state.YAxis_.map((option, index) => (
-                                                                                    <MenuItem key={option} value={option}>
-                                                                                        {option}
-                                                                                    </MenuItem>
-                                                                                ))}
-                                                                            </TextField>
-                                                                        </div>
-                                                                        <div className="row col-sm-6 col-md-6 col-lg-6 inputfield">
-                                                                            <TextField
-                                                                                id="GroupBy"
-                                                                                select
-                                                                                name='GroupByCol'
-                                                                                label="Group By"
-                                                                                margin="dense"
-                                                                                value={state.GroupByCol}
-                                                                                className='input-field '
-                                                                                defaultValue={'Sum'}
-                                                                                onChange={(e) => { handleValidation(e); handleChange(e); setFlag(false) }}
-                                                                            >
-                                                                                {GroupByCol.map((option, index) => (
-                                                                                    <MenuItem key={option} value={option}>
-                                                                                        {option}
-                                                                                    </MenuItem>
-                                                                                ))}
-                                                                            </TextField>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="row col-lg-12">
-                                                                        <p className="row col-lg-12">Text Style</p>
-                                                                        <div className="row col-xs-4 col-sm-6 col-md-4 col-lg-5 inputfield">
-                                                                            <TextField
-                                                                                //error={formValues.GroupBy.error}
-                                                                                // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
-                                                                                id="Font"
-                                                                                select
-                                                                                name='pFont'
-                                                                                label="Font"
-                                                                                className='input-field '
-                                                                                onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                                value={state.pFont}
-                                                                            >
-                                                                                {Fonts.map((option, index) => (
-                                                                                    <MenuItem key={option} value={option}>
-                                                                                        {option}
-                                                                                    </MenuItem>
-                                                                                ))}
-                                                                            </TextField>
-                                                                        </div>
-                                                                        <div className="row col-xs-4 col-sm-4 col-md-4 col-lg-4 inputfield">
-                                                                            <TextField
-                                                                                //error={formValues.GroupBy.error}
-                                                                                // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
-                                                                                id="Font"
-                                                                                select
-                                                                                name='pSize'
-                                                                                label="Size"
-                                                                                className='input-field '
-                                                                                onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                                value={state.pSize}
-                                                                            >
-                                                                                {(() => {
-                                                                                    let Item = [];
-                                                                                    for (let i = 6; i <= 30; i++) {
-                                                                                        Item.push(<MenuItem key={i} value={i}> {i}  </MenuItem>)
-                                                                                    }
-                                                                                    return Item
-                                                                                })()}
-                                                                            </TextField>
-                                                                        </div>
-                                                                        <div className="row col-xs-4 col-sm-2 col-md-4 col-lg-3 inputfield">
-                                                                            <input type="color" name='pColor'
-                                                                                value={state.pColor}
-                                                                                id="colorPicker" onChange={handleChange}></input>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        }
-
-                                                        {(state.Chart !== 'Pie Chart') ?
-                                                            <>
-
-                                                                <div className="col-lg-12" >
-                                                                    <p className="row col-lg-12">X-Axis</p>
-                                                                    <div className="row col-lg-12" style={{ marginTop: '10px' }}>
-
-                                                                        <div className="row col-xs-12 col-sm-6 col-md-6 col-lg-5" >
-                                                                            <TextField
-                                                                                error={formValues.XAxisCopy.error}
-                                                                                helperText={formValues.XAxisCopy.error && formValues.XAxisCopy.errorMessage}
-                                                                                id="XAxis"
-                                                                                select
-                                                                                name='XAxisCopy'
-                                                                                label={
-                                                                                    <Fragment>
-                                                                                        {state.Chart !== 'Series Chart' &&
+                                                    <AccordionDetails>
+                                                        <Typography>
+                                                            <div className="col-lg-12" style={{ margin: "10px 0px 15px 0px" }}>
+                                                                {(state.Chart === 'Pie Chart') &&
+                                                                    <div className="col-lg-12">
+                                                                        <div className="row col-lg-12">
+                                                                            <p className="row col-lg-12">X-Axis</p>
+                                                                            <div className="row col-sm-6 col-md-5 col-lg-6 inputfield">
+                                                                                <TextField
+                                                                                    error={formValues.XAxisCopy.error}
+                                                                                    helperText={formValues.XAxisCopy.error && formValues.XAxisCopy.errorMessage}
+                                                                                    id="XAxis"
+                                                                                    select
+                                                                                    name='XAxisCopy'
+                                                                                    label={
+                                                                                        <Fragment>
                                                                                             <BootstrapTooltip title="Accepts numbers" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
                                                                                                 <Numbers fontSize="small" />
                                                                                             </BootstrapTooltip>
-                                                                                        }
-                                                                                        &nbsp;
-                                                                                        {state.Chart !== 'ScatterPlot' && state.Chart !== 'Series Chart' && state.Chart !== 'Bar Line Chart' ?
+
+                                                                                            &nbsp;
                                                                                             <BootstrapTooltip title="Accepts strings" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
-                                                                                                {/* <Text fontSize="large" /> */}
+                                                                                                {/* <Text style={{ height: '27px' }} /> */}
                                                                                                 <span style={{ fontWeight: '700' }}>ABC</span>
                                                                                             </BootstrapTooltip>
-                                                                                            : ''
-                                                                                        }
-                                                                                        &nbsp;
-                                                                                        {state.Chart === 'Series Chart' && state.Chart !== 'Bar Line Chart' ?
-                                                                                            <BootstrapTooltip title="Accepts dates" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
-                                                                                                <Calendar fontSize="small" />
-                                                                                            </BootstrapTooltip>
-                                                                                            : ''
-                                                                                        }
-                                                                                        <span style={{ fontWeight: '900' }}>*</span>
-                                                                                    </Fragment>
-                                                                                }
-                                                                                className='input-field '
-                                                                                value={state.XAxisCopy}
-                                                                                onChange={(e) => { handleChange(e) }}
-                                                                                onBlur={(e) => { handleValidation(e) }}
-                                                                                defaultValue={'Select'}
-                                                                            >
-                                                                                <MenuItem key={-1} value={'Select'}>
-                                                                                    {'Select'}
-                                                                                </MenuItem>
-                                                                                {state.XAxis_.map((option, index) => (
-                                                                                    <MenuItem key={option} value={option}>
-                                                                                        {option}
-                                                                                    </MenuItem>
-                                                                                ))}
-                                                                            </TextField>
-                                                                        </div>
-                                                                        <div className="row col-xs-12 col-sm-6 col-md-6 col-lg-5">
-                                                                            <TextField
-                                                                                //error={formValues.YAxisPadding.error}
-                                                                                //helperText={formValues.YAxisPadding.error && formValues.YAxisPadding.errorMessage}
-                                                                                id="Rotate" className='input-field' name='Rotate' label="Rotate" variant="outlined"
-                                                                                value={state.Rotate}
-                                                                                onChange={(e) => { handleChange(e) }}
-                                                                                onBlur={(e) => { handleValidation(e) }}
-                                                                            />
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="row col-lg-12" style={{ marginTop: '10px' }}>
-                                                                        <p className="row col-lg-12">Text Style</p>
-                                                                        <div className="row col-xs-4 col-sm-6 col-md-4 col-lg-5 inputfield">
-                                                                            <TextField
-                                                                                //error={formValues.GroupBy.error}
-                                                                                // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
-                                                                                id="Font"
-                                                                                select
-                                                                                name='xFont'
-                                                                                label="Font"
-                                                                                className='input-field '
-                                                                                onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                                value={state.xFont}
-                                                                            >
-                                                                                {Fonts.map((option, index) => (
-                                                                                    <MenuItem key={option} value={option}>
-                                                                                        {option}
-                                                                                    </MenuItem>
-                                                                                ))}
-                                                                            </TextField>
-                                                                        </div>
-                                                                        <div className="row col-xs-4 col-sm-4 col-md-4 col-lg-4 inputfield">
-                                                                            <TextField
-                                                                                //error={formValues.GroupBy.error}
-                                                                                // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
-                                                                                id="Font"
-                                                                                select
-                                                                                name='xSize'
-                                                                                label="Size"
-                                                                                className='input-field '
-                                                                                onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                                value={state.xSize}
-                                                                            >
-                                                                                {(() => {
-                                                                                    let Item = [];
-                                                                                    for (let i = 6; i <= 30; i++) {
-                                                                                        Item.push(<MenuItem key={i} value={i}> {i}  </MenuItem>)
+                                                                                            &nbsp;
+                                                                                            <span style={{ fontWeight: '900' }}>*</span>
+                                                                                        </Fragment>
                                                                                     }
-                                                                                    return Item
-                                                                                })()}
-                                                                            </TextField>
-                                                                        </div>
-                                                                        <div className="row col-xs-4 col-sm-2 col-md-4 col-lg-3 inputfield">
-                                                                            <input type="color" name='xColor'
-                                                                                value={state.xColor}
-                                                                                id="colorPicker" onChange={handleChange}></input>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className=" col-lg-12" style={{ marginTop: '10px' }}>
-                                                                        <p className="row col-lg-12">Y-Axis</p>
-                                                                        <div className="row col-lg-12" style={{ marginTop: '10px' }}>
-                                                                            <div className="row col-xs-12 col-sm-6 col-md-6 col-lg-5">
+                                                                                    className='input-field '
+                                                                                    margin="dense"
+                                                                                    onChange={(e) => { handleChange(e) }}
+                                                                                    onBlur={(e) => { handleValidation(e) }}
+                                                                                    value={state.XAxisCopy}
+                                                                                    defaultValue={'Select'}
+                                                                                >
+                                                                                    <MenuItem key={-1} value={'Select'}>
+                                                                                        {'Select'}
+                                                                                    </MenuItem>
+                                                                                    {state.XAxis_.map((option, index) => (
+                                                                                        <MenuItem key={option} value={option}>
+                                                                                            {option}
+                                                                                        </MenuItem>
+                                                                                    ))}
+                                                                                </TextField>
+                                                                            </div>
+                                                                            <p className="row col-lg-12">Y-Axis</p>
+                                                                            <div className="row col-sm-6 col-md-5 col-lg-6" >
                                                                                 <TextField
                                                                                     error={formValues.YAxisCopy.error}
                                                                                     helperText={formValues.YAxisCopy.error && formValues.YAxisCopy.errorMessage}
@@ -1874,13 +1796,13 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                                             </BootstrapTooltip>
                                                                                             <span style={{ fontWeight: '900' }}>*</span>
                                                                                         </Fragment>
-
                                                                                     }
-                                                                                    value={state.YAxisCopy}
+                                                                                    margin="dense"
                                                                                     className='input-field '
                                                                                     onChange={(e) => { handleChange(e) }}
-                                                                                    defaultValue={'Select'}
                                                                                     onBlur={(e) => { handleValidation(e) }}
+                                                                                    value={state.YAxisCopy}
+                                                                                    defaultValue={'Select'}
                                                                                 >
                                                                                     <MenuItem key={-1} value={'Select'}>
                                                                                         {'Select'}
@@ -1892,13 +1814,13 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                                     ))}
                                                                                 </TextField>
                                                                             </div>
-                                                                            <div className="row col-sm-6 col-md-6 col-lg-5 inputfield">
+                                                                            <div className="row col-sm-6 col-md-6 col-lg-6 inputfield">
                                                                                 <TextField
                                                                                     id="GroupBy"
                                                                                     select
                                                                                     name='GroupByCol'
                                                                                     label="Group By"
-                                                                                    //   margin="dense"
+                                                                                    margin="dense"
                                                                                     value={state.GroupByCol}
                                                                                     className='input-field '
                                                                                     defaultValue={'Sum'}
@@ -1911,38 +1833,24 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                                     ))}
                                                                                 </TextField>
                                                                             </div>
-                                                                            {state.Chart === 'Bar Chart' &&
-                                                                                <>
-                                                                                    <div className="row col-xs-12 col-sm-6 col-md-6 col-lg-5">
-                                                                                        <TextField
-                                                                                            error={formValues.YAxisPadding.error}
-                                                                                            helperText={formValues.YAxisPadding.error && formValues.YAxisPadding.errorMessage}
-                                                                                            id="YAxisPadding" className='input-field' name='YAxisPadding' label="Y-AxisPadding*" variant="outlined"
-                                                                                            value={state.YAxisPadding}
-                                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }} />
-                                                                                    </div>
-
-                                                                                </>
-                                                                            }
-
                                                                         </div>
-                                                                        <div className="row col-lg-12" style={{ marginTop: '10px' }}>
-                                                                            <p className="row col-lg-12">Text Style</p>
-                                                                            <div className="row col-xs-4 col-sm-6 col-md-4 col-lg-5 inputfield">
+                                                                        <div className="row col-lg-12">
+                                                                            <p className="row col-lg-12 inputfield">Text Style</p>
+                                                                            <div className="row col-xs-6 col-sm-6 col-md-4 col-lg-6 inputfield">
                                                                                 <TextField
                                                                                     //error={formValues.GroupBy.error}
                                                                                     // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
                                                                                     id="Font"
                                                                                     select
-                                                                                    name='yFont'
+                                                                                    name='pFont'
                                                                                     label="Font"
                                                                                     className='input-field '
                                                                                     onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                                    value={state.yFont}
+                                                                                    value={state.pFont}
                                                                                 >
                                                                                     {Fonts.map((option, index) => (
                                                                                         <MenuItem key={option} value={option}>
-                                                                                            {option}
+                                                                                            <span style={{ fontFamily: option }}>{option}</span>
                                                                                         </MenuItem>
                                                                                     ))}
                                                                                 </TextField>
@@ -1953,344 +1861,112 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                                     // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
                                                                                     id="Font"
                                                                                     select
-                                                                                    name='ySize'
+                                                                                    name='pSize'
                                                                                     label="Size"
                                                                                     className='input-field '
                                                                                     onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                                    value={state.ySize}
+                                                                                    value={state.pSize}
                                                                                 >
                                                                                     {(() => {
                                                                                         let Item = [];
-                                                                                        for (let i = 6; i <= 30; i++) {
-                                                                                            Item.push(<MenuItem key={i} value={i}> {i}  </MenuItem>)
+                                                                                        for (let i = 10; i <= 30; i++) {
+                                                                                            Item.push(<MenuItem key={i} value={i}> <span style={{ fontSize: `${i}px` }}>{i}</span> </MenuItem>)
                                                                                         }
                                                                                         return Item
                                                                                     })()}
                                                                                 </TextField>
                                                                             </div>
-                                                                            <div className="row col-xs-4 col-sm-2 col-md-4 col-lg-3 inputfield">
-                                                                                <input type="color" name='yColor'
-                                                                                    value={state.yColor}
+                                                                            <div className="row col-xs-2 col-sm-2 col-md-2 col-lg-2 inputfield">
+                                                                                <input type="color" name='pColor'
+                                                                                    value={state.pColor}
                                                                                     id="colorPicker" onChange={handleChange}></input>
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                </div>
-                                                                {state.Chart === 'Composite Chart' || state.Chart === 'Series Chart' ?
-                                                                    <div className="row col-lg-12" style={{ marginTop: '10px' }}>
-
-                                                                        <div className="row col-sm-6 col-md-6 col-lg-5">
-                                                                            <TextField
-                                                                                error={formValues.GroupByCopy.error}
-                                                                                helperText={formValues.GroupByCopy.error && formValues.GroupByCopy.errorMessage}
-                                                                                id="GroupBy"
-                                                                                select
-                                                                                name='GroupByCopy'
-                                                                                label={
-                                                                                    <Fragment>
-                                                                                        <BootstrapTooltip title="Accepts strings" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
-                                                                                            {/* <Text fontSize="large" /> */}
-                                                                                            <span style={{ fontWeight: '700' }}>ABC</span>
-                                                                                        </BootstrapTooltip>
-
-                                                                                        {state.Chart !== 'Composite Chart' ?
-                                                                                            <BootstrapTooltip title="Accepts numbers" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
-                                                                                                <Numbers fontSize="small" />
-                                                                                            </BootstrapTooltip>
-                                                                                            : ''
-                                                                                        }
-                                                                                        <span style={{ fontWeight: '900' }}>*</span>
-                                                                                    </Fragment>
-                                                                                }
-                                                                                className='input-field '
-                                                                                onChange={(e) => { handleChange(e) }}
-                                                                                onBlur={(e) => { handleValidation(e) }}
-                                                                                value={state.GroupByCopy}
-                                                                                defaultValue={'Select'}
-                                                                            >
-                                                                                <MenuItem key={-1} value={'Select'}>
-                                                                                    {'Select'}
-                                                                                </MenuItem>
-                                                                                {state.GroupByCopy_.map((option, index) => (
-                                                                                    <MenuItem key={option} value={option}>
-                                                                                        {option}
-                                                                                    </MenuItem>
-                                                                                ))}
-                                                                            </TextField>
-                                                                        </div>
-                                                                    </div>
-                                                                    : ''
                                                                 }
-                                                                {state.Chart === 'Bar Line Chart' ?
-                                                                    <div className="row col-lg-12" style={{ marginTop: '10px' }}>
-                                                                        <p className="row col-lg-12">Right Y-Axis</p>
 
-                                                                        <div className="row col-sm-6 col-md-6 col-lg-5" style={{ marginTop: '10px' }}>
-                                                                            <TextField
-                                                                                error={formValues.GroupByCopy.error}
-                                                                                helperText={formValues.GroupByCopy.error && formValues.GroupByCopy.errorMessage}
-                                                                                id="GroupBy"
-                                                                                select
-                                                                                name='GroupByCopy'
-                                                                                label={
-                                                                                    <Fragment>
-                                                                                        <BootstrapTooltip title="Accepts numbers" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
-                                                                                            <Numbers fontSize="small" />
-                                                                                        </BootstrapTooltip>
-                                                                                        <span style={{ fontWeight: '900' }}>*</span>
-                                                                                    </Fragment>
-                                                                                }
-                                                                                className='input-field '
-                                                                                onChange={(e) => { handleChange(e) }}
-                                                                                onBlur={(e) => { handleValidation(e) }}
-                                                                                value={state.GroupByCopy}
-                                                                                defaultValue={'Select'}
-                                                                            >
-                                                                                <MenuItem key={-1} value={'Select'}>
-                                                                                    {'Select'}
-                                                                                </MenuItem>
-                                                                                {state.XAxis_.map((option, index) => (
-                                                                                    <MenuItem key={option} value={option}>
-                                                                                        {option}
-                                                                                    </MenuItem>
-                                                                                ))}
-                                                                            </TextField>
-                                                                        </div>
-                                                                        <div className="row col-lg-12" style={{ marginTop: '10px' }}>
-                                                                            <p className="row col-lg-12">Text Style</p>
-                                                                            <div className="row col-xs-4 col-sm-6 col-md-4 col-lg-5 inputfield">
-                                                                                <TextField
-                                                                                    //error={formValues.GroupBy.error}
-                                                                                    // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
-                                                                                    id="Font"
-                                                                                    select
-                                                                                    name='ryFont'
-                                                                                    label="Font"
-                                                                                    className='input-field '
-                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                                    value={state.ryFont}
-                                                                                >
-                                                                                    {Fonts.map((option, index) => (
-                                                                                        <MenuItem key={option} value={option}>
-                                                                                            {option}
+                                                                {(state.Chart !== 'Pie Chart') ?
+                                                                    <>
+                                                                        <div className="col-lg-12" >
+                                                                            <p className="row col-lg-12">X-Axis</p>
+                                                                            <div className="row col-lg-12 inputfield" style={{ marginTop: '10px' }}>
+
+                                                                                <div className="row col-xs-12 col-sm-6 col-md-6 col-lg-6" >
+                                                                                    <TextField
+                                                                                        error={formValues.XAxisCopy.error}
+                                                                                        helperText={formValues.XAxisCopy.error && formValues.XAxisCopy.errorMessage}
+                                                                                        id="XAxis"
+                                                                                        select
+                                                                                        name='XAxisCopy'
+                                                                                        label={
+                                                                                            <Fragment>
+                                                                                                {state.Chart !== 'Series Chart' &&
+                                                                                                    <BootstrapTooltip title="Accepts numbers" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
+                                                                                                        <Numbers fontSize="small" />
+                                                                                                    </BootstrapTooltip>
+                                                                                                }
+                                                                                                &nbsp;
+                                                                                                {state.Chart !== 'ScatterPlot' && state.Chart !== 'Series Chart' && state.Chart !== 'Bar Line Chart' ?
+                                                                                                    <BootstrapTooltip title="Accepts strings" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
+                                                                                                        {/* <Text fontSize="large" /> */}
+                                                                                                        <span style={{ fontWeight: '700' }}>ABC</span>
+                                                                                                    </BootstrapTooltip>
+                                                                                                    : ''
+                                                                                                }
+                                                                                                &nbsp;
+                                                                                                {state.Chart === 'Series Chart' && state.Chart !== 'Bar Line Chart' ?
+                                                                                                    <BootstrapTooltip title="Accepts dates" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
+                                                                                                        <Calendar fontSize="small" />
+                                                                                                    </BootstrapTooltip>
+                                                                                                    : ''
+                                                                                                }
+                                                                                                <span style={{ fontWeight: '900' }}>*</span>
+                                                                                            </Fragment>
+                                                                                        }
+                                                                                        className='input-field '
+                                                                                        value={state.XAxisCopy}
+                                                                                        onChange={(e) => { handleChange(e) }}
+                                                                                        onBlur={(e) => { handleValidation(e) }}
+                                                                                        defaultValue={'Select'}
+                                                                                    >
+                                                                                        <MenuItem key={-1} value={'Select'}>
+                                                                                            {'Select'}
                                                                                         </MenuItem>
-                                                                                    ))}
-                                                                                </TextField>
-                                                                            </div>
-                                                                            <div className="row col-xs-4 col-sm-4 col-md-4 col-lg-4 inputfield">
-                                                                                <TextField
-                                                                                    //error={formValues.GroupBy.error}
-                                                                                    // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
-                                                                                    id="Font"
-                                                                                    select
-                                                                                    name='rySize'
-                                                                                    label="Size"
-                                                                                    className='input-field '
-                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                                    value={state.rySize}
-                                                                                >
-                                                                                    {(() => {
-                                                                                        let Item = [];
-                                                                                        for (let i = 6; i <= 30; i++) {
-                                                                                            Item.push(<MenuItem key={i} value={i}> {i}  </MenuItem>)
-                                                                                        }
-                                                                                        return Item
-                                                                                    })()}
-                                                                                </TextField>
-                                                                            </div>
-                                                                            <div className="row col-xs-4 col-sm-2 col-md-4 col-lg-3 inputfield">
-                                                                                <input type="color" name='ryColor'
-                                                                                    value={state.ryColor}
-                                                                                    id="colorPicker" onChange={handleChange}></input>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    : ''
-                                                                }
-                                                            </>
-                                                            : ''
-                                                        }
-                                                    </div>
-                                                </Typography>
-                                            </AccordionDetails>
-                                        </Accordion>
-                                        : ''
-                                    }
-                                    {(enable.Imported || state.Uploaded_file !== undefined) && (state.Chart !== 'Pie Chart') && (navbar.bar === 'Charts') ?
-                                        <Accordion className="acd">
-                                            <AccordionSummary
-                                                className="acdsummary"
-                                                expandIcon={<ExpandMoreIcon />}
-                                                aria-controls="panel1a-content"
-                                                id="panel1a-header"
-                                            >
-                                                <Typography className="acdTitle">Axes Labels</Typography>
-
-                                            </AccordionSummary>
-
-                                            <AccordionDetails>
-                                                <Typography>
-                                                    <div className=" col-lg-12">
-                                                        <div className="row col-lg-12" style={{ margin: "0px 0px 15px 10px" }}>
-                                                            <div className="row col-lg-12" >
-                                                                <div className="row col-xm-3 col-sm-3 col-md-3 col-lg-3" >
-                                                                    Axes
-                                                                </div>
-                                                                <div className="row col-xm-4 col-sm-4 col-md-4 col-lg-4" >
-                                                                    <label className="switch">
-                                                                        <input type="checkbox" name="Axesswatch" checked={state.Axesswatch_} onChange={handleShowProps}></input>
-                                                                        <span className="slider round"></span>
-                                                                    </label>
-                                                                </div>
-                                                            </div>
-                                                            {state.Axesswatch_ &&
-                                                                <>
-                                                                    <p className="row col-lg-12" style={{ marginTop: '20px' }}>X-Axis</p>
-                                                                    <div className="row col-lg-12" style={{ marginTop: '10px' }}>
-                                                                        <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-5">
-                                                                            <TextField id="XAxisLabel" className='input-field' name='XAxisLabel' label="X-AxisLabel" variant="outlined"
-                                                                                value={state.XAxisLabel}
-                                                                                onChange={handleChange} />
-                                                                        </div>
-
-                                                                    </div>
-                                                                    <div className="row col-lg-12" style={{ marginTop: '20px' }}>
-                                                                        <div className="row col-xs-4 col-sm-4 col-md-4 col-lg-5 inputfield">
-                                                                            <TextField
-                                                                                //error={formValues.GroupBy.error}
-                                                                                // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
-                                                                                id="Font"
-                                                                                select
-                                                                                name='xlFont'
-                                                                                label="Font"
-                                                                                className='input-field '
-                                                                                onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                                value={state.xlFont}
-                                                                                defaultValue={'Arial'}
-                                                                            >
-                                                                                {Fonts.map((option, index) => (
-                                                                                    <MenuItem key={option} value={option}>
-                                                                                        {option}
-                                                                                    </MenuItem>
-                                                                                ))}
-                                                                            </TextField>
-                                                                        </div>
-                                                                        <div className="row col-xs-4 col-sm-4 col-md-4 col-lg-4 inputfield">
-                                                                            <TextField
-                                                                                //error={formValues.GroupBy.error}
-                                                                                // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
-                                                                                id="Font"
-                                                                                select
-                                                                                name='xlSize'
-                                                                                label="Size"
-                                                                                className='input-field '
-                                                                                onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                                value={state.xlSize}
-                                                                                defaultValue={'14'}
-                                                                            >
-                                                                                {(() => {
-                                                                                    let Item = [];
-                                                                                    for (let i = 6; i <= 30; i++) {
-                                                                                        Item.push(<MenuItem key={i} value={i}> {i}  </MenuItem>)
-                                                                                    }
-                                                                                    return Item
-                                                                                })()}
-                                                                            </TextField>
-                                                                        </div>
-                                                                        <div className="row col-xs-4 col-sm-2 col-md-4 col-lg-3 inputfield">
-                                                                            <input type="color" name='xlColor'
-                                                                                value={state.xlColor}
-                                                                                defaultValue={'#000000'}
-                                                                                id="colorPicker" onChange={handleChange}></input>
-                                                                        </div>
-                                                                    </div>
-                                                                    <p className="row col-lg-12">Y-Axis</p>
-                                                                    <div className="row col-lg-12" style={{ marginTop: '10px' }}>
-                                                                        <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-5">
-                                                                            <TextField id="YAxisLabel" className='input-field' name='YAxisLabel' label="Y-AxisLabel" variant="outlined"
-                                                                                value={state.YAxisLabel}
-                                                                                onChange={handleChange} />
-                                                                        </div>
-
-                                                                    </div>
-                                                                    <div className="row col-lg-12" style={{ marginTop: '20px' }}>
-                                                                        <div className="row col-xs-4 col-sm-4 col-md-4 col-lg-5 inputfield">
-                                                                            <TextField
-                                                                                //error={formValues.GroupBy.error}
-                                                                                // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
-                                                                                id="Font"
-                                                                                select
-                                                                                name='ylFont'
-                                                                                label="Font"
-                                                                                className='input-field '
-                                                                                onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                                value={state.ylFont}
-                                                                                defaultValue={'Arial'}
-                                                                            >
-                                                                                {Fonts.map((option, index) => (
-                                                                                    <MenuItem key={option} value={option}>
-                                                                                        {option}
-                                                                                    </MenuItem>
-                                                                                ))}
-                                                                            </TextField>
-                                                                        </div>
-                                                                        <div className="row col-xs-4 col-sm-4 col-md-4 col-lg-4 inputfield">
-                                                                            <TextField
-                                                                                //error={formValues.GroupBy.error}
-                                                                                // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
-                                                                                id="Font"
-                                                                                select
-                                                                                name='ylSize'
-                                                                                label="Size"
-                                                                                className='input-field '
-                                                                                onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                                value={state.ylSize}
-                                                                                defaultValue={'14'}
-                                                                            >
-                                                                                {(() => {
-                                                                                    let Item = [];
-                                                                                    for (let i = 6; i <= 30; i++) {
-                                                                                        Item.push(<MenuItem key={i} value={i}> {i}  </MenuItem>)
-                                                                                    }
-                                                                                    return Item
-                                                                                })()}
-                                                                            </TextField>
-                                                                        </div>
-                                                                        <div className="row col-xs-4 col-sm-2 col-md-4 col-lg-3 inputfield">
-                                                                            <input type="color" name='ylColor'
-                                                                                value={state.ylColor}
-                                                                                defaultValue={'#000000'}
-                                                                                id="colorPicker" onChange={handleChange}></input>
-                                                                        </div>
-                                                                    </div>
-                                                                    {state.Chart === 'Bar Line Chart' &&
-                                                                        <>
-                                                                            <p className="row col-lg-12">Right Y-Axis</p>
-                                                                            <div className="row col-lg-12" style={{ marginTop: '10px' }}>
-                                                                                <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-5">
-                                                                                    <TextField id="YAxisLabel" className='input-field' name='RYAxisLabel' label="Right Y-AxisLabel" variant="outlined"
-                                                                                        value={state.RYAxisLabel}
-                                                                                        onChange={handleChange} />
+                                                                                        {state.XAxis_.map((option, index) => (
+                                                                                            <MenuItem key={option} value={option}>
+                                                                                                {option}
+                                                                                            </MenuItem>
+                                                                                        ))}
+                                                                                    </TextField>
                                                                                 </div>
-
+                                                                                <div className="row col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                                                                    <TextField
+                                                                                        //error={formValues.YAxisPadding.error}
+                                                                                        //helperText={formValues.YAxisPadding.error && formValues.YAxisPadding.errorMessage}
+                                                                                        id="Rotate" className='input-field' name='Rotate' label="Rotate" variant="outlined"
+                                                                                        value={state.Rotate}
+                                                                                        onChange={(e) => { handleChange(e) }}
+                                                                                        onBlur={(e) => { handleValidation(e) }}
+                                                                                    />
+                                                                                </div>
                                                                             </div>
-                                                                            <div className="row col-lg-12" style={{ marginTop: '20px' }}>
-                                                                                <div className="row col-xs-4 col-sm-4 col-md-4 col-lg-5 inputfield">
+                                                                            <div className="row col-lg-12" style={{ marginTop: '10px' }}>
+                                                                                <p className="row col-lg-12 inputfield">Text Style</p>
+                                                                                <div className="row col-xs-4 col-sm-6 col-md-6 col-lg-6 inputfield">
                                                                                     <TextField
                                                                                         //error={formValues.GroupBy.error}
                                                                                         // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
                                                                                         id="Font"
                                                                                         select
-                                                                                        name='rylFont'
+                                                                                        name='xFont'
                                                                                         label="Font"
                                                                                         className='input-field '
                                                                                         onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                                        value={state.rylFont}
-                                                                                        defaultValue={'Arial'}
+                                                                                        value={state.xFont}
                                                                                     >
                                                                                         {Fonts.map((option, index) => (
                                                                                             <MenuItem key={option} value={option}>
-                                                                                                {option}
+                                                                                                <span style={{ fontFamily: option }}>{option}</span>
                                                                                             </MenuItem>
                                                                                         ))}
                                                                                     </TextField>
@@ -2301,828 +1977,1155 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                                         // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
                                                                                         id="Font"
                                                                                         select
-                                                                                        name='rylSize'
+                                                                                        name='xSize'
                                                                                         label="Size"
                                                                                         className='input-field '
                                                                                         onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                                        value={state.rylSize}
-                                                                                        defaultValue={'14'}
+                                                                                        value={state.xSize}
                                                                                     >
                                                                                         {(() => {
                                                                                             let Item = [];
-                                                                                            for (let i = 6; i <= 30; i++) {
-                                                                                                Item.push(<MenuItem key={i} value={i}> {i}  </MenuItem>)
+                                                                                            for (let i = 10; i <= 30; i++) {
+                                                                                                Item.push(<MenuItem key={i} value={i}> <span style={{ fontSize: `${i}px` }}>{i}</span> </MenuItem>)
                                                                                             }
                                                                                             return Item
                                                                                         })()}
                                                                                     </TextField>
                                                                                 </div>
-                                                                                <div className="row col-xs-4 col-sm-2 col-md-4 col-lg-3 inputfield">
-                                                                                    <input type="color" name='rylColor'
-                                                                                        value={state.rylColor}
+                                                                                <div className="row col-xs-4 col-sm-2 col-md-2 col-lg-2 inputfield">
+                                                                                    <input type="color" name='xColor'
+                                                                                        value={state.xColor}
+                                                                                        id="colorPicker" onChange={handleChange}></input>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div className=" col-lg-12" style={{ marginTop: '10px' }}>
+                                                                                <p className="row col-lg-12">Y-Axis</p>
+                                                                                <div className="row col-lg-12" style={{ marginTop: '10px' }}>
+                                                                                    <div className="row col-xs-12 col-sm-6 col-md-6 col-lg-6 inputfield">
+                                                                                        <TextField
+                                                                                            error={formValues.YAxisCopy.error}
+                                                                                            helperText={formValues.YAxisCopy.error && formValues.YAxisCopy.errorMessage}
+                                                                                            id="YAxis"
+                                                                                            select
+                                                                                            name='YAxisCopy'
+                                                                                            label={
+                                                                                                <Fragment>
+                                                                                                    <BootstrapTooltip title="Accepts numbers" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
+                                                                                                        <Numbers fontSize="small" />
+                                                                                                    </BootstrapTooltip>
+                                                                                                    <span style={{ fontWeight: '900' }}>*</span>
+                                                                                                </Fragment>
+
+                                                                                            }
+                                                                                            value={state.YAxisCopy}
+                                                                                            className='input-field '
+                                                                                            onChange={(e) => { handleChange(e) }}
+                                                                                            defaultValue={'Select'}
+                                                                                            onBlur={(e) => { handleValidation(e) }}
+                                                                                        >
+                                                                                            <MenuItem key={-1} value={'Select'}>
+                                                                                                {'Select'}
+                                                                                            </MenuItem>
+                                                                                            {state.YAxis_.map((option, index) => (
+                                                                                                <MenuItem key={option} value={option}>
+                                                                                                    {option}
+                                                                                                </MenuItem>
+                                                                                            ))}
+                                                                                        </TextField>
+                                                                                    </div>
+                                                                                    <div className="row col-sm-6 col-md-6 col-lg-6 inputfield">
+                                                                                        <TextField
+                                                                                            id="GroupBy"
+                                                                                            select
+                                                                                            name='GroupByCol'
+                                                                                            label="Group By"
+                                                                                            //   margin="dense"
+                                                                                            value={state.GroupByCol}
+                                                                                            className='input-field '
+                                                                                            defaultValue={'Sum'}
+                                                                                            onChange={(e) => { handleValidation(e); handleChange(e); setFlag(false) }}
+                                                                                        >
+                                                                                            {GroupByCol.map((option, index) => (
+                                                                                                <MenuItem key={option} value={option}>
+                                                                                                    {option}
+                                                                                                </MenuItem>
+                                                                                            ))}
+                                                                                        </TextField>
+                                                                                    </div>
+                                                                                    {state.Chart === 'Bar Chart' &&
+                                                                                        <>
+                                                                                            <div className="row col-xs-12 col-sm-6 col-md-6 col-lg-6 inputfield">
+                                                                                                <TextField
+                                                                                                    error={formValues.YAxisPadding.error}
+                                                                                                    helperText={formValues.YAxisPadding.error && formValues.YAxisPadding.errorMessage}
+                                                                                                    id="YAxisPadding" className='input-field' name='YAxisPadding' label="Y-Axis Padding*" variant="outlined"
+                                                                                                    value={state.YAxisPadding}
+                                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                                            </div>
+
+                                                                                        </>
+                                                                                    }
+
+                                                                                </div>
+                                                                                <div className="row col-lg-12">
+                                                                                    {/* <p className="row col-lg-12">Text Style</p> */}
+                                                                                    <div className="row col-xs-4 col-sm-6 col-md-4 col-lg-6 inputfield">
+                                                                                        <TextField
+                                                                                            //error={formValues.GroupBy.error}
+                                                                                            // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
+                                                                                            id="Font"
+                                                                                            select
+                                                                                            name='yFont'
+                                                                                            label="Font"
+                                                                                            className='input-field '
+                                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                                            value={state.yFont}
+                                                                                        >
+                                                                                            {Fonts.map((option, index) => (
+                                                                                                <MenuItem key={option} value={option}>
+                                                                                                    <span style={{ fontFamily: option }}>{option}</span>
+                                                                                                </MenuItem>
+                                                                                            ))}
+                                                                                        </TextField>
+                                                                                    </div>
+                                                                                    <div className="row col-xs-4 col-sm-4 col-md-4 col-lg-4 inputfield">
+                                                                                        <TextField
+                                                                                            //error={formValues.GroupBy.error}
+                                                                                            // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
+                                                                                            id="Font"
+                                                                                            select
+                                                                                            name='ySize'
+                                                                                            label="Size"
+                                                                                            className='input-field '
+                                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                                            value={state.ySize}
+                                                                                        >
+                                                                                            {(() => {
+                                                                                                let Item = [];
+                                                                                                for (let i = 10; i <= 30; i++) {
+                                                                                                    Item.push(<MenuItem key={i} value={i}> <span style={{ fontSize: `${i}px` }}>{i}</span> </MenuItem>)
+                                                                                                }
+                                                                                                return Item
+                                                                                            })()}
+                                                                                        </TextField>
+                                                                                    </div>
+                                                                                    <div className="row col-xs-4 col-sm-2 col-md-2 col-lg-2 inputfield">
+                                                                                        <input type="color" name='yColor'
+                                                                                            value={state.yColor}
+                                                                                            id="colorPicker" onChange={handleChange}></input>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        {state.Chart === 'Composite Chart' || state.Chart === 'Series Chart' ?
+                                                                            <div className="row col-lg-12" style={{ marginTop: '10px' }}>
+                                                                                <div className="row col-sm-6 col-md-6 col-lg-6">
+                                                                                    <TextField
+                                                                                        error={formValues.GroupByCopy.error}
+                                                                                        helperText={formValues.GroupByCopy.error && formValues.GroupByCopy.errorMessage}
+                                                                                        id="GroupBy"
+                                                                                        select
+                                                                                        name='GroupByCopy'
+                                                                                        label={
+                                                                                            <Fragment>
+                                                                                                <BootstrapTooltip title="Accepts strings" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
+                                                                                                    {/* <Text fontSize="large" /> */}
+                                                                                                    <span style={{ fontWeight: '700' }}>ABC</span>
+                                                                                                </BootstrapTooltip>
+
+                                                                                                {state.Chart !== 'Composite Chart' ?
+                                                                                                    <BootstrapTooltip title="Accepts numbers" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
+                                                                                                        <Numbers fontSize="small" />
+                                                                                                    </BootstrapTooltip>
+                                                                                                    : ''
+                                                                                                }
+                                                                                                <span style={{ fontWeight: '900' }}>*</span>
+                                                                                            </Fragment>
+                                                                                        }
+                                                                                        className='input-field '
+                                                                                        onChange={(e) => { handleChange(e) }}
+                                                                                        onBlur={(e) => { handleValidation(e) }}
+                                                                                        value={state.GroupByCopy}
+                                                                                        defaultValue={'Select'}
+                                                                                    >
+                                                                                        <MenuItem key={-1} value={'Select'}>
+                                                                                            {'Select'}
+                                                                                        </MenuItem>
+                                                                                        {state.GroupByCopy_.map((option, index) => (
+                                                                                            <MenuItem key={option} value={option}>
+                                                                                                {option}
+                                                                                            </MenuItem>
+                                                                                        ))}
+                                                                                    </TextField>
+                                                                                </div>
+                                                                            </div>
+                                                                            : ''
+                                                                        }
+                                                                        {state.Chart === 'Bar Line Chart' ?
+                                                                            <div className="col-lg-12" style={{ marginTop: '10px' }}>
+                                                                                <div className="col-lg-12" >
+                                                                                    <p className="row col-lg-12">Right Y-Axis</p>
+                                                                                    <div className="row col-lg-12" style={{ marginTop: '10px' }}>
+                                                                                        <div className="row col-sm-6 col-md-6 col-lg-6">
+                                                                                            <TextField
+                                                                                                error={formValues.GroupByCopy.error}
+                                                                                                helperText={formValues.GroupByCopy.error && formValues.GroupByCopy.errorMessage}
+                                                                                                id="GroupBy"
+                                                                                                select
+                                                                                                name='GroupByCopy'
+                                                                                                label={
+                                                                                                    <Fragment>
+                                                                                                        <BootstrapTooltip title="Accepts numbers" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
+                                                                                                            <Numbers fontSize="small" />
+                                                                                                        </BootstrapTooltip>
+                                                                                                        <span style={{ fontWeight: '900' }}>*</span>
+                                                                                                    </Fragment>
+                                                                                                }
+                                                                                                className='input-field '
+                                                                                                onChange={(e) => { handleChange(e) }}
+                                                                                                onBlur={(e) => { handleValidation(e) }}
+                                                                                                value={state.GroupByCopy}
+                                                                                                defaultValue={'Select'}
+                                                                                            >
+                                                                                                <MenuItem key={-1} value={'Select'}>
+                                                                                                    {'Select'}
+                                                                                                </MenuItem>
+                                                                                                {state.XAxis_.map((option, index) => (
+                                                                                                    <MenuItem key={option} value={option}>
+                                                                                                        {option}
+                                                                                                    </MenuItem>
+                                                                                                ))}
+                                                                                            </TextField>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div className="row col-lg-12" style={{ marginTop: '10px' }}>
+                                                                                        {/* <p className="row col-lg-12">Text Style</p> */}
+                                                                                        <div className="row col-xs-6 col-sm-6 col-md-6 col-lg-6 inputfield">
+                                                                                            <TextField
+                                                                                                //error={formValues.GroupBy.error}
+                                                                                                // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
+                                                                                                id="Font"
+                                                                                                select
+                                                                                                name='ryFont'
+                                                                                                label="Font"
+                                                                                                className='input-field '
+                                                                                                onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                                                value={state.ryFont}
+                                                                                            >
+                                                                                                {Fonts.map((option, index) => (
+                                                                                                    <MenuItem key={option} value={option}>
+                                                                                                        <span style={{ fontFamily: option }}>{option}</span>
+                                                                                                    </MenuItem>
+                                                                                                ))}
+                                                                                            </TextField>
+                                                                                        </div>
+                                                                                        <div className="row col-xs-4 col-sm-4 col-md-4 col-lg-4 inputfield">
+                                                                                            <TextField
+                                                                                                //error={formValues.GroupBy.error}
+                                                                                                // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
+                                                                                                id="Font"
+                                                                                                select
+                                                                                                name='rySize'
+                                                                                                label="Size"
+                                                                                                className='input-field '
+                                                                                                onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                                                value={state.rySize}
+                                                                                            >
+                                                                                                {(() => {
+                                                                                                    let Item = [];
+                                                                                                    for (let i = 10; i <= 30; i++) {
+                                                                                                        Item.push(<MenuItem key={i} value={i}> <span style={{ fontSize: `${i}px` }}>{i}</span> </MenuItem>)
+                                                                                                    }
+                                                                                                    return Item
+                                                                                                })()}
+                                                                                            </TextField>
+                                                                                        </div>
+                                                                                        <div className="row col-xs-2 col-sm-2 col-md-2 col-lg-2 inputfield">
+                                                                                            <input type="color" name='ryColor'
+                                                                                                value={state.ryColor}
+                                                                                                id="colorPicker" onChange={handleChange}></input>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            : ''
+                                                                        }
+                                                                    </>
+                                                                    : ''
+                                                                }
+                                                            </div>
+                                                        </Typography>
+                                                    </AccordionDetails>
+                                                </Accordion>
+                                                : ''
+                                            }
+                                            {(enable.Imported || state.Uploaded_file !== undefined) && (state.Chart !== 'Pie Chart') && (navbar.bar === 'Charts') ?
+                                                <Accordion className="acd">
+                                                    <AccordionSummary
+                                                        className="acdsummary"
+                                                        expandIcon={<ExpandMoreIcon />}
+                                                        aria-controls="panel1a-content"
+                                                        id="panel1a-header"
+                                                    >
+                                                        <Typography className="acdTitle">Axes Labels</Typography>
+
+                                                    </AccordionSummary>
+
+                                                    <AccordionDetails>
+                                                        <Typography>
+                                                            <div className="col-lg-12">
+                                                                <div className="col-lg-12" style={{ margin: "0px 0px 15px 0px" }}>
+                                                                    <div className="row col-lg-12" >
+                                                                        <div className="row col-xm-3 col-sm-3 col-md-3 col-lg-3" >
+                                                                            Axes
+                                                                        </div>
+                                                                        <div className="row col-xm-4 col-sm-4 col-md-4 col-lg-4" >
+                                                                            <label className="switch">
+                                                                                <input type="checkbox" name="Axesswatch" checked={state.Axesswatch_} onChange={handleShowProps}></input>
+                                                                                <span className="slider round"></span>
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+                                                                    {state.Axesswatch_ &&
+                                                                        <>
+                                                                            <p className="row col-lg-12" style={{ marginTop: '20px' }}>X-Axis</p>
+                                                                            <div className="row col-lg-12 inputfield" style={{ marginTop: '10px' }}>
+                                                                                <div className="row col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                                                                    <TextField id="XAxisLabel" className='input-field' name='XAxisLabel' label="X-AxisLabel" variant="outlined"
+                                                                                        value={state.XAxisLabel}
+                                                                                        onChange={handleChange} />
+                                                                                </div>
+
+                                                                            </div>
+                                                                            <p className="row col-lg-12 inputfield">Text Style</p>
+                                                                            <div className="row col-lg-12" >
+                                                                                <div className="row col-xs-6 col-sm-6 col-md-6 col-lg-6 inputfield">
+                                                                                    <TextField
+                                                                                        //error={formValues.GroupBy.error}
+                                                                                        // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
+                                                                                        id="Font"
+                                                                                        select
+                                                                                        name='xlFont'
+                                                                                        label="Font"
+                                                                                        className='input-field '
+                                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                                        value={state.xlFont}
+                                                                                        defaultValue={'Arial'}
+                                                                                    >
+                                                                                        {Fonts.map((option, index) => (
+                                                                                            <MenuItem key={option} value={option}>
+                                                                                                <span style={{ fontFamily: option }}>{option}</span>
+                                                                                            </MenuItem>
+                                                                                        ))}
+                                                                                    </TextField>
+                                                                                </div>
+                                                                                <div className="row col-xs-4 col-sm-4 col-md-4 col-lg-4 inputfield">
+                                                                                    <TextField
+                                                                                        //error={formValues.GroupBy.error}
+                                                                                        // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
+                                                                                        id="Font"
+                                                                                        select
+                                                                                        name='xlSize'
+                                                                                        label="Size"
+                                                                                        className='input-field '
+                                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                                        value={state.xlSize}
+                                                                                        defaultValue={'14'}
+                                                                                    >
+                                                                                        {(() => {
+                                                                                            let Item = [];
+                                                                                            for (let i = 10; i <= 30; i++) {
+                                                                                                Item.push(<MenuItem key={i} value={i}> <span style={{ fontSize: `${i}px` }}>{i}</span> </MenuItem>)
+                                                                                            }
+                                                                                            return Item
+                                                                                        })()}
+                                                                                    </TextField>
+                                                                                </div>
+                                                                                <div className="row col-xs-2 col-sm-2 col-md-2 col-lg-2 inputfield">
+                                                                                    <input type="color" name='xlColor'
+                                                                                        value={state.xlColor}
                                                                                         defaultValue={'#000000'}
                                                                                         id="colorPicker" onChange={handleChange}></input>
                                                                                 </div>
                                                                             </div>
+                                                                            <p className="row col-lg-12">Y-Axis</p>
+                                                                            <div className="row col-lg-12 inputfield" style={{ marginTop: '10px' }}>
+                                                                                <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-6">
+                                                                                    <TextField id="YAxisLabel" className='input-field' name='YAxisLabel' label="Y-AxisLabel" variant="outlined"
+                                                                                        value={state.YAxisLabel}
+                                                                                        onChange={handleChange} />
+                                                                                </div>
+
+                                                                            </div>
+                                                                            <p className="row col-lg-12 inputfield">Text Style</p>
+                                                                            <div className="row col-lg-12" >
+                                                                                <div className="row col-xs-6 col-sm-6 col-md-6 col-lg-6 inputfield">
+                                                                                    <TextField
+                                                                                        //error={formValues.GroupBy.error}
+                                                                                        // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
+                                                                                        id="Font"
+                                                                                        select
+                                                                                        name='ylFont'
+                                                                                        label="Font"
+                                                                                        className='input-field '
+                                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                                        value={state.ylFont}
+                                                                                        defaultValue={'Arial'}
+                                                                                    >
+                                                                                        {Fonts.map((option, index) => (
+                                                                                            <MenuItem key={option} value={option}>
+                                                                                                <span style={{ fontFamily: option }}>{option}</span>
+                                                                                            </MenuItem>
+                                                                                        ))}
+                                                                                    </TextField>
+                                                                                </div>
+                                                                                <div className="row col-xs-4 col-sm-4 col-md-4 col-lg-4 inputfield">
+                                                                                    <TextField
+                                                                                        //error={formValues.GroupBy.error}
+                                                                                        // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
+                                                                                        id="Font"
+                                                                                        select
+                                                                                        name='ylSize'
+                                                                                        label="Size"
+                                                                                        className='input-field '
+                                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                                        value={state.ylSize}
+                                                                                        defaultValue={'14'}
+                                                                                    >
+                                                                                        {(() => {
+                                                                                            let Item = [];
+                                                                                            for (let i = 10; i <= 30; i++) {
+                                                                                                Item.push(<MenuItem key={i} value={i}> <span style={{ fontSize: `${i}px` }}>{i}</span> </MenuItem>)
+                                                                                            }
+                                                                                            return Item
+                                                                                        })()}
+                                                                                    </TextField>
+                                                                                </div>
+                                                                                <div className="row col-xs-2 col-sm-2 col-md-2 col-lg-2 inputfield">
+                                                                                    <input type="color" name='ylColor'
+                                                                                        value={state.ylColor}
+                                                                                        defaultValue={'#000000'}
+                                                                                        id="colorPicker" onChange={handleChange}></input>
+                                                                                </div>
+                                                                            </div>
+                                                                            {state.Chart === 'Bar Line Chart' &&
+                                                                                <>
+                                                                                    <p className="row col-lg-12">Right Y-Axis</p>
+                                                                                    <div className="row col-lg-12" style={{ marginTop: '10px' }}>
+                                                                                        <div className="row col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                                                                            <TextField id="YAxisLabel" className='input-field' name='RYAxisLabel' label="Right Y-Axis Label" variant="outlined"
+                                                                                                value={state.RYAxisLabel}
+                                                                                                onChange={handleChange} />
+                                                                                        </div>
+
+                                                                                    </div>
+                                                                                    <div className="row col-lg-12" style={{ marginTop: '20px' }}>
+                                                                                        <div className="row col-xs-6 col-sm-6 col-md-6 col-lg-6 inputfield">
+                                                                                            <TextField
+                                                                                                //error={formValues.GroupBy.error}
+                                                                                                // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
+                                                                                                id="Font"
+                                                                                                select
+                                                                                                name='rylFont'
+                                                                                                label="Font"
+                                                                                                className='input-field '
+                                                                                                onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                                                value={state.rylFont}
+                                                                                                defaultValue={'Arial'}
+                                                                                            >
+                                                                                                {Fonts.map((option, index) => (
+                                                                                                    <MenuItem key={option} value={option}>
+                                                                                                        <span style={{ fontFamily: option }}>{option}</span>
+                                                                                                    </MenuItem>
+                                                                                                ))}
+                                                                                            </TextField>
+                                                                                        </div>
+                                                                                        <div className="row col-xs-4 col-sm-4 col-md-4 col-lg-4 inputfield">
+                                                                                            <TextField
+                                                                                                //error={formValues.GroupBy.error}
+                                                                                                // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
+                                                                                                id="Font"
+                                                                                                select
+                                                                                                name='rylSize'
+                                                                                                label="Size"
+                                                                                                className='input-field '
+                                                                                                onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                                                value={state.rylSize}
+                                                                                                defaultValue={'14'}
+                                                                                            >
+                                                                                                {(() => {
+                                                                                                    let Item = [];
+                                                                                                    for (let i = 10; i <= 30; i++) {
+                                                                                                        Item.push(<MenuItem key={i} value={i}> <span style={{ fontSize: `${i}px` }}>{i}</span> </MenuItem>)
+                                                                                                    }
+                                                                                                    return Item
+                                                                                                })()}
+                                                                                            </TextField>
+                                                                                        </div>
+                                                                                        <div className="row col-xs-4 col-sm-2 col-md-2 col-lg-2 inputfield">
+                                                                                            <input type="color" name='rylColor'
+                                                                                                value={state.rylColor}
+                                                                                                defaultValue={'#000000'}
+                                                                                                id="colorPicker" onChange={handleChange}></input>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </>
+                                                                            }
                                                                         </>
                                                                     }
+                                                                </div>
+                                                            </div>
+                                                        </Typography>
+                                                    </AccordionDetails>
+                                                </Accordion>
+                                                : ''}
+                                            <Accordion className="acd">
+                                                <AccordionSummary
+                                                    className="acdsummary"
+                                                    expandIcon={<ExpandMoreIcon />}
+                                                    //     expanded={'true'}
+                                                    aria-controls="panel1a-content"
+                                                    id="panel1a-header"
+                                                >
+                                                    <Typography className="acdTitle">
+                                                        Title&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    </Typography>
+                                                </AccordionSummary>
+
+                                                <AccordionDetails className="acdDetails">
+                                                    <Typography>
+                                                        <div className="row col-lg-12" style={{ marginTop: '0px' }}>
+
+                                                            <div className="row col-lg-12 inputfield" >
+                                                                <div className="row col-xm-3 col-sm-3 col-md-3 col-lg-3" >
+                                                                    Title
+                                                                </div>
+                                                                <div className="row col-xm-4 col-sm-4 col-md-4 col-lg-4" >
+                                                                    <label className="switch">
+                                                                        <input type="checkbox" name="Titleswatch" checked={state.Titleswatch_} onChange={handleShowProps}></input>
+                                                                        <span className="slider round"></span>
+                                                                    </label>
+                                                                </div>
+
+                                                            </div>
+                                                            {state.Titleswatch_ &&
+                                                                <>
+                                                                    {/* <p className="row col-lg-12">Title</p> */}
+                                                                    <div className="row col-sm-6 col-md-6 col-lg-6 inputfield">
+                                                                        <TextField
+                                                                            error={formValues.Title.error}
+                                                                            helperText={formValues.Title.error && formValues.Title.errorMessage}
+                                                                            id="Title" className='input-field' name='Title' label="Title" variant="outlined"
+                                                                            value={state.Title}
+                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                        {/* <SketchPicker /> */}
+                                                                    </div>
+
+                                                                    <p className="row col-lg-12 inputfield">Text Style</p>
+                                                                    <div className="row col-xs-6 col-sm-6 col-md-6 col-lg-6 inputfield">
+                                                                        <TextField
+                                                                            //error={formValues.GroupBy.error}
+                                                                            // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
+                                                                            id="Font"
+                                                                            select
+                                                                            name='TitleFont'
+                                                                            label="Font"
+                                                                            className='input-field '
+                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                            value={state.TitleFont}
+                                                                            defaultValue={'Arial'}
+
+                                                                        >
+                                                                            {Fonts.map((option, index) => (
+                                                                                <MenuItem key={option} value={option}>
+                                                                                    <span style={{ fontFamily: option }}>{option}</span>
+                                                                                </MenuItem>
+                                                                            ))}
+                                                                        </TextField>
+                                                                    </div>
+                                                                    <div className="row col-xs-4 col-sm-4 col-md-4 col-lg-4 inputfield">
+                                                                        <TextField
+                                                                            //error={formValues.GroupBy.error}
+                                                                            // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
+                                                                            id="Font"
+                                                                            select
+                                                                            name='TitleSize'
+                                                                            label="Size"
+                                                                            className='input-field '
+                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                            value={state.TitleSize}
+                                                                            defaultValue={'14'}
+                                                                        >
+                                                                            {(() => {
+                                                                                let Item = [];
+                                                                                for (let i = 10; i <= 30; i++) {
+                                                                                    Item.push(<MenuItem key={i} value={i}> <span style={{ fontSize: `${i}px` }}>{i}</span> </MenuItem>)
+                                                                                }
+                                                                                return Item
+                                                                            })()}
+                                                                        </TextField>
+                                                                    </div>
+                                                                    <div className="row col-xs-2 col-sm-2 col-md-2 col-lg-2 inputfield">
+                                                                        <input type="color" name='TitleColor'
+                                                                            value={state.TitleColor}
+                                                                            defaultValue={'#000000'}
+                                                                            id="colorPicker" onChange={handleChange}></input>
+                                                                    </div>
                                                                 </>
                                                             }
                                                         </div>
+                                                    </Typography>
+                                                </AccordionDetails>
+                                            </Accordion>
+                                            {navbar.bar === 'Charts' && (state.Chart !== 'Bar Chart' && state.Chart !== 'Line Chart' && state.Chart !== 'ScatterPlot') ?
+                                                <Accordion className="acd">
+                                                    <AccordionSummary
+                                                        className="acdsummary"
+                                                        expandIcon={<ExpandMoreIcon />}
+                                                        aria-controls="panel1a-content"
+                                                        id="panel1a-header"
+                                                    >
+                                                        <Typography className="acdTitle">Legend</Typography>
 
-                                                    </div>
-                                                </Typography>
-                                            </AccordionDetails>
-                                        </Accordion>
-                                        : ''}
-                                    <Accordion className="acd">
-                                        <AccordionSummary
-                                            className="acdsummary"
-                                            expandIcon={<ExpandMoreIcon />}
-                                            //     expanded={'true'}
-                                            aria-controls="panel1a-content"
-                                            id="panel1a-header"
-                                        >
-                                            <Typography className="acdTitle">
-                                                Title&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                            </Typography>
-                                            {/* <Typography className="acdswatch">
-                                                <div>
-                                                    <label className="switch">
-                                                        <input type="checkbox" name="Titleswatch" checked={state.Titleswatch_} onChange={handleShowProps}></input>
-                                                        <span className="slider round"></span>
-                                                    </label>
-                                                </div>
-                                            </Typography> */}
-                                        </AccordionSummary>
+                                                    </AccordionSummary>
+                                                    <AccordionDetails>
+                                                        <Typography>
 
-                                        <AccordionDetails className="acdDetails">
-                                            <Typography>
-                                                <div className=" col-lg-12" style={{ marginTop: '0px' }}>
-                                                    <div className="row col-lg-12" style={{ margin: "0px 0px 15px 10px" }}>
+                                                            <div className="col-lg-12" style={{ margin: "0px 0px 15px 0px" }}>
+                                                                <div className="row col-lg-12">
+                                                                    <div className="row col-lg-12" >
+                                                                        <div className="row col-xm-3 col-sm-3 col-md-3 col-lg-3" >
+                                                                            Legend
+                                                                        </div>
+                                                                        <div className="row col-xm-4 col-sm-4 col-md-4 col-lg-4" >
+                                                                            <label className="switch">
+                                                                                <input type="checkbox" name="Legendswatch" checked={state.Legendswatch_} onChange={handleShowProps}></input>
+                                                                                <span className="slider round"></span>
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+                                                                    {state.Legendswatch_ &&
+                                                                        <>
+                                                                            {/* <p className="row col-lg-12 inputfield" style={{ marginTop: '20px' }}>Text Style</p> */}
 
-                                                        <div className="row col-lg-12" >
-                                                            <div className="row col-xm-3 col-sm-3 col-md-3 col-lg-3" >
-                                                                Title
+                                                                            <div className="row col-xs-6 col-sm-6 col-md-6 col-lg-6 inputfield" >
+                                                                                <TextField
+                                                                                    //error={formValues.GroupBy.error}
+                                                                                    // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
+                                                                                    id="Font"
+                                                                                    select
+                                                                                    name='LegendFont'
+                                                                                    label="Font"
+                                                                                    className='input-field '
+                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                                    value={state.LegendFont}
+                                                                                    defaultValue={'Arial'}
+                                                                                >
+                                                                                    {Fonts.map((option, index) => (
+                                                                                        <MenuItem key={option} value={option}>
+                                                                                            <span style={{ fontFamily: option }}>{option}</span>
+                                                                                        </MenuItem>
+                                                                                    ))}
+                                                                                </TextField>
+                                                                            </div>
+                                                                            <div className="row col-xs-4 col-sm-4 col-md-4 col-lg-4 inputfield">
+                                                                                <TextField
+                                                                                    //error={formValues.GroupBy.error}
+                                                                                    // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
+                                                                                    id="Font"
+                                                                                    select
+                                                                                    name='LegendSize'
+                                                                                    label="Size"
+                                                                                    className='input-field '
+                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                                    value={state.LegendSize}
+                                                                                    defaultValue={'14'}
+                                                                                >
+                                                                                    {(() => {
+                                                                                        let Item = [];
+                                                                                        for (let i = 10; i <= 30; i++) {
+                                                                                            Item.push(<MenuItem key={i} value={i}> <span style={{ fontSize: `${i}px` }}>{i}</span> </MenuItem>)
+                                                                                        }
+                                                                                        return Item
+                                                                                    })()}
+                                                                                </TextField>
+                                                                            </div>
+                                                                            <div className="row col-xs-2 col-sm-2 col-md-2 col-lg-2 inputfield">
+                                                                                <input type="color" name='LegendColor'
+                                                                                    value={state.LegendColor}
+                                                                                    defaultValue={'#000000'}
+                                                                                    id="colorPicker" onChange={handleChange}></input>
+                                                                            </div>
+                                                                            <div className="row col-xs-12 col-sm-6 col-md-6 col-lg-6 inputfield">
+                                                                                <TextField
+                                                                                    // error={formValues.InputType.error}
+                                                                                    // helperText={formValues.InputType.error && formValues.InputType.errorMessage}
+                                                                                    id="LengendPosition"
+                                                                                    select
+                                                                                    name='LengendPosition'
+                                                                                    label="Position"
+                                                                                    className='Horizontal'
+                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                                    value={state.LengendPosition}
+                                                                                    defaultValue={false}
+                                                                                >
+                                                                                    <MenuItem key={1} value={true} >Horizontal</MenuItem>
+                                                                                    <MenuItem key={2} value={false}>Vertical</MenuItem>
+
+                                                                                </TextField>
+                                                                            </div>
+                                                                        </>
+                                                                    }
+                                                                </div>
                                                             </div>
-                                                            <div className="row col-xm-4 col-sm-4 col-md-4 col-lg-4" >
-                                                                <label className="switch">
-                                                                    <input type="checkbox" name="Titleswatch" checked={state.Titleswatch_} onChange={handleShowProps}></input>
-                                                                    <span className="slider round"></span>
-                                                                </label>
-                                                            </div>
 
-                                                        </div>
-                                                        {state.Titleswatch_ &&
-                                                            <>
-                                                                {/* <p className="row col-lg-12">Title</p> */}
-                                                                <div className="row col-sm-6 col-md-6 col-lg-5 inputfield" style={{ marginTop: '20px' }}>
-                                                                    <TextField
-                                                                        error={formValues.Title.error}
-                                                                        helperText={formValues.Title.error && formValues.Title.errorMessage}
-                                                                        id="Title" className='input-field' name='Title' label="Title" variant="outlined"
-                                                                        value={state.Title}
-                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }} />
-                                                                    {/* <SketchPicker /> */}
-                                                                </div>
+                                                        </Typography>
+                                                    </AccordionDetails>
+                                                </Accordion>
+                                                : ''
+                                            }
+                                            {navbar.bar === 'Charts' &&
+                                                <Accordion className="acd">
+                                                    <AccordionSummary
+                                                        className="acdsummary"
+                                                        expandIcon={<ExpandMoreIcon />}
+                                                        aria-controls="panel1a-content"
+                                                        id="panel1a-header"
+                                                    >
+                                                        <Typography className="acdTitle">Tooltip&nbsp;</Typography>
 
-                                                                <p className="row col-lg-12">Text Style</p>
-                                                                <div className="row col-xs-4 col-sm-4 col-md-4 col-lg-5 inputfield">
-                                                                    <TextField
-                                                                        //error={formValues.GroupBy.error}
-                                                                        // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
-                                                                        id="Font"
-                                                                        select
-                                                                        name='TitleFont'
-                                                                        label="Font"
-                                                                        className='input-field '
-                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                        value={state.TitleFont}
-                                                                        defaultValue={'Arial'}
-
-                                                                    >
-                                                                        {Fonts.map((option, index) => (
-                                                                            <MenuItem key={option} value={option}>
-                                                                                {option}
-                                                                            </MenuItem>
-                                                                        ))}
-                                                                    </TextField>
-                                                                </div>
-                                                                <div className="row col-xs-4 col-sm-4 col-md-4 col-lg-4 inputfield">
-                                                                    <TextField
-                                                                        //error={formValues.GroupBy.error}
-                                                                        // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
-                                                                        id="Font"
-                                                                        select
-                                                                        name='TitleSize'
-                                                                        label="Size"
-                                                                        className='input-field '
-                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                        value={state.TitleSize}
-                                                                        defaultValue={'14'}
-                                                                    >
-                                                                        {(() => {
-                                                                            let Item = [];
-                                                                            for (let i = 6; i <= 30; i++) {
-                                                                                Item.push(<MenuItem key={i} value={i}> {i}  </MenuItem>)
-                                                                            }
-                                                                            return Item
-                                                                        })()}
-                                                                    </TextField>
-                                                                </div>
-                                                                <div className="row col-xs-4 col-sm-2 col-md-4 col-lg-3 inputfield">
-                                                                    <input type="color" name='TitleColor'
-                                                                        value={state.TitleColor}
-                                                                        defaultValue={'#000000'}
-                                                                        id="colorPicker" onChange={handleChange}></input>
-                                                                </div>
-                                                            </>
-                                                        }
-                                                    </div>
-
-                                                </div>
-                                            </Typography>
-                                        </AccordionDetails>
-                                    </Accordion>
-                                    {navbar.bar === 'Charts' && (state.Chart !== 'Bar Chart' && state.Chart !== 'Line Chart' && state.Chart !== 'ScatterPlot') ?
-                                        <Accordion className="acd">
-                                            <AccordionSummary
-                                                className="acdsummary"
-                                                expandIcon={<ExpandMoreIcon />}
-                                                aria-controls="panel1a-content"
-                                                id="panel1a-header"
-                                            >
-                                                <Typography className="acdTitle">Legend</Typography>
-                                                {/* <Typography className="acdswatch">
-                                                    <div>
-                                                        <label className="switch">
-                                                            <input type="checkbox" name="Legendswatch" checked={state.Legendswatch_} onChange={handleShowProps}></input>
-                                                            <span className="slider round"></span>
-                                                        </label>
-                                                    </div>
-                                                </Typography> */}
-                                            </AccordionSummary>
-                                            <AccordionDetails>
-                                                <Typography>
-
-                                                    <div className="row col-lg-12" style={{ margin: "0px 0px 15px 10px" }}>
-                                                        <div className="row col-lg-12" >
-                                                            <div className="row col-xm-3 col-sm-3 col-md-3 col-lg-3" >
-                                                                Legend
-                                                            </div>
-                                                            <div className="row col-xm-4 col-sm-4 col-md-4 col-lg-4" >
-                                                                <label className="switch">
-                                                                    <input type="checkbox" name="Legendswatch" checked={state.Legendswatch_} onChange={handleShowProps}></input>
-                                                                    <span className="slider round"></span>
-                                                                </label>
-                                                            </div>
-                                                        </div>
-                                                        {state.Legendswatch_ &&
-                                                            <>
-                                                                <p className="row col-lg-12" style={{ marginTop: '20px' }}>Text Style</p>
-                                                                <div className="row col-xs-4 col-sm-4 col-md-4 col-lg-5 inputfield">
-                                                                    <TextField
-                                                                        //error={formValues.GroupBy.error}
-                                                                        // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
-                                                                        id="Font"
-                                                                        select
-                                                                        name='LegendFont'
-                                                                        label="Font"
-                                                                        className='input-field '
-                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                        value={state.LegendFont}
-                                                                        defaultValue={'Arial'}
-                                                                    >
-                                                                        {Fonts.map((option, index) => (
-                                                                            <MenuItem key={option} value={option}>
-                                                                                {option}
-                                                                            </MenuItem>
-                                                                        ))}
-                                                                    </TextField>
-                                                                </div>
-                                                                <div className="row col-xs-4 col-sm-4 col-md-4 col-lg-4 inputfield">
-                                                                    <TextField
-                                                                        //error={formValues.GroupBy.error}
-                                                                        // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
-                                                                        id="Font"
-                                                                        select
-                                                                        name='LegendSize'
-                                                                        label="Size"
-                                                                        className='input-field '
-                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                        value={state.LegendSize}
-                                                                        defaultValue={'14'}
-                                                                    >
-                                                                        {(() => {
-                                                                            let Item = [];
-                                                                            for (let i = 6; i <= 30; i++) {
-                                                                                Item.push(<MenuItem key={i} value={i}> {i}  </MenuItem>)
-                                                                            }
-                                                                            return Item
-                                                                        })()}
-                                                                    </TextField>
-                                                                </div>
-                                                                <div className="row col-xs-4 col-sm-2 col-md-4 col-lg-3 inputfield">
-                                                                    <input type="color" name='LegendColor'
-                                                                        value={state.LegendColor}
-                                                                        defaultValue={'#000000'}
-                                                                        id="colorPicker" onChange={handleChange}></input>
-                                                                </div>
-
-                                                                <div className="row col-xs-12 col-sm-4 col-md-4 col-lg-5 inputfield">
-                                                                    <TextField
-                                                                        // error={formValues.InputType.error}
-                                                                        // helperText={formValues.InputType.error && formValues.InputType.errorMessage}
-                                                                        id="LengendPosition"
-                                                                        select
-                                                                        name='LengendPosition'
-                                                                        label="Position"
-                                                                        className='Horizontal'
-                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                        value={state.LengendPosition}
-                                                                        defaultValue={false}
-                                                                    >
-                                                                        <MenuItem key={1} value={true} >Horizontal</MenuItem>
-                                                                        <MenuItem key={2} value={false}>Vertical</MenuItem>
-
-                                                                    </TextField>
-                                                                </div>
-                                                            </>
-                                                        }
-                                                    </div>
-
-                                                </Typography>
-                                            </AccordionDetails>
-                                        </Accordion>
-                                        : ''
-                                    }
-                                    {navbar.bar === 'Charts' &&
-                                        <Accordion className="acd">
-                                            <AccordionSummary
-                                                className="acdsummary"
-                                                expandIcon={<ExpandMoreIcon />}
-                                                aria-controls="panel1a-content"
-                                                id="panel1a-header"
-                                            >
-                                                <Typography className="acdTitle">Tooltip&nbsp;</Typography>
-                                                {/* <Typography className="acdTitle" style={{ paddingLeft: '50%' }}> */}
-                                                {/* <Typography className="acdTitle acdswatch">
-                                                    <div>
-                                                        <label className="switch">
-                                                            <input type="checkbox" name="Tooltipswatch" checked={state.Tooltipswatch_} onChange={handleShowProps}></input>
-                                                            <span className="slider round"></span>
-                                                        </label>
-                                                    </div>
-                                                </Typography> */}
-                                            </AccordionSummary>
-                                            <AccordionDetails>
-                                                <Typography>
-                                                    <div className="row col-lg-12" style={{ margin: "0px 0px 15px 10px" }}>
-                                                        <div className="row col-lg-12" >
-                                                            <div className="row col-xm-3 col-sm-3 col-md-3 col-lg-3" >
-                                                                Tooltip
-                                                            </div>
-                                                            <div className="row col-xm-4 col-sm-4 col-md-4 col-lg-4" >
-                                                                <label className="switch">
-                                                                    <input type="checkbox" name="Tooltipswatch" checked={state.Tooltipswatch_} onChange={handleShowProps}></input>
-                                                                    <span className="slider round"></span>
-                                                                </label>
-                                                            </div>
-                                                        </div>
-                                                        {state.Tooltipswatch_ &&
-                                                            <>
-                                                                <div className="row col-xs-4 col-sm-4 col-md-4 col-lg-5 inputfield" style={{ marginTop: '20px' }}>
-                                                                    <TextField
-                                                                        //error={formValues.GroupBy.error}
-                                                                        // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
-                                                                        id="TContent"
-                                                                        select
-                                                                        name='TooltipContent'
-                                                                        label="Content"
-                                                                        className='input-field '
-                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                        defaultValue={'All'}
-                                                                        value={state.TooltipContent}
-                                                                        style={{ marginTop: '10px' }}
-                                                                    >
-
-                                                                        {TooltipContent.map((option, index) => (
-                                                                            <MenuItem key={option} value={option}>
-                                                                                {option}
-                                                                            </MenuItem>
-                                                                        ))}
-                                                                        {state.Chart === 'Composite Chart' || state.Chart === 'Series Chart' || state.Chart === 'Bar Line Chart' ?
-                                                                            <MenuItem value={'Group'}>
-                                                                                {'Group'}
-                                                                            </MenuItem>
-                                                                            : ''
-                                                                        }
-                                                                    </TextField>
-                                                                </div>
-                                                                <p className="row col-lg-12">Text Style</p>
-                                                                <div className="row col-xs-4 col-sm-4 col-md-4 col-lg-5 inputfield">
-                                                                    <TextField
-                                                                        //error={formValues.GroupBy.error}
-                                                                        // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
-                                                                        id="Font"
-                                                                        select
-                                                                        name='TooltipFont'
-                                                                        label="Font"
-                                                                        className='input-field '
-                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                        value={state.TooltipFont}
-                                                                        defaultValue={'Arial'}
-                                                                    >
-                                                                        {Fonts.map((option, index) => (
-                                                                            <MenuItem key={option} value={option}>
-                                                                                {option}
-                                                                            </MenuItem>
-                                                                        ))}
-                                                                    </TextField>
-                                                                </div>
-                                                                <div className="row col-xs-4 col-sm-4 col-md-4 col-lg-4 inputfield">
-                                                                    <TextField
-                                                                        //error={formValues.GroupBy.error}
-                                                                        // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
-                                                                        id="Font"
-                                                                        select
-                                                                        name='TooltipSize'
-                                                                        label="Size"
-                                                                        className='input-field '
-                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                        value={state.TooltipSize}
-                                                                        defaultValue={'14'}
-                                                                    >
-                                                                        {(() => {
-                                                                            let Item = [];
-                                                                            for (let i = 6; i <= 30; i++) {
-                                                                                Item.push(<MenuItem key={i} value={i}> {i}  </MenuItem>)
-                                                                            }
-                                                                            return Item
-                                                                        })()}
-                                                                    </TextField>
-                                                                </div>
-                                                                <div className="row col-xs-4 col-sm-2 col-md-4 col-lg-3 inputfield">
-                                                                    <input type="color" name='TooltipColor'
-                                                                        value={state.TooltipColor}
-                                                                        defaultValue={'#ffffff'}
-                                                                        id="colorPicker" onChange={handleChange}></input>
-                                                                </div>
-                                                                <p className="row col-lg-12">Background</p>
-                                                                <div className="row col-xs-12 col-sm-2 col-md-4 col-lg-3 inputfield">
-                                                                    <input type="color" name='TooltipBGColor'
-                                                                        value={state.TooltipBGColor}
-                                                                        defaultValue={'#6282b3'}
-                                                                        id="TooltipBGColor" onChange={handleChange}></input>
-                                                                </div>
-                                                                <p className="row col-lg-12">Border Style</p>
-
-                                                                <div className="row col-xs-12 col-sm-4 col-md-4 col-lg-5 inputfield">
-                                                                    <TextField id="Color" className='input-field'
-                                                                        value={state.TooltipThickness}
-                                                                        name='TooltipThickness' label="Width" variant="outlined"
-                                                                        defaultValue={'0'}
-                                                                        onChange={handleChange} />
-                                                                </div>
-                                                                <div className="row col-xs-12 col-sm-2 col-md-4 col-lg-3 inputfield">
-                                                                    <input type="color" name='TooltipTickColor'
-                                                                        value={state.TooltipTickColor}
-                                                                        defaultValue={'#000000'}
-                                                                        id="colorPicker" onChange={handleChange}></input>
-
-                                                                </div>
-                                                            </>
-                                                        }
-
-                                                    </div>
-
-
-                                                </Typography>
-                                            </AccordionDetails>
-                                        </Accordion>
-                                    }
-                                    {navbar.bar === 'Charts' &&
-                                        <Accordion className="acd">
-                                            <AccordionSummary
-                                                className="acdsummary"
-                                                expandIcon={<ExpandMoreIcon />}
-                                                aria-controls="panel1a-content"
-                                                id="panel1a-header"
-                                            >
-                                                <Typography className="acdTitle">Data Labels&nbsp;</Typography>
-                                            </AccordionSummary>
-                                            <AccordionDetails>
-                                                <Typography>
-                                                    <div className="row col-lg-12" style={{ margin: "0px 0px 15px 10px" }}>
-                                                        <div className="row col-lg-12" >
-                                                            <div className="row col-xm-3 col-sm-3 col-md-3 col-lg-4" >
-                                                                Data Labels
-                                                            </div>
-                                                            <div className="row col-xm-4 col-sm-4 col-md-4 col-lg-4" >
-                                                                <label className="switch">
-                                                                    <input type="checkbox" name="Labelsswatch" checked={state.Labelsswatch_} onChange={handleShowProps}></input>
-                                                                    <span className="slider round"></span>
-                                                                </label>
-                                                            </div>
-                                                        </div>
-                                                        {state.Labelsswatch_ &&
-                                                            <>
-                                                                <div className="row col-xs-4 col-sm-4 col-md-4 col-lg-5 inputfield" style={{ marginTop: '20px' }}>
-                                                                    <TextField
-                                                                        id="TContent"
-                                                                        select
-                                                                        name='LabelsContent'
-                                                                        label="Content"
-                                                                        className='input-field '
-                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                        defaultValue={'X'}
-                                                                        value={state.LabelsContent}
-                                                                        style={{ marginTop: '10px' }}
-                                                                    >
-
-                                                                        {LablesContent.map((option, index) => (
-                                                                            <MenuItem key={option} value={option}>
-                                                                                {option}
-                                                                            </MenuItem>
-                                                                        ))}
-                                                                    </TextField>
-                                                                </div>
-                                                                <p className="row col-lg-12">Text Style</p>
-                                                                <div className="row col-xs-4 col-sm-4 col-md-4 col-lg-5 inputfield">
-                                                                    <TextField
-                                                                        id="Font"
-                                                                        select
-                                                                        name='LabelsFont'
-                                                                        label="Font"
-                                                                        className='input-field '
-                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                        value={state.LabelsFont}
-                                                                        defaultValue={'Arial'}
-                                                                    >
-                                                                        {Fonts.map((option, index) => (
-                                                                            <MenuItem key={option} value={option}>
-                                                                                {option}
-                                                                            </MenuItem>
-                                                                        ))}
-                                                                    </TextField>
-                                                                </div>
-                                                                <div className="row col-xs-4 col-sm-4 col-md-4 col-lg-4 inputfield">
-                                                                    <TextField
-                                                                        id="Font"
-                                                                        select
-                                                                        name='Labelsize'
-                                                                        label="Size"
-                                                                        className='input-field '
-                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                        value={state.LabelsSize}
-                                                                        defaultValue={'14'}
-                                                                    >
-                                                                        {(() => {
-                                                                            let Item = [];
-                                                                            for (let i = 6; i <= 30; i++) {
-                                                                                Item.push(<MenuItem key={i} value={i}> {i}  </MenuItem>)
-                                                                            }
-                                                                            return Item
-                                                                        })()}
-                                                                    </TextField>
-                                                                </div>
-                                                                <div className="row col-xs-4 col-sm-2 col-md-4 col-lg-3 inputfield">
-                                                                    <input type="color" name='LabelsColor'
-                                                                        value={state.LabelsColor}
-                                                                        defaultValue={'#000000'}
-                                                                        id="colorPicker" onChange={handleChange}></input>
-                                                                </div>
-                                                            </>
-                                                        }
-                                                    </div>
-                                                </Typography>
-                                            </AccordionDetails>
-                                        </Accordion>
-                                    }
-                                </>
-                                : ""
-                            }
-
-
-                            {(state.Chart === 'Pie Chart' && navbar.bar === 'Charts') && (enable.Imported || state.Uploaded_file !== undefined) ?
-                                <Accordion className="acd">
-                                    <AccordionSummary
-                                        className="acdsummary"
-                                        expandIcon={<ExpandMoreIcon />}
-                                        aria-controls="panel1a-content"
-                                        id="panel1a-header"
-                                    >
-                                        <Typography className="acdTitle">Pie&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</Typography>
-                                        {/* <Typography className="acdTitle acdswatch" >
-                                            <div>
-                                                <label className="switch">
-                                                    <input type="checkbox" name="Pieswatch" checked={state.Pieswatch_} onChange={handleShowProps}></input>
-                                                    <span className="slider round"></span>
-                                                </label>
-                                            </div>
-                                        </Typography> */}
-                                    </AccordionSummary>
-
-                                    <AccordionDetails>
-                                        <Typography>
-                                            <div className="col-lg-12">
-                                                <div className="row col-lg-12" style={{ margin: "10px 0px 15px 10px" }}>
-                                                    {navbar.bar === 'Charts' &&
-                                                        <>
-                                                            <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                                                <div className="row col-sm-12 col-md-12 col-lg-6" >
-                                                                    <TextField
-                                                                        error={formValues.Innerradius.error}
-                                                                        helperText={formValues.Innerradius.error && formValues.Innerradius.errorMessage}
-                                                                        id="Innerradius" className='input-field' name='Innerradius' label="Innerradius*" variant="outlined"
-                                                                        value={state.Innerradius}
-                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }} />
-                                                                </div>
-                                                                <div className="row col-sm-12 col-md-12 col-lg-6"   >
-                                                                    <TextField
-                                                                        error={formValues.SlicesCap.error}
-                                                                        helperText={formValues.SlicesCap.error && formValues.SlicesCap.errorMessage}
-                                                                        id="SlicesCap" className='input-field' name='SlicesCap' label="SlicesCap*" variant="outlined"
-                                                                        value={state.SlicesCap}
-                                                                        onChange={(e) => { handleChange(e) }}
-                                                                        onBlur={(e) => { handleValidation(e) }}
-                                                                    />
-                                                                </div>
-                                                                <div className="row col-sm-12 col-md-12 col-lg-6" style={{ marginTop: '20px' }} >
-                                                                    <TextField
-                                                                        error={formValues.ExternalRadiusPadding.error}
-                                                                        helperText={formValues.ExternalRadiusPadding.error && formValues.ExternalRadiusPadding.errorMessage}
-                                                                        id="ExternalRadiusPadding" className='input-field' name='ExternalRadiusPadding' label="ExternalRadiusPadding*" variant="outlined"
-                                                                        value={state.ExternalRadiusPadding}
-                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }} />
-                                                                </div>
-
-                                                            </div>
-                                                            <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ marginTop: '20px' }}>
+                                                    </AccordionSummary>
+                                                    <AccordionDetails>
+                                                        <Typography>
+                                                            <div className="row col-lg-12" style={{ margin: "0px 0px 15px 0px" }}>
                                                                 <div className="row col-lg-12" >
                                                                     <div className="row col-xm-3 col-sm-3 col-md-3 col-lg-3" >
-                                                                        Pie
+                                                                        Tooltip
                                                                     </div>
                                                                     <div className="row col-xm-4 col-sm-4 col-md-4 col-lg-4" >
                                                                         <label className="switch">
-                                                                            <input type="checkbox" name="Pieswatch" checked={state.Pieswatch_} onChange={handleShowProps}></input>
+                                                                            <input type="checkbox" name="Tooltipswatch" checked={state.Tooltipswatch_} onChange={handleShowProps}></input>
                                                                             <span className="slider round"></span>
                                                                         </label>
                                                                     </div>
-
                                                                 </div>
-                                                                {state.Pieswatch_ &&
+                                                                {state.Tooltipswatch_ &&
                                                                     <>
-                                                                        <p className="row col-lg-12">Background</p>
-                                                                        <div className="row col-xs-12 col-sm-2 col-md-4 col-lg-3 inputfield">
-                                                                            <input type="color" name='BGColor'
-                                                                                value={state.BGColor}
+                                                                        <div className="row col-xs-6 col-sm-6 col-md-6 col-lg-6 inputfield" style={{ marginTop: '20px' }}>
+                                                                            <TextField
+                                                                                //error={formValues.GroupBy.error}
+                                                                                // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
+                                                                                id="TContent"
+                                                                                select
+                                                                                name='TooltipContent'
+                                                                                label="Content"
+                                                                                className='input-field '
+                                                                                onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                                defaultValue={'All'}
+                                                                                value={state.TooltipContent}
+                                                                                style={{ marginTop: '10px' }}
+                                                                            >
+
+                                                                                {TooltipContent.map((option, index) => (
+                                                                                    <MenuItem key={option} value={option}>
+                                                                                        {option}
+                                                                                    </MenuItem>
+                                                                                ))}
+                                                                                {state.Chart === 'Composite Chart' || state.Chart === 'Series Chart' || state.Chart === 'Bar Line Chart' ?
+                                                                                    <MenuItem value={'Group'}>
+                                                                                        {'Group'}
+                                                                                    </MenuItem>
+                                                                                    : ''
+                                                                                }
+                                                                            </TextField>
+                                                                        </div>
+                                                                        <p className="row col-lg-12 inputfield">Text Style</p>
+                                                                        <div className="row col-xs-6 col-sm-6 col-md-6 col-lg-6 inputfield">
+                                                                            <TextField
+                                                                                //error={formValues.GroupBy.error}
+                                                                                // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
+                                                                                id="Font"
+                                                                                select
+                                                                                name='TooltipFont'
+                                                                                label="Font"
+                                                                                className='input-field '
+                                                                                onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                                value={state.TooltipFont}
+                                                                                defaultValue={'Arial'}
+                                                                            >
+                                                                                {Fonts.map((option, index) => (
+                                                                                    <MenuItem key={option} value={option}>
+                                                                                        <span style={{ fontFamily: option }}>{option}</span>
+                                                                                    </MenuItem>
+                                                                                ))}
+                                                                            </TextField>
+                                                                        </div>
+                                                                        <div className="row col-xs-4 col-sm-4 col-md-4 col-lg-4 inputfield">
+                                                                            <TextField
+                                                                                //error={formValues.GroupBy.error}
+                                                                                // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
+                                                                                id="Font"
+                                                                                select
+                                                                                name='TooltipSize'
+                                                                                label="Size"
+                                                                                className='input-field '
+                                                                                onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                                value={state.TooltipSize}
+                                                                                defaultValue={'14'}
+                                                                            >
+                                                                                {(() => {
+                                                                                    let Item = [];
+                                                                                    for (let i = 10; i <= 30; i++) {
+                                                                                        Item.push(<MenuItem key={i} value={i}> <span style={{ fontSize: `${i}px` }}>{i}</span> </MenuItem>)
+                                                                                    }
+                                                                                    return Item
+                                                                                })()}
+                                                                            </TextField>
+                                                                        </div>
+                                                                        <div className="row col-xs-2 col-sm-2 col-md-2 col-lg-2 inputfield">
+                                                                            <input type="color" name='TooltipColor'
+                                                                                value={state.TooltipColor}
                                                                                 defaultValue={'#ffffff'}
-                                                                                id="colorPicker" onChange={handleChange}>
-                                                                            </input>
+                                                                                id="colorPicker" onChange={handleChange}></input>
+                                                                        </div>
+                                                                        <p className="row col-lg-12">Background</p>
+                                                                        <div className="row col-xs-2 col-sm-2 col-md-2 col-lg-2 inputfield">
+                                                                            <input type="color" name='TooltipBGColor'
+                                                                                value={state.TooltipBGColor}
+                                                                                defaultValue={'#6282b3'}
+                                                                                id="TooltipBGColor" onChange={handleChange}></input>
+                                                                        </div>
+                                                                        <p className="row col-lg-12 inputfield">Border Style</p>
+
+                                                                        <div className="row col-xs-6 col-sm-6 col-md-6 col-lg-6 inputfield">
+                                                                            <TextField id="Color" className='input-field'
+                                                                                value={state.TooltipThickness}
+                                                                                name='TooltipThickness' label="Width" variant="outlined"
+                                                                                defaultValue={'0'}
+                                                                                onChange={handleChange} />
+                                                                        </div>
+                                                                        <div className="row col-xs-2 col-sm-2 col-md-2 col-lg-2 inputfield">
+                                                                            <input type="color" name='TooltipTickColor'
+                                                                                value={state.TooltipTickColor}
+                                                                                defaultValue={'#000000'}
+                                                                                id="colorPicker" onChange={handleChange}></input>
 
                                                                         </div>
                                                                     </>
                                                                 }
 
                                                             </div>
-                                                        </>
-                                                    }
-                                                </div>
-                                            </div>
-                                        </Typography>
-                                    </AccordionDetails>
-                                </Accordion>
-                                : ''
-                            }
-                            {(state.Chart === 'Bar Chart' && navbar.bar === 'Charts') && (enable.Imported || state.Uploaded_file !== undefined) ?
-                                <Accordion className="acd">
-                                    <AccordionSummary
-                                        className="acdsummary"
-                                        expandIcon={<ExpandMoreIcon />}
-                                        aria-controls="panel1a-content"
-                                        id="panel1a-header"
-                                    >
-                                        <Typography className="acdTitle">Bar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</Typography>
-                                        {/* <Typography className="acdTitle acdswatch">
-                                            <div>
-                                                <label className="switch">
-                                                    <input type="checkbox" name="Barswatch" checked={state.Barswatch_} onChange={handleShowProps}></input>
-                                                    <span className="slider round"></span>
-                                                </label>
-                                            </div>
-                                        </Typography> */}
-                                    </AccordionSummary>
 
-                                    <AccordionDetails>
-                                        <Typography>
-                                            <div className=" col-lg-12" style={{ marginTop: '10px' }}>
-                                                {navbar.bar === 'Charts' &&
-                                                    <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ margin: "10px 0px 15px 10px" }}>
-                                                        <div className="row col-lg-12" >
-                                                            <div className="row col-xm-3 col-sm-3 col-md-3 col-lg-3" >
-                                                                Bar
-                                                            </div>
-                                                            <div className="row col-xm-4 col-sm-4 col-md-4 col-lg-4" >
-                                                                <label className="switch">
-                                                                    <input type="checkbox" name="Barswatch" checked={state.Barswatch_} onChange={handleShowProps}></input>
-                                                                    <span className="slider round"></span>
-                                                                </label>
-                                                            </div>
 
+                                                        </Typography>
+                                                    </AccordionDetails>
+                                                </Accordion>
+                                            }
+                                            {navbar.bar === 'Charts' &&
+                                                <Accordion className="acd">
+                                                    <AccordionSummary
+                                                        className="acdsummary"
+                                                        expandIcon={<ExpandMoreIcon />}
+                                                        aria-controls="panel1a-content"
+                                                        id="panel1a-header"
+                                                    >
+                                                        <Typography className="acdTitle">Data Labels&nbsp;</Typography>
+                                                    </AccordionSummary>
+                                                    <AccordionDetails>
+                                                        <Typography>
+                                                            <div className="col-lg-12" style={{ margin: "0px 0px 15px 0px" }}>
+                                                                <div className="row col-lg-12">
+                                                                    <div className="row col-lg-12" >
+                                                                        <div className="row col-xm-3 col-sm-3 col-md-3 col-lg-4" >
+                                                                            Data Labels
+                                                                        </div>
+                                                                        <div className="row col-xm-4 col-sm-4 col-md-4 col-lg-4" >
+                                                                            <label className="switch">
+                                                                                <input type="checkbox" name="Labelsswatch" checked={state.Labelsswatch_} onChange={handleShowProps}></input>
+                                                                                <span className="slider round"></span>
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+                                                                    {state.Labelsswatch_ &&
+                                                                        <>
+                                                                            <div className="row col-xs-6 col-sm-6 col-md-6 col-lg-6 inputfield" style={{ marginTop: '20px' }}>
+                                                                                <TextField
+                                                                                    id="TContent"
+                                                                                    select
+                                                                                    name='LabelsContent'
+                                                                                    label="Content"
+                                                                                    className='input-field '
+                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                                    defaultValue={'X'}
+                                                                                    value={state.LabelsContent}
+                                                                                    style={{ marginTop: '10px' }}
+                                                                                >
+
+                                                                                    {LablesContent.map((option, index) => (
+                                                                                        <MenuItem key={option} value={option}>
+                                                                                            {option}
+                                                                                        </MenuItem>
+                                                                                    ))}
+                                                                                </TextField>
+                                                                            </div>
+                                                                            <p className="row col-lg-12 inputfield">Text Style</p>
+                                                                            <div className="row col-xs-6 col-sm-6 col-md-6 col-lg-6 inputfield">
+                                                                                <TextField
+                                                                                    id="Font"
+                                                                                    select
+                                                                                    name='LabelsFont'
+                                                                                    label="Font"
+                                                                                    className='input-field '
+                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                                    value={state.LabelsFont}
+                                                                                    defaultValue={'Arial'}
+                                                                                >
+                                                                                    {Fonts.map((option, index) => (
+                                                                                        <MenuItem key={option} value={option}>
+                                                                                            <span style={{ fontFamily: option }}>{option}</span>
+                                                                                        </MenuItem>
+                                                                                    ))}
+                                                                                </TextField>
+                                                                            </div>
+                                                                            <div className="row col-xs-4 col-sm-4 col-md-4 col-lg-4 inputfield">
+                                                                                <TextField
+                                                                                    id="Font"
+                                                                                    select
+                                                                                    name='Labelsize'
+                                                                                    label="Size"
+                                                                                    className='input-field '
+                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                                    value={state.LabelsSize}
+                                                                                    defaultValue={'14'}
+                                                                                >
+                                                                                    {(() => {
+                                                                                        let Item = [];
+                                                                                        for (let i = 10; i <= 30; i++) {
+                                                                                            Item.push(<MenuItem key={i} value={i}> <span style={{ fontSize: `${i}px` }}>{i}</span> </MenuItem>)
+                                                                                        }
+                                                                                        return Item
+                                                                                    })()}
+                                                                                </TextField>
+                                                                            </div>
+                                                                            <div className="row col-xs-2 col-sm-2 col-md-2 col-lg-2 inputfield">
+                                                                                <input type="color" name='LabelsColor'
+                                                                                    value={state.LabelsColor}
+                                                                                    defaultValue={'#000000'}
+                                                                                    id="colorPicker" onChange={handleChange}></input>
+                                                                            </div>
+                                                                        </>
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </Typography>
+                                                    </AccordionDetails>
+                                                </Accordion>
+                                            }
+                                        </>
+                                        : ''
+                                    }
+                                    {(state.Chart === 'Pie Chart' && navbar.bar === 'Charts') && (enable.Imported || state.Uploaded_file !== undefined) ?
+                                        <Accordion className="acd">
+                                            <AccordionSummary
+                                                className="acdsummary"
+                                                expandIcon={<ExpandMoreIcon />}
+                                                aria-controls="panel1a-content"
+                                                id="panel1a-header"
+                                            >
+                                                <Typography className="acdTitle">Pie&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</Typography>
+                                            </AccordionSummary>
+
+                                            <AccordionDetails>
+                                                <Typography>
+                                                    <div className="col-lg-12">
+                                                        <div className="col-lg-12" >
+                                                            {navbar.bar === 'Charts' &&
+                                                                <>
+                                                                    <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ marginTop: '10px' }}>
+                                                                        <div className="row col-sm-12 col-md-12 col-lg-6" >
+                                                                            <TextField
+                                                                                error={formValues.Innerradius.error}
+                                                                                helperText={formValues.Innerradius.error && formValues.Innerradius.errorMessage}
+                                                                                id="Innerradius" className='input-field' name='Innerradius' label="Innerradius*" variant="outlined"
+                                                                                value={state.Innerradius}
+                                                                                onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                        </div>
+                                                                        <div className="row col-sm-12 col-md-12 col-lg-6"   >
+                                                                            <TextField
+                                                                                error={formValues.SlicesCap.error}
+                                                                                helperText={formValues.SlicesCap.error && formValues.SlicesCap.errorMessage}
+                                                                                id="SlicesCap" className='input-field' name='SlicesCap' label="SlicesCap*" variant="outlined"
+                                                                                value={state.SlicesCap}
+                                                                                onChange={(e) => { handleChange(e) }}
+                                                                                onBlur={(e) => { handleValidation(e) }}
+                                                                            />
+                                                                        </div>
+                                                                        <div className="row col-sm-12 col-md-12 col-lg-6" style={{ marginTop: '20px' }} >
+                                                                            <TextField
+                                                                                error={formValues.ExternalRadiusPadding.error}
+                                                                                helperText={formValues.ExternalRadiusPadding.error && formValues.ExternalRadiusPadding.errorMessage}
+                                                                                id="ExternalRadiusPadding" className='input-field' name='ExternalRadiusPadding' label="ExternalRadiusPadding*" variant="outlined"
+                                                                                value={state.ExternalRadiusPadding}
+                                                                                onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                        </div>
+
+                                                                    </div>
+                                                                    <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ marginTop: '20px' }}>
+                                                                        <div className="row col-lg-12" >
+                                                                            <div className="row col-xm-3 col-sm-3 col-md-3 col-lg-3" >
+                                                                                Pie
+                                                                            </div>
+                                                                            <div className="row col-xm-4 col-sm-4 col-md-4 col-lg-4" >
+                                                                                <label className="switch">
+                                                                                    <input type="checkbox" name="Pieswatch" checked={state.Pieswatch_} onChange={handleShowProps}></input>
+                                                                                    <span className="slider round"></span>
+                                                                                </label>
+                                                                            </div>
+
+                                                                        </div>
+                                                                        {state.Pieswatch_ &&
+                                                                            <>
+                                                                                <p className="row col-lg-12">Background</p>
+                                                                                <div className="row col-xs-12 col-sm-2 col-md-2 col-lg-2 inputfield">
+                                                                                    <input type="color" name='BGColor'
+                                                                                        value={state.BGColor}
+                                                                                        defaultValue={'#ffffff'}
+                                                                                        id="colorPicker" onChange={handleChange}>
+                                                                                    </input>
+
+                                                                                </div>
+                                                                            </>
+                                                                        }
+
+                                                                    </div>
+                                                                </>
+                                                            }
                                                         </div>
-                                                        {state.Barswatch_ &&
-                                                            <>
-                                                                <p className="row col-lg-12" style={{ marginTop: '10px' }}>Padding</p>
+                                                    </div>
+                                                </Typography>
+                                            </AccordionDetails>
+                                        </Accordion>
+                                        : ''
+                                    }
+                                    {(state.Chart === 'Bar Chart' && navbar.bar === 'Charts') && (enable.Imported || state.Uploaded_file !== undefined) ?
+                                        <Accordion className="acd">
+                                            <AccordionSummary
+                                                className="acdsummary"
+                                                expandIcon={<ExpandMoreIcon />}
+                                                aria-controls="panel1a-content"
+                                                id="panel1a-header"
+                                            >
+                                                <Typography className="acdTitle">Bar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</Typography>
+                                            </AccordionSummary>
 
-                                                                <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" >
-                                                                    <div className="row col-sm-12 col-md-12 col-lg-3" >
-                                                                        <TextField
-                                                                            id="PadTop" className='input-field' name='PadTop' label="Top" variant="outlined"
-                                                                            value={state.PadTop}
-                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                            <AccordionDetails>
+                                                <Typography>
+                                                    <div className="col-lg-12" style={{ marginTop: '10px' }}>
+                                                        {navbar.bar === 'Charts' &&
+                                                            <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ margin: "0px 0px 15px 0px" }}>
+                                                                <div className="row col-lg-12" >
+                                                                    <div className="row col-xm-3 col-sm-3 col-md-3 col-lg-3" >
+                                                                        Bar
                                                                     </div>
-                                                                    <div className="row col-sm-12 col-md-12 col-lg-3"   >
-                                                                        <TextField
-                                                                            id="PadBottom" className='input-field' name='PadBottom' label="Bottom" variant="outlined"
-                                                                            value={state.PadBottom}
-                                                                            onChange={(e) => { handleChange(e) }}
-                                                                            onBlur={(e) => { handleValidation(e) }}
-                                                                        />
-                                                                    </div>
-                                                                    <div className="row col-sm-12 col-md-12 col-lg-3" >
-                                                                        <TextField
-                                                                            id="PadRight" className='input-field' name='PadRight' label="Right" variant="outlined"
-                                                                            value={state.PadRight}
-                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }} />
-                                                                    </div>
-                                                                    <div className="row col-sm-12 col-md-12 col-lg-3" >
-                                                                        <TextField
-                                                                            id="PadLeft" className='input-field' name='PadLeft' label="Left" variant="outlined"
-                                                                            value={state.PadLeft}
-                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                    <div className="row col-xm-4 col-sm-4 col-md-4 col-lg-4" >
+                                                                        <label className="switch">
+                                                                            <input type="checkbox" name="Barswatch" checked={state.Barswatch_} onChange={handleShowProps}></input>
+                                                                            <span className="slider round"></span>
+                                                                        </label>
                                                                     </div>
 
                                                                 </div>
+                                                                {state.Barswatch_ &&
+                                                                    <>
+                                                                        <p className="row col-lg-12" style={{ marginTop: '10px' }}>Padding</p>
 
-                                                                <p className="row col-lg-12" style={{ marginTop: '10px' }}>Bar Color</p>
+                                                                        <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" >
+                                                                            <div className="row col-sm-12 col-md-12 col-lg-3" >
+                                                                                <TextField
+                                                                                    id="PadTop" className='input-field' name='PadTop' label="Top" variant="outlined"
+                                                                                    value={state.PadTop}
+                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                            </div>
+                                                                            <div className="row col-sm-12 col-md-12 col-lg-3"   >
+                                                                                <TextField
+                                                                                    id="PadBottom" className='input-field' name='PadBottom' label="Bottom" variant="outlined"
+                                                                                    value={state.PadBottom}
+                                                                                    onChange={(e) => { handleChange(e) }}
+                                                                                    onBlur={(e) => { handleValidation(e) }}
+                                                                                />
+                                                                            </div>
+                                                                            <div className="row col-sm-12 col-md-12 col-lg-3" >
+                                                                                <TextField
+                                                                                    id="PadRight" className='input-field' name='PadRight' label="Right" variant="outlined"
+                                                                                    value={state.PadRight}
+                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                            </div>
+                                                                            <div className="row col-sm-12 col-md-12 col-lg-3" >
+                                                                                <TextField
+                                                                                    id="PadLeft" className='input-field' name='PadLeft' label="Left" variant="outlined"
+                                                                                    value={state.PadLeft}
+                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                            </div>
 
-                                                                <div className="row col-xs-12 col-sm-2 col-md-4 col-lg-3 inputfield">
-                                                                    <input type="color" name='Color' value={state.Color} defaultValue={'#000000'} id="colorPicker" onChange={handleChange}></input>
+                                                                        </div>
 
-                                                                </div>
-                                                                <p className="row col-lg-12">Background</p>
-                                                                <div className="row col-xs-12 col-sm-2 col-md-4 col-lg-3 inputfield">
-                                                                    <input type="color" name='BGColor' defaultValue={'#ffffff'} value={state.BGColor} id="colorPicker" onChange={handleChange}></input>
+                                                                        <p className="row col-lg-12" style={{ marginTop: '10px' }}>Bar Color</p>
 
-                                                                </div>
-                                                            </>
+                                                                        <div className="row col-xs-12 col-sm-2 col-md-4 col-lg-3 inputfield">
+                                                                            <input type="color" name='Color' value={state.Color} defaultValue={'#000000'} id="colorPicker" onChange={handleChange}></input>
+
+                                                                        </div>
+                                                                        <p className="row col-lg-12">Background</p>
+                                                                        <div className="row col-xs-12 col-sm-2 col-md-4 col-lg-3 inputfield">
+                                                                            <input type="color" name='BGColor' defaultValue={'#ffffff'} value={state.BGColor} id="colorPicker" onChange={handleChange}></input>
+
+                                                                        </div>
+                                                                    </>
+                                                                }
+                                                            </div>
                                                         }
                                                     </div>
+                                                </Typography>
+                                            </AccordionDetails>
+                                        </Accordion>
+                                        : ''
+                                    }
+                                    {(state.Chart === 'ScatterPlot' && navbar.bar === 'Charts') && (enable.Imported || state.Uploaded_file !== undefined) ?
+                                        <Accordion className="acd">
+                                            <AccordionSummary
+                                                className="acdsummary"
+                                                expandIcon={<ExpandMoreIcon />}
+                                                aria-controls="panel1a-content"
+                                                id="panel1a-header"
+                                            >
+                                                <Typography className="acdTitle">Scatter&nbsp;</Typography>
+                                            </AccordionSummary>
 
-
-                                                }
-                                            </div>
-                                        </Typography>
-                                    </AccordionDetails>
-                                </Accordion>
-                                : ''
-                            }
-                            {(state.Chart === 'ScatterPlot' && navbar.bar === 'Charts') && (enable.Imported || state.Uploaded_file !== undefined) ?
-                                <Accordion className="acd">
-                                    <AccordionSummary
-                                        className="acdsummary"
-                                        expandIcon={<ExpandMoreIcon />}
-                                        aria-controls="panel1a-content"
-                                        id="panel1a-header"
-                                    >
-                                        <Typography className="acdTitle">Scatter&nbsp;</Typography>
-                                        {/* <Typography className="acdTitle acdswatch">
-                                            <div>
-                                                <label className="switch">
-                                                    <input type="checkbox" name="Scatterswatch" checked={state.Scatterswatch_} onChange={handleShowProps}></input>
-                                                    <span className="slider round"></span>
-                                                </label>
-                                            </div>
-                                        </Typography> */}
-                                    </AccordionSummary>
-
-                                    <AccordionDetails>
-                                        <Typography>
-                                            <div className=" col-lg-12" style={{ marginTop: '10px' }}>
-                                                <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ margin: "10px 0px 15px 10px" }}>
-                                                    <div className="row col-xs-12 col-sm-6 col-md-6 col-lg-6" >
-                                                        <TextField
-                                                            error={formValues.SymbolSize.error}
-                                                            helperText={formValues.SymbolSize.error && formValues.SymbolSize.errorMessage}
-                                                            id="SymbolSize" className='input-field' name='SymbolSize' label="SymbolSize*" variant="outlined"
-                                                            value={state.SymbolSize}
-                                                            onChange={(e) => { handleValidation(e); handleChange(e); }} />
-                                                    </div>
-                                                    <div className="row col-lg-12" style={{ marginTop: '10px' }}>
-                                                        <div className="row col-xm-3 col-sm-3 col-md-3 col-lg-3" >
-                                                            Scatter
-                                                        </div>
-                                                        <div className="row col-xm-4 col-sm-4 col-md-4 col-lg-4" >
-                                                            <label className="switch">
-                                                                <input type="checkbox" name="Scatterswatch" checked={state.Scatterswatch_} onChange={handleShowProps}></input>
-                                                                <span className="slider round"></span>
-                                                            </label>
-                                                        </div>
-
-                                                    </div>
-                                                    {state.Scatterswatch_ &&
-                                                        <>
-                                                            <p className="row col-lg-12" style={{ marginTop: '10px' }}>Padding</p>
-
-                                                            <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" >
-                                                                <div className="row col-sm-12 col-md-12 col-lg-3" >
-                                                                    <TextField
-                                                                        id="PadTop" className='input-field' name='PadTop' label="Top" variant="outlined"
-                                                                        value={state.PadTop}
-                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }} />
-                                                                </div>
-                                                                <div className="row col-sm-12 col-md-12 col-lg-3"   >
-                                                                    <TextField
-                                                                        id="PadBottom" className='input-field' name='PadBottom' label="Bottom" variant="outlined"
-                                                                        value={state.PadBottom}
-                                                                        onChange={(e) => { handleChange(e) }}
-                                                                        onBlur={(e) => { handleValidation(e) }}
-                                                                    />
-                                                                </div>
-                                                                <div className="row col-sm-12 col-md-12 col-lg-3" >
-                                                                    <TextField
-                                                                        id="PadRight" className='input-field' name='PadRight' label="Right" variant="outlined"
-                                                                        value={state.PadRight}
-                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }} />
-                                                                </div>
-                                                                <div className="row col-sm-12 col-md-12 col-lg-3" >
-                                                                    <TextField
-                                                                        id="PadLeft" className='input-field' name='PadLeft' label="Left" variant="outlined"
-                                                                        value={state.PadLeft}
-                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }} />
-                                                                </div>
-
+                                            <AccordionDetails>
+                                                <Typography>
+                                                    <div className=" col-lg-12" style={{ marginTop: '10px' }}>
+                                                        <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ margin: "0px 0px 15px 0px" }}>
+                                                            <div className="row col-xs-12 col-sm-6 col-md-6 col-lg-6" >
+                                                                <TextField
+                                                                    error={formValues.SymbolSize.error}
+                                                                    helperText={formValues.SymbolSize.error && formValues.SymbolSize.errorMessage}
+                                                                    id="SymbolSize" className='input-field' name='SymbolSize' label="SymbolSize*" variant="outlined"
+                                                                    value={state.SymbolSize}
+                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }} />
                                                             </div>
-                                                            <p className="row col-lg-12" style={{ marginTop: '10px' }}>Color</p>
-
-                                                            <div className="row col-xs-12 col-sm-2 col-md-4 col-lg-3 inputfield">
-                                                                <input type="color" name='Color' defaultValue={'#000000'} value={state.Color} id="colorPicker" onChange={handleChange}></input>
-
-                                                            </div>
-                                                            <p className="row col-lg-12">Background</p>
-                                                            <div className="row col-xs-12 col-sm-2 col-md-4 col-lg-3 inputfield">
-                                                                <input type="color" name='BGColor' defaultValue={'#ffffff'} value={state.BGColor} id="colorPicker" onChange={handleChange}></input>
-
-                                                            </div>
-                                                        </>
-                                                    }
-                                                </div>
-                                            </div>
-                                        </Typography>
-                                    </AccordionDetails>
-                                </Accordion>
-                                : ''
-                            }
-                            {(state.Chart === 'Line Chart' && navbar.bar === 'Charts') && (enable.Imported || state.Uploaded_file !== undefined) ?
-                                <Accordion className="acd">
-                                    <AccordionSummary
-                                        className="acdsummary"
-                                        expandIcon={<ExpandMoreIcon />}
-                                        aria-controls="panel1a-content"
-                                        id="panel1a-header"
-                                    >
-                                        <Typography className="acdTitle">Line&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</Typography>
-                                        {/* <Typography className="acdTitle acdswatch">
-                                            <div>
-                                                <label className="switch">
-                                                    <input type="checkbox" name="Lineswatch" checked={state.Lineswatch_} onChange={handleShowProps}></input>
-                                                    <span className="slider round"></span>
-                                                </label>
-                                            </div>
-                                        </Typography> */}
-                                    </AccordionSummary>
-
-                                    <AccordionDetails>
-                                        <Typography>
-                                            <div className="col-lg-12">
-                                                <div className="row col-lg-12" style={{ margin: "10px 0px 15px 10px" }}>
-                                                    {navbar.bar === 'Charts' &&
-
-                                                        <>
-                                                            <div className="row col-lg-12">
+                                                            <div className="row col-lg-12" style={{ marginTop: '10px' }}>
                                                                 <div className="row col-xm-3 col-sm-3 col-md-3 col-lg-3" >
-                                                                    Line
+                                                                    Scatter
                                                                 </div>
                                                                 <div className="row col-xm-4 col-sm-4 col-md-4 col-lg-4" >
                                                                     <label className="switch">
-                                                                        <input type="checkbox" name="Lineswatch" checked={state.Lineswatch_} onChange={handleShowProps}></input>
+                                                                        <input type="checkbox" name="Scatterswatch" checked={state.Scatterswatch_} onChange={handleShowProps}></input>
                                                                         <span className="slider round"></span>
                                                                     </label>
                                                                 </div>
 
                                                             </div>
-                                                            {state.Lineswatch_ &&
+                                                            {state.Scatterswatch_ &&
                                                                 <>
                                                                     <p className="row col-lg-12" style={{ marginTop: '10px' }}>Padding</p>
 
@@ -3158,7 +3161,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                     <p className="row col-lg-12" style={{ marginTop: '10px' }}>Color</p>
 
                                                                     <div className="row col-xs-12 col-sm-2 col-md-4 col-lg-3 inputfield">
-                                                                        <input type="color" name='Color' defaultValue={'#6282b3'} value={state.Color} id="colorPicker" onChange={handleChange}></input>
+                                                                        <input type="color" name='Color' defaultValue={'#000000'} value={state.Color} id="colorPicker" onChange={handleChange}></input>
 
                                                                     </div>
                                                                     <p className="row col-lg-12">Background</p>
@@ -3168,116 +3171,191 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                     </div>
                                                                 </>
                                                             }
-                                                        </>
-                                                    }
-                                                </div>
-                                            </div>
-                                        </Typography>
-                                    </AccordionDetails>
-                                </Accordion>
-                                : ''
-                            }
-                            {(state.Chart === 'Series Chart' && navbar.bar === 'Charts') && (enable.Imported || state.Uploaded_file !== undefined) ?
-                                <Accordion className="acd">
-                                    <AccordionSummary
-                                        className="acdsummary"
-                                        expandIcon={<ExpandMoreIcon />}
-                                        aria-controls="panel1a-content"
-                                        id="panel1a-header"
-                                    >
-                                        <Typography className="acdTitle">Series&nbsp;&nbsp;&nbsp;</Typography>
-                                        {/* <Typography className="acdswatch">
-                                            <div>
-                                                <label className="switch">
-                                                    <input type="checkbox" name="Seriesswatch" checked={state.Seriesswatch_} onChange={handleShowProps}></input>
-                                                    <span className="slider round"></span>
-                                                </label>
-                                            </div>
-                                        </Typography> */}
-                                    </AccordionSummary>
-
-                                    <AccordionDetails>
-                                        <Typography>
-                                            <div className=" col-lg-12" >
-                                                {navbar.bar === 'Charts' &&
-                                                    <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ margin: "10px 0px 15px 10px" }}>
-
-                                                        <div className="row col-lg-12">
-                                                            <div className="row col-xm-3 col-sm-3 col-md-3 col-lg-3" >
-                                                                Series
-                                                            </div>
-                                                            <div className="row col-xm-4 col-sm-4 col-md-4 col-lg-4" >
-                                                                <label className="switch">
-                                                                    <input type="checkbox" name="Seriesswatch" checked={state.Seriesswatch_} onChange={handleShowProps}></input>
-                                                                    <span className="slider round"></span>
-                                                                </label>
-                                                            </div>
-
                                                         </div>
-                                                        {state.Seriesswatch_ &&
-                                                            <>
-                                                                <p className="row col-lg-12" style={{ marginTop: '10px' }}>Padding</p>
+                                                    </div>
+                                                </Typography>
+                                            </AccordionDetails>
+                                        </Accordion>
+                                        : ''
+                                    }
+                                    {(state.Chart === 'Line Chart' && navbar.bar === 'Charts') && (enable.Imported || state.Uploaded_file !== undefined) ?
+                                        <Accordion className="acd">
+                                            <AccordionSummary
+                                                className="acdsummary"
+                                                expandIcon={<ExpandMoreIcon />}
+                                                aria-controls="panel1a-content"
+                                                id="panel1a-header"
+                                            >
+                                                <Typography className="acdTitle">Line&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</Typography>
+                                            </AccordionSummary>
+                                            <AccordionDetails>
+                                                <Typography>
+                                                    <div className="col-lg-12">
+                                                        <div className=" col-lg-12" style={{ margin: "0px 0px 15px 0px" }}>
+                                                            {navbar.bar === 'Charts' &&
 
-                                                                <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" >
-                                                                    <div className="row col-sm-12 col-md-12 col-lg-3" >
-                                                                        <TextField
-                                                                            id="PadTop" className='input-field' name='PadTop' label="Top" variant="outlined"
-                                                                            value={state.PadTop}
-                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                <>
+                                                                    <div className="row col-lg-12">
+                                                                        <div className="row col-xm-3 col-sm-3 col-md-3 col-lg-3" >
+                                                                            Line
+                                                                        </div>
+                                                                        <div className="row col-xm-4 col-sm-4 col-md-4 col-lg-4" >
+                                                                            <label className="switch">
+                                                                                <input type="checkbox" name="Lineswatch" checked={state.Lineswatch_} onChange={handleShowProps}></input>
+                                                                                <span className="slider round"></span>
+                                                                            </label>
+                                                                        </div>
+
                                                                     </div>
-                                                                    <div className="row col-sm-12 col-md-12 col-lg-3"   >
-                                                                        <TextField
-                                                                            id="PadBottom" className='input-field' name='PadBottom' label="Bottom" variant="outlined"
-                                                                            value={state.PadBottom}
-                                                                            onChange={(e) => { handleChange(e) }}
-                                                                            onBlur={(e) => { handleValidation(e) }}
-                                                                        />
+                                                                    {state.Lineswatch_ &&
+                                                                        <>
+                                                                            <p className="row col-lg-12" style={{ marginTop: '10px' }}>Padding</p>
+
+                                                                            <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" >
+                                                                                <div className="row col-sm-12 col-md-12 col-lg-3" >
+                                                                                    <TextField
+                                                                                        id="PadTop" className='input-field' name='PadTop' label="Top" variant="outlined"
+                                                                                        value={state.PadTop}
+                                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                                </div>
+                                                                                <div className="row col-sm-12 col-md-12 col-lg-3"   >
+                                                                                    <TextField
+                                                                                        id="PadBottom" className='input-field' name='PadBottom' label="Bottom" variant="outlined"
+                                                                                        value={state.PadBottom}
+                                                                                        onChange={(e) => { handleChange(e) }}
+                                                                                        onBlur={(e) => { handleValidation(e) }}
+                                                                                    />
+                                                                                </div>
+                                                                                <div className="row col-sm-12 col-md-12 col-lg-3" >
+                                                                                    <TextField
+                                                                                        id="PadRight" className='input-field' name='PadRight' label="Right" variant="outlined"
+                                                                                        value={state.PadRight}
+                                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                                </div>
+                                                                                <div className="row col-sm-12 col-md-12 col-lg-3" >
+                                                                                    <TextField
+                                                                                        id="PadLeft" className='input-field' name='PadLeft' label="Left" variant="outlined"
+                                                                                        value={state.PadLeft}
+                                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                                </div>
+
+                                                                            </div>
+                                                                            <p className="row col-lg-12" style={{ marginTop: '10px' }}>Color</p>
+
+                                                                            <div className="row col-xs-12 col-sm-2 col-md-4 col-lg-3 inputfield">
+                                                                                <input type="color" name='Color' defaultValue={'#6282b3'} value={state.Color} id="colorPicker" onChange={handleChange}></input>
+
+                                                                            </div>
+                                                                            <p className="row col-lg-12">Background</p>
+                                                                            <div className="row col-xs-12 col-sm-2 col-md-4 col-lg-3 inputfield">
+                                                                                <input type="color" name='BGColor' defaultValue={'#ffffff'} value={state.BGColor} id="colorPicker" onChange={handleChange}></input>
+
+                                                                            </div>
+                                                                        </>
+                                                                    }
+                                                                </>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </Typography>
+                                            </AccordionDetails>
+                                        </Accordion>
+                                        : ''
+                                    }
+                                    {(state.Chart === 'Series Chart' && navbar.bar === 'Charts') && (enable.Imported || state.Uploaded_file !== undefined) ?
+                                        <Accordion className="acd">
+                                            <AccordionSummary
+                                                className="acdsummary"
+                                                expandIcon={<ExpandMoreIcon />}
+                                                aria-controls="panel1a-content"
+                                                id="panel1a-header"
+                                            >
+                                                <Typography className="acdTitle">Series&nbsp;&nbsp;&nbsp;</Typography>
+
+                                            </AccordionSummary>
+
+                                            <AccordionDetails>
+                                                <Typography>
+                                                    <div className=" col-lg-12" >
+                                                        {navbar.bar === 'Charts' &&
+                                                            <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ margin: "0px 0px 15px 0px" }}>
+
+                                                                <div className="row col-lg-12">
+                                                                    <div className="row col-xm-3 col-sm-3 col-md-3 col-lg-3" >
+                                                                        Series
                                                                     </div>
-                                                                    <div className="row col-sm-12 col-md-12 col-lg-3" >
-                                                                        <TextField
-                                                                            id="PadRight" className='input-field' name='PadRight' label="Right" variant="outlined"
-                                                                            value={state.PadRight}
-                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }} />
-                                                                    </div>
-                                                                    <div className="row col-sm-12 col-md-12 col-lg-3" >
-                                                                        <TextField
-                                                                            id="PadLeft" className='input-field' name='PadLeft' label="Left" variant="outlined"
-                                                                            value={state.PadLeft}
-                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                    <div className="row col-xm-4 col-sm-4 col-md-4 col-lg-4" >
+                                                                        <label className="switch">
+                                                                            <input type="checkbox" name="Seriesswatch" checked={state.Seriesswatch_} onChange={handleShowProps}></input>
+                                                                            <span className="slider round"></span>
+                                                                        </label>
                                                                     </div>
 
                                                                 </div>
-                                                                <p className="row col-lg-12" style={{ marginTop: '10px' }}>Color</p>
+                                                                {state.Seriesswatch_ &&
+                                                                    <>
+                                                                        <p className="row col-lg-12" style={{ marginTop: '10px' }}>Padding</p>
 
-                                                                <div className="row col-xs-12 col-sm-2 col-md-4 col-lg-3 inputfield">
-                                                                    <input type="color" name='Color' defaultValue={'#6282b3'} value={state.Color} id="colorPicker" onChange={handleChange}></input>
+                                                                        <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" >
+                                                                            <div className="row col-sm-12 col-md-12 col-lg-3" >
+                                                                                <TextField
+                                                                                    id="PadTop" className='input-field' name='PadTop' label="Top" variant="outlined"
+                                                                                    value={state.PadTop}
+                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                            </div>
+                                                                            <div className="row col-sm-12 col-md-12 col-lg-3"   >
+                                                                                <TextField
+                                                                                    id="PadBottom" className='input-field' name='PadBottom' label="Bottom" variant="outlined"
+                                                                                    value={state.PadBottom}
+                                                                                    onChange={(e) => { handleChange(e) }}
+                                                                                    onBlur={(e) => { handleValidation(e) }}
+                                                                                />
+                                                                            </div>
+                                                                            <div className="row col-sm-12 col-md-12 col-lg-3" >
+                                                                                <TextField
+                                                                                    id="PadRight" className='input-field' name='PadRight' label="Right" variant="outlined"
+                                                                                    value={state.PadRight}
+                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                            </div>
+                                                                            <div className="row col-sm-12 col-md-12 col-lg-3" >
+                                                                                <TextField
+                                                                                    id="PadLeft" className='input-field' name='PadLeft' label="Left" variant="outlined"
+                                                                                    value={state.PadLeft}
+                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                            </div>
 
-                                                                </div>
-                                                                <p className="row col-lg-12">Background</p>
-                                                                <div className="row col-xs-12 col-sm-2 col-md-4 col-lg-3 inputfield">
-                                                                    <input type="color" name='BGColor' defaultValue={'#ffffff'} value={state.BGColor} id="colorPicker" onChange={handleChange}></input>
+                                                                        </div>
+                                                                        <p className="row col-lg-12" style={{ marginTop: '10px' }}>Color</p>
 
-                                                                </div>
-                                                            </>
+                                                                        <div className="row col-xs-12 col-sm-2 col-md-4 col-lg-3 inputfield">
+                                                                            <input type="color" name='Color' defaultValue={'#6282b3'} value={state.Color} id="colorPicker" onChange={handleChange}></input>
+
+                                                                        </div>
+                                                                        <p className="row col-lg-12">Background</p>
+                                                                        <div className="row col-xs-12 col-sm-2 col-md-4 col-lg-3 inputfield">
+                                                                            <input type="color" name='BGColor' defaultValue={'#ffffff'} value={state.BGColor} id="colorPicker" onChange={handleChange}></input>
+
+                                                                        </div>
+                                                                    </>
+                                                                }
+                                                            </div>
                                                         }
                                                     </div>
-                                                }
-                                            </div>
-                                        </Typography>
-                                    </AccordionDetails>
-                                </Accordion>
-                                : ''
-                            }
-                            {(state.Chart === 'Composite Chart' && navbar.bar === 'Charts') && (enable.Imported || state.Uploaded_file !== undefined) ?
-                                <Accordion className="acd">
-                                    <AccordionSummary
-                                        className="acdsummary"
-                                        expandIcon={<ExpandMoreIcon />}
-                                        aria-controls="panel1a-content"
-                                        id="panel1a-header"
-                                    >
-                                        <Typography className="acdTitle">Composite&nbsp;&nbsp;</Typography>
-                                        {/* <Typography className="acdTitle acdswatch" style={{ paddingLeft: '48%' }}>
+                                                </Typography>
+                                            </AccordionDetails>
+                                        </Accordion>
+                                        : ''
+                                    }
+                                    {(state.Chart === 'Composite Chart' && navbar.bar === 'Charts') && (enable.Imported || state.Uploaded_file !== undefined) ?
+                                        <Accordion className="acd">
+                                            <AccordionSummary
+                                                className="acdsummary"
+                                                expandIcon={<ExpandMoreIcon />}
+                                                aria-controls="panel1a-content"
+                                                id="panel1a-header"
+                                            >
+                                                <Typography className="acdTitle">Composite&nbsp;&nbsp;</Typography>
+                                                {/* <Typography className="acdTitle acdswatch" style={{ paddingLeft: '48%' }}>
                                             <div>
                                                 <label className="switch">
                                                     <input type="checkbox" name="Compositeswatch" checked={state.Compositeswatch_} onChange={handleShowProps}></input>
@@ -3285,184 +3363,185 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                 </label>
                                             </div>
                                         </Typography> */}
-                                    </AccordionSummary>
+                                            </AccordionSummary>
 
-                                    <AccordionDetails>
-                                        <Typography>
-                                            <div className=" col-lg-12" style={{ marginTop: '10px' }}>
-                                                {navbar.bar === 'Charts' &&
-                                                    <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ margin: "10px 0px 15px 10px" }}>
-                                                        <div className="row col-lg-12">
-                                                            <div className="row col-xm-3 col-sm-3 col-md-3 col-lg-3" >
-                                                                Composite
-                                                            </div>
-                                                            <div className="row col-xm-4 col-sm-4 col-md-4 col-lg-4" >
-                                                                <label className="switch">
-                                                                    <input type="checkbox" name="Compositeswatch" checked={state.Compositeswatch_} onChange={handleShowProps}></input>
-                                                                    <span className="slider round"></span>
-                                                                </label>
-                                                            </div>
-
-                                                        </div>
-                                                        {state.Compositeswatch_ &&
-                                                            <>
-                                                                <p className="row col-lg-12" style={{ marginTop: '10px' }}>Padding</p>
-
-                                                                <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" >
-                                                                    <div className="row col-sm-12 col-md-12 col-lg-3" >
-                                                                        <TextField
-                                                                            id="PadTop" className='input-field' name='PadTop' label="Top" variant="outlined"
-                                                                            value={state.PadTop}
-                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                            <AccordionDetails>
+                                                <Typography>
+                                                    <div className=" col-lg-12" style={{ marginTop: '10px' }}>
+                                                        {navbar.bar === 'Charts' &&
+                                                            <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ margin: "0px 0px 15px 0px" }}>
+                                                                <div className="row col-lg-12">
+                                                                    <div className="row col-xm-3 col-sm-3 col-md-3 col-lg-3" >
+                                                                        Composite
                                                                     </div>
-                                                                    <div className="row col-sm-12 col-md-12 col-lg-3"   >
-                                                                        <TextField
-                                                                            id="PadBottom" className='input-field' name='PadBottom' label="Bottom" variant="outlined"
-                                                                            value={state.PadBottom}
-                                                                            onChange={(e) => { handleChange(e) }}
-                                                                            onBlur={(e) => { handleValidation(e) }}
-                                                                        />
-                                                                    </div>
-                                                                    <div className="row col-sm-12 col-md-12 col-lg-3" >
-                                                                        <TextField
-                                                                            id="PadRight" className='input-field' name='PadRight' label="Right" variant="outlined"
-                                                                            value={state.PadRight}
-                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }} />
-                                                                    </div>
-                                                                    <div className="row col-sm-12 col-md-12 col-lg-3" >
-                                                                        <TextField
-                                                                            id="PadLeft" className='input-field' name='PadLeft' label="Left" variant="outlined"
-                                                                            value={state.PadLeft}
-                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                    <div className="row col-xm-4 col-sm-4 col-md-4 col-lg-4" >
+                                                                        <label className="switch">
+                                                                            <input type="checkbox" name="Compositeswatch" checked={state.Compositeswatch_} onChange={handleShowProps}></input>
+                                                                            <span className="slider round"></span>
+                                                                        </label>
                                                                     </div>
 
                                                                 </div>
+                                                                {state.Compositeswatch_ &&
+                                                                    <>
+                                                                        <p className="row col-lg-12" style={{ marginTop: '10px' }}>Padding</p>
 
-                                                                <p className="row col-lg-12" style={{ marginTop: '10px' }}>Background</p>
-                                                                <div className="row col-xs-12 col-sm-2 col-md-4 col-lg-3 inputfield">
-                                                                    <input type="color" name='BGColor' defaultValue={'#ffffff'} value={state.BGColor} id="colorPicker" onChange={handleChange}></input>
+                                                                        <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" >
+                                                                            <div className="row col-sm-12 col-md-12 col-lg-3" >
+                                                                                <TextField
+                                                                                    id="PadTop" className='input-field' name='PadTop' label="Top" variant="outlined"
+                                                                                    value={state.PadTop}
+                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                            </div>
+                                                                            <div className="row col-sm-12 col-md-12 col-lg-3"   >
+                                                                                <TextField
+                                                                                    id="PadBottom" className='input-field' name='PadBottom' label="Bottom" variant="outlined"
+                                                                                    value={state.PadBottom}
+                                                                                    onChange={(e) => { handleChange(e) }}
+                                                                                    onBlur={(e) => { handleValidation(e) }}
+                                                                                />
+                                                                            </div>
+                                                                            <div className="row col-sm-12 col-md-12 col-lg-3" >
+                                                                                <TextField
+                                                                                    id="PadRight" className='input-field' name='PadRight' label="Right" variant="outlined"
+                                                                                    value={state.PadRight}
+                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                            </div>
+                                                                            <div className="row col-sm-12 col-md-12 col-lg-3" >
+                                                                                <TextField
+                                                                                    id="PadLeft" className='input-field' name='PadLeft' label="Left" variant="outlined"
+                                                                                    value={state.PadLeft}
+                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                            </div>
 
-                                                                </div>
-                                                            </>
+                                                                        </div>
+
+                                                                        <p className="row col-lg-12" style={{ marginTop: '10px' }}>Background</p>
+                                                                        <div className="row col-xs-12 col-sm-2 col-md-4 col-lg-3 inputfield">
+                                                                            <input type="color" name='BGColor' defaultValue={'#ffffff'} value={state.BGColor} id="colorPicker" onChange={handleChange}></input>
+
+                                                                        </div>
+                                                                    </>
+                                                                }
+                                                            </div>
                                                         }
                                                     </div>
-                                                }
-                                            </div>
-                                        </Typography>
-                                    </AccordionDetails>
-                                </Accordion>
-                                : ''
-                            }
-                            {(state.Chart === 'Bar Line Chart' && navbar.bar === 'Charts') && (enable.Imported || state.Uploaded_file !== undefined) ?
-                                <Accordion className="acd">
-                                    <AccordionSummary
-                                        className="acdsummary"
-                                        expandIcon={<ExpandMoreIcon />}
-                                        aria-controls="panel1a-content"
-                                        id="panel1a-header"
-                                    >
-                                        <Typography className="acdTitle">Bar Line</Typography>
-                                    </AccordionSummary>
+                                                </Typography>
+                                            </AccordionDetails>
+                                        </Accordion>
+                                        : ''
+                                    }
+                                    {(state.Chart === 'Bar Line Chart' && navbar.bar === 'Charts') && (enable.Imported || state.Uploaded_file !== undefined) ?
+                                        <Accordion className="acd">
+                                            <AccordionSummary
+                                                className="acdsummary"
+                                                expandIcon={<ExpandMoreIcon />}
+                                                aria-controls="panel1a-content"
+                                                id="panel1a-header"
+                                            >
+                                                <Typography className="acdTitle">Bar Line</Typography>
+                                            </AccordionSummary>
 
-                                    <AccordionDetails>
-                                        <Typography>
-                                            <div className=" col-lg-12" >
-                                                {navbar.bar === 'Charts' &&
-                                                    <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ margin: "10px 0px 15px 10px" }}>
+                                            <AccordionDetails>
+                                                <Typography>
+                                                    <div className=" col-lg-12" >
+                                                        {navbar.bar === 'Charts' &&
+                                                            <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ margin: "0px 0px 15px 0px" }}>
 
-                                                        <div className="row col-lg-12">
-                                                            <div className="row col-xm-3 col-sm-3 col-md-3 col-lg-3" >
-                                                                Bar Line
+                                                                <div className="row col-lg-12">
+                                                                    <div className="row col-xm-3 col-sm-3 col-md-3 col-lg-3" >
+                                                                        Bar Line
+                                                                    </div>
+                                                                    <div className="row col-xm-4 col-sm-4 col-md-4 col-lg-4" >
+                                                                        <label className="switch">
+                                                                            <input type="checkbox" name="BarLineswatch" checked={state.BarLineswatch_} onChange={handleShowProps}></input>
+                                                                            <span className="slider round"></span>
+                                                                        </label>
+                                                                    </div>
+
+                                                                </div>
+                                                                {state.BarLineswatch &&
+                                                                    <>
+                                                                        <p className="row col-lg-12" style={{ marginTop: '10px' }}>Padding</p>
+
+                                                                        <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" >
+                                                                            <div className="row col-sm-12 col-md-12 col-lg-3" >
+                                                                                <TextField
+                                                                                    id="PadTop" className='input-field' name='PadTop' label="Top" variant="outlined"
+                                                                                    value={state.PadTop}
+                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                            </div>
+                                                                            <div className="row col-sm-12 col-md-12 col-lg-3"   >
+                                                                                <TextField
+                                                                                    id="PadBottom" className='input-field' name='PadBottom' label="Bottom" variant="outlined"
+                                                                                    value={state.PadBottom}
+                                                                                    onChange={(e) => { handleChange(e) }}
+                                                                                    onBlur={(e) => { handleValidation(e) }}
+                                                                                />
+                                                                            </div>
+                                                                            <div className="row col-sm-12 col-md-12 col-lg-3" >
+                                                                                <TextField
+                                                                                    id="PadRight" className='input-field' name='PadRight' label="Right" variant="outlined"
+                                                                                    value={state.PadRight}
+                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                            </div>
+                                                                            <div className="row col-sm-12 col-md-12 col-lg-3" >
+                                                                                <TextField
+                                                                                    id="PadLeft" className='input-field' name='PadLeft' label="Left" variant="outlined"
+                                                                                    value={state.PadLeft}
+                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                            </div>
+
+                                                                        </div>
+                                                                        <p className="row col-lg-12" style={{ marginTop: '10px' }}>Color</p>
+
+                                                                        <div className="row col-xs-12 col-sm-2 col-md-4 col-lg-3 inputfield">
+                                                                            <input type="color" name='Color' defaultValue={'#6282b3'} value={state.Color} id="colorPicker" onChange={handleChange}></input>
+
+                                                                        </div>
+                                                                        <p className="row col-lg-12">Line Color</p>
+
+                                                                        <div className="row col-xs-12 col-sm-2 col-md-4 col-lg-3 inputfield">
+                                                                            <input type="color" name='LineColor' defaultValue={'#FF0000'} value={state.LineColor} id="colorPicker" onChange={handleChange}></input>
+
+                                                                        </div>
+                                                                        <p className="row col-lg-12">Background</p>
+                                                                        <div className="row col-xs-12 col-sm-2 col-md-4 col-lg-3 inputfield">
+                                                                            <input type="color" name='BGColor' defaultValue={'#ffffff'} value={state.BGColor} id="colorPicker" onChange={handleChange}></input>
+
+                                                                        </div>
+                                                                    </>
+                                                                }
                                                             </div>
-                                                            <div className="row col-xm-4 col-sm-4 col-md-4 col-lg-4" >
-                                                                <label className="switch">
-                                                                    <input type="checkbox" name="BarLineswatch" checked={state.BarLineswatch_} onChange={handleShowProps}></input>
-                                                                    <span className="slider round"></span>
-                                                                </label>
-                                                            </div>
-
-                                                        </div>
-                                                        {state.BarLineswatch &&
-                                                            <>
-                                                                <p className="row col-lg-12" style={{ marginTop: '10px' }}>Padding</p>
-
-                                                                <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" >
-                                                                    <div className="row col-sm-12 col-md-12 col-lg-3" >
-                                                                        <TextField
-                                                                            id="PadTop" className='input-field' name='PadTop' label="Top" variant="outlined"
-                                                                            value={state.PadTop}
-                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }} />
-                                                                    </div>
-                                                                    <div className="row col-sm-12 col-md-12 col-lg-3"   >
-                                                                        <TextField
-                                                                            id="PadBottom" className='input-field' name='PadBottom' label="Bottom" variant="outlined"
-                                                                            value={state.PadBottom}
-                                                                            onChange={(e) => { handleChange(e) }}
-                                                                            onBlur={(e) => { handleValidation(e) }}
-                                                                        />
-                                                                    </div>
-                                                                    <div className="row col-sm-12 col-md-12 col-lg-3" >
-                                                                        <TextField
-                                                                            id="PadRight" className='input-field' name='PadRight' label="Right" variant="outlined"
-                                                                            value={state.PadRight}
-                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }} />
-                                                                    </div>
-                                                                    <div className="row col-sm-12 col-md-12 col-lg-3" >
-                                                                        <TextField
-                                                                            id="PadLeft" className='input-field' name='PadLeft' label="Left" variant="outlined"
-                                                                            value={state.PadLeft}
-                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }} />
-                                                                    </div>
-
-                                                                </div>
-                                                                <p className="row col-lg-12" style={{ marginTop: '10px' }}>Color</p>
-
-                                                                <div className="row col-xs-12 col-sm-2 col-md-4 col-lg-3 inputfield">
-                                                                    <input type="color" name='Color' defaultValue={'#6282b3'} value={state.Color} id="colorPicker" onChange={handleChange}></input>
-
-                                                                </div>
-                                                                <p className="row col-lg-12">Line Color</p>
-
-                                                                <div className="row col-xs-12 col-sm-2 col-md-4 col-lg-3 inputfield">
-                                                                    <input type="color" name='LineColor' defaultValue={'#FF0000'} value={state.LineColor} id="colorPicker" onChange={handleChange}></input>
-
-                                                                </div>
-                                                                <p className="row col-lg-12">Background</p>
-                                                                <div className="row col-xs-12 col-sm-2 col-md-4 col-lg-3 inputfield">
-                                                                    <input type="color" name='BGColor' defaultValue={'#ffffff'} value={state.BGColor} id="colorPicker" onChange={handleChange}></input>
-
-                                                                </div>
-                                                            </>
                                                         }
                                                     </div>
-                                                }
+                                                </Typography>
+                                            </AccordionDetails>
+                                        </Accordion>
+                                        : ''
+                                    }
+                                    {flag && navbar.bar === 'Charts' ?
+                                        <div className="col-sm-12 col-md-12 col-lg-12" style={{ marginTop: '10px' }}>
+                                            <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                <TextField
+                                                    id="TempDescription" label="Description" value={state.TempDescription} name="TempDescription" fullWidth multiline maxRows={4}
+                                                    onChange={handleChange}
+                                                />
                                             </div>
-                                        </Typography>
-                                    </AccordionDetails>
-                                </Accordion>
-                                : ''
-                            }
-                            {flag && navbar.bar === 'Charts' ?
-                                <div className="col-sm-12 col-md-12 col-lg-12" style={{ marginTop: '10px' }}>
-                                    <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                        <TextField
-                                            id="TempDescription" label="Description" value={state.TempDescription} name="TempDescription" fullWidth multiline maxRows={4}
-                                            onChange={handleChange}
-                                        />
-                                    </div>
-                                </div>
-                                : ''
-                            }
-                            <div className="row col-sm-12 col-md-12 col-lg-12" style={{ marginTop: '10px' }}>
-                                {navbar.bar !== 'Templates' && navbar.bar !== 'Data' && navbar.bar !== 'Demo' && navbar.bar !== 'Dashboard' && navbar.bar !== 'Feedback' && state.Uploaded_file !== undefined ?
+                                        </div>
+                                        : ''
+                                    }
+                                    {navbar.bar === 'Charts' &&
+                                        <div className="row col-sm-12 col-md-12 col-lg-12" style={{ marginTop: '10px' }}>
+                                            {navbar.bar === 'Charts' && state.Uploaded_file !== undefined ?
 
-                                    <div className="row col-sm-4 col-md-12 col-lg-6" style={{ marginTop: '10px' }}>
-                                        {/* <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                                <div className="row col-sm-4 col-md-12 col-lg-6" style={{ marginTop: '10px' }}>
+                                                    {/* <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                             <Box sx={{ position: 'relative' }}> */}
-                                        <Button disabled={disable} variant="contained" id="ChartGen" className='input-field button' style={{ backgroundColor: '#6282b3' }} onClick={(e) => { setProgress({ 'loader': true }); GenerateChart() }}>
-                                            Generate Chart
-                                        </Button>
-                                        {/* {progress.loader && <CircularProgress
+                                                    <Button disabled={disable} variant="contained" id="ChartGen" className='input-field button' style={{ backgroundColor: '#6282b3' }} onClick={(e) => { setProgress({ 'loader': true }); GenerateChart() }}>
+                                                        Generate Chart
+                                                    </Button>
+                                                    {/* {progress.loader && <CircularProgress
                                                     size={24}
                                                     sx={{
                                                         // color: 'green',
@@ -3476,102 +3555,102 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                 }
                                             </Box>
                                         </Box> */}
-                                    </div>
-                                    : ''
-                                }
-                                {state.Chart !== 'Select' && state.Chart !== undefined && navbar.bar !== 'Templates' && navbar.bar !== 'Data' && navbar.bar !== 'Demo' && flag !== true && navbar.bar !== 'Dashboard' && navbar.bar !== 'Feedback' ?
-                                    <div className="row col-sm-4 col-md-12 col-lg-6" style={{ marginTop: '10px' }}>
-                                        <Button id="saveTemp" variant="contained" className='input-field button' style={{ backgroundColor: '#6282b3', lineHeight: '1rem' }} onClick={(e) => { handleOpen() }}>
-                                            Save Template
-                                        </Button>
-                                    </div>
-                                    : ''
-                                }
-                                {state.Chart !== 'Select' && state.Chart !== undefined && navbar.bar !== 'Templates' && navbar.bar !== 'Data' && navbar.bar !== 'Demo' && flag === true && navbar.bar !== 'Dashboard' && navbar.bar !== 'Feedback' ?
-                                    <>
-                                        <div className="row col-sm-4 col-md-12 col-lg-3" style={{ marginTop: '10px' }}>
-                                            <Button id="saveTemp" variant="contained" className='input-field button' style={{ backgroundColor: '#6282b3', lineHeight: '1rem' }} onClick={(e) => { saveTemplate('update') }}>
-                                                Update
-                                            </Button>
-                                        </div>
-                                        <div className="row col-sm-4 col-md-12 col-lg-3" style={{ marginTop: '10px' }}>
-                                            <Button id="saveTemp" variant="contained" className='input-field button' style={{ backgroundColor: '#6282b3', lineHeight: '1rem' }} onClick={(e) => { saveTemplate('cancel') }}>
-                                                Cancel
-                                            </Button>
-                                        </div>
-                                    </>
-                                    : ''
-                                }
-
-                            </div>
-
-                            {/* {(navbar.bar === 'Templates') && (enable.Imported || state.Uploaded_file !== undefined) ? */}
-                            {(navbar.bar === 'Templates') ?
-                                <>
-                                    {(() => {
-                                        let Item = [];
-                                        for (let a in template) {
-                                            if (template[a] !== undefined) {
-                                                Item.push(
-                                                    <div className="col-lg-12 container-template" >
-                                                        <div className="row col-lg-12 container-title">
-                                                            <div style={{ fontWeight: 'bold' }} className="row col-sm-9 col-md-9 col-lg-9" >
-                                                                {a}
-                                                            </div>
-
-                                                            <div className="col-sm-1 col-md-1 col-lg-1">
-                                                                <BootstrapTooltip title="Preview" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
-                                                                    <RemoveRedEyeIcon id={a} className='temp-icon' onClick={handleTemplate} />
-                                                                </BootstrapTooltip>
-                                                            </div>
-                                                            <div className="col-sm-1 col-md-1 col-lg-1">
-                                                                <BootstrapTooltip title="Edit" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
-                                                                    <EditIcon id={a} className='temp-icon' onClick={handleTemplate} />
-                                                                </BootstrapTooltip>
-                                                            </div>
-                                                            <div className="col-sm-1 col-md-1 col-lg-1">
-                                                                <BootstrapTooltip title="Delete" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
-                                                                    <DeleteIcon id={a} className='temp-icon' onClick={handleTemplate} />
-                                                                </BootstrapTooltip>
-                                                            </div>
-
-                                                        </div>
-                                                        <div className="col-lg-12 container-description">
-                                                            <div className="row col-sm-12 col-md-12 col-lg-12" >
-                                                                <div>{template[a].TempDescription}</div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                )
-                                            }
-                                        }
-                                        if (Item.length === 0) {
-                                            Item.push(
-                                                <div className="col-lg-12 container-template" >
-                                                    <div className="row col-lg-12 container-title">
-                                                        No Template Found !!!
-                                                    </div>
                                                 </div>
-                                            )
-                                        }
-                                        return Item
+                                                : ''
+                                            }
+                                            {state.Chart !== 'Select' && state.Chart !== undefined && navbar.bar === 'Charts' && flag === false ?
+                                                <div className="row col-sm-4 col-md-12 col-lg-6" style={{ marginTop: '10px' }}>
+                                                    <Button id="saveTemp" variant="contained" className='input-field button' style={{ backgroundColor: '#6282b3', lineHeight: '1rem' }} onClick={(e) => { setOpen({ 'Template': true }) }}>
+                                                        Save Template
+                                                    </Button>
+                                                </div>
+                                                : ''
+                                            }
+                                            {state.Chart !== 'Select' && state.Chart !== undefined && navbar.bar === 'Charts' && flag === true ?
+                                                <>
+                                                    <div className="row col-sm-4 col-md-12 col-lg-3" style={{ marginTop: '10px' }}>
+                                                        <Button id="saveTemp" variant="contained" className='input-field button' style={{ backgroundColor: '#6282b3', lineHeight: '1rem' }} onClick={(e) => { saveTemplate('update') }}>
+                                                            Update
+                                                        </Button>
+                                                    </div>
+                                                    <div className="row col-sm-4 col-md-12 col-lg-3" style={{ marginTop: '10px' }}>
+                                                        <Button id="saveTemp" variant="contained" className='input-field button' style={{ backgroundColor: '#6282b3', lineHeight: '1rem' }} onClick={(e) => { saveTemplate('cancel') }}>
+                                                            Cancel
+                                                        </Button>
+                                                    </div>
+                                                </>
+                                                : ''
+                                            }
 
-                                    })()}
-                                </>
+                                        </div>
+                                    }
+                                    {/* {(navbar.bar === 'Templates') && (enable.Imported || state.Uploaded_file !== undefined) ? */}
+                                    {(navbar.bar === 'Templates') ?
+                                        <>
+                                            {(() => {
+                                                let Item = [];
+                                                for (let a in template) {
+                                                    if (template[a] !== undefined) {
+                                                        Item.push(
+                                                            <div className="col-lg-12 container-template" >
+                                                                <div className="row col-lg-12 container-title">
+                                                                    <div style={{ fontWeight: 'bold' }} className="row col-sm-9 col-md-9 col-lg-9" >
+                                                                        {a}
+                                                                    </div>
+
+                                                                    <div className="col-sm-1 col-md-1 col-lg-1 TemplateIcon">
+                                                                        <BootstrapTooltip title="Preview" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
+                                                                            <RemoveRedEyeIcon id={a} className='temp-icon' onClick={handleTemplate} />
+                                                                        </BootstrapTooltip>
+                                                                    </div>
+                                                                    <div className="col-sm-1 col-md-1 col-lg-1 TemplateIcon">
+                                                                        <BootstrapTooltip title="Edit" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
+                                                                            <EditIcon id={a} className='temp-icon' onClick={handleTemplate} />
+                                                                        </BootstrapTooltip>
+                                                                    </div>
+                                                                    <div className="col-sm-1 col-md-1 col-lg-1 TemplateIcon">
+                                                                        <BootstrapTooltip title="Delete" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
+                                                                            <DeleteIcon id={a} className='temp-icon' onClick={handleTemplate} />
+                                                                        </BootstrapTooltip>
+                                                                    </div>
+
+                                                                </div>
+                                                                <div className="col-lg-12 container-description">
+                                                                    <div className="row col-sm-12 col-md-12 col-lg-12" >
+                                                                        <div>{template[a].TempDescription}</div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        )
+                                                    }
+                                                }
+                                                if (Item.length === 0) {
+                                                    Item.push(
+                                                        <div className="col-lg-12 container-template" >
+                                                            <div className="row col-lg-12 container-title">
+                                                                No Template Found !!!
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                }
+                                                return Item
+
+                                            })()}
+                                        </>
+                                        : ''
+                                    }
+                                </div>
                                 : ''
                             }
-
-
-
-                        </div>
+                        </>
                         : ''
                     }
                     {navbar.bar === 'Demo' &&
                         <div className="row col-sm-12 col-md-12 col-lg-12" style={{ margin: "15px 0px 15px 10px" }}>
                             <div className="col-sm-12 col-md-4 col-lg-4">
                             </div>
-                            <div class="row1-container">
-                                <div class="box box-down cyan">
+                            <div className="row1-container">
+                                <div className="box box-down cyan">
                                     <h2>Data(i)</h2>
                                     <p>Join us on a project tour!</p>
                                     <Button id="playVideo" variant="contained" className='input-field button' style={{ backgroundColor: '#6282b3', lineHeight: '1rem', float: 'right', marginTop: '10px' }} onClick={(e) => { setPlay({ 'isPlay': true }); setData({ 'data': undefined }); setIsshow({ ...show, 'isShow': undefined }); setIssues(undefined) }}>
@@ -3596,140 +3675,19 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                     </div>
                                     {others.StaticLayouts &&
                                         // <DashboardLayouts 
-                                        <>
-                                            <div className="row col-sx-12 col-sm-12 col-md-12 col-lg-12 prt-dashboardLayouts">
-                                                {/* 1 X 1 */}
-                                                <div className={`col-sx-5 col-sm-5 col-md-5 col-lg-5  Dashboardlayout-1 ${others.selectedLayout === "1X1" ? 'active' : ''}`} id="1X1"
-                                                    onClick={dashboardLayouts}>
-                                                    <div className="row col-lg-12" style={{ margin: '0px 0px 10px 0px' }}>
-                                                        <div className="col-sx-10 col-sm-10 col-md-10 col-lg-10 layoutContainer">
-                                                        </div>
-                                                        <div className="col-sx-10 col-sm-10 col-md-10 col-lg-10 layoutContainer">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                {/* 1 X 2 */}
-                                                <div className={`col-sx-5 col-sm-5 col-md-5 col-lg-5  Dashboardlayout-1 ${others.selectedLayout === "1X2" ? 'active' : ''}`} id="1X2"
-                                                    onClick={dashboardLayouts}>
-                                                    <div className="row col-lg-12" style={{ margin: '0px 0px 10px 0px' }}>
-                                                        <div className="col-sx-10 col-sm-10 col-md-10 col-lg-10 layoutContainer">
-                                                        </div>
-                                                        <div className="col-sx-5 col-sm-5 col-md-5 col-lg-5 layoutContainer" >
-                                                        </div>
-                                                        <div className="col-sx-5 col-sm-5 col-md-5 col-lg-5 layoutContainer">
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-                                                {/* 1 X 3 */}
-                                                <div className={`col-sx-5 col-sm-5 col-md-5 col-lg-5  Dashboardlayout-1 ${others.selectedLayout === "1X3" ? 'active' : ''}`} id="1X3"
-                                                    onClick={dashboardLayouts}>
-                                                    <div className="row col-lg-12" style={{ margin: '0px 0px 10px 0px' }}>
-                                                        <div className="col-sx-11 col-sm-11 col-md-11 col-lg-11 layoutContainer">
-                                                        </div>
-                                                        <div className="col-sx-4 col-sm-4 col-md-4 col-lg-4 layoutContainer" >
-                                                        </div>
-                                                        <div className="col-sx-4 col-sm-4 col-md-4 col-lg-4 layoutContainer">
-                                                        </div>
-                                                        <div className="col-sx-3 col-sm-3 col-md-3 col-lg-3 layoutContainer" >
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                {/* 2 X 1 */}
-                                                <div className={`col-sx-5 col-sm-5 col-md-5 col-lg-5  Dashboardlayout-1 ${others.selectedLayout === "2X1" ? 'active' : ''}`} id="2X1"
-                                                    onClick={dashboardLayouts}>
-                                                    <div className="row col-lg-12" style={{ margin: '0px 0px 10px 0px' }}>
-
-                                                        <div className="col-sx-5 col-sm-5 col-md-5 col-lg-5 layoutContainer" >
-                                                        </div>
-                                                        <div className="col-sx-5 col-sm-5 col-md-5 col-lg-5 layoutContainer">
-                                                        </div>
-                                                        <div className="col-sx-10 col-sm-10 col-md-10 col-lg-10 layoutContainer">
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-                                                {/* 2 X 2 */}
-                                                <div className={`col-sx-5 col-sm-5 col-md-5 col-lg-5  Dashboardlayout-1 ${others.selectedLayout === "2X2" ? 'active' : ''}`} id="2X2"
-                                                    onClick={dashboardLayouts}>
-                                                    <div className="row col-lg-12" style={{ margin: '0px 0px 10px 0px' }}>
-                                                        <div className="col-sx-5 col-sm-5 col-md-5 col-lg-5 layoutContainer" >
-                                                        </div>
-                                                        <div className="col-sx-5 col-sm-5 col-md-5 col-lg-5 layoutContainer">
-                                                        </div>
-                                                        <div className="col-sx-5 col-sm-5 col-md-5 col-lg-5 layoutContainer" >
-                                                        </div>
-                                                        <div className="col-sx-5 col-sm-5 col-md-5 col-lg-5 layoutContainer">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                {/* 2 X 3 */}
-                                                <div className={`col-sx-5 col-sm-5 col-md-5 col-lg-5  Dashboardlayout-1 ${others.selectedLayout === "2X3" ? 'active' : ''}`} id="2X3"
-                                                    onClick={dashboardLayouts}>
-                                                    <div className="row col-lg-12" style={{ margin: '0px 0px 10px 0px' }}>
-                                                        <div className="col-sx-5 col-sm-5 col-md-5 col-lg-5 layoutContainer">
-                                                        </div>
-                                                        <div className="col-sx-5 col-sm-5 col-md-5 col-lg-6 layoutContainer">
-                                                        </div>
-                                                        <div className="col-sx-4 col-sm-4 col-md-4 col-lg-4 layoutContainer" >
-                                                        </div>
-                                                        <div className="col-sx-4 col-sm-4 col-md-4 col-lg-4 layoutContainer">
-                                                        </div>
-                                                        <div className="col-sx-3 col-sm-3 col-md-3 col-lg-3 layoutContainer" >
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-                                                {/* 3 X 1 */}
-                                                <div className={`col-sx-5 col-sm-5 col-md-5 col-lg-5  Dashboardlayout-1 ${others.selectedLayout === "3X1" ? 'active' : ''}`} id="3X1"
-                                                    onClick={dashboardLayouts}>
-                                                    <div className="row col-lg-12" style={{ margin: '0px 0px 10px 0px' }}>
-                                                        <div className="col-sx-5 col-sm-5 col-md-5 col-lg-5 layoutContainer" >
-                                                        </div>
-                                                        <div className="col-sx-5 col-sm-5 col-md-5 col-lg-5 layoutContainer">
-                                                        </div>
-                                                        <div className="col-sx-10 col-sm-10 col-md-10 col-lg-10 layoutContainer">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                {/* 3 X 2 */}
-                                                <div className={`col-sx-5 col-sm-5 col-md-5 col-lg-5  Dashboardlayout-1 ${others.selectedLayout === "3X2" ? 'active' : ''}`} id="3X2"
-                                                    onClick={dashboardLayouts}>
-                                                    <div className="row col-lg-12" style={{ margin: '0px 0px 10px 0px' }}>
-                                                        <div className="col-sx-4 col-sm-4 col-md-4 col-lg-4 layoutContainer" >
-                                                        </div>
-                                                        <div className="col-sx-4 col-sm-4 col-md-4 col-lg-4 layoutContainer">
-                                                        </div>
-                                                        <div className="col-sx-3 col-sm-3 col-md-3 col-lg-3 layoutContainer" >
-                                                        </div>
-                                                        <div className="col-sx-5 col-sm-5 col-md-5 col-lg-5 layoutContainer">
-                                                        </div>
-                                                        <div className="col-sx-5 col-sm-5 col-md-5 col-lg-6 layoutContainer">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                {/* 3 X 3 */}
-                                                <div className={`col-sx-5 col-sm-5 col-md-5 col-lg-5  Dashboardlayout-1 ${others.selectedLayout === "3X3" ? 'active' : ''}`} id="3X3"
-                                                    onClick={dashboardLayouts}>
-                                                    <div className="row col-lg-12" style={{ margin: '0px 0px 10px 0px' }}>
-                                                        <div className="col-sx-4 col-sm-4 col-md-4 col-lg-4 layoutContainer" >
-                                                        </div>
-                                                        <div className="col-sx-4 col-sm-4 col-md-4 col-lg-4 layoutContainer">
-                                                        </div>
-                                                        <div className="col-sx-3 col-sm-3 col-md-3 col-lg-3 layoutContainer" >
-                                                        </div>
-                                                        <div className="col-sx-4 col-sm-4 col-md-4 col-lg-4 layoutContainer" >
-                                                        </div>
-                                                        <div className="col-sx-4 col-sm-4 col-md-4 col-lg-4 layoutContainer">
-                                                        </div>
-                                                        <div className="col-sx-3 col-sm-3 col-md-3 col-lg-3 layoutContainer" >
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                        </>
+                                        <div className="row col-lg-12">
+                                            <img alt="Loading..." src={layout1} className={`Dashboardlayout-1 ${others.selectedLayout === "1X0" ? 'active' : ''}`} id="1X0" onClick={dashboardLayouts}></img>
+                                            <img alt="Loading..." src={layout2} className={`Dashboardlayout-1 ${others.selectedLayout === "2X0" ? 'active' : ''}`} id="2X0" onClick={dashboardLayouts}></img>
+                                            <img alt="Loading..." src={layout3} className={`Dashboardlayout-1 ${others.selectedLayout === "1X1" ? 'active' : ''}`} id="1X1" onClick={dashboardLayouts}></img>
+                                            <img alt="Loading..." src={layout4} className={`Dashboardlayout-1 ${others.selectedLayout === "3X0" ? 'active' : ''}`} id="3X0" onClick={dashboardLayouts}></img>
+                                            <img alt="Loading..." src={layout5} className={`Dashboardlayout-1 ${others.selectedLayout === "2X1" ? 'active' : ''}`} id="2X1" onClick={dashboardLayouts}></img>
+                                            <img alt="Loading..." src={layout6} className={`Dashboardlayout-1 ${others.selectedLayout === "1X2" ? 'active' : ''}`} id="1X2" onClick={dashboardLayouts}></img>
+                                            <img alt="Loading..." src={layout7} className={`Dashboardlayout-1 ${others.selectedLayout === "1X1X1" ? 'active' : ''}`} id="1X1X1" onClick={dashboardLayouts}></img>
+                                            <img alt="Loading..." src={layout8} className={`Dashboardlayout-1 ${others.selectedLayout === "2X2" ? 'active' : ''}`} id="2X2" onClick={dashboardLayouts}></img>
+                                            <img alt="Loading..." src={layout9} className={`Dashboardlayout-1 ${others.selectedLayout === "2X3" ? 'active' : ''}`} id="2X3" onClick={dashboardLayouts}></img>
+                                            <img alt="Loading..." src={layout10} className={`Dashboardlayout-1 ${others.selectedLayout === "3X2" ? 'active' : ''}`} id="3X2" onClick={dashboardLayouts}></img>
+                                            <img alt="Loading..." src={layout11} className={`Dashboardlayout-1 ${others.selectedLayout === "3X3" ? 'active' : ''}`} id="3X3" onClick={dashboardLayouts}></img>
+                                        </div>
                                     }
                                 </div>
                                 <div className="row col-lg-12 filterswt">
@@ -3764,7 +3722,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                 Item.push(
                                                                     <div className="row col-xs-5 col-sm-5 col-md-5 col-lg-5">
                                                                         <TextField id="NOCharts" className='input-field' name={"Cols" + i} label={"Row " + i + " Columns"} variant="outlined" margin="dense"
-                                                                            value={others["Cols" + i]}
+                                                                            value={others['Cols'] !== undefined ? others['Cols']["Cols" + i] : others["Cols" + i]}
                                                                             onChange={(e) => { setOthers({ ...others, 'Cols': { ...others['Cols'], [e.target.name]: e.target.value } }) }}
                                                                             onBlur={(e) => { handleValidation(e) }}
                                                                         />
@@ -3780,14 +3738,26 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                         </>
                                     }
                                 </div>
+                                <div className="row col-sm-4 col-md-12 col-lg-6" style={{ marginTop: '10px' }}>
+                                    <Button id="saveTemp" variant="contained" className='input-field button' style={{ backgroundColor: '#6282b3', lineHeight: '1rem' }}
+                                        onClick={e => {
+                                            setIsshow({
+                                                ...show, 'isShow': true, dashboard, 'Custom': others, 'CustomLayouts': others.CustomLayouts
+                                                , 'StaticLayouts': others.StaticLayouts, 'selectedLayout': others.selectedLayout, 'Build': true
+                                            });
+                                            setPlay({ 'isPlay': undefined }); setIssues(undefined)
+                                        }}>
+                                        Build Dashboard
+                                    </Button>
+                                </div>
                                 <div className="row col-xs-12 col-sm-12 col-md-4 col-lg-12 inputfield row1-container borderdivstyle" style={{ marginTop: "10px", maxHeight: '50vh', overflowY: 'auto' }}>
                                     <div className="col-lg-12 borderstyle">
                                         <div className="col-lg-8" style={{ display: 'contents' }}>Templates</div>
-                                        <div className="col-lg-1" style={{ cursor: 'pointer' }}>
+                                        {/* <div className="col-lg-1" style={{ cursor: 'pointer' }}>
                                             <BootstrapTooltip title="Refresh" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
                                                 <Reload onClick={e => { setIsshow({ ...show, 'isShow': true, dashboard, 'NOCharts': others.NOCharts }) }} />
                                             </BootstrapTooltip>
-                                        </div>
+                                        </div> */}
                                     </div>
                                     {(() => {
                                         let Item = [];
@@ -3798,7 +3768,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                         <div className="col-lg-12 container-title">
                                                             <div className="row col-lg-12">
                                                                 <div className="col-lg-4"><DashboardIcons e={dashboard[a].Chart} /></div>
-                                                                <div className="col-lg-8">{dashboard[a].Chart}</div>
+                                                                <div className="col-lg-8" style={{ paddingLeft: '0px' }}>{dashboard[a].Chart}</div>
                                                                 {/* <>
                                                                     {filter[a] !== undefined && filter[a].Mode === true ?
                                                                         <div className="col-lg-2">
@@ -3824,7 +3794,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                         }
                                         if (Item.length === 0) {
                                             Item.push(
-                                                <div className="col-lg-12 " >
+                                                <div className="col-lg-12 none-tamplate" onClick={(e) => { setNavbar({ 'bar': 'Data' }) }}>
                                                     Please Create any template
                                                 </div>
                                             )
@@ -3839,7 +3809,8 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                     </div>
                                     <div className=" col-xm-3 col-sm-3 col-md-3 col-lg-3" >
                                         <label className="switch">
-                                            <input type="checkbox" name="Filterswatch" checked={filter.filterSwatch} onChange={(e) => { setFilter({ ...filter, 'filterSwatch': e.target.checked, 'data': state.Uploaded_file }) }}></input>
+                                            <input type="checkbox" name="Filterswatch" checked={filter.filterSwatch}
+                                                onChange={(e) => { setFilter({ ...filter, 'filterSwatch': e.target.checked, 'data': dashboard[Object.keys(dashboard)[0]].Uploaded_file }); setfilteringProps({ ...filteringProps, 'Dimensions': dashboard[Object.keys(dashboard)[0]].CheckType }) }}></input>
                                             <span className="slider round"></span>
                                         </label>
                                     </div>
@@ -3893,7 +3864,16 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                         </>
                                     }
                                 </div>
-                                <div className="row col-sm-4 col-md-12 col-lg-5" style={{ marginTop: '10px' }}>
+                                {others.EditDashboard &&
+                                    <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ marginTop: '10px' }}>
+                                        <TextField
+                                            id="TempDescription" className="Description" label="Description" name="DashboardDescription" fullWidth margin="dense" multiline maxRows={4}
+                                            value={projectDetails.DashboardDescription}
+                                            onChange={(e) => { setprojectDetails({ ...projectDetails, [e.target.name]: e.target.value }) }}
+                                        />
+                                    </div>
+                                }
+                                {/* <div className="row col-sm-4 col-md-12 col-lg-5" style={{ marginTop: '10px' }}>
                                     <Button id="saveTemp" variant="contained" className='input-field button' style={{ backgroundColor: '#6282b3', lineHeight: '1rem' }}
                                         onClick={e => {
                                             setIsshow({
@@ -3904,22 +3884,154 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                         }}>
                                         Build Dashboard
                                     </Button>
-                                </div>
-                                <div className="row col-sm-4 col-md-12 col-lg-5" style={{ marginTop: '10px' }}>
-                                    <Button id="saveTemp" variant="contained" className='input-field button' style={{ backgroundColor: '#6282b3', lineHeight: '1rem' }}
-                                        onClick={(e) => { ExpandCollapse(); handleFilter(undefined, 'Apply Filter'); setIssues(undefined) }}>
-                                        Publish Dashboard
-                                    </Button>
-                                </div>
-
+                                </div> */}
+                                {!others.EditDashboard === true ?
+                                    <>
+                                        <div className="row col-sm-4 col-md-12 col-lg-6" style={{ marginTop: '10px' }}>
+                                            <Button id="saveTemp" variant="contained" className='input-field button' style={{ backgroundColor: '#6282b3', lineHeight: '1rem' }}
+                                                onClick={(e) => { ExpandCollapse(); handleFilter('Apply Filter'); setIssues(undefined) }}>
+                                                Publish Dashboard
+                                            </Button>
+                                        </div>
+                                        <div className="row col-sm-4 col-md-12 col-lg-4" style={{ marginTop: '10px' }}>
+                                            <Button id="saveTemp" variant="contained" className='input-field button' style={{ backgroundColor: '#6282b3', lineHeight: '1rem' }}
+                                                onClick={(e) => { setOpen({ 'Dashboard': true }) }}>
+                                                Save
+                                            </Button>
+                                        </div>
+                                    </>
+                                    :
+                                    <>
+                                        <div className="row col-sm-4 col-md-12 col-lg-3" style={{ marginTop: '10px' }}>
+                                            <Button id="saveTemp" variant="contained" className='input-field button' style={{ backgroundColor: '#6282b3', lineHeight: '1rem' }}
+                                                onClick={(e) => { handleDashboard('Update', e) }}>
+                                                Update
+                                            </Button>
+                                        </div>
+                                        <div className="row col-sm-4 col-md-12 col-lg-3" style={{ marginTop: '10px' }}>
+                                            <Button id="saveTemp" variant="contained" className='input-field button' style={{ backgroundColor: '#6282b3', lineHeight: '1rem' }}
+                                                onClick={(e) => { setOthers({ ...others, 'EditDashboard': false }) }}>
+                                                Cancel
+                                            </Button>
+                                        </div>
+                                    </>
+                                }
 
                             </div>
                         </>
                     }
+                    {(navbar.bar === 'Project') ?
+                        <div className="row col-sm-12 col-md-12 col-lg-12" style={{ margin: "15px 0px 15px 10px" }}>
+                            <>
+                                {(() => {
+                                    let Item = [];
+                                    for (let a in project) {
+                                        if (project[a] !== undefined) {
+                                            Item.push(
+                                                <div className="col-lg-12 container-template" >
+                                                    <div className="row col-lg-12 container-title">
+                                                        <div style={{ fontWeight: 'bold' }} className="row col-sm-9 col-md-9 col-lg-9" >
+                                                            {a}
+                                                        </div>
+
+                                                        <div className="col-sm-1 col-md-1 col-lg-1 TemplateIcon">
+                                                            <BootstrapTooltip title="Preview" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
+                                                                <RemoveRedEyeIcon id={a} className='temp-icon' onClick={(e) => { handleDashboard('Preview', e) }} />
+                                                            </BootstrapTooltip>
+                                                        </div>
+                                                        <div className="col-sm-1 col-md-1 col-lg-1 TemplateIcon">
+                                                            <BootstrapTooltip title="Edit" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
+                                                                <EditIcon id={a} className='temp-icon' onClick={(e) => { handleDashboard('Edit', e) }} />
+                                                            </BootstrapTooltip>
+                                                        </div>
+                                                        <div className="col-sm-1 col-md-1 col-lg-1 TemplateIcon">
+                                                            <BootstrapTooltip title="Delete" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
+                                                                <DeleteIcon id={a} className='temp-icon' onClick={(e) => { handleDashboard('Delete', e) }} />
+                                                            </BootstrapTooltip>
+                                                        </div>
+
+                                                    </div>
+                                                    <div className="col-lg-12 container-description">
+                                                        <div className="row col-sm-12 col-md-12 col-lg-12" >
+                                                            <div>{project[a].DashboardDescription}</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )
+                                        }
+                                    }
+
+                                    if (Item.length === 0) {
+                                        Item.push(
+                                            <>
+                                                <div className="col-lg-12 container-template" >
+                                                    <div className="row col-lg-12 container-title">
+                                                        No Projects Found !!!
+                                                    </div>
+                                                </div>
+                                            </>
+                                        )
+                                    }
+                                    Item.push(
+                                        <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                            <Button variant="contained" margin="normal" className='input-field button' style={{ backgroundColor: '#6282b3', float: 'left', marginTop: '10px' }}
+                                                onClick={(e) => { setNavbar({ 'bar': 'Dashboard' }); setOthers({ ...others, 'EditDashboard': false }); GetTemplate('Dashboard') }}>
+                                                Create new project
+                                            </Button>
+                                        </div>
+                                    )
+                                    return Item
+
+                                })()}
+                            </>
+                        </div>
+                        : ''
+                    }
+                    {(navbar.bar === 'Collections') ?
+                        <div className="row col-sm-12 col-md-12 col-lg-12 Collections" style={{ margin: "15px 0px 15px 10px" }}>
+                            <>
+                                {(() => {
+                                    let Item = [];
+                                    for (let a in TemplatesCollections) {
+                                        if (TemplatesCollections[a] !== undefined) {
+                                            Item.push(
+                                                <div className="col-lg-5 box box-down cyan" style={{ cursor: 'pointer', padding: '20px 0px 20px 20px;' }} id={a} onClick={(e) => { GetPreDefinedTemplates('Preview', e) }}>
+                                                    <div className="col-lg-12 container-title">
+                                                        <div className="row col-lg-12">
+                                                            <div className="col-lg-4"><DashboardIcons e={TemplatesCollections[a].Chart} /></div>
+                                                            <div className="col-lg-8" style={{ paddingLeft: '0px' }}>{TemplatesCollections[a].Chart}</div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="row col-lg-12 PredefinedTempBody">
+                                                        <div style={{ fontWeight: 'bold', marginBottom: '10px' }} className="col-sm-12 col-md-12 col-lg-12" >
+                                                            {TemplatesCollections[a].TempName}
+                                                        </div>
+                                                        <div style={{ fontSize: '13px', overflowWrap: 'anywhere' }} className="col-sm-12 col-md-12 col-lg-12" >
+                                                            {TemplatesCollections[a].TempDescription}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )
+                                        }
+                                    }
+                                    if (Item.length === 0) {
+                                        Item.push(
+                                            <div className="col-lg-12 none-tamplate" onClick={(e) => { setNavbar({ 'bar': 'Data' }) }}>
+                                                Please Create any template
+                                            </div>
+                                        )
+                                    }
+                                    return Item
+
+                                })()}
+                            </>
+                        </div>
+                        : ''
+                    }
                     {navbar.bar === 'Feedback' &&
                         <>
-                            <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ margin: '15px 0px 15px 10px' }}>
+                                {/* <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                     <TextField id="Username"
                                         error={formValues.UName.error}
                                         helperText={formValues.UName.error && formValues.UName.errorMessage}
@@ -3928,19 +4040,44 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                         onChange={(e) => { setFeedback({ ...feedback, 'Reported By': e.target.value }) }}
                                         onBlur={(e) => { handleValidation(e) }}
                                     />
+                                </div> */}
+                                <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" >
+                                    <TextField
+                                        error={formValues.YAxisCopy.error}
+                                        helperText={formValues.YAxisCopy.error && formValues.YAxisCopy.errorMessage}
+                                        id="Category"
+                                        select
+                                        name='Category'
+                                        label='Category'
+                                        margin="dense"
+                                        className='input-field '
+                                        defaultValue={'Select'}
+                                        onChange={(e) => { setFeedback({ ...feedback, 'Category': e.target.value }) }}
+                                        onBlur={(e) => { handleValidation(e) }}
+                                    >
+                                        <MenuItem key={-1} value={'Select'}>
+                                            {'Select'}
+                                        </MenuItem>
+                                        {feedback.Categories.map((option, index) => (
+                                            <MenuItem key={option} value={option}>
+                                                {option}
+                                            </MenuItem>
+                                        ))}
+                                    </TextField>
                                 </div>
-                                <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                     <TextField
                                         id="TempDescription"
                                         className="Description"
                                         error={formValues.Issue.error}
                                         helperText={formValues.Issue.error && formValues.Issue.errorMessage}
+                                        value={feedback.Issue}
                                         label="Issue*" name="Issue" fullWidth margin="dense" multiline maxRows={4}
                                         onChange={(e) => { setFeedback({ ...feedback, [e.target.name]: e.target.value }) }}
                                         onBlur={(e) => { handleValidation(e) }}
                                     />
                                 </div>
-                                <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ display: 'flex' }}>
+                                <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ display: 'flex' }}>
                                     <Button variant="contained" margin="normal" className='input-field button' style={{ backgroundColor: '#6282b3', float: 'left', marginTop: '10px' }} onClick={(e) => { handleFeedback() }}>
                                         Report
                                     </Button>
@@ -3950,18 +4087,19 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                     }
                     {/* {!navopen && <div className="nav-inputarea">InputArea</div>} */}
                 </>
+                {/* Template */}
                 <Modal
                     aria-labelledby="transition-modal-title"
                     aria-describedby="transition-modal-description"
-                    open={open}
-                    onClose={handleClose}
+                    open={open.Template}
+                    onClose={(e) => { setOpen({ 'Template': false }) }}
                     closeAfterTransition
                     BackdropComponent={Backdrop}
                     BackdropProps={{
                         timeout: 500,
                     }}
                 >
-                    <Fade in={open}>
+                    <Fade in={open.Template}>
                         <Box sx={style}>
                             <Typography id="transition-modal-title" variant="h6" component="h2">
                                 Template
@@ -3987,7 +4125,59 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                             </Typography>
                             <Typography id="transition-modal-description" sx={{ mt: 5 }} style={{ marginTop: '10px' }}>
                                 <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12" >
-                                    <Button variant="contained" margin="normal" className='input-field button' style={{ backgroundColor: '#6282b3', float: 'right' }} onClick={(e) => { saveTemplate('save') }}>
+                                    <Button variant="contained" margin="normal" className='input-field button' style={{ backgroundColor: '#6282b3', float: 'right' }} onClick={(e) => { setOpen({ 'Template': false }) }}>
+                                        Cancel
+                                    </Button>
+                                    <Button variant="contained" margin="normal" className='input-field button' style={{ backgroundColor: '#6282b3', float: 'right', marginRight: '10px' }} onClick={(e) => { saveTemplate('save') }}>
+                                        Save
+                                    </Button>
+                                </div>
+                            </Typography>
+                        </Box>
+                    </Fade>
+                </Modal>
+                {/* Dashboard */}
+                <Modal
+                    aria-labelledby="transition-modal-title"
+                    aria-describedby="transition-modal-description"
+                    open={open.Dashboard}
+                    onClose={(e) => { setOpen({ 'Dashboard': false }) }}
+                    closeAfterTransition
+                    BackdropComponent={Backdrop}
+                    BackdropProps={{
+                        timeout: 500,
+                    }}
+                >
+                    <Fade in={open.Dashboard}>
+                        <Box sx={style}>
+                            <Typography id="transition-modal-title" variant="h6" component="h2">
+                                Dashboard
+                            </Typography>
+                            <Typography id="transition-modal-description" sx={{ mt: 2 }} style={{ marginTop: '10px' }}>
+                                <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                    <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                        <TextField id="Dashboard"
+                                            // error={formValues.TempName.error}
+                                            //helperText={formValues.TempName.error && formValues.TempName.errorMessage}
+                                            margin="dense" fullWidth className='input-field' name='DashboardName' label="Dashboard Name" variant="outlined"
+                                            // value={state.YAxisLabel}
+                                            onChange={(e) => { setprojectDetails({ ...projectDetails, [e.target.name]: e.target.value }) }}
+                                        />
+                                    </div>
+                                    <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                        <TextField
+                                            id="TempDescription" className="Description" label="Description" name="DashboardDescription" fullWidth margin="dense" multiline maxRows={4}
+                                            onChange={(e) => { setprojectDetails({ ...projectDetails, [e.target.name]: e.target.value }) }}
+                                        />
+                                    </div>
+                                </div>
+                            </Typography>
+                            <Typography id="transition-modal-description" sx={{ mt: 5 }} style={{ marginTop: '10px' }}>
+                                <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12" >
+                                    <Button variant="contained" margin="normal" className='input-field button' style={{ backgroundColor: '#6282b3', float: 'right' }} onClick={(e) => { setOpen({ 'Dashboard': false }) }}>
+                                        Cancel
+                                    </Button>
+                                    <Button variant="contained" margin="normal" className='input-field button' style={{ backgroundColor: '#6282b3', float: 'right', marginRight: '10px' }} onClick={(e) => { handleDashboard('Save') }}>
                                         Save
                                     </Button>
                                 </div>
@@ -4006,4 +4196,4 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         </>
     )
 }
-export default InputArea
+export default React.memo(InputArea)
