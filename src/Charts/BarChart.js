@@ -155,6 +155,7 @@ const BarChart = ({ params }) => {
 
     chart
       .ordinalColors([params.Barswatch === 'show' ? params.Color : '#6282b3'])
+     // .margins({top: 10, right: 50, bottom: 30, left: 40})
       .margins({ top: 10 + parseInt(PadTop), right: 20 + parseInt(PadRight), bottom: 50 + parseInt(PadBottom), left: 40 + parseInt(PadLeft) })
       .width(params.Width_ === null ? null : params.Width_)
       .height(params.Heigth_)
@@ -257,7 +258,12 @@ const BarChart = ({ params }) => {
             .style("opacity", 0);
         });
 
-      // chart.renderlet(function (chart) {
+      // Bar Border Radius
+      // chart.selectAll("rect")
+      //   .attr("rx", "20")
+      //   .attr("ry", "20");
+    });
+    chart.renderlet(function (chart) {
       //X-Axis 
       chart.selectAll("g.x g.tick text")
         .attr('dx', params.Rotate === undefined || params.Rotate === '' ? '' : '-10')
@@ -295,12 +301,7 @@ const BarChart = ({ params }) => {
         .style("fill", params.LabelsColor)
         .style("font-size", params.Labelsize + "px")
         .style("display", params.Labelsswatch !== undefined ? params.Labelsswatch : 'none')
-      // })
-      // Bar Border Radius
-      // chart.selectAll("rect")
-      //   .attr("rx", "20")
-      //   .attr("ry", "20");
-    });
+    })
     //});
     function BMK(labelValue) {
       // Nine Zeroes for Billions

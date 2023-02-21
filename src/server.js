@@ -250,3 +250,40 @@ app.post("/DeleteDashboard", (req, res) => {
             console.log("Error while Project Deleting on " + new Date())      // Failure
         });
 })
+// =================== DATASET =======================
+app.post('/InsertDataSet', (req, res) => {
+    let data = [];
+    data.push(req.body)
+    connect();
+    db
+        .collection("Dataset").insertMany(data).then(function () {
+            res.status(200).send('Success')
+            console.log("DataSet inserted")  // Success
+        }).catch(function (error) {
+            console.log(error)      // Failure
+        });
+})
+app.post("/GetDataset/", (req, res) => {
+    connect();
+    db
+        .collection('Dataset')
+        .find({ 'userID': req.body.userID }).toArray(function (err, result) {
+            if (err) {
+                res.status(400).send("Error fethcing dataset! on " + new Date());
+            } else {
+                res.json(result);
+                console.log('Dataset Fetched on ' + new Date());
+            };
+        })
+})
+app.post("/DeleteDataset", (req, res) => {
+    connect();
+    db
+        .collection('Dataset')
+        .deleteOne({ 'filename': req.body.id, 'userID': req.body.userID }).then(function () {
+            res.status(200).send('Success')
+            console.log("Dataset Deleted on " + new Date())  // Success
+        }).catch(function (error) {
+            console.log("Error while Dataset Deleting on " + new Date())      // Failure
+        });
+})

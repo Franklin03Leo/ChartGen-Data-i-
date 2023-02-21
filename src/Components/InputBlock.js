@@ -23,6 +23,7 @@ import FormControl from '@mui/material/FormControl';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
+import { useNavigate } from "react-router-dom";
 //NPM's
 import Papa from "papaparse";
 import * as xlsx from "xlsx";
@@ -76,7 +77,6 @@ import layout11 from '../../src/Images/layout11.svg';
 import LoadingSpinner from "../Components/LoadingSpinner";
 
 const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, showDashboard, feedback_, project_ }) => {
-
     // Global variables declaration
     const ChartType = ['Select', 'Pie Chart', 'Bar Chart', 'ScatterPlot', 'Line Chart', 'Composite Chart', 'Series Chart', 'Bar Line Chart']
     const Fonts = ['Arial', 'Verdana', 'Tahoma', 'Trebuchet', 'Times New Roman', 'Georgia', 'Garamond', 'Courier']
@@ -150,7 +150,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
             error: false,
             errorMessage: 'The given name is already exists, Please provide some other name.'
         },
-        UName: {
+        Category: {
             error: false,
             errorMessage: 'Please enter'
         },
@@ -190,7 +190,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
     const [others, setOthers] = React.useState({ 'StaticLayouts': true, 'selectedLayout': '1X2' });
     const [feedback, setFeedback] = React.useState({
         'Categories': ['UI', 'Performance', 'Dataset', 'Statistics', 'Data Dictionary', 'Template', 'Dashboard', 'User Guide', 'Suggestions', 'Other'],
-        'Reported By': sessionStorage.getItem('UserName').split(',')[0]
+        'Reported By': sessionStorage.getItem('UserName') !== null && sessionStorage.getItem('UserName').split(',')[0]
     });
     const [feedbackIssue, setIssues] = React.useState(undefined);
     const [dashboardCharts, setdashboardCharts] = React.useState();
@@ -199,6 +199,8 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
     const [postProject, setpostProject] = React.useState({});
     const [TemplatesCollections, setTemplatesCollections] = React.useState({});
     const [path, setPath] = React.useState({ 'Location': window.location.hostname }) //49.204.124.69/
+    const [Dataset, setDataset] = React.useState({});
+
     // Data passing
     const [filedata, setData] = React.useState({})
     const [play, setPlay] = React.useState({})
@@ -268,6 +270,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
     React.useEffect(() => {
         GetTemplate('Dashboard')
         GetDashboard()
+        getDataSet()
         const handleResize = () => {
 
             if (window.innerWidth < 1010) {
@@ -292,6 +295,8 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
     }, [])
 
     //Functions
+    const navigate = useNavigate();
+
     //Every fields onChange for store the inputs
     const handleChange = (event) => {
         if (event.target.name === 'file') {
@@ -333,11 +338,13 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                 'GroupByCopy_': newArray,
                                 'CheckType': newArray
                             })
+
                             setError({ 'invalidFile': undefined })
                             ChildtoParentHandshake(state, enable, navbar, { 'newArray': newArray, 'Uploaded_file': results.data })
                             setfilteringProps({ ...filteringProps, 'Dimensions': newArray })
                             setData({ 'data': results.data })
                             setIssues(undefined)
+                            postDataSet(event.target.files[0].name, results.data)
 
                         },
                     });
@@ -378,6 +385,8 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                             setData({ 'data': data })
                             setIssues(undefined)
                             ChildtoParentHandshake(state, enable, navbar, { 'newArray': newArray, 'Uploaded_file': data })
+                            postDataSet(event.target.files[0].name, data)
+
 
                         } catch (error) {
                             setError({ 'invalidFile': 'There is s problem with the file, Please check and Try again !!!' })
@@ -428,6 +437,8 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                         setData({ 'data': json })
                         setIssues(undefined)
                         ChildtoParentHandshake(state, enable, navbar, { 'newArray': newArray, 'Uploaded_file': json })
+                        postDataSet(event.target.files[0].name, json)
+
                     };
                     reader.readAsArrayBuffer(event.target.files[0]);
                 }
@@ -439,6 +450,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                     })
                 }
             }
+
             setFlag(false)
 
         }
@@ -992,11 +1004,12 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
     //Template Save/Cancel
     const saveTemplate = (action) => {
         if (action !== 'cancel') {
-            setTemplate({ ...template, [state.TempName]: state })
-            setDashboard({ ...dashboard, [state.TempName]: { ...state, 'Width_': null, 'Heigth_': 250 } })
+            setTemplate({ ...template, [state.TempName]: state });
+            setDashboard({ ...dashboard, [state.TempName]: { ...state, 'Width_': null, 'Heigth_': 250 } });
             if (flag) {
-
-                PostTemplate('Update')
+                document.querySelector('.loader').style.display = 'block';
+                PostTemplate('Update');
+                GenerateChart();
                 toast.success('Your template has been Updated', {
                     position: toast.POSITION.BOTTOM_RIGHT,
                     hideProgressBar: true,
@@ -1012,9 +1025,9 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                     hideProgressBar: true,
                     autoClose: 2000
                 });
-                setOpen(false)
-                setNavbar({ 'bar': 'Templates' })
-                PostTemplate('Insert')
+                setOpen(false);
+                setNavbar({ 'bar': 'Templates' });
+                PostTemplate('Insert');
             }
         }
         else {
@@ -1246,24 +1259,31 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         }
     }
     const GetTemplate = (Tab) => {
+        if (state.userID == '') {
+            navigate('/')
+            return
+        }
+        if (Object.keys(template).length === 0 || Object.keys(dashboard).length === 0)
+            document.querySelector('.loader').style.display = 'block';
         axios.post(`http://${path.Location}:8000/GetTemplate`, { 'userID': state.userID }).then((response) => {
-            let data = response.data
+            let data = response.data;
             if (Tab === 'Dashboard') {
-                let obj = {}
+                let obj = {};
                 for (let i = 0; i < data.length; i++) {
-                    data[i].Width_ = null
-                    data[i].Heigth_ = 250
-                    obj[data[i].TempName] = data[i]
+                    data[i].Width_ = null;
+                    data[i].Heigth_ = 250;
+                    obj[data[i].TempName] = data[i];
                 }
-                setDashboard(obj)
+                setDashboard(obj);
             }
             else {
                 let obj = {}
                 for (let i = 0; i < data.length; i++) {
-                    obj[data[i].TempName] = data[i]
+                    obj[data[i].TempName] = data[i];
                 }
-                setTemplate(obj)
+                setTemplate(obj);
             }
+            document.querySelector('.loader').style.display = 'none';
         });
     }
     const handleFeedback = (action) => {
@@ -1339,8 +1359,6 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                 obj.layouts = [others.Rows, a]
                 obj.layoutOption = 'Custom'
             }
-            // obj.layouts = JSON.parse(sessionStorage.getItem('dashboard'))['Layouts']
-            // obj.layoutOption = JSON.parse(sessionStorage.getItem('dashboard'))['LayoutOption']
             obj.charts = JSON.parse(sessionStorage.getItem('IDs'))
             obj.DashboardName = project[others.EditingDashboardID].DashboardName
             obj.DashboardDescription = projectDetails.DashboardDescription
@@ -1349,7 +1367,9 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
             obj.FilterProps = filterProps
             obj.selectedFilterDimensions = filteringProps.customFilter
             obj.AvailableDimensions = filteringProps.Dimensions
-
+            obj.action = 'Update'
+            setpostProject(obj);
+            document.querySelector('.loader').style.display = 'block'
             axios.post(`http://${path.Location}:8000/UpdateDashboard`, obj).then((response) => {
                 toast.success('Your Project has been Updated.', {
                     position: toast.POSITION.BOTTOM_RIGHT,
@@ -1357,7 +1377,8 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                     autoClose: 2000
                 });
                 //GetDashboard();
-            })
+            });
+
         }
         else if (action === 'Delete') {
             axios.post(`http://${path.Location}:8000/DeleteDashboard`, {
@@ -1373,7 +1394,6 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
             })
         }
         if (action === 'Preview' || action === 'Edit') {
-            // setProgress({'loader': true })
             document.querySelector('.loader').style.display = 'block'
             let data = project[e.currentTarget.id] //others.EditingDashboardID
             let obj = {}
@@ -1428,43 +1448,75 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         })
     }
     const GetDashboard = () => {
+        if (Object.keys(project).length === 0)
+            document.querySelector('.loader').style.display = 'block';
         axios.post(`http://${path.Location}:8000/GetDashboard`, { 'userID': state.userID }).then((response) => {
             console.log('project data', response.data);
-            let data = response.data
-            let obj = {}
+            let data = response.data;
+            let obj = {};
             for (let i = 0; i < data.length; i++) {
-                // obj.DashboardDescription = data[i].DashboardDescription
-                // obj.DashboardName = data[i].DashboardName
-                // obj.charts = data[i].charts
-                // obj.layout = data[i].layout
-                // obj.userID = data[i].userID
-                obj[data[i].DashboardName] = data[i]
+                obj[data[i].DashboardName] = data[i];
             }
-            setProject(obj)
-            setNavbar({ 'bar': 'Project' })
+            setProject(obj);
+            setNavbar({ 'bar': 'Project' });
+            document.querySelector('.loader').style.display = 'none';
+
         })
     }
     const GetPreDefinedTemplates = (action, e) => {
         if (action === 'Fetch') {
+            if (Object.keys(TemplatesCollections).length === 0)
+                document.querySelector('.loader').style.display = 'block';
             axios.post(`http://${path.Location}:8000/GetPreDefinedTemplate`)
                 .then((response) => {
-                    //console.log('PredefinedTemplates', response.data);
-                    let data = response.data
-                    let obj = {}
+                    let data = response.data;
+                    let obj = {};
                     for (let i = 0; i < data.length; i++) {
-                        obj[data[i].TempName] = data[i]
+                        obj[data[i].TempName] = data[i];
                     }
-                    setTemplatesCollections(obj)
+                    setTemplatesCollections(obj);
+                    document.querySelector('.loader').style.display = 'none';
+
                 })
                 .catch(error => {
                     console.log(error);
                 });
         }
         else {
-            setEnable({ ...enable, 'Piechart': false, 'Barchart': false, 'Scatter': false, 'Linechart': false, 'Compositechart': false, 'Serieschart': false, 'Barlinechart': false })
-            setEnableTemplate(!enabletemplate)
-            setState(TemplatesCollections[e.currentTarget.id])
-            setFlag(false)
+            setEnable({ ...enable, 'Piechart': false, 'Barchart': false, 'Scatter': false, 'Linechart': false, 'Compositechart': false, 'Serieschart': false, 'Barlinechart': false });
+            setEnableTemplate(!enabletemplate);
+            setState(TemplatesCollections[e.currentTarget.id]);
+            setFlag(false);
+        }
+    }
+    const postDataSet = (name, data) => {
+        let obj = {}
+        obj.userID = state.userID
+        obj.filename = name
+        obj.data = data
+        axios.post(`http://${path.Location}:8000/InsertDataSet`, obj).then((response) => {
+            getDataSet()
+        })
+    }
+    const getDataSet = () => {
+        axios.post(`http://${path.Location}:8000/GetDataSet`, { 'userID': state.userID }).then((response) => {
+            let data = response.data
+            let obj = {}
+            for (let i = 0; i < data.length; i++) {
+                obj[data[i].filename] = data[i].data
+            }
+            setDataset(obj)
+        })
+    }
+    const handleDataSet = (action, id) => {
+        if (action === 'Delete') {
+            axios.post(`http://${path.Location}:8000/DeleteDataSet`, { 'userID': state.userID, 'id': id }).then((response) => {
+                getDataSet()
+            })
+        }
+        else if (action === 'Use') {
+            setState({ ...state, Uploaded_file: Dataset[id] })
+            setData({ 'data': Dataset[id] })
         }
     }
 
@@ -1475,7 +1527,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
             <>
                 <div>
                     {!navopen &&
-                        <BootstrapTooltip title="Expand Input Area" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
+                        <BootstrapTooltip title="Expand" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
                             <ArrowRightIcon onClick={(e) => { ExpandCollapse() }} fontSize="medium" style={{ cursor: 'pointer' }} />
                         </BootstrapTooltip>
                     }
@@ -1580,7 +1632,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
             <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12 divchart" style={{ height: 'calc(100vh - 6vh)', width: navwidth.inuptArea, overflowY: `${!navopen ? 'hidden' : 'auto'}`, padding: `${navopen ? '' : '0px'}` }}>
                 <div className="nav-close">
                     {navopen ?
-                        <BootstrapTooltip title="Collapse Input Area" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
+                        <BootstrapTooltip title="Collapse" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
                             <ArrowLeftIcon onClick={(e) => { ExpandCollapse() }} fontSize="medium" style={{ cursor: 'pointer' }} />
                         </BootstrapTooltip>
                         : ''
@@ -1598,13 +1650,14 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                     select
                                     name='InputType'
                                     label="Input Type"
-                                    defaultValue={'Import Inputs'}
+                                    defaultValue={'Enter Inputs'}
                                     className='input-field '
                                     onChange={(e) => { handleValidation(e); handleChange(e); }}
                                     value={state.InputType}
                                 >
                                     <MenuItem key={1} value={'Import Inputs'} >Import Inputs</MenuItem>
                                     <MenuItem key={2} value={'Enter Inputs'}>Enter Inputs</MenuItem>
+                                    <MenuItem key={3} value={'Available Dataset'}>Available Dataset</MenuItem>
 
                                 </TextField>
 
@@ -1644,7 +1697,38 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                         </div>
                         : ''
                     }
-                    {state.Uploaded_file !== undefined && navbar.bar === 'Data' ?
+                    {(state.InputType === "Available Dataset" && navbar.bar === 'Data') ?
+                        <>
+                            {(() => {
+                                let Item = [];
+                                for (let a in Dataset) {
+                                    if (Dataset[a] !== undefined) {
+                                        Item.push(
+                                            <div className="row col-lg-12 divdataset-body">
+                                                <div className="col-lg-5 dataset-name">{a}</div>
+                                                <div className="row col-lg-5 dataset-icon">
+                                                    <div className="col-lg-5 dataset-icon_" onClick={(e) => { handleDataSet('Use', a) }}>Use</div>
+                                                    <div className="col-lg-5 dataset-icon_" onClick={(e) => { handleDataSet('Delete', a) }}>Delete</div>
+                                                </div>
+                                            </div>
+                                        )
+                                    }
+                                }
+                                if (Item.length === 0) {
+                                    Item.push(
+                                        <div className="row col-lg-12 divdataset-body">
+                                            <div className="col-lg-10 dataset-name">No Dataset Found !!!</div>
+
+                                        </div>
+                                    )
+                                }
+                                return Item
+
+                            })()}
+                        </>
+                        : ''
+                    }
+                    {state.Uploaded_file !== undefined && state.InputType === 'Enter Inputs' && navbar.bar === 'Data' ?
                         <>
                             <div className="row col-sm-6 col-md-3 col-lg-5" style={{ margin: "15px" }}>
                                 <Button variant="contained" className='input-field button' style={{ backgroundColor: '#6282b3', float: 'right' }} onClick={(e) => { setData({ 'data': state.Uploaded_file }); setIsshow({ "isShow": undefined }); setIssues(undefined) }}>
@@ -1655,7 +1739,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                         :
                         ''
                     }
-                    {state.Uploaded_file === undefined && navbar.bar === 'Data' ?
+                    {state.Uploaded_file === undefined && state.InputType === 'Enter Inputs' && navbar.bar === 'Data' ?
                         <div style={{ color: 'red' }}>Use the file with the less than 300 records for better experience, We are working on for boosting up.</div>
                         : ''
                     }
@@ -2732,7 +2816,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                                     </MenuItem>
                                                                                 ))}
                                                                                 {state.Chart === 'Composite Chart' || state.Chart === 'Series Chart' || state.Chart === 'Bar Line Chart' ?
-                                                                                    <MenuItem value={'Group'}>
+                                                                                    <MenuItem key={'Group'} value={'Group'}>
                                                                                         {'Group'}
                                                                                     </MenuItem>
                                                                                     : ''
@@ -3533,28 +3617,12 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                     }
                                     {navbar.bar === 'Charts' &&
                                         <div className="row col-sm-12 col-md-12 col-lg-12" style={{ marginTop: '10px' }}>
-                                            {navbar.bar === 'Charts' && state.Uploaded_file !== undefined ?
+                                            {navbar.bar === 'Charts' && state.Uploaded_file !== undefined && flag !== true ?
 
                                                 <div className="row col-sm-4 col-md-12 col-lg-6" style={{ marginTop: '10px' }}>
-                                                    {/* <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                            <Box sx={{ position: 'relative' }}> */}
                                                     <Button disabled={disable} variant="contained" id="ChartGen" className='input-field button' style={{ backgroundColor: '#6282b3' }} onClick={(e) => { setProgress({ 'loader': true }); GenerateChart() }}>
                                                         Generate Chart
                                                     </Button>
-                                                    {/* {progress.loader && <CircularProgress
-                                                    size={24}
-                                                    sx={{
-                                                        // color: 'green',
-                                                        position: 'absolute',
-                                                        top: '50%',
-                                                        left: '50%',
-                                                        marginTop: '-12px',
-                                                        marginLeft: '-12px',
-                                                    }}
-                                                />
-                                                }
-                                            </Box>
-                                        </Box> */}
                                                 </div>
                                                 : ''
                                             }
@@ -3835,7 +3903,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                 {filteringProps.Dimensions.map((name) => (
                                                                     <MenuItem key={name} value={name}>
                                                                         <Checkbox checked={filteringProps.customFilter === undefined ? false : filteringProps.customFilter.indexOf(name) > -1} />
-                                                                        <ListItemText primary={name} />
+                                                                        <ListItemText key={name} primary={name} />
                                                                     </MenuItem>
                                                                 ))}
                                                             </Select>
@@ -4043,12 +4111,12 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                 </div> */}
                                 <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" >
                                     <TextField
-                                        error={formValues.YAxisCopy.error}
-                                        helperText={formValues.YAxisCopy.error && formValues.YAxisCopy.errorMessage}
+                                        error={formValues.Category.error}
+                                        helperText={formValues.Category.error && formValues.Category.errorMessage}
                                         id="Category"
                                         select
                                         name='Category'
-                                        label='Category'
+                                        label='Category*'
                                         margin="dense"
                                         className='input-field '
                                         defaultValue={'Select'}

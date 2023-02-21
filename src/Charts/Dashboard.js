@@ -20,7 +20,7 @@ import Compose from "../Charts/CompositeChart";
 import SeriesChart from "../Charts/SeriesChart";
 import BarLineChart from "../Charts/BarLineChart";
 import DashboardFilter from "../Components/DashboardFilter";
-import DatasetTable from "../Charts/DatasetTable";
+import DatasetTable from "../Components/DatasetTable";
 //NPM's
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -45,6 +45,7 @@ const Dashboard = ({ params }) => {
             SetTemplate(params.dashboard)
             if (params.dashboard != template)
                 Setfilteredtemplate(params.dashboard)
+            //if (params.action === 'Edit')
             SetDetails({ 'ProjectName': params.DashboardName })
         }
         if (params.Filter !== undefined) {
@@ -109,10 +110,10 @@ const Dashboard = ({ params }) => {
         sessionStorage.setItem('IDs', JSON.stringify(chartsID))
         // DashboardArea()
     }, [chartsID])
-    useEffect(() => {
-        setOpen({ ...open, 'Loader': false })
+    // useEffect(() => {
+    //     setOpen({ ...open, 'Loader': false })
 
-    }, [])
+    // }, [])
     //Custom
     const style = {
         position: 'absolute',
@@ -129,6 +130,7 @@ const Dashboard = ({ params }) => {
 
     //Components
     const Chart = ({ state }) => {
+
         const chart = React.useMemo(() => {
             return (
                 <>
@@ -151,14 +153,17 @@ const Dashboard = ({ params }) => {
                 </>
             )
         }, [state])
+
         return chart
+
     }
     function CreatingUploadArea() {
         console.log('charts re-rendered')
-        if (Object.keys(template).length !== 0)
-            setTimeout(() => {
-                document.querySelector('.loader').style.display = 'none';
-            }, 100);
+        // if (Object.keys(filteredtemplate).length !== 0) {
+        //     setTimeout(() => {
+        //         document.querySelector('.loader').style.display = 'none';
+        //     }, 100);
+        // }
         return (
             <>
                 {(() => {
@@ -172,7 +177,7 @@ const Dashboard = ({ params }) => {
                                         {template[chartsID["chart" + i]] !== undefined ?
                                             <>
                                                 <ZoomOut style={{ float: 'right', cursor: 'pointer', paddingTop: '6px' }} onClick={e => { handleOpen(i) }} />
-                                                {(!isBublished && params.userID === undefined) || (params.action !== undefined && params.action === 'Edit') ?
+                                                {(!isBublished && params.userID === undefined) || (params.action !== undefined && params.action === 'Edit') || (params.action !== undefined && params.action === 'Update') ?
                                                     <DeleteIcon style={{ float: 'right', cursor: 'pointer', paddingTop: '6px' }} onClick={e => { RemoveChart(i) }} />
                                                     : ''
                                                 }
@@ -214,7 +219,7 @@ const Dashboard = ({ params }) => {
                                         {template[chartsID["chart" + i]] !== undefined ?
                                             <>
                                                 <ZoomOut style={{ float: 'right', cursor: 'pointer', paddingTop: '6px' }} onClick={e => { handleOpen(i) }} />
-                                                {(!isBublished && params.userID === undefined) || (params.action !== undefined && params.action === 'Edit') ?
+                                                {(!isBublished && params.userID === undefined) || (params.action !== undefined && params.action === 'Edit') || (params.action !== undefined && params.action === 'Update') ?
                                                     <DeleteIcon style={{ float: 'right', cursor: 'pointer', paddingTop: '6px' }} onClick={e => { RemoveChart(i) }} />
                                                     : ''
                                                 }
@@ -255,7 +260,7 @@ const Dashboard = ({ params }) => {
                                         {template[chartsID["chart" + i]] !== undefined ?
                                             <>
                                                 <ZoomOut style={{ float: 'right', cursor: 'pointer', paddingTop: '6px' }} onClick={e => { handleOpen(i) }} />
-                                                {(!isBublished && params.userID === undefined) || (params.action !== undefined && params.action === 'Edit') ?
+                                                {(!isBublished && params.userID === undefined) || (params.action !== undefined && params.action === 'Edit') || (params.action !== undefined && params.action === 'Update') ?
                                                     <DeleteIcon style={{ float: 'right', cursor: 'pointer', paddingTop: '6px' }} onClick={e => { RemoveChart(i) }} />
                                                     : ''
                                                 }
@@ -296,7 +301,7 @@ const Dashboard = ({ params }) => {
                                         {template[chartsID["chart" + i]] !== undefined ?
                                             <>
                                                 <ZoomOut style={{ float: 'right', cursor: 'pointer', paddingTop: '6px' }} onClick={e => { handleOpen(i) }} />
-                                                {(!isBublished && params.userID === undefined) || (params.action !== undefined && params.action === 'Edit') ?
+                                                {(!isBublished && params.userID === undefined) || (params.action !== undefined && params.action === 'Edit') || (params.action !== undefined && params.action === 'Update') ?
                                                     <DeleteIcon style={{ float: 'right', cursor: 'pointer', paddingTop: '6px' }} onClick={e => { RemoveChart(i) }} />
                                                     : ''
                                                 }
@@ -416,19 +421,17 @@ const Dashboard = ({ params }) => {
 
     };
     const handleClose = () => setOpen({ 'Chart': false });
-    const handleFilter = (params) => {
+    const handleFilter = async (params) => {
+        document.querySelector('.loader').style.display = 'block'
         for (let i = 0; i < Object.keys(filteredtemplate).length; i++) {
             if (Object.keys(filteredtemplate)[i] !== 'Render')
                 filteredtemplate[Object.keys(filteredtemplate)[i]].Uploaded_file = params.data
         }
         Setfilteredtemplate({ ...filteredtemplate, 'Render': !filteredtemplate.Render })
-        // if (params.isFiltered === 'Cancel Filter')
-        //     setTab({ ...Tab, 'data': undefined })
-        // else
-        // setTab({ ...Tab, 'data': params.data })
-        //document.querySelector('.loader').style.display = 'none'
+        return 'Executed'
     }
     const RemoveChart = (e) => {
+        document.querySelector('.loader').style.display = 'block'
         toast.success('Chart has been removed from the dashboard.', {
             position: toast.POSITION.BOTTOM_RIGHT,
             hideProgressBar: true,

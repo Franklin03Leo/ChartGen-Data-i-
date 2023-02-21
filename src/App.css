@@ -1,3 +1,10 @@
+:root {
+  --button: #6282b3;
+  --accordian: #7984c2;
+  --theme: #6282b3;
+  --highlight: #ffffff;
+}
+
 .App {
   text-align: center;
 }

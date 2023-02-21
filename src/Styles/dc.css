@@ -1,3 +1,5 @@
+@import "../App.css";
+
 .dc-chart path.dc-symbol, .dc-legend g.dc-legend-item.fadeout {
     fill-opacity: 0.5;
     stroke-opacity: 0.5;
@@ -336,12 +338,12 @@ table tbody tr:nth-child(odd) td, table tbody tr:nth-child(odd) th {
 }
 
 thead tr {
-    background-color: #6282b3;
+    background-color: var(--theme);
     color: #ffffff;
 }
 
 /* .table-wrap:last-of-type {
-    border-bottom: 2px solid #6282b3;
+    border-bottom: 2px solid var(--theme);
 } */
 
 
@@ -442,7 +444,7 @@ input[type=file] {
 input[type=file]::file-selector-button {
     margin-right: 20px;
     border: none;
-    background: #6282b3;
+    background: var(--theme);
     padding: 10px 20px;
     border-radius: 10px;
     color: #fff;
@@ -451,7 +453,7 @@ input[type=file]::file-selector-button {
 }
 
 input[type=file]::file-selector-button:hover {
-    background: #6282b3;
+    background: var(--theme);
 }
 
 .tick text {
@@ -481,7 +483,7 @@ div.tooltip {
     padding: 2px;
     color: white;
     font: 12px sans-serif;
-    background: #6282b3;
+    background: var(--theme);
     border-radius: 5px;
     pointer-events: none;
     padding: 10px;
@@ -508,7 +510,7 @@ body {
     position: fixed;
     /* background-image: linear-gradient(-225deg, #77FFD2 0%, #6297DB 48%, #1EECFF 100%); */
     background-image: linear-gradient(to top, #0c3483 0%, #a2b6df 100%, #6b8cce 100%, #a2b6df 100%);
-    color: #fff;
+    color: white;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
     z-index: 99999;
     display: flex;
@@ -728,7 +730,7 @@ input:checked+.slider:before {
     /* background-image: linear-gradient(to top, #bce6ff 0%, #e7edf1 100%); */
     padding-bottom: 5px;
     width: 96%;
-    border-top: 3px solid #6282b3;
+    border-top: 3px solid var(--theme);
     /* background-image: linear-gradient(45deg, #93a5cf 0%, #e4efe9 100%); */
     background-image: linear-gradient(to top, #fff1eb 0%, #ace0f9 100%);
     /* box-shadow: rgb(17 17 26 / 5%) 0px 1px 0px, rgb(17 17 26 / 10%) 0px 0px 8px; */
@@ -761,12 +763,12 @@ input:checked+.slider:before {
 }
 
 .tss-131sses-MUIDataTable-responsiveScroll {
-    max-height: 64.5vh  !important;
+    max-height: 64.5vh !important;
     margin: 0px 20px;
 }
 
 .MuiTableCell-head {
-    background-color: #6282b3 !important;
+    background-color: var(--theme) !important;
     color: white !important;
 }
 
@@ -801,8 +803,8 @@ input:checked+.slider:before {
 .chartbox {
     box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px !important;
     padding: 7px 12px 0px 12px !important;
-    max-height:43.5vh;
-    height: 43.5vh;
+    max-height: 43.5vh;
+    /* height: 43.5vh; */
 }
 
 .Mui-selected {
@@ -835,7 +837,7 @@ input:checked+.slider:before {
 
 .box {
     border-radius: 5px;
-    box-shadow: 0px 30px 40px -20px #6282b3;
+    box-shadow: 0px 30px 40px -20px var(--theme);
     padding: 7px;
     margin: 10px 10px 10px 0px;
     box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
@@ -851,7 +853,7 @@ input:checked+.slider:before {
 .header p {
     margin: 0 auto;
     line-height: 2;
-    color: #6282b3;
+    color: var(--theme);
 }
 
 
@@ -860,7 +862,7 @@ input:checked+.slider:before {
 }
 
 .cyan {
-    border-top: 3px solid #6282b3;
+    border-top: 3px solid var(--theme);
     transition-duration: 0.3s;
 }
 
@@ -886,7 +888,7 @@ input:checked+.slider:before {
 }
 
 .filterswt {
-    border-top: 2px solid #6282b3;
+    border-top: 2px solid var(--theme);
     margin-top: 10px;
     background-color: inherit;
     padding: 15px;
@@ -897,7 +899,7 @@ input:checked+.slider:before {
 }
 
 .filterDiv {
-    border-top: 3px solid #6282b3;
+    border-top: 3px solid var(--theme);
     margin: 0px 10px;
     background-color: inherit;
     padding: 15px;
@@ -1029,7 +1031,7 @@ input:checked+.slider:before {
 
 .MuiButton-root.MuiButton-containedPrimary {
     flex: 1;
-    background-color: #6282b3 !important;
+    background-color: var(--button) !important;
     color: #fff !important;
     border: 1px rgb(250, 239, 239) solid !important;
     /* padding: 0.5rem !important; */
@@ -1069,17 +1071,24 @@ input:checked+.slider:before {
     width: 50px;
     height: 50px;
     border-style: solid;
-    border-color: #6282b3;
+    border-color: var(--theme);
     border-top-color: transparent;
     border-width: 6px;
     border-radius: 50%;
     -webkit-animation: spin .8s linear infinite;
     animation: spin 1s linear infinite;
 }
+
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
 .loader {
     position: fixed;
     width: 100%;
@@ -1087,4 +1096,41 @@ input:checked+.slider:before {
     z-index: 9999;
     height: 100vh;
     display: none;
+}
+
+.divdataset-body {
+    margin-left: 4px;
+    padding: 5px;
+}
+
+.dataset-icon {
+    /* padding: 10px; */
+    margin: 0px 5px;
+    /* background-color: #7984c2; */
+    border-radius: 5px;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0.3s, opacity 0.5s ease-in-out;
+}
+
+.divdataset-body:hover div.dataset-icon {
+    visibility: visible;
+    opacity: 1;
+}
+
+.dataset-icon_ {
+    margin: 0px 5px;
+    background-color: #b8c3ff;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.dataset-name {
+    padding: 10px;
+    background-color: #b1cef9;
+    border-radius: 5px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }

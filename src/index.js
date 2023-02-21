@@ -3,20 +3,12 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App.js';
 import reportWebVitals from './reportWebVitals';
-import {
-  createTheme,
-  ThemeProvider as MuiThemeProvider
-} from "@mui/material/styles";
-
-import { themeConfig } from './Components/themeConfig';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-// const theme = createTheme(themeConfig);
+
 root.render(
   <React.StrictMode>
-    {/* <MuiThemeProvider theme={theme}> */}
-      <App />
-    {/* </MuiThemeProvider> */}
+    <App />
   </React.StrictMode>
 );
 
