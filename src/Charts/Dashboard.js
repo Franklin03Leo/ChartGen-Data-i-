@@ -159,11 +159,11 @@ const Dashboard = ({ params }) => {
     }
     function CreatingUploadArea() {
         console.log('charts re-rendered')
-        // if (Object.keys(filteredtemplate).length !== 0) {
-        //     setTimeout(() => {
-        //         document.querySelector('.loader').style.display = 'none';
-        //     }, 100);
-        // }
+        if (Object.keys(filteredtemplate).length !== 0) {
+            setTimeout(() => {
+                document.querySelector('.loader').style.display = 'none';
+            }, 100);
+        }
         return (
             <>
                 {(() => {
