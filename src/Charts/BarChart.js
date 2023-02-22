@@ -25,6 +25,7 @@ const BarChart = ({ params }) => {
   }
 
   React.useEffect(() => {
+    console.time('bar')
     var div2 = d3.select("#Charts").append("div")
       .attr("class", "tooltip")
       .style("opacity", 0)
@@ -35,23 +36,29 @@ const BarChart = ({ params }) => {
       .style("border", params.TooltipThickness + 'px ' + params.TooltipTickColor + ' solid')
 
     IsString_(params.Uploaded_file[0])
-    var ndx;
-    var datatabel = new dc.dataTable(div1.current);
-
+    var ndx, datatabel, chart;
     var experiments = params.Uploaded_file
 
-    var chart = new dc.barChart(div.current)
-      .title(function (y) {
-        var tooltip = params.XAxis + ': ' + y.key + '\n'
-          + params.YAxis + ': ' + y.value
-        return ''
-      })
+    if (params.Width_ !== null) {
+      datatabel = new dc.dataTable(div1.current);
+      chart = new dc.barChart(div.current)
+    }
+    else {
+      datatabel = new dc.dataTable(div1.current, 'Table');
+      chart = new dc.barChart(div.current, 'Barchart')
+    }
+    chart.title(function (y) {
+      var tooltip = params.XAxis + ': ' + y.key + '\n'
+        + params.YAxis + ': ' + y.value
+      return ''
+    })
     const Max = experiments.map(object => {
       return object[params.XAxis];
     });
 
 
     ndx = crossfilter(experiments)
+
     var runDimension = ndx.dimension(function (d) {
       return d[params.XAxis];
     })
@@ -144,7 +151,6 @@ const BarChart = ({ params }) => {
       speedSumGroup = runDimension.group().reduceCount(function (d) { return d[params.XAxis] });
     }
 
-
     var fmt = d3.format('02d');
     var table_ = ndx.dimension(function (d) { return [fmt(+d[params.XAxis]), fmt(+d[params.YAxis])]; });
     let PadTop, PadRight, PadBottom, PadLeft = 0
@@ -155,7 +161,7 @@ const BarChart = ({ params }) => {
 
     chart
       .ordinalColors([params.Barswatch === 'show' ? params.Color : '#6282b3'])
-     // .margins({top: 10, right: 50, bottom: 30, left: 40})
+      // .margins({top: 10, right: 50, bottom: 30, left: 40})
       .margins({ top: 10 + parseInt(PadTop), right: 20 + parseInt(PadRight), bottom: 50 + parseInt(PadBottom), left: 40 + parseInt(PadLeft) })
       .width(params.Width_ === null ? null : params.Width_)
       .height(params.Heigth_)
@@ -216,15 +222,24 @@ const BarChart = ({ params }) => {
       .on('preRedraw', update_offset)
       .on('pretransition', display);
 
-    dc.renderAll();
-    // resizing(chart);
-    d3.select('body').on('mouseover', function () {
+    if (params.Width_ !== null)
+      dc.renderAll()
+    else
+      dc.renderAll('Barchart');
 
+    // resizing(chart);
+
+    d3.select('body').on('mouseover', function () {
       d3.selectAll('rect.bar')
         .on("mouseover", function (d) {
           div2.transition()
             .duration(500)
             .style("opacity", params.Tooltipswatch)
+            .style("font-family", params.TooltipFont)
+            .style("color", params.TooltipColor)
+            .style("font-size", params.TooltipSize + "px")
+            .style("background-color", params.TooltipBGColor)
+            .style("border", params.TooltipThickness + 'px ' + params.TooltipTickColor + ' solid')
           if (params.TooltipContent === 'X') {
             div2.html('<div><div><b>'
               + params.XAxis + '</b> : ' + d.target.__data__.x + '</div><div>')
@@ -376,6 +391,8 @@ const BarChart = ({ params }) => {
 
     // last();
     // next()
+    console.timeEnd('bar')
+
   }, [params]);
 
 

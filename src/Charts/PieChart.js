@@ -11,7 +11,8 @@ const PieChart = ({ params }) => {
   const div1 = React.useRef(null)
 
   React.useEffect(() => {
-    //document.documentElement.style.setProperty('--logo-color', tooltip)
+    console.time('Pie')
+
     var div2 = d3.select("#Charts").append("div")
       .attr("class", "tooltip")
       .style("opacity", 0)
@@ -116,8 +117,15 @@ const PieChart = ({ params }) => {
 
     var fmt = d3.format('02d');
     var table_ = ndx.dimension(function (d) { return [fmt(+d[params.XAxis]), fmt(+d[params.YAxis])]; });
-    var fileChart = new dc.pieChart(div.current);
-    var datatabel = new dc.dataTable(div1.current);
+    var fileChart, datatabel;
+    if (params.Width_ !== null) {
+      fileChart = new dc.pieChart(div.current);
+      datatabel = new dc.dataTable(div1.current);
+    }
+    else {
+      fileChart = new dc.pieChart(div.current, 'Chart');
+      datatabel = new dc.dataTable(div1.current, 'Table');
+    }
     fileChart
       .width(params.Width_)
       .height(params.Heigth_)
@@ -173,7 +181,10 @@ const PieChart = ({ params }) => {
 
 
 
-    dc.renderAll();
+    if (params.Width_ !== null)
+      dc.renderAll()
+    else
+      dc.renderAll('Chart');
     d3.selectAll("g.dc-legend-item text")
       // .style
       .style("font-family", params.LegendFont)
@@ -191,6 +202,11 @@ const PieChart = ({ params }) => {
           div2.transition()
             .duration(500)
             .style("opacity", params.Tooltipswatch)
+            .style("font-family", params.TooltipFont)
+            .style("color", params.TooltipColor)
+            .style("font-size", params.TooltipSize + "px")
+            .style("background-color", params.TooltipBGColor)
+            .style("border", params.TooltipThickness + 'px ' + params.TooltipTickColor + ' solid')
           if (params.TooltipContent === 'X') {
             div2.html('<div><div><b>' + params.XAxis + '</b> : ' + d.target.__data__.data['key'] + '</div><div>')
           }
@@ -284,7 +300,7 @@ const PieChart = ({ params }) => {
 
     // last();
     // next()
-    document.querySelector('.loader').style.display = 'none';
+    console.timeEnd('Pie')
 
   })
 

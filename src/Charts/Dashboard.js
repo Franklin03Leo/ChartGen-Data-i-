@@ -130,8 +130,7 @@ const Dashboard = ({ params }) => {
 
     //Components
     const Chart = ({ state }) => {
-
-        const chart = React.useMemo(() => {
+        //const chart = React.useMemo(() => {
             return (
                 <>
                     <div>
@@ -152,9 +151,8 @@ const Dashboard = ({ params }) => {
                     </div>
                 </>
             )
-        }, [state])
-
-        return chart
+     //   }, [state])
+       // return chart
 
     }
     function CreatingUploadArea() {
@@ -461,7 +459,11 @@ const Dashboard = ({ params }) => {
         //     }
         // }
     }
-    const DashboardArea = React.useMemo(() => CreatingUploadArea(), [template, filteredtemplate, chartsID, layouts])
+    const DashboardArea = React.useMemo(() => {
+        const dashboard = CreatingUploadArea()
+        return dashboard
+    }
+        , [template, filteredtemplate, chartsID, layouts])
     const NavTabs = React.useMemo(() => Tabs(), [Tab, filter])
     //const charts = React.useMemo((state) => Chart({state}), [template])
     //const handleClick = useCallback(() => onclick(DashboardArea), [DashboardArea, onclick]);
