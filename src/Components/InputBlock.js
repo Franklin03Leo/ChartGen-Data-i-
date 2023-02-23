@@ -1074,7 +1074,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
             return;
         }
         else if (action === 'templeDelete') {
-            let Index
+            let Index = -1
             for (let i = 0; i < Object.keys(project).length; i++) {
                 Index = Object.values(project[Object.keys(project)[i]].charts).indexOf(name)
                 if (Index !== -1) {
@@ -1512,6 +1512,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                     let data = response.data;
                     let obj = {};
                     for (let i = 0; i < data.length; i++) {
+                        data[i].userID = user.userID
                         obj[data[i].TempName] = data[i];
                     }
                     setTemplatesCollections(obj);
@@ -4256,13 +4257,13 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                 <>
                                     <Typography id="transition-modal-description" sx={{ mt: 2 }} style={{ marginTop: '10px' }}>
                                         {/* <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12"> */}
-                                            <Alert severity="warning">Are you sure want to delete <strong>"{open.tempName}"</strong> Template?
-                                                This will impact <strong>"{open.dashboardName}"</strong> Dashboard.</Alert>
+                                        <Alert severity="warning">Are you sure want to delete <strong>"{open.tempName}"</strong> Template?
+                                            This will impact <strong>"{open.dashboardName}"</strong> Dashboard.</Alert>
                                         {/* </div> */}
                                     </Typography>
                                     <Typography id="transition-modal-description" sx={{ mt: 5 }} style={{ marginTop: '10px' }}>
                                         <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12" >
-                                            <Button variant="contained" margin="normal" className='input-field button' style={{ backgroundColor: '#6282b3', float: 'right' }} onClick={(e) => { setOpen({ ...open, 'Template': false}) }}>
+                                            <Button variant="contained" margin="normal" className='input-field button' style={{ backgroundColor: '#6282b3', float: 'right' }} onClick={(e) => { setOpen({ ...open, 'Template': false }) }}>
                                                 Cancel
                                             </Button>
                                             <Button variant="contained" margin="normal" className='input-field button' style={{ backgroundColor: '#6282b3', float: 'right', marginRight: '10px' }} onClick={(e) => { handleTemplate(open.tempName, 'Delete') }}>
