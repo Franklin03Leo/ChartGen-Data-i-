@@ -21,7 +21,7 @@ const Feedback = ({ params }) => {
         }
 
     }
-    const cols = [{ name: 'Reported By' }, { name: 'Category' }, { name: 'Issue' }, { name: 'Date/Time', options: { customBodyRender: fnFormat } }]
+    const cols = [{ name: 'Reported By' }, { name: 'Category' }, { name: 'Section' }, { name: 'Issue' }, { name: 'Date/Time', options: { customBodyRender: fnFormat } }]
     const options = {
         filter: false,
         filterType: "multiselect",

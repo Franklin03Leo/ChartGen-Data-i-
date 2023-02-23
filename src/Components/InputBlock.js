@@ -66,12 +66,6 @@ import layout8 from '../../src/Images/layout8.svg';
 import layout9 from '../../src/Images/layout9.svg';
 import layout10 from '../../src/Images/layout10.svg';
 import layout11 from '../../src/Images/layout11.svg';
-// import login from '../../src/L1.svg';
-// import login from '../../src/L1.svg';
-// import login from '../../src/L1.svg';
-// import login from '../../src/L1.svg';
-// import login from '../../src/L1.svg';
-// import login from '../../src/L1.svg';
 
 //Components
 import LoadingSpinner from "../Components/LoadingSpinner";
@@ -165,13 +159,14 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         }
 
     })
-    // const [Env, setEnv] = React.useState();
+    const [user, setUser] = React.useState({ 'userID': sessionStorage.getItem('UserName').split(',')[1] });
     const [disable, isDisable] = React.useState(true);
     const [error, setError] = React.useState({});
     const [state, setState] = React.useState({
         'InputType': 'Enter Inputs', 'Heigth_': 280, 'Width_': 600, 'YAxisPadding': '10',
-        'SlicesCap': 10, 'Innerradius': 10, 'ExternalRadiusPadding': 60, 'SymbolSize': 7, 'TooltipContent': 'All', 'TooltipTickColor': '#000000', 'GroupByCol': 'Sum',
-        'LabelsContent': 'X', 'userID': sessionStorage.getItem('UserName') !== null && sessionStorage.getItem('UserName').split(',')[1]
+        'SlicesCap': 10, 'Innerradius': 10, 'ExternalRadiusPadding': 60, 'SymbolSize': 7, 'TooltipContent': 'All',
+        'TooltipTickColor': '#000000', 'GroupByCol': 'Sum', 'Color': '#8495e6',
+        'LabelsContent': 'X', 'userID': sessionStorage.getItem('UserName') !== null && user.userID
     });
     const [enable, setEnable] = React.useState({})
     const [colors, setColors] = React.useState([]);
@@ -183,7 +178,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
     const [navopen, setNavOpen] = React.useState(true);
     const [navwidth, setNavWidth] = React.useState({ 'navArea': '90px', 'inuptArea': '30%', 'ChartArea': '63%' });
     const [isMobile, setIsMobile] = React.useState(false);
-    const [open, setOpen] = React.useState({ 'Template': false, 'Dashboard': false });
+    const [open, setOpen] = React.useState({ 'Template': false, 'Dashboard': false, 'deleteTemplate': false });
     const [progress, setProgress] = React.useState({ 'loader': false });
     const [filter, setFilter] = React.useState({});
     const [filteringProps, setfilteringProps] = React.useState({ 'customFilter': [] });
@@ -192,6 +187,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         'Categories': ['UI', 'Performance', 'Dataset', 'Statistics', 'Data Dictionary', 'Template', 'Dashboard', 'User Guide', 'Suggestions', 'Other'],
         'Reported By': sessionStorage.getItem('UserName') !== null && sessionStorage.getItem('UserName').split(',')[0]
     });
+    const [feedbackSection, setFeedbackSection] = React.useState(['Dataset', 'Statistics', 'Data Dictionary', 'Template', 'Dashboard', 'User Guide'])
     const [feedbackIssue, setIssues] = React.useState(undefined);
     const [dashboardCharts, setdashboardCharts] = React.useState();
     const [projectDetails, setprojectDetails] = React.useState({})
@@ -221,8 +217,9 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         position: 'absolute',
         top: '35%',
         left: '50%',
+        width: '30%',
         transform: 'translate(-50%, -50%)',
-        width: 400,
+        // width: 400,
         bgcolor: 'background.paper',
         boxShadow: 24,
         p: 4,
@@ -268,6 +265,11 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         project_(postProject);
     }, [postProject]);
     React.useEffect(() => {
+        // toast.success('Welcome back, Xavier', {
+        //     position: toast.POSITION.BOTTOM_RIGHT,
+        //     hideProgressBar: true,
+        //     autoClose: 2000
+        // });
         GetTemplate('Dashboard')
         GetDashboard()
         getDataSet()
@@ -963,9 +965,16 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
     // Sidebar navigation
     const handleNavbarChange = (event) => {
         var data = event.currentTarget.dataset.testid;
+        if (data !== 'FeedbackIcon')
+            resetScreen()
         var bar = '';
-        if (data === 'DatasetIcon') bar = 'Data'
-        else if (data === 'SignalCellularAltIcon') bar = 'Charts'
+        if (data === 'DatasetIcon') {
+            bar = 'Data'
+        }
+        else if (data === 'SignalCellularAltIcon') {
+            bar = 'Charts'
+
+        }
         else if (data === 'Grid3x3Icon') bar = 'Dimensions'
         else if (data === 'LineAxisIcon') bar = 'Axes'
         else if (data === 'ArticleIcon') bar = 'Templates'
@@ -1040,36 +1049,50 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         }
     }
     //Template Edit/Delete
-    const handleTemplate = (e) => {
-        if (e.currentTarget.dataset.testid === 'EditIcon') {
-            setState(template[e.currentTarget.id])
+    const handleTemplate = (name, action) => {
+        if (action === 'Edit') {
+            setState(template[name])
             setEnable({ ...enable, 'Piechart': false, 'Barchart': false, 'Scatter': false, 'Linechart': false, 'Compositechart': false, 'Serieschart': false, 'Barlinechart': false })
             setNavbar({ 'bar': 'Charts' })
             setFlag(true)
 
         }
-        else if (e.currentTarget.dataset.testid === 'DeleteIcon') {
-            setTemplate({ ...template, [e.currentTarget.id]: undefined })
+        else if (action === 'Delete') {
+            setTemplate({ ...template, [name]: undefined })
             setEnable({ ...enable, 'Piechart': false, 'Barchart': false, 'Scatter': false, 'Linechart': false, 'Compositechart': false, 'Serieschart': false, 'Barlinechart': false })
 
-            axios.post(`http://${path.Location}:8000/DeleteTemplate`, { 'TempName': e.currentTarget.id, 'userID': state.userID }).then((response) => {
+            axios.post(`http://${path.Location}:8000/DeleteTemplate`, { 'TempName': name, 'userID': user.userID }).then((response) => {
                 console.log('data', response);
+                toast.success('Your Chart has been Deleted', {
+                    position: toast.POSITION.BOTTOM_RIGHT,
+                    hideProgressBar: true,
+                    autoClose: 2000
+                });
+                setFlag(flag)
             });
-
-            toast.success('Your Chart has been Deleted', {
-                position: toast.POSITION.BOTTOM_RIGHT,
-                hideProgressBar: true,
-                autoClose: 2000
-            });
-            setFlag(flag)
+            setOpen({ ...open, 'Template': false })
+            return;
         }
-        if (e.currentTarget.dataset.testid === 'RemoveRedEyeIcon' || e.currentTarget.dataset.testid === 'EditIcon') {
+        else if (action === 'templeDelete') {
+            let Index
+            for (let i = 0; i < Object.keys(project).length; i++) {
+                Index = Object.values(project[Object.keys(project)[i]].charts).indexOf(name)
+                if (Index !== -1) {
+                    setOpen({ ...open, 'Template': true, 'deleteTemplate': true, 'tempName': name, 'dashboardName': project[Object.keys(project)[i]].DashboardName })
+                    return
+                }
+            }
+            if (Index === -1)
+                handleTemplate(name, 'Delete')
+        }
+
+        if (action === 'Preview' || action === 'Edit') {
             //GetTemplate()
             document.querySelector('.loader').style.display = 'block';
             setEnable({ ...enable, 'Piechart': false, 'Barchart': false, 'Scatter': false, 'Linechart': false, 'Compositechart': false, 'Serieschart': false, 'Barlinechart': false })
             setEnableTemplate(!enabletemplate)
-            setState(template[e.currentTarget.id])
-            if (e.currentTarget.dataset.testid === 'RemoveRedEyeIcon')
+            setState(template[name])
+            if (action === 'Preview')
                 setFlag(false)
         }
     }
@@ -1227,11 +1250,20 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         setOthers({ ...others, 'selectedLayout': event.currentTarget.id })
     }
 
+    //To reset the screen click upon navtabs
+    const resetScreen = () => {
+        setData({ 'data': undefined });
+        setIsshow({ "isShow": undefined });
+        setIssues(undefined);
+        setPlay({ "isPlay": undefined })
+        ChildtoParentHandshake(undefined)
+    }
+
     // Service call's
     const PostTemplate = (action) => {
         try {
             if (action === 'Update') {
-                axios.post(`http://${path.Location}:8000/DeleteTemplate`, { 'TempName': state.TempName, 'userID': state.userID }).then((response) => {
+                axios.post(`http://${path.Location}:8000/DeleteTemplate`, { 'TempName': state.TempName, 'userID': user.userID }).then((response) => {
                     axios.post(`http://${path.Location}:8000/InsertTemplate`, (state))
                         .then((response) => {
                             console.log('data', response.data);
@@ -1259,13 +1291,13 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         }
     }
     const GetTemplate = (Tab) => {
-        if (state.userID == '') {
+        if (user.userID == '') {
             navigate('/')
             return
         }
-        if (Object.keys(template).length === 0 || Object.keys(dashboard).length === 0)
+        if ((Tab === undefined && Object.keys(template).length === 0) || Object.keys(dashboard).length === 0)
             document.querySelector('.loader').style.display = 'block';
-        axios.post(`http://${path.Location}:8000/GetTemplate`, { 'userID': state.userID }).then((response) => {
+        axios.post(`http://${path.Location}:8000/GetTemplate`, { 'userID': user.userID }).then((response) => {
             let data = response.data;
             if (Tab === 'Dashboard') {
                 let obj = {};
@@ -1283,7 +1315,9 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                 }
                 setTemplate(obj);
             }
-            document.querySelector('.loader').style.display = 'none';
+            setTimeout(() => {
+                document.querySelector('.loader').style.display = 'none';
+            }, 100);
         });
     }
     const handleFeedback = (action) => {
@@ -1344,7 +1378,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         else if (action === 'Update') {
             const filterProps = handleFilter('Dashboard Insert')
             let obj = {}
-            obj.userID = state.userID
+            obj.userID = user.userID
             if (others.StaticLayouts) {
                 obj.layouts = others.selectedLayout
                 obj.layoutOption = 'Static'
@@ -1381,8 +1415,9 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
 
         }
         else if (action === 'Delete') {
+            document.querySelector('.loader').style.display = 'block';
             axios.post(`http://${path.Location}:8000/DeleteDashboard`, {
-                'userID': state.userID,
+                'userID': user.userID,
                 'DashboardName': e.currentTarget.id
             }).then((response) => {
                 toast.success('Your Project has been Deleted.', {
@@ -1391,6 +1426,9 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                     autoClose: 2000
                 });
                 GetDashboard();
+                setTimeout(() => {
+                    document.querySelector('.loader').style.display = 'none';
+                }, 100);
             })
         }
         if (action === 'Preview' || action === 'Edit') {
@@ -1409,7 +1447,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
             obj.action = action;
             setpostProject(obj);
             setPlay({ 'isPlay': undefined }); setIssues(undefined);
-            setIsshow({ ...show, 'isShow': true });
+            setIsshow({ ...show, 'isShow': true, 'Build': false });
 
 
         }
@@ -1418,7 +1456,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         let obj = {}
         const filterProps = handleFilter('Dashboard Insert')
         if (action === 'Insert') {
-            obj.userID = state.userID
+            obj.userID = user.userID
             if (others.StaticLayouts) {
                 obj.layouts = others.selectedLayout
                 obj.layoutOption = 'Static'
@@ -1450,7 +1488,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
     const GetDashboard = () => {
         if (Object.keys(project).length === 0)
             document.querySelector('.loader').style.display = 'block';
-        axios.post(`http://${path.Location}:8000/GetDashboard`, { 'userID': state.userID }).then((response) => {
+        axios.post(`http://${path.Location}:8000/GetDashboard`, { 'userID': user.userID }).then((response) => {
             console.log('project data', response.data);
             let data = response.data;
             let obj = {};
@@ -1459,7 +1497,9 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
             }
             setProject(obj);
             setNavbar({ 'bar': 'Project' });
-            document.querySelector('.loader').style.display = 'none';
+            setTimeout(() => {
+                document.querySelector('.loader').style.display = 'none';
+            }, 100);
 
         })
     }
@@ -1475,7 +1515,9 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                         obj[data[i].TempName] = data[i];
                     }
                     setTemplatesCollections(obj);
-                    document.querySelector('.loader').style.display = 'none';
+                    setTimeout(() => {
+                        document.querySelector('.loader').style.display = 'none';
+                    }, 100);
 
                 })
                 .catch(error => {
@@ -1491,7 +1533,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
     }
     const postDataSet = (name, data) => {
         let obj = {}
-        obj.userID = state.userID
+        obj.userID = user.userID
         obj.filename = name
         obj.data = data
         axios.post(`http://${path.Location}:8000/InsertDataSet`, obj).then((response) => {
@@ -1499,7 +1541,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         })
     }
     const getDataSet = () => {
-        axios.post(`http://${path.Location}:8000/GetDataSet`, { 'userID': state.userID }).then((response) => {
+        axios.post(`http://${path.Location}:8000/GetDataSet`, { 'userID': user.userID }).then((response) => {
             let data = response.data
             let obj = {}
             for (let i = 0; i < data.length; i++) {
@@ -1510,7 +1552,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
     }
     const handleDataSet = (action, id) => {
         if (action === 'Delete') {
-            axios.post(`http://${path.Location}:8000/DeleteDataSet`, { 'userID': state.userID, 'id': id }).then((response) => {
+            axios.post(`http://${path.Location}:8000/DeleteDataSet`, { 'userID': user.userID, 'id': id }).then((response) => {
                 getDataSet()
             })
         }
@@ -1739,10 +1781,10 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                         :
                         ''
                     }
-                    {state.Uploaded_file === undefined && state.InputType === 'Enter Inputs' && navbar.bar === 'Data' ?
+                    {/* {state.Uploaded_file === undefined && state.InputType === 'Enter Inputs' && navbar.bar === 'Data' ?
                         <div style={{ color: 'red' }}>Use the file with the less than 300 records for better experience, We are working on for boosting up.</div>
                         : ''
-                    }
+                    } */}
                     {(state.Uploaded_file !== undefined && error.invalidInputs === undefined) || template !== undefined ?
                         <>
                             {navbar.bar === 'Charts' || navbar.bar === 'Templates' ?
@@ -3156,7 +3198,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                         <p className="row col-lg-12" style={{ marginTop: '10px' }}>Bar Color</p>
 
                                                                         <div className="row col-xs-12 col-sm-2 col-md-4 col-lg-3 inputfield">
-                                                                            <input type="color" name='Color' value={state.Color} defaultValue={'#000000'} id="colorPicker" onChange={handleChange}></input>
+                                                                            <input type="color" name='Color' value={state.Color} defaultValue={'#8495e6'} id="colorPicker" onChange={handleChange}></input>
 
                                                                         </div>
                                                                         <p className="row col-lg-12">Background</p>
@@ -3668,17 +3710,17 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
 
                                                                     <div className="col-sm-1 col-md-1 col-lg-1 TemplateIcon">
                                                                         <BootstrapTooltip title="Preview" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
-                                                                            <RemoveRedEyeIcon id={a} className='temp-icon' onClick={handleTemplate} />
+                                                                            <RemoveRedEyeIcon id={a} className='temp-icon' onClick={(e) => { handleTemplate(a, 'Preview') }} />
                                                                         </BootstrapTooltip>
                                                                     </div>
                                                                     <div className="col-sm-1 col-md-1 col-lg-1 TemplateIcon">
                                                                         <BootstrapTooltip title="Edit" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
-                                                                            <EditIcon id={a} className='temp-icon' onClick={handleTemplate} />
+                                                                            <EditIcon id={a} className='temp-icon' onClick={(e) => { handleTemplate(a, 'Edit') }} />
                                                                         </BootstrapTooltip>
                                                                     </div>
                                                                     <div className="col-sm-1 col-md-1 col-lg-1 TemplateIcon">
                                                                         <BootstrapTooltip title="Delete" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
-                                                                            <DeleteIcon id={a} className='temp-icon' onClick={handleTemplate} />
+                                                                            <DeleteIcon id={a} className='temp-icon' onClick={(e) => { handleTemplate(a, 'templeDelete') }} />
                                                                         </BootstrapTooltip>
                                                                     </div>
 
@@ -4133,6 +4175,44 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                         ))}
                                     </TextField>
                                 </div>
+                                {feedback.Category === 'UI' || feedback.Category === 'Performance' || feedback.Category === 'Suggestions' ?
+                                    <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" >
+                                        <TextField
+                                            // error={formValues.Category.error}
+                                            // helperText={formValues.Category.error && formValues.Category.errorMessage}
+                                            id="Category"
+                                            select
+                                            name='Section'
+                                            label='Section*'
+                                            margin="dense"
+                                            className='input-field '
+                                            defaultValue={'Select'}
+                                            onChange={(e) => { setFeedback({ ...feedback, 'Section': e.target.value }) }}
+                                        //onBlur={(e) => { handleValidation(e) }}
+                                        >
+                                            <MenuItem key={-1} value={'Select'}>
+                                                {'Select'}
+                                            </MenuItem>
+                                            {feedbackSection.map((option, index) => (
+                                                <MenuItem key={option} value={option}>
+                                                    {option}
+                                                </MenuItem>
+                                            ))}
+                                        </TextField>
+                                    </div>
+                                    : ''
+                                }
+                                {feedback.Category === 'Other' ?
+                                    <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                        <TextField id="NOCharts" className='input-field' name='Other' label="Category" variant="outlined" margin="dense"
+                                            // error={formValues.Rows.error}
+                                            // helperText={formValues.Rows.error && formValues.Rows.errorMessage}
+                                            // value={others.Rows}
+                                            onChange={(e) => { setFeedback({ ...feedback, 'Section': e.target.value }) }}
+                                        />
+                                    </div>
+                                    : ''
+                                }
                                 <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                     <TextField
                                         id="TempDescription"
@@ -4172,35 +4252,58 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                             <Typography id="transition-modal-title" variant="h6" component="h2">
                                 Template
                             </Typography>
-                            <Typography id="transition-modal-description" sx={{ mt: 2 }} style={{ marginTop: '10px' }}>
-                                <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                    <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                        <TextField id="Template"
-                                            error={formValues.TempName.error}
-                                            helperText={formValues.TempName.error && formValues.TempName.errorMessage}
-                                            margin="dense" fullWidth className='input-field' name='TempName' label="Template Name" variant="outlined"
-                                            // value={state.YAxisLabel}
-                                            onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                        />
-                                    </div>
-                                    <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                        <TextField
-                                            id="TempDescription" className="Description" label="Description" name="TempDescription" fullWidth margin="dense" multiline maxRows={4}
-                                            onChange={handleChange}
-                                        />
-                                    </div>
-                                </div>
-                            </Typography>
-                            <Typography id="transition-modal-description" sx={{ mt: 5 }} style={{ marginTop: '10px' }}>
-                                <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12" >
-                                    <Button variant="contained" margin="normal" className='input-field button' style={{ backgroundColor: '#6282b3', float: 'right' }} onClick={(e) => { setOpen({ 'Template': false }) }}>
-                                        Cancel
-                                    </Button>
-                                    <Button variant="contained" margin="normal" className='input-field button' style={{ backgroundColor: '#6282b3', float: 'right', marginRight: '10px' }} onClick={(e) => { saveTemplate('save') }}>
-                                        Save
-                                    </Button>
-                                </div>
-                            </Typography>
+                            {open.deleteTemplate ?
+                                <>
+                                    <Typography id="transition-modal-description" sx={{ mt: 2 }} style={{ marginTop: '10px' }}>
+                                        {/* <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12"> */}
+                                            <Alert severity="warning">Are you sure want to delete <strong>"{open.tempName}"</strong> Template?
+                                                This will impact <strong>"{open.dashboardName}"</strong> Dashboard.</Alert>
+                                        {/* </div> */}
+                                    </Typography>
+                                    <Typography id="transition-modal-description" sx={{ mt: 5 }} style={{ marginTop: '10px' }}>
+                                        <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12" >
+                                            <Button variant="contained" margin="normal" className='input-field button' style={{ backgroundColor: '#6282b3', float: 'right' }} onClick={(e) => { setOpen({ ...open, 'Template': false}) }}>
+                                                Cancel
+                                            </Button>
+                                            <Button variant="contained" margin="normal" className='input-field button' style={{ backgroundColor: '#6282b3', float: 'right', marginRight: '10px' }} onClick={(e) => { handleTemplate(open.tempName, 'Delete') }}>
+                                                Proceed
+                                            </Button>
+                                        </div>
+                                    </Typography>
+                                </>
+                                :
+                                <>
+                                    <Typography id="transition-modal-description" sx={{ mt: 2 }} style={{ marginTop: '10px' }}>
+                                        <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                            <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                <TextField id="Template"
+                                                    error={formValues.TempName.error}
+                                                    helperText={formValues.TempName.error && formValues.TempName.errorMessage}
+                                                    margin="dense" fullWidth className='input-field' name='TempName' label="Template Name" variant="outlined"
+                                                    // value={state.YAxisLabel}
+                                                    onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                />
+                                            </div>
+                                            <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                <TextField
+                                                    id="TempDescription" className="Description" label="Description" name="TempDescription" fullWidth margin="dense" multiline maxRows={4}
+                                                    onChange={handleChange}
+                                                />
+                                            </div>
+                                        </div>
+                                    </Typography>
+                                    <Typography id="transition-modal-description" sx={{ mt: 5 }} style={{ marginTop: '10px' }}>
+                                        <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12" >
+                                            <Button variant="contained" margin="normal" className='input-field button' style={{ backgroundColor: '#6282b3', float: 'right' }} onClick={(e) => { setOpen({ 'Template': false }) }}>
+                                                Cancel
+                                            </Button>
+                                            <Button variant="contained" margin="normal" className='input-field button' style={{ backgroundColor: '#6282b3', float: 'right', marginRight: '10px' }} onClick={(e) => { saveTemplate('save') }}>
+                                                Save
+                                            </Button>
+                                        </div>
+                                    </Typography>
+                                </>
+                            }
                         </Box>
                     </Fade>
                 </Modal>
@@ -4253,6 +4356,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                         </Box>
                     </Fade>
                 </Modal>
+
                 {error.mandatoryFields !== undefined && (navbar.bar === 'Charts' || navbar.bar === 'Dashboard' || navbar.bar === 'Templates' || navbar.bar === 'Feedback') ?
                     <div className="col-xs-3 col-sm-10 col-md-10 col-lg-10" style={{ margin: "15px 0px 15px  0px", padding: 0 }}>
                         <Alert severity="error">{error.mandatoryFields}</Alert>

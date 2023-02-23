@@ -131,33 +131,33 @@ const Dashboard = ({ params }) => {
     //Components
     const Chart = ({ state }) => {
         //const chart = React.useMemo(() => {
-            return (
-                <>
-                    <div>
-                        {state.Chart === 'Bar Chart' &&
-                            <BarChart params={state} />}
-                        {state.Chart === 'Pie Chart' &&
-                            <PieChart params={state} />}
-                        {state.Chart === 'ScatterPlot' &&
-                            <Scatter params={state} />}
-                        {state.Chart === 'Line Chart' &&
-                            <LineChart params={state} />}
-                        {state.Chart === 'Composite Chart' &&
-                            <Compose params={state} />}
-                        {state.Chart === 'Series Chart' &&
-                            <SeriesChart params={state} />}
-                        {state.Chart === 'Bar Line Chart' &&
-                            <BarLineChart params={state} />}
-                    </div>
-                </>
-            )
-     //   }, [state])
-       // return chart
+        return (
+            <>
+                <div>
+                    {state.Chart === 'Bar Chart' &&
+                        <BarChart params={state} />}
+                    {state.Chart === 'Pie Chart' &&
+                        <PieChart params={state} />}
+                    {state.Chart === 'ScatterPlot' &&
+                        <Scatter params={state} />}
+                    {state.Chart === 'Line Chart' &&
+                        <LineChart params={state} />}
+                    {state.Chart === 'Composite Chart' &&
+                        <Compose params={state} />}
+                    {state.Chart === 'Series Chart' &&
+                        <SeriesChart params={state} />}
+                    {state.Chart === 'Bar Line Chart' &&
+                        <BarLineChart params={state} />}
+                </div>
+            </>
+        )
+        //   }, [state])
+        // return chart
 
     }
     function CreatingUploadArea() {
         console.log('charts re-rendered')
-        if (Object.keys(filteredtemplate).length !== 0) {
+        if (Object.keys(template).length !== 0) {
             setTimeout(() => {
                 document.querySelector('.loader').style.display = 'none';
             }, 100);
@@ -189,9 +189,9 @@ const Dashboard = ({ params }) => {
                                             :
                                             <div className="divdashboard" >
                                                 <div style={{ color: 'red', position: 'relative', top: '40%' }}>
-                                                    <div className="col-lg-12">Please Refresh</div>
+                                                    <div className="col-lg-12">You might have deleted</div>
                                                     <div className="col-lg-12">the</div>
-                                                    <div className="col-lg-12">Templates</div>
+                                                    <div className="col-lg-12">Template</div>
                                                 </div>
                                             </div>
                                         }
@@ -405,7 +405,7 @@ const Dashboard = ({ params }) => {
     //Functions
     const drop = (event) => {
         // SetTemplate(params.template)
-        document.querySelector('.loader').style.display = 'block';
+        //document.querySelector('.loader').style.display = 'block';
         SetChartsID({ ...chartsID, [event.currentTarget.id]: event.dataTransfer.getData('text') })
         if (Tab.data === undefined)
             setTab({ ...Tab, 'data': template[event.dataTransfer.getData('text')].Uploaded_file })
@@ -442,7 +442,7 @@ const Dashboard = ({ params }) => {
         if (action === 'Dashboard')
             setTab({ ...Tab, 'Dashboard': true })
         else {
-            setTab({ ...Tab, 'Dashboard': false, 'data': template[Object.keys(template)[0]].Uploaded_file })
+            setTab({ ...Tab, 'Dashboard': false, 'data': template[chartsID[Object.keys(chartsID)[0]]].Uploaded_file })
         }
     }
     const resetDimension = () => {

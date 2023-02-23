@@ -75,6 +75,14 @@ const HomePage = () => {
         p: 4,
         borderRadius: '5px'
     };
+
+    // React.useEffect(() => {
+    //     toast.success('Welcome back, Xavier', {
+    //         position: toast.POSITION.BOTTOM_RIGHT,
+    //         hideProgressBar: true,
+    //         autoClose: 2000
+    //     });
+    // }, [])
     // React.useEffect(() => {
     let timeout, downloadTimer
     document.getElementById('root').addEventListener('mousemove', function () {
@@ -104,9 +112,11 @@ const HomePage = () => {
     const data = (state, enable, navbar, file) => {
         // debugger
         setState(state)
-        setEnable(enable)
-        setNavbar(navbar)
-        setChangeType({ ...changeType, 'Dimensions': file.newArray, 'file': file.Uploaded_file })
+        if (state !== undefined) {
+            setEnable(enable)
+            setNavbar(navbar)
+            setChangeType({ ...changeType, 'Dimensions': file.newArray, 'file': file.Uploaded_file })
+        }
     }
     const expand = useCallback((navwidth) => {
         setNavWidth(navwidth);
@@ -223,7 +233,11 @@ const HomePage = () => {
                     {/* <div className="" style={{ backgroundColor: '#e9ecef', height: '87vh', width: navwidth.ChartArea }}> */}
                     <div className="" style={{ backgroundColor: '#e9ecef', width: `${navwidth.ChartArea === '63%' ? 'calc(70% - 90px)' : 'calc(100% - 90px)'}`, height: 'calc(100vh - 6vh)' }}>
                         {filedata.data === undefined && play.isPlay !== true && show.isShow !== true && feedback.Issues === undefined ?
-                            <ChartBlock enable={enable} state={state} />
+                            <>
+                                {state !== undefined &&
+                                    <ChartBlock enable={enable} state={state} />
+                                }
+                            </>
                             :
                             <>
                                 {filedata.data !== undefined && show.isShow !== true ?
@@ -335,7 +349,12 @@ const HomePage = () => {
                             <Feedback params={feedback.Issues} />
                             : ''
                         }
-
+                        {(state === undefined || Object.keys(state).length === 0) && feedback.Issues === undefined && !show.isShow && !play.isPlay ?
+                            <>
+                                
+                            </>
+                            : ''
+                        }
                     </div>
                 </div>
             </div>
