@@ -290,9 +290,9 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
 
         };
 
-        window.addEventListener("resize", handleResize);
+       // window.addEventListener("resize", handleResize);
         return () => {
-            window.removeEventListener("resize", handleResize);
+         //   window.removeEventListener("resize", handleResize);
         };
     }, [])
 
@@ -1275,7 +1275,9 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                 });
             }
             else if (action === 'Insert') {
-                axios.post(`http://${path.Location}:8000/InsertTemplate`, (state))
+                const Result = state
+                delete Result._id
+                axios.post(`http://${path.Location}:8000/InsertTemplate`, (Result))
                     .then((response) => {
                         console.log('data', response.data);
                         GetTemplate()
@@ -4244,7 +4246,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                     aria-labelledby="transition-modal-title"
                     aria-describedby="transition-modal-description"
                     open={open.Template}
-                    onClose={(e) => { setOpen({ 'Template': false }) }}
+                    onClose={(e) => { setOpen({ ...open, 'Template': false }) }}
                     closeAfterTransition
                     BackdropComponent={Backdrop}
                     BackdropProps={{
@@ -4298,7 +4300,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                     </Typography>
                                     <Typography id="transition-modal-description" sx={{ mt: 5 }} style={{ marginTop: '10px' }}>
                                         <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12" >
-                                            <Button variant="contained" margin="normal" className='input-field button' style={{ backgroundColor: '#6282b3', float: 'right' }} onClick={(e) => { setOpen({ 'Template': false }) }}>
+                                            <Button variant="contained" margin="normal" className='input-field button' style={{ backgroundColor: '#6282b3', float: 'right' }} onClick={(e) => { setOpen({ ...open, 'Template': false }) }}>
                                                 Cancel
                                             </Button>
                                             <Button variant="contained" margin="normal" className='input-field button' style={{ backgroundColor: '#6282b3', float: 'right', marginRight: '10px' }} onClick={(e) => { saveTemplate('save') }}>
