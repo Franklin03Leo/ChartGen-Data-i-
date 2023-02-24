@@ -79,7 +79,7 @@ app.post('/InsertTemplate', (req, res) => {
             res.status(200).send('Success')
             console.log("Template inserted on " + new Date())  // Success
         }).catch(function (error) {
-            console.log("Error while Template inserting on " + new Date())      // Failure
+            console.log(`${error} ==== >Error while Template inserting on ` + new Date())      // Failure
         });
 })
 app.post("/DeleteTemplate", (req, res) => {

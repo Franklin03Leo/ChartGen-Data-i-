@@ -1512,8 +1512,11 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                     let data = response.data;
                     let obj = {};
                     for (let i = 0; i < data.length; i++) {
+
                         data[i].userID = user.userID
+                        delete data[i]._id
                         obj[data[i].TempName] = data[i];
+
                     }
                     setTemplatesCollections(obj);
                     setTimeout(() => {
