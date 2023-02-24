@@ -1,6 +1,8 @@
 import MUIDataTable from "mui-datatables";
 const DatasetTable = ({ params,filter }) => {
-//debugger
+    setTimeout(() => {
+        document.querySelector('.loader').style.display = 'none';
+    }, 100);
     const cols = Object.keys(params[0]).map((e) => ({ ['name']: e }))
     const options = {
         filter: `${filter === false? false :true}`,

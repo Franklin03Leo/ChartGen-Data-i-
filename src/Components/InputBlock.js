@@ -290,9 +290,9 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
 
         };
 
-       // window.addEventListener("resize", handleResize);
+        // window.addEventListener("resize", handleResize);
         return () => {
-         //   window.removeEventListener("resize", handleResize);
+            //   window.removeEventListener("resize", handleResize);
         };
     }, [])
 
@@ -302,6 +302,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
     //Every fields onChange for store the inputs
     const handleChange = (event) => {
         if (event.target.name === 'file') {
+            document.querySelector('.loader').style.display = 'block'
             if (event.target.files[0] === undefined) {
                 setState({
                     ...state, 'Uploaded_file': undefined,
@@ -452,7 +453,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                     })
                 }
             }
-
+            
             setFlag(false)
 
         }
@@ -1228,20 +1229,23 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
     }
     //Expand/Collapse
     const ExpandCollapse = () => {
-        if (navopen && !isMobile) {
-            setNavWidth({ 'navArea': '90px', 'inuptArea': '0%', 'ChartArea': '95%' })
-        }
-        else if (navopen && isMobile) {
-            setNavWidth({ 'navArea': '90px', 'inuptArea': '0%', 'ChartArea': '94%' })
-        }
-        else if (!navopen && isMobile) {
-            setNavWidth({ 'navArea': '90px', 'inuptArea': '60%', 'ChartArea': '94%' })
-        }
-        else if (!navopen && !isMobile) {
-            setNavWidth({ 'navArea': '90px', 'inuptArea': '30%', 'ChartArea': '63%' })
-        }
-        setNavOpen(!navopen)
-        setIsshow({ ...show, isBublished: !show.isBublished })
+        setTimeout(() => {
+
+            if (navopen && !isMobile) {
+                setNavWidth({ 'navArea': '90px', 'inuptArea': '0%', 'ChartArea': '95%' })
+            }
+            else if (navopen && isMobile) {
+                setNavWidth({ 'navArea': '90px', 'inuptArea': '0%', 'ChartArea': '94%' })
+            }
+            else if (!navopen && isMobile) {
+                setNavWidth({ 'navArea': '90px', 'inuptArea': '60%', 'ChartArea': '94%' })
+            }
+            else if (!navopen && !isMobile) {
+                setNavWidth({ 'navArea': '90px', 'inuptArea': '30%', 'ChartArea': '63%' })
+            }
+            setNavOpen(!navopen)
+            setIsshow({ ...show, isBublished: !show.isBublished })
+        }, 100);
         //ExpandData(navwidth)
 
     }
@@ -1507,28 +1511,29 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
     }
     const GetPreDefinedTemplates = (action, e) => {
         if (action === 'Fetch') {
-            if (Object.keys(TemplatesCollections).length === 0)
+            if (Object.keys(TemplatesCollections).length === 0) {
                 document.querySelector('.loader').style.display = 'block';
-            axios.post(`http://${path.Location}:8000/GetPreDefinedTemplate`)
-                .then((response) => {
-                    let data = response.data;
-                    let obj = {};
-                    for (let i = 0; i < data.length; i++) {
+                axios.post(`http://${path.Location}:8000/GetPreDefinedTemplate`)
+                    .then((response) => {
+                        let data = response.data;
+                        let obj = {};
+                        for (let i = 0; i < data.length; i++) {
 
-                        data[i].userID = user.userID
-                        delete data[i]._id
-                        obj[data[i].TempName] = data[i];
+                            data[i].userID = user.userID
+                            delete data[i]._id
+                            obj[data[i].TempName] = data[i];
 
-                    }
-                    setTemplatesCollections(obj);
-                    setTimeout(() => {
-                        document.querySelector('.loader').style.display = 'none';
-                    }, 100);
+                        }
+                        setTemplatesCollections(obj);
+                        setTimeout(() => {
+                            document.querySelector('.loader').style.display = 'none';
+                        }, 100);
 
-                })
-                .catch(error => {
-                    console.log(error);
-                });
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+            }
         }
         else {
             setEnable({ ...enable, 'Piechart': false, 'Barchart': false, 'Scatter': false, 'Linechart': false, 'Compositechart': false, 'Serieschart': false, 'Barlinechart': false });

@@ -65,10 +65,11 @@ const DashboardFilter = ({ params, paramfn }) => {
             setfilteredValue({})
             setfilterProps([])
         }
-        paramfn({ 'data': data, 'isFiltered': action })
-        // setTimeout(() => {
-        document.querySelector('.loader').style.display = 'none';
-        // }, 100);
+        setTimeout(() => {
+
+            paramfn({ 'data': data, 'isFiltered': action })
+        }, 100);
+
 
     }
     return (
