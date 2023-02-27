@@ -1491,7 +1491,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
             GetDashboard()
         })
     }
-    const GetDashboard = () => {
+    const GetDashboard = () => { 
         if (Object.keys(project).length === 0)
             document.querySelector('.loader').style.display = 'block';
         axios.post(`http://${path.Location}:8000/GetDashboard`, { 'userID': user.userID }).then((response) => {
