@@ -57,18 +57,34 @@ app.post("/GetPreDefinedTemplate", (req, res) => {
 })
 // ==================== TEMPLATE =======================
 app.post("/GetTemplate/", (req, res) => {
+    const data = req.body
     connect();
-    db
-        .collection('charts')
-        .find({ 'userID': req.body.userID }).sort({ '_id': 1 }).toArray(function (err, result) {
-            if (err) {
-                res.status(400).send("Error fetching listings!");
-                console.log('Error while Template Fetching on ' + new Date());
-            } else {
-                res.json(result);
-                console.log('Template Fetched on ' + new Date());
-            };
-        })
+    if (data.Flag.action === 'All') {
+        db
+            .collection('charts')
+            .find({ 'userID': data.userID }).sort({ '_id': 1 }).toArray(function (err, result) {
+                if (err) {
+                    res.status(400).send("Error fetching listings!");
+                    console.log('Error while Template Fetching on ' + new Date());
+                } else {
+                    res.json(result);
+                    console.log('All Template Fetched on ' + new Date());
+                };
+            })
+    }
+    else {
+        db
+            .collection('charts')
+            .find({ 'userID': data.userID, 'TempName': { $in: data.Flag.charts } }).toArray(function (err, result) {
+                if (err) {
+                    res.status(400).send("Error fetching listings!");
+                    console.log('Error while Specific Template Fetching on ' + new Date());
+                } else {
+                    res.json(result);
+                    console.log('Specific Template Fetched on ' + new Date());
+                };
+            })
+    }
 })
 app.post('/InsertTemplate', (req, res) => {
     let data = [];

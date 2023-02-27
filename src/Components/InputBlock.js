@@ -270,7 +270,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         //     hideProgressBar: true,
         //     autoClose: 2000
         // });
-        GetTemplate('Dashboard')
+        //GetTemplate('Dashboard')
         GetDashboard()
         getDataSet()
         const handleResize = () => {
@@ -1228,7 +1228,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         setfilteringProps({ ...filteringProps, [event.target.name]: typeof value === 'string' ? value.split(',') : value, });
     }
     //Expand/Collapse
-    const ExpandCollapse = () => {
+    const ExpandCollapse = (action) => {
         setTimeout(() => {
 
             if (navopen && !isMobile) {
@@ -1244,7 +1244,11 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                 setNavWidth({ 'navArea': '90px', 'inuptArea': '30%', 'ChartArea': '63%' })
             }
             setNavOpen(!navopen)
-            setIsshow({ ...show, isBublished: !show.isBublished })
+            if (action === 'publish')
+                setIsshow({ ...show, isBublished: !show.isBublished, 'Build': false })
+            else
+                setIsshow({ ...show, isBublished: !show.isBublished })
+
         }, 100);
         //ExpandData(navwidth)
 
@@ -1303,9 +1307,9 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         }
         if ((Tab === undefined && Object.keys(template).length === 0) || Object.keys(dashboard).length === 0)
             document.querySelector('.loader').style.display = 'block';
-        axios.post(`http://${path.Location}:8000/GetTemplate`, { 'userID': user.userID }).then((response) => {
+        axios.post(`http://${path.Location}:8000/GetTemplate`, { 'userID': user.userID, 'Flag': { 'action': 'All' } }).then((response) => {
             let data = response.data;
-            if (Tab === 'Dashboard') {
+            if (Tab === 'Dashboard' || Tab === 'Create Dashboard') {
                 let obj = {};
                 for (let i = 0; i < data.length; i++) {
                     data[i].Width_ = null;
@@ -1313,6 +1317,11 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                     obj[data[i].TempName] = data[i];
                 }
                 setDashboard(obj);
+                if (Tab === 'Create Dashboard') {
+                    setTimeout(() => {
+                        document.querySelector('.loader').style.display = 'none';
+                    }, 0);
+                }
             }
             else {
                 let obj = {}
@@ -1320,11 +1329,12 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                     obj[data[i].TempName] = data[i];
                 }
                 setTemplate(obj);
-            }
-            if (Tab === undefined) {
-                setTimeout(() => {
-                    document.querySelector('.loader').style.display = 'none';
-                }, 100);
+
+                if (Tab === undefined) {
+                    setTimeout(() => {
+                        document.querySelector('.loader').style.display = 'none';
+                    }, 100);
+                }
             }
         });
     }
@@ -1442,21 +1452,49 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         if (action === 'Preview' || action === 'Edit') {
             document.querySelector('.loader').style.display = 'block'
             let data = project[e.currentTarget.id] //others.EditingDashboardID
-            let Uploaded_file = dashboard[Object.values(data.charts)[0]].Uploaded_file
-            let obj = {}
-            obj.userID = data.userID;
-            obj.layouts = data.layouts;
-            obj.layoutOption = data.layoutOption;
-            obj.charts = data.charts;
-            obj.DashboardName = data.DashboardName;
-            obj.DashboardDescription = data.DashboardDescription;
-            obj.dashboard = dashboard;
-            obj.Filter = { 'filterSwatch': data.filter.filterSwatch, 'data': Uploaded_file !== undefined ? Uploaded_file : '' };
-            obj.FilterProps = data.filterProps;
-            obj.action = action;
-            setpostProject(obj);
-            setPlay({ 'isPlay': undefined }); setIssues(undefined);
-            setIsshow({ ...show, 'isShow': true, 'Build': false });
+            if (Object.keys(dashboard).length === 0) {
+                axios.post(`http://${path.Location}:8000/GetTemplate`, { 'userID': user.userID, 'Flag': { 'action': 'Specific', 'charts': Object.values(data.charts) } }).then((response) => {
+                    let Result = response.data;
+                    let dashboard_ = {};
+                    for (let i = 0; i < Result.length; i++) {
+                        Result[i].Width_ = null;
+                        Result[i].Heigth_ = 250;
+                        dashboard_[Result[i].TempName] = Result[i];
+                    }
+                    let Uploaded_file = dashboard_[Object.values(data.charts)[0]].Uploaded_file
+                    let obj = {}
+                    obj.userID = data.userID;
+                    obj.layouts = data.layouts;
+                    obj.layoutOption = data.layoutOption;
+                    obj.charts = data.charts;
+                    obj.DashboardName = data.DashboardName;
+                    obj.DashboardDescription = data.DashboardDescription;
+                    obj.dashboard = dashboard_;
+                    obj.Filter = { 'filterSwatch': data.filter.filterSwatch, 'data': Uploaded_file !== undefined ? Uploaded_file : '' };
+                    obj.FilterProps = data.filterProps;
+                    obj.action = action;
+                    setpostProject(obj);
+                    setPlay({ 'isPlay': undefined }); setIssues(undefined);
+                    setIsshow({ ...show, 'isShow': true, 'Build': false });
+                })
+            }
+            else {
+                let Uploaded_file = dashboard[Object.values(data.charts)[0]].Uploaded_file
+                let obj = {}
+                obj.userID = data.userID;
+                obj.layouts = data.layouts;
+                obj.layoutOption = data.layoutOption;
+                obj.charts = data.charts;
+                obj.DashboardName = data.DashboardName;
+                obj.DashboardDescription = data.DashboardDescription;
+                obj.dashboard = dashboard;
+                obj.Filter = { 'filterSwatch': data.filter.filterSwatch, 'data': Uploaded_file !== undefined ? Uploaded_file : '' };
+                obj.FilterProps = data.filterProps;
+                obj.action = action;
+                setpostProject(obj);
+                setPlay({ 'isPlay': undefined }); setIssues(undefined);
+                setIsshow({ ...show, 'isShow': true, 'Build': false });
+            }
 
         }
     }
@@ -1497,7 +1535,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         if (Object.keys(project).length === 0)
             document.querySelector('.loader').style.display = 'block';
         axios.post(`http://${path.Location}:8000/GetDashboard`, { 'userID': user.userID }).then((response) => {
-            console.log('project data', response.data);
+            // console.log('project data', response.data);
             let data = response.data;
             let obj = {};
             for (let i = 0; i < data.length; i++) {
@@ -1613,7 +1651,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
 
                     <div className="Icon">
                         <BootstrapTooltip title="Dashboard" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
-                            <Dashboard className="Icon_" fontSize="large" color={navbar.bar === 'Dashboard' ? 'primary' : '#979A9B'} onClick={(e) => { handleNavbarChange(e); GetTemplate('Dashboard') }} />
+                            <Dashboard className="Icon_" fontSize="large" color={navbar.bar === 'Dashboard' ? 'primary' : '#979A9B'} onClick={(e) => { handleNavbarChange(e); GetTemplate('Create Dashboard') }} />
                         </BootstrapTooltip>
                     </div>
                     <div className="Icon">
@@ -4014,7 +4052,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                     <>
                                         <div className="row col-sm-4 col-md-12 col-lg-6" style={{ marginTop: '10px' }}>
                                             <Button id="saveTemp" variant="contained" className='input-field button' style={{ backgroundColor: '#6282b3', lineHeight: '1rem' }}
-                                                onClick={(e) => { ExpandCollapse(); handleFilter('Apply Filter'); setIssues(undefined) }}>
+                                                onClick={(e) => { ExpandCollapse('publish'); handleFilter('Apply Filter'); setIssues(undefined) }}>
                                                 Publish Dashboard
                                             </Button>
                                         </div>
