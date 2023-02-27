@@ -453,7 +453,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                     })
                 }
             }
-            
+
             setFlag(false)
 
         }
@@ -1321,9 +1321,11 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                 }
                 setTemplate(obj);
             }
-            setTimeout(() => {
-                document.querySelector('.loader').style.display = 'none';
-            }, 100);
+            if (Tab === undefined) {
+                setTimeout(() => {
+                    document.querySelector('.loader').style.display = 'none';
+                }, 100);
+            }
         });
     }
     const handleFeedback = (action) => {
@@ -1440,6 +1442,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         if (action === 'Preview' || action === 'Edit') {
             document.querySelector('.loader').style.display = 'block'
             let data = project[e.currentTarget.id] //others.EditingDashboardID
+            let Uploaded_file = dashboard[Object.values(data.charts)[0]].Uploaded_file
             let obj = {}
             obj.userID = data.userID;
             obj.layouts = data.layouts;
@@ -1448,13 +1451,12 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
             obj.DashboardName = data.DashboardName;
             obj.DashboardDescription = data.DashboardDescription;
             obj.dashboard = dashboard;
-            obj.Filter = { 'filterSwatch': data.filter.filterSwatch, 'data': dashboard[Object.values(data.charts)[0]].Uploaded_file };
+            obj.Filter = { 'filterSwatch': data.filter.filterSwatch, 'data': Uploaded_file !== undefined ? Uploaded_file : '' };
             obj.FilterProps = data.filterProps;
             obj.action = action;
             setpostProject(obj);
             setPlay({ 'isPlay': undefined }); setIssues(undefined);
             setIsshow({ ...show, 'isShow': true, 'Build': false });
-
 
         }
     }
@@ -1491,7 +1493,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
             GetDashboard()
         })
     }
-    const GetDashboard = () => { 
+    const GetDashboard = () => {
         if (Object.keys(project).length === 0)
             document.querySelector('.loader').style.display = 'block';
         axios.post(`http://${path.Location}:8000/GetDashboard`, { 'userID': user.userID }).then((response) => {
@@ -1503,9 +1505,11 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
             }
             setProject(obj);
             setNavbar({ 'bar': 'Project' });
+            // if (Object.keys(project).length !== 0) {
             setTimeout(() => {
                 document.querySelector('.loader').style.display = 'none';
             }, 100);
+            // }
 
         })
     }
