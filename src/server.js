@@ -160,7 +160,7 @@ app.post('/SigninUser/', (req, res) => {
                     console.log(`${err} ===> Error while signin on ` + new Date().toLocaleString())
                 } else {
                     if (result) {
-                        res.status(200).json(result);
+                        res.status(200).send(result);
                         console.log(`${result.Name} Signed in on ` + new Date().toLocaleString())
                     }
                     else {
