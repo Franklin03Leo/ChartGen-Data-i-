@@ -48,10 +48,10 @@ app.post("/GetPreDefinedTemplate", (req, res) => {
         .find({}).toArray(function (err, result) {
             if (err) {
                 res.status(400).send("Error fetching listings!");
-                console.log('Error while Predefined Template Fetching on ' + new Date());
+                console.log(`${err} ===> Error while Predefined Template Fetching on ` + new Date().toLocaleString());
             } else {
                 res.json(result);
-                console.log('Predefined Template Fetched on ' + new Date());
+                console.log('Predefined Template Fetched');
             };
         })
 })
@@ -65,10 +65,10 @@ app.post("/GetTemplate/", (req, res) => {
             .find({ 'userID': data.userID }).sort({ '_id': 1 }).toArray(function (err, result) {
                 if (err) {
                     res.status(400).send("Error fetching listings!");
-                    console.log('Error while Template Fetching on ' + new Date());
+                    console.log(`${err} ===> Error while Template Fetching on ` + new Date().toLocaleString());
                 } else {
                     res.json(result);
-                    console.log('All Template Fetched on ' + new Date());
+                    console.log('All Template Fetched');
                 };
             })
     }
@@ -78,10 +78,10 @@ app.post("/GetTemplate/", (req, res) => {
             .find({ 'userID': data.userID, 'TempName': { $in: data.Flag.charts } }).toArray(function (err, result) {
                 if (err) {
                     res.status(400).send("Error fetching listings!");
-                    console.log('Error while Specific Template Fetching on ' + new Date());
+                    console.log(`${err} ===> Error while Specific Template Fetching on ` + new Date().toLocaleString());
                 } else {
                     res.json(result);
-                    console.log('Specific Template Fetched on ' + new Date());
+                    console.log('Specific Template Fetched');
                 };
             })
     }
@@ -93,9 +93,9 @@ app.post('/InsertTemplate', (req, res) => {
     db
         .collection("charts").insertMany(data).then(function () {
             res.status(200).send('Success')
-            console.log("Template inserted on " + new Date())  // Success
+            console.log("Template inserted") // Success
         }).catch(function (error) {
-            console.log(`${error} ==== >Error while Template inserting on ` + new Date())      // Failure
+            console.log(`${error} ===> Error while Template inserting on ` + new Date().toLocaleString())      // Failure
         });
 })
 app.post("/DeleteTemplate", (req, res) => {
@@ -104,9 +104,9 @@ app.post("/DeleteTemplate", (req, res) => {
         .collection('charts')
         .deleteOne({ 'TempName': req.body.TempName, 'userID': req.body.userID }).then(function () {
             res.status(200).send('Success')
-            console.log("Template Deleted on " + new Date())  // Success
+            console.log("Template Deleted")  // Success
         }).catch(function (error) {
-            console.log("Error while Template Deleting on " + new Date())      // Failure
+            console.log(`${error} ===> Error while Template Deleting on ` + new Date().toLocaleString())      // Failure
         });
 })
 // =================== FEEDBACK =======================
@@ -116,10 +116,10 @@ app.get("/GetFeedback/", (req, res) => {
         .collection('Feedback')
         .find({}).toArray(function (err, result) {
             if (err) {
-                res.status(400).send("Error fetching feedback! on " + new Date());
+                res.status(400).send(`${err} ===> Error fetching feedback! on ` + new Date().toLocaleString());
             } else {
                 res.json(result);
-                console.log('Feedback fetched on' + new Date());
+                console.log('Feedback fetched');
             };
         })
 })
@@ -129,10 +129,10 @@ app.post('/InsertFeedback/', (req, res) => {
     connect();
     db
         .collection("Feedback").insertOne(data).then(function () {
-            console.log("Feedback inserted on " + new Date())  // Success
+            console.log("Feedback inserted")  // Success
             res.send('Success')
         }).catch(function (error) {
-            console.log(("Error while Feedback insertion on " + new Date()))
+            console.log((`${error} ===> Error while Feedback insertion on ` + new Date().toLocaleString()))
             res.send('Error')    // Failure
         });
 })
@@ -142,10 +142,10 @@ app.post('/SignupUser/', (req, res) => {
     connect();
     db
         .collection("UserDetails").insertOne(data).then(function () {
-            console.log("User Details inserted on " + new Date())  // Success
+            console.log("User Details inserted")  // Success
             res.send('Success')
         }).catch(function (error) {
-            console.log("Error while User Details insertion on " + new Date())
+            console.log(`${error} ===> Error while User Details insertion on ` + new Date().toLocaleString())
             res.send('Error')    // Failure
         });
 })
@@ -157,15 +157,15 @@ app.post('/SigninUser/', (req, res) => {
             function (err, result) {
                 if (err) {
                     res.status(400).send("Error fetching listings!");
-                    console.log("Error while signin on " + new Date())
+                    console.log(`${err} ===> Error while signin on ` + new Date().toLocaleString())
                 } else {
                     if (result) {
                         res.status(200).json(result);
-                        console.log("Signed in on " + new Date())
+                        console.log(`${result.Name} Signed in on ` + new Date().toLocaleString())
                     }
                     else {
                         res.status(404).send('User not found');
-                        console.log("Sign in attempt on " + new Date());
+                        console.log("Sign in attempt on " + new Date().toLocaleString());
                     }
                 };
 
@@ -176,11 +176,11 @@ app.post('/ForgotUser/', (req, res) => {
     connect();
     db
         .collection("UserDetails").updateOne({ 'userID': data.FuserID }, { $set: { password: data.password } }).then(function () {
-            console.log("User Details updated on " + new Date())  // Success
+            console.log("User Details updated")  // Success
             res.send('Success')
         }).catch(function (error) {
             console.log(error)
-            res.send("Error while User Details updation on " + new Date())    // Failure
+            res.send(`${error} ===> Error while User Details updation on ` + new Date().toLocaleString())    // Failure
         });
 })
 app.post('/CheckSignupUser/', (req, res) => {
@@ -191,15 +191,15 @@ app.post('/CheckSignupUser/', (req, res) => {
             function (err, result) {
                 if (err) {
                     res.status(400).send("Error fetching listings!");
-                    console.log("Error while checking on " + new Date())
+                    console.log(`${err} ===> Error while checking on ` + new Date().toLocaleString())
                 } else {
                     if (result) {
                         res.status(200).json(result);
-                        console.log("Checking user on " + new Date())
+                        console.log("Checking user")
                     }
                     else {
                         res.status(404).send('User not found');
-                        console.log("Checking user attempt on " + new Date());
+                        console.log("Checking user attempt on " + new Date().toLocaleString());
                     }
                 };
 
@@ -215,7 +215,7 @@ app.post('/InsertDashboard', (req, res) => {
             res.status(200).send('Success')
             console.log("Dashboard inserted")  // Success
         }).catch(function (error) {
-            console.log(error)      // Failure
+            console.log(`${error} ===> Error while inserting dashboard on ` + new Date().toLocaleString())      // Failure
         });
 })
 app.post("/GetDashboard/", (req, res) => {
@@ -224,10 +224,10 @@ app.post("/GetDashboard/", (req, res) => {
         .collection('Dashboards')
         .find({ 'userID': req.body.userID }).toArray(function (err, result) {
             if (err) {
-                res.status(400).send("Error fethcing projects! on " + new Date());
+                res.status(400).send(`${err} ===> Error fethcing projects on ` + new Date().toLocaleString());
             } else {
                 res.json(result);
-                console.log('Project Fetched on ' + new Date());
+                console.log('Project Fetched');
             };
         })
 })
@@ -250,9 +250,9 @@ app.post('/UpdateDashboard', (req, res) => {
             }).then(function () {
                 //.deleteOne({ 'DashboardName': req.body.DashboardName, 'userID': req.body.userID }).then(function () {
                 res.status(200).send('Success')
-                console.log("Dashboard Updated on " + new Date())  // Success
+                console.log("Dashboard Updated")  // Success
             }).catch(function (error) {
-                console.log("Error while Dashboard Updation on " + new Date())      // Failure
+                console.log(`${error} ===> Error while Dashboard Updation on ` + new Date().toLocaleString())      // Failure
             });
 })
 app.post("/DeleteDashboard", (req, res) => {
@@ -261,9 +261,9 @@ app.post("/DeleteDashboard", (req, res) => {
         .collection('Dashboards')
         .deleteOne({ 'DashboardName': req.body.DashboardName, 'userID': req.body.userID }).then(function () {
             res.status(200).send('Success')
-            console.log("Project Deleted on " + new Date())  // Success
+            console.log("Project Deleted")  // Success
         }).catch(function (error) {
-            console.log("Error while Project Deleting on " + new Date())      // Failure
+            console.log(`${error} ===> Error while Project Deleting on ` + new Date().toLocaleString())      // Failure
         });
 })
 // =================== DATASET =======================
@@ -276,7 +276,7 @@ app.post('/InsertDataSet', (req, res) => {
             res.status(200).send('Success')
             console.log("DataSet inserted")  // Success
         }).catch(function (error) {
-            console.log(error)      // Failure
+            console.log(`${error} ===> Error while dataset insertion on ` + new Date().toLocaleString())      // Failure
         });
 })
 app.post("/GetDataset/", (req, res) => {
@@ -285,10 +285,10 @@ app.post("/GetDataset/", (req, res) => {
         .collection('Dataset')
         .find({ 'userID': req.body.userID }).toArray(function (err, result) {
             if (err) {
-                res.status(400).send("Error fethcing dataset! on " + new Date());
+                res.status(400).send(`${err} ===> Error fethcing dataset on ` + new Date().toLocaleString());
             } else {
                 res.json(result);
-                console.log('Dataset Fetched on ' + new Date());
+                console.log('Dataset Fetched');
             };
         })
 })
@@ -298,8 +298,8 @@ app.post("/DeleteDataset", (req, res) => {
         .collection('Dataset')
         .deleteOne({ 'filename': req.body.id, 'userID': req.body.userID }).then(function () {
             res.status(200).send('Success')
-            console.log("Dataset Deleted on " + new Date())  // Success
+            console.log("Dataset Deleted")  // Success
         }).catch(function (error) {
-            console.log("Error while Dataset Deleting on " + new Date())      // Failure
+            console.log(`${error} ===> Error while Dataset Deleting on ` + new Date().toLocaleString())      // Failure
         });
 })

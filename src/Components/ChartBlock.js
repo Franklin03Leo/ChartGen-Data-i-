@@ -53,14 +53,16 @@ const ChartBlock = ({ enable, state }) => {
     const exportInputs = () => {
 
         var copystate = {}
-        var PieChart = ['Uploaded_file', 'Chart', 'Heigth_', 'Width_', 'Title', 'Innerradius', 'SlicesCap', 'ExternalRadiusPadding', 'XAxis', 'YAxis', 'XAxis_', 'YAxis_']
-        var BarChart = ['Uploaded_file', 'Chart', 'Heigth_', 'Width_', 'Title', 'Color', 'XAxisLabel', 'YAxisLabel', 'XAxis', 'YAxis', 'YAxisPadding', 'XAxis_', 'YAxis_']
-        var ScatterPlot = ['Uploaded_file', 'Chart', 'Heigth_', 'Width_', 'Title', 'Color', 'XAxisLabel', 'YAxisLabel', 'XAxis', 'YAxis', 'SymbolSize', 'XAxis_', 'YAxis_']
-        var LineChart = ['Uploaded_file', 'Chart', 'Heigth_', 'Width_', 'Title', 'Color', 'XAxisLabel', 'YAxisLabel', 'XAxis', 'YAxis', 'XAxis_', 'YAxis_']
-        var CompositeChart = ['Uploaded_file', 'Chart', 'Heigth_', 'Width_', 'Title', 'Color', 'XAxisLabel', 'YAxisLabel', 'XAxis', 'YAxis', 'GroupBy', 'XAxis_', 'YAxis_', 'GroupByValues']
-        var Common = ['BGColor', 'LegendColor', 'LegendFont', 'LegendSize', 'LengendPosition', 'TitleColor', 'TitleFont', 'TitleSize', 'TooltipBGColor', 'TooltipColor',
+        var PieChart = ['Innerradius', 'SlicesCap', 'ExternalRadiusPadding']
+        var BarChart = ['YAxisPadding']
+        var ScatterPlot = ['SymbolSize']
+        var LineChart = []
+        var CompositeChart = ['GroupBy', 'GroupByValues']
+        var Common = ['Uploaded_file', 'Chart', 'Heigth_', 'Width_', 'Title', 'XAxis', 'YAxis', 'XAxis_', 'YAxis_', 'Color', 'XAxisLabel', 'YAxisLabel', 'BGColor',
+            'LegendColor', 'LegendFont', 'LegendSize', 'LengendPosition', 'TitleColor', 'TitleFont', 'TitleSize', 'TooltipBGColor', 'TooltipColor',
             'TooltipFont', 'TooltipSize', 'TooltipThickness', 'TooltipTickColor', 'xFont', 'xSize', 'xColor', 'xlColor', 'xlFont', 'xlSize', 'yFont', 'yColor', 'ySize',
-            'ylColor', 'ylFont', 'ylSize', 'Axesswatch', 'Axesswatch_', 'Titleswatch', 'Titleswatch_', 'Tooltipswatch', 'Tooltipswatch_', 'Legendswatch', 'Legendswatch_', 'InputType']
+            'ylColor', 'ylFont', 'ylSize', 'Axesswatch', 'Axesswatch_', 'Titleswatch', 'Titleswatch_', 'Tooltipswatch', 'Tooltipswatch_', 'Legendswatch', 'Legendswatch_', 'InputType',
+            'XAxisCopy', 'YAxisCopy', 'TempDescription', 'TempName', 'GroupByCol', 'GroupByCopy_']
         for (let i = 0; i < Object.keys(state).length; i++) {
             if (state.Chart === 'Pie Chart') {
                 if (PieChart.indexOf(Object.keys(state)[i]) !== -1) {
@@ -90,7 +92,6 @@ const ChartBlock = ({ enable, state }) => {
 
             if (Common.indexOf(Object.keys(state)[i]) !== -1) {
                 if (Object.keys(state)[i] === 'InputType') {
-
                     copystate['InputType'] = 'Import Inputs'
                 }
                 else {
@@ -99,14 +100,16 @@ const ChartBlock = ({ enable, state }) => {
             }
 
         }
+
         const json = JSON.stringify(copystate, null, 2);
         const blob = new Blob([json], { type: "application/json" });
         const href = URL.createObjectURL(blob);
 
         // create "a" HTLM element with href to file
+        const fileName = state.Chart.replaceAll(' ', '') + '-' + new Date().toLocaleDateString('en-GB').replaceAll('/', '')
         const link = document.createElement("a");
         link.href = href;
-        link.download = state.Chart + "-Inputs.json";
+        link.download = fileName + ".json";
         document.body.appendChild(link);
         link.click();
 
@@ -123,7 +126,7 @@ const ChartBlock = ({ enable, state }) => {
                     <div className="row col-xs-1 col-sm-8 col-md-8 col-lg-8" >
                     </div>
                     {state.Chart !== undefined ?
-                        <div className="row col-xs-12 col-sm-4 col-md-4 col-lg-4" style={{ padding: '5px',height:'5vh' }}>
+                        <div className="row col-xs-12 col-sm-4 col-md-4 col-lg-4" style={{ padding: '5px', height: '5vh' }}>
                             <div className="col-xs-5 col-sm-8 col-md-8 col-lg-8">
                                 <BootstrapTooltip title="Download" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
                                     <DownloadIcon style={{ float: 'right', cursor: 'pointer' }} onClick={saveChart} className="Icon_" />

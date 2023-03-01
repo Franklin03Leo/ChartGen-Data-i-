@@ -163,7 +163,11 @@ const Compose = ({ params }) => {
 
         var fmt = d3.format('02d');
         var table_ = ndx.dimension(function (d) { return d[params.XAxis] });
-        let compositeChart = new dc.compositeChart(div.current)
+        let compositeChart
+        if (params.Width_ !== null)
+            compositeChart = new dc.compositeChart(div.current)
+        else
+            compositeChart = new dc.compositeChart(div.current, 'CompositeChart')
         var datatabel = new dc.dataTable(div1.current);
         var max = Math.max(...experiments);
         let barPadding;
@@ -369,7 +373,10 @@ const Compose = ({ params }) => {
             .on('preRedraw', update_offset)
             .on('pretransition', display)
 
-        dc.renderAll();
+        if (params.Width_ !== null)
+            dc.renderAll()
+        else
+            dc.renderAll('CompositeChart');
         // dc.redrawAll();
         setTimeout(() => {
             barlabelpostion();
@@ -537,7 +544,7 @@ const Compose = ({ params }) => {
                     </div>
                 </div>
             </Grid>
-            <Grid item className="cardbox chartbox" style={{display: params.Width_ === null ? 'none' : 'block' }}>
+            <Grid item className="cardbox chartbox" style={{ display: params.Width_ === null ? 'none' : 'block' }}>
                 <div id="table-scroll" className="table-scroll">
                     <div className="table-wrap">
 
@@ -552,4 +559,4 @@ const Compose = ({ params }) => {
         </Grid>
     );
 }
-export default Compose
+export default React.memo(Compose);

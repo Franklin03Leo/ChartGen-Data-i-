@@ -393,7 +393,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
 
                         } catch (error) {
                             setError({ 'invalidFile': 'There is s problem with the file, Please check and Try again !!!' })
-
+                            document.querySelector('.loader').style.display = 'none';
                         }
                     };
                     reader.readAsText(event.target.files[0]);
@@ -929,7 +929,6 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         // console.log('Template value', template)
         // console.log('Dashboard value', dashboard)
         setTimeout(() => {
-
             document.querySelector('.loader').style.display = 'none';
         }, 100);
     }
@@ -947,8 +946,10 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         reader.onload = e => {
             var data = JSON.parse(e.target.result)
             if (data['Chart'] !== undefined) {
+                // document.querySelector('.loader').style.display = 'block';
                 setState(data)
-                setNavbar({ 'bar': 'Data' })
+                setNavbar({ 'bar': 'Charts' })
+                ChildtoParentHandshake(data, enable, navbar, { 'newArray': data.XAxis_, 'Uploaded_file': data.Uploaded_file })
                 isDisable(false)
                 setError({ 'invalidInputs': undefined })
                 setEnable({ ...enable, 'Piechart': false, 'Barchart': false, 'Scatter': false, 'Linechart': false, 'Compositechart': false, 'Imported': true })
@@ -1391,7 +1392,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
             setNavbar({ 'bar': 'Dashboard' })
             setprojectDetails({ 'DashboardDescription': project[e.currentTarget.id].DashboardDescription })
             setfilteringProps({ ...filteringProps, 'customFilter': data.selectedFilterDimensions, 'Dimensions': data.AvailableDimensions })
-            setFilter({ ...filter, 'filterSwatch': data.filter.filterSwatch, 'data': dashboard[Object.values(data.charts)[0]].Uploaded_file })
+            //setFilter({ ...filter, 'filterSwatch': data.filter.filterSwatch, 'data': dashboard[Object.values(data.charts)[0]].Uploaded_file })
         }
         else if (action === 'Update') {
             const filterProps = handleFilter('Dashboard Insert')
@@ -1585,6 +1586,10 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         }
     }
     const postDataSet = (name, data) => {
+        if (Dataset[name] !== undefined) {
+           // setError({ 'invalidFile': 'There is s problem with the file, Please check and Try again !!!' })
+            return
+        }
         let obj = {}
         obj.userID = user.userID
         obj.filename = name

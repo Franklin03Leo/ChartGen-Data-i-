@@ -111,8 +111,18 @@ const LineChart = ({ params }) => {
 
         var fmt = d3.format('02d');
         var table_ = ndx.dimension(function (d) { return [fmt(+d[params.XAxis]), fmt(+d[params.YAxis])]; });
-        var chart = new dc.lineChart(div.current);
-        var datatabel = new dc.dataTable(div1.current);
+
+        var chart, datatabel
+
+        if (params.Width_ !== null) {
+            datatabel = new dc.dataTable(div1.current);
+            chart = new dc.lineChart(div.current)
+        }
+        else {
+            chart = new dc.lineChart(div.current, 'LineChart');
+            datatabel = new dc.dataTable(div1.current);
+        }
+
         let PadTop, PadRight, PadBottom, PadLeft = 0
         if (params.PadTop === undefined || params.PadTop === '') PadTop = 0; else PadTop = params.PadTop
         if (params.PadRight === undefined || params.PadRight === '') PadRight = 0; else PadRight = params.PadRight
@@ -213,7 +223,10 @@ const LineChart = ({ params }) => {
             .on('preRedraw', update_offset)
             .on('pretransition', display);
 
-        dc.renderAll();
+        if (params.Width_ !== null)
+            dc.renderAll()
+        else
+            dc.renderAll('LineChart');
         d3.select('body').on('mouseover', function () {
 
             d3.selectAll('.dot')
@@ -339,7 +352,7 @@ const LineChart = ({ params }) => {
                     </div>
                 </div>
             </Grid>
-            <Grid item className="cardbox chartbox" xs={12} sm={12} md={12} xl={12} lg={12} style={{display: params.Width_ === null ?'none':'block'}}>
+            <Grid item className="cardbox chartbox" xs={12} sm={12} md={12} xl={12} lg={12} style={{ display: params.Width_ === null ? 'none' : 'block' }}>
                 <div id="table-scroll" className="table-scroll">
                     <div className="table-wrap">
 
@@ -354,7 +367,7 @@ const LineChart = ({ params }) => {
         </Grid>
     );
 }
-export default LineChart
+export default React.memo(LineChart);
 
 
 

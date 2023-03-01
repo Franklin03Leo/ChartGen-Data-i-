@@ -11,8 +11,17 @@
     -webkit-box-pack: center;
     justify-content: center;
     padding-top: 8%;
-}
+    animation: 1s ease-out 0s 1 slideInFromTop;
 
+}
+@keyframes slideInFromTop {
+    0% {
+      transform: translateY(-100%);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
 .login-card {
     width: auto;
     border-radius: 7px;

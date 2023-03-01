@@ -39,12 +39,16 @@ const BarLineChart = ({ params }) => {
             return object[params.XAxis];
         });
         // var chart = new dc.barChart(div.current)
-        let compositeChart = new dc.compositeChart(div.current)
-            .title(function (y) {
-                var tooltip = params.XAxis + ': ' + y.key + '\n'
-                    + params.YAxis + ': ' + y.value
-                return ''
-            })
+        let compositeChart
+        if (params.Width_ !== null)
+            compositeChart = new dc.compositeChart(div.current)
+        else
+            compositeChart = new dc.compositeChart(div.current, 'BarLineChart')
+                .title(function (y) {
+                    var tooltip = params.XAxis + ': ' + y.key + '\n'
+                        + params.YAxis + ': ' + y.value
+                    return ''
+                })
         ndx = crossfilter(experiments)
         var runDimension = ndx.dimension(function (d) {
             return d[params.XAxis];
@@ -262,7 +266,7 @@ const BarLineChart = ({ params }) => {
             .yAxisLabel(params.YAxisLabel)
             .xAxisLabel(params.XAxisLabel)
             .rightYAxisLabel(params.RYAxisLabel)
-            .yAxis().tickFormat(function (v) { return v})
+            .yAxis().tickFormat(function (v) { return v })
         datatabel
             .width(300)
             .height(480)
@@ -276,7 +280,10 @@ const BarLineChart = ({ params }) => {
             .on('pretransition', display);
 
 
-        dc.renderAll();
+        if (params.Width_ !== null)
+            dc.renderAll()
+        else
+            dc.renderAll('BarLineChart');
         d3.selectAll("g.dc-legend-item text")
             // .style
             .style("font-family", params.LegendFont)
@@ -514,4 +521,4 @@ const BarLineChart = ({ params }) => {
     );
 }
 
-export default BarLineChart
+export default React.memo(BarLineChart);

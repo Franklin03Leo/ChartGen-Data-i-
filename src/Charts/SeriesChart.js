@@ -17,11 +17,13 @@ const SeriesChart = ({ params }) => {
             .style("font-size", params.TooltipSize + "px")
             .style("background-color", params.TooltipBGColor)
             .style("border", params.TooltipThickness + 'px ' + params.TooltipTickColor + ' solid')
+        const originalObject = params.Uploaded_file
 
-        var experiments = params.Uploaded_file
+        var experiments = JSON.stringify(originalObject);
+
         const timeFormat = d3.timeFormat('%Y-%m-%d');
         const timeFormat_ = d3.timeFormat('%m-%d-%Y');
-
+        experiments = JSON.parse(experiments)
         experiments.forEach(function (x) {
             if (new Date(x[params.XAxis]) == 'Invalid Date')
                 x[params.XAxis] = new Date(x[params.XAxis].toString().split('-').reverse().join('/'))
@@ -141,7 +143,7 @@ const SeriesChart = ({ params }) => {
         //var table_ = ndx.dimension(function (d) { return [fmt(+d[params.XAxis])]; });
         var chart = new dc.seriesChart(div.current);
         //var datatabel = new dc.dataTable(div1.current);
-        const volumeChart = new dc.barChart(div3.current);
+        //  const volumeChart = new dc.barChart(div3.current);
         let PadTop, PadRight, PadBottom, PadLeft = 0
         if (params.PadTop === undefined || params.PadTop === '') PadTop = 0; else PadTop = params.PadTop
         if (params.PadRight === undefined || params.PadRight === '') PadRight = 0; else PadRight = params.PadRight
@@ -163,7 +165,7 @@ const SeriesChart = ({ params }) => {
             .dimension(runDimension)
             .group(speedSumGroup)
             .mouseZoomable(true)
-            .rangeChart(volumeChart)
+            //  .rangeChart(volumeChart)
             .seriesAccessor(function (d) { return d.key[0]; })
             .keyAccessor(function (d) { return d.key[1]; })
             .valueAccessor(function (d) { return +d.value; })
@@ -231,7 +233,7 @@ const SeriesChart = ({ params }) => {
                     .style("font-size", params.ylSize + "px")
                     .style("display", params.Axesswatch === undefined ? 'none' : params.Axesswatch)
 
-                    chart.selectAll(".barLabel")
+                chart.selectAll(".barLabel")
                     .style("font-family", params.LabelsFont)
                     .style("fill", params.LabelsColor)
                     .style("font-size", params.Labelsize + "px")
@@ -243,29 +245,29 @@ const SeriesChart = ({ params }) => {
             .xAxisLabel(params.XAxisLabel)
         chart.yAxis().tickFormat(function (v) { return BMK(v); })
 
-        volumeChart
-            .width(params.Width_)
-            .height(150)
-            .margins({ top: parseInt(10) + parseInt(PadTop), right: parseInt(30) + parseInt(PadRight), bottom: parseInt(50) + parseInt(PadBottom), left: parseInt(30) + parseInt(PadLeft) })
-            .dimension(runDimension)
-            .group(speedSumGroup_copy)
-            .centerBar(true)
-            .ordinalColors([params.Seriesswatch === 'show' ? params.Color : '#6282b3'])
-            .gap(1)
-            .x(d3.scaleTime().domain([new Date(minDate), new Date(maxDate)]))
-            .round(d3.timeMonth.round)
-            .alwaysUseRounding(true)
-            .xUnits(d3.timeMonths)
-            .controlsUseVisibility(true)
-            .renderlet(function (volumeChart) {
-                volumeChart.selectAll("g.x g.tick text")
-                    .attr('dx', '-10')
-                    .attr('text-anchor', 'end')
-                    .attr('transform', "rotate(-60)")
-            })
-        volumeChart.yAxis().tickFormat(function (v) { return BMK(v); })
+        // volumeChart
+        //     .width(params.Width_)
+        //     .height(150)
+        //     .margins({ top: parseInt(10) + parseInt(PadTop), right: parseInt(30) + parseInt(PadRight), bottom: parseInt(50) + parseInt(PadBottom), left: parseInt(30) + parseInt(PadLeft) })
+        //     .dimension(runDimension)
+        //     .group(speedSumGroup_copy)
+        //     .centerBar(true)
+        //     .ordinalColors([params.Seriesswatch === 'show' ? params.Color : '#6282b3'])
+        //     .gap(1)
+        //     .x(d3.scaleTime().domain([new Date(minDate), new Date(maxDate)]))
+        //     .round(d3.timeMonth.round)
+        //     .alwaysUseRounding(true)
+        //     .xUnits(d3.timeMonths)
+        //     .controlsUseVisibility(true)
+        //     .renderlet(function (volumeChart) {
+        //         volumeChart.selectAll("g.x g.tick text")
+        //             .attr('dx', '-10')
+        //             .attr('text-anchor', 'end')
+        //             .attr('transform', "rotate(-60)")
+        //     })
+        // volumeChart.yAxis().tickFormat(function (v) { return BMK(v); })
 
-        volumeChart.xAxis().tickFormat(function (v) { return timeFormat_(v); })
+        // volumeChart.xAxis().tickFormat(function (v) { return timeFormat_(v); })
 
         // datatabel
         //     .width(300)
@@ -427,8 +429,8 @@ const SeriesChart = ({ params }) => {
                     <div ref={div} className="boxcenter">
                     </div>
 
-                    <div ref={div3} className="boxcenter">
-                    </div>
+                    {/* <div ref={div3} className="boxcenter">
+                    </div> */}
                 </div>
             </Grid>
             {/* <Grid item className="cardbox" xs={12} sm={12} md={12} xl={4} lg={12}>
@@ -447,4 +449,4 @@ const SeriesChart = ({ params }) => {
     );
 }
 
-export default SeriesChart
+export default React.memo(SeriesChart);

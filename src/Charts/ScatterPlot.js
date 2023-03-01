@@ -112,8 +112,16 @@ const Scatter = ({ params }) => {
 
         var fmt = d3.format('02d');
         var table_ = ndx.dimension(function (d) { return [fmt(+d[params.XAxis]), fmt(+d[params.YAxis])]; });
-        var chart = new dc.scatterPlot(div.current);
-        var datatabel = new dc.dataTable(div1.current);
+
+        var chart, datatabel
+        if (params.Width_ !== null) {
+            chart = new dc.scatterPlot(div.current)
+            datatabel = new dc.dataTable(div1.current);
+        }
+        else {
+            chart = new dc.scatterPlot(div.current, 'scatterPlot');
+            datatabel = new dc.dataTable(div1.current);
+        }
         let PadTop, PadRight, PadBottom, PadLeft = 0
         if (params.PadTop === undefined || params.PadTop === '') PadTop = 0; else PadTop = params.PadTop
         if (params.PadRight === undefined || params.PadRight === '') PadRight = 0; else PadRight = params.PadRight
@@ -229,7 +237,11 @@ const Scatter = ({ params }) => {
             .on('preRedraw', update_offset)
             .on('pretransition', display);
 
-        dc.renderAll();
+        if (params.Width_ !== null)
+            dc.renderAll()
+        else
+            dc.renderAll('scatterPlot');
+
         d3.select('body').on('mouseover', function () {
 
             d3.selectAll('.symbol')
@@ -336,7 +348,7 @@ const Scatter = ({ params }) => {
                     </div>
                 </div>
             </Grid>
-            <Grid item className="cardbox chartbox" style={{display: params.Width_ === null ? 'none' : 'block' }}>
+            <Grid item className="cardbox chartbox" style={{ display: params.Width_ === null ? 'none' : 'block' }}>
 
                 <div id="table-scroll" className="table-scroll">
                     <div className="table-wrap">
@@ -351,4 +363,4 @@ const Scatter = ({ params }) => {
         </Grid>
     );
 }
-export default Scatter
+export default React.memo(Scatter);
