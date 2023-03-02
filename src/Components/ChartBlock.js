@@ -119,7 +119,7 @@ const ChartBlock = ({ enable, state }) => {
     }
 
     const Chart = useCallback(({ enable, state }) => {
-        console.log('Rendered')
+        //console.log('Rendered')
         return (
             <>
                 <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12 container-Inputs">

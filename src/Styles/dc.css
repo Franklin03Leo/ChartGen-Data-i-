@@ -341,6 +341,7 @@ thead tr {
     background-color: var(--theme);
     color: #ffffff;
 }
+
 /* .main-table.dc-chart thead{
     position: absolute;
 } */
@@ -1015,6 +1016,9 @@ input:checked+.slider:before {
     font-size: 17px;
     margin: 5% 0%;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    margin-right: 6px;
 }
 
 #menu-logout {
@@ -1165,4 +1169,13 @@ input:checked+.slider:before {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+}
+
+.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation1 {
+    top: 6px !important;
+}
+
+.MuiList-root.MuiList-padding {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
 }
