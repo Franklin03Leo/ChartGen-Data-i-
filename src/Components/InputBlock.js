@@ -1454,6 +1454,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
             document.querySelector('.loader').style.display = 'block'
             let data = project[e.currentTarget.id] //others.EditingDashboardID
             if (Object.keys(dashboard).length === 0) {
+                GetTemplate('Dashboard')
                 axios.post(`http://${path.Location}:8000/GetTemplate`, { 'userID': user.userID, 'Flag': { 'action': 'Specific', 'charts': Object.values(data.charts) } }).then((response) => {
                     let Result = response.data;
                     let dashboard_ = {};
@@ -1587,7 +1588,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
     }
     const postDataSet = (name, data) => {
         if (Dataset[name] !== undefined) {
-           // setError({ 'invalidFile': 'There is s problem with the file, Please check and Try again !!!' })
+            // setError({ 'invalidFile': 'There is s problem with the file, Please check and Try again !!!' })
             return
         }
         let obj = {}
