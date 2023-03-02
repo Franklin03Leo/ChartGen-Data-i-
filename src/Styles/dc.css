@@ -641,7 +641,7 @@ p {
     overflow-y: auto;
     overflow-x: hidden;
     /* height: 87vh; */
-    animation: 1s ease-out 0s 1 slideInFromTOP;
+    transition: all 0.5s ease;
 
 }
 
