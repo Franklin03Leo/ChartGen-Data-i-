@@ -66,7 +66,7 @@ const Login = () => {
     React.useEffect(() => {
         sessionStorage.setItem('UserName', [','])
         if (window.location.host === "localhost:3000") setPath({ 'Location': 'localhost' })
-        else if (window.location.host === "49.204.124.69:9000") setPath({ 'Location': '49.204.124.69' })
+        else if (window.location.host === "49.204.124.69:8080") setPath({ 'Location': '49.204.124.69' })
     }, [])
     // document.addEventListener("keyup", function (event) {
     //     if (event.key === 'Enter') {
