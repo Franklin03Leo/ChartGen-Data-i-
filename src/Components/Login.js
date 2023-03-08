@@ -57,7 +57,7 @@ const Login = () => {
     const [userDetails, setUserDetails] = React.useState({})
     const [user, setUser] = React.useState({})
     const [forgotuser, setForgotUser] = React.useState({})
-    const [path, setPath] = React.useState({ 'Location': '' })
+    const [path, setPath] = React.useState({ 'Location': window.location.hostname })
     const navigate = useNavigate();
     const handleClickShowPassword = () => setShowPassword((show) => !show);
     const handleMouseDownPassword = (event) => {
@@ -65,8 +65,8 @@ const Login = () => {
     };
     React.useEffect(() => {
         sessionStorage.setItem('UserName', [','])
-        if (window.location.host === "localhost:3000") setPath({ 'Location': 'localhost' })
-        else if (window.location.host === "49.204.124.69:9000") setPath({ 'Location': '49.204.124.69' })
+        // if (window.location.host === "localhost:3000") setPath({ 'Location': 'localhost' })
+        // else if (window.location.host === "49.204.124.69:8081") setPath({ 'Location': '49.204.124.69' })
     }, [])
     // document.addEventListener("keyup", function (event) {
     //     if (event.key === 'Enter') {
