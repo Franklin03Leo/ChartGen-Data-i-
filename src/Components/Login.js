@@ -22,7 +22,6 @@ import axios from "axios";
 
 //Components
 import '../Styles/Login.css';
-import login from '../../src/Images/Login.png';
 const Login = () => {
     const [validation, setvalidation] = React.useState({
         userID: {
@@ -191,12 +190,12 @@ const Login = () => {
             <ToastContainer />
             <div className="login-wrapper">
                 <div className="login-container">
-                    <div className="login-card" style={{ backgroundImage: `url(${login})` }} >
+                    <div className="login-card"  >
                         {page === 'Login' &&
                             <div className="container-page">
-                                <h5 className="page-title">
-                                    Sign In
-                                </h5>
+                                <p className="page-title">
+                                    Sign in to Spectraiq
+                                </p>
                                 <div className="row col-lg-12">
                                     <TextField
                                         error={validation.userID.error}
@@ -204,7 +203,7 @@ const Login = () => {
                                         InputProps={{
                                             endAdornment: <InputAdornment position="end" ><IconButton edge="end" tabIndex={-1}><User /></IconButton></InputAdornment>,
                                         }}
-                                        id="UserID" className='input-field' name='userID' label="UserID" variant="outlined"
+                                        id="UserID" className='input-field' name='userID' label="User ID" variant="outlined"
                                         margin="dense"
                                         onChange={(e) => { handleDetails(e, 'Login') }}
                                     />
@@ -241,20 +240,20 @@ const Login = () => {
                                     </FormControl>
                                 </div>
                                 <div className="line-space fgtpwd" tabIndex={0}>
-                                    <div className="forgot" onClick={(e) => { setPage('Forgot') }}>
-                                        Forgot Password
+                                    <div className="forgot" color="#717171" onClick={(e) => { setPage('Forgot') }}>
+                                        Forgot  your Password?
                                     </div>
                                 </div>
                                 <div className="row col-lg-12 login-btn">
-                                    <Button id="saveTemp" variant="contained" className='input-field button' style={{ backgroundColor: '#6282b3' }}
+                                    <Button id="saveTemp" variant="contained" disableRipple className='input-field button' style={{ backgroundColor: '#6282b3' }}
                                         onClick={(e) => { handlePost('Login') }}
                                     >
                                         Sign in
                                     </Button>
                                 </div>
                                 <div className="row col-lg-12" style={{ marginTop: '15px' }}>
-                                    <div style={{ fontSize: '11px' }}>
-                                        Don’t have an account? <span className="forgot" onClick={(e) => { setPage('Sign Up') }}>Sign up</span>
+                                    <div className="forgot" style={{ color: '#222D4B',textDecoration:'none' }}>
+                                        Don’t have an account? <span className="forgot"  color="#717171" onClick={(e) => { setPage('Sign Up') }}>Sign up</span>
                                     </div>
                                 </div>
                             </div>
@@ -271,7 +270,7 @@ const Login = () => {
                                         InputProps={{
                                             endAdornment: <InputAdornment position="end"><IconButton edge="end" tabIndex={-1}><User /></IconButton></InputAdornment>,
                                         }}
-                                        id="userId" className='input-field' name='FuserID' label="UserID" variant="outlined"
+                                        id="userId" className='input-field' name='FuserID' label="User ID" variant="outlined"
                                         margin="dense"
                                         onChange={(e) => { handleDetails(e, 'Forgot') }}
                                     />
@@ -333,7 +332,7 @@ const Login = () => {
                                     </FormControl>
                                 </div>
                                 <div className="row col-lg-12 login-btn">
-                                    <Button id="saveTemp" variant="contained" className='input-field button' style={{ backgroundColor: '#6282b3' }}
+                                    <Button id="saveTemp" variant="contained" disableRipple className='input-field button' style={{ backgroundColor: '#6282b3' }}
                                         onClick={(e) => { handlePost('Forgot') }}
                                     >
                                         Change
@@ -348,9 +347,9 @@ const Login = () => {
                         }
                         {page === 'Sign Up' &&
                             <div className="container-page">
-                                <h5 className="page-title">
-                                    Sign Up
-                                </h5>
+                                <p className="page-title">
+                                    Create Account
+                                </p>
                                 <div className="row col-lg-12">
                                     <TextField
                                         //error={validation.Heigth_.error}
@@ -431,7 +430,7 @@ const Login = () => {
                                     </FormControl>
                                 </div>
                                 <div className="row col-lg-12 login-btn">
-                                    <Button id="saveTemp" variant="contained" className='input-field button' style={{ backgroundColor: '#6282b3' }}
+                                    <Button id="saveTemp" variant="contained" disableRipple="false" className='input-field button' style={{ backgroundColor: '#6282b3' }}
                                         onClick={(e) => { handlePost('Sign Up') }}
                                     >
                                         Sign Up

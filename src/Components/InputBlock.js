@@ -67,6 +67,8 @@ import layout9 from '../../src/Images/layout9.svg';
 import layout10 from '../../src/Images/layout10.svg';
 import layout11 from '../../src/Images/layout11.svg';
 
+
+import Data from '../../src/Images/Input-Data.svg';
 //Components
 import LoadingSpinner from "../Components/LoadingSpinner";
 

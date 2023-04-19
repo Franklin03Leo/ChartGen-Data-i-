@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 //Logo
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
-import logo from '../../src/Analytic_Brains_Logo.png';
+import logo from '../../src/Spectra_logo.png';
 import Avatar from "@mui/material/Avatar";
 import Logout from '@mui/icons-material/Logout';
 const Header = () => {
@@ -29,7 +29,7 @@ const Header = () => {
                     </a>
                 </div>
                 <div className="container">
-                    Data(I)
+                    {/* Data(I) */}
                 </div>
                 <div style={{ display: 'flex' }}>
                     <div className="header-username"

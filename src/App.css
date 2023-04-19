@@ -1,7 +1,11 @@
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;400;500;600;700;900&display=swap');
+div,.MuiTypography-root{
+  font: normal normal 13px/13px 'Poppins' !important;
+}
 :root {
-  --button: #6282b3;
+  --button: #2E89FF;
   --accordian: #7984c2;
-  --theme: #6282b3;
+  --theme: #2e89ff;
   --highlight: #ffffff;
 }
 
@@ -9,21 +13,21 @@
   text-align: center;
 }
 
-div {
+/* div {
   font-size: 14px
 }
 
 * {
   font-family: "Avenir Next", sans-serif;
-}
+} */
 
 .MuiInputLabel-root, .MuiMenuItem-root, .MuiTypography-root {
-  font-size: 14px !important;
-  line-height: 13.5px !important
+  font-size: 13px !important;
+  line-height: 13px !important
 }
 
 .MuiSelect-select, p, .MuiInputBase-input {
-  font-size: 14px !important;
+  font-size: 13px !important;
 
 }
 
@@ -43,6 +47,7 @@ input[type=file] {
   font-size: 14px !important;
   padding: 1px !important;
 }
+
 
 [type='color'] {
   width: 41px !important;
@@ -92,4 +97,7 @@ button {
 }
 #root{
   min-width: 1000px;
+}
+svg{
+  font-size: 20px !important;
 }
