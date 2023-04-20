@@ -1,1 +1,11 @@
-<svg width="81" height="65" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" overflow="hidden"><defs><clipPath id="clip0"><rect x="384" y="594" width="81" height="65"/></clipPath><clipPath id="clip1"><rect x="-0.0999147" y="-0.13893" width="499915" height="396274"/></clipPath><image width="81" height="65" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFEAAABBCAMAAACeh7ifAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAABmUExURQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOfm5p2MQdQAAAAgdFJOUwAIEBggKDA4QEhQWGBocHiAh4+Xn6evt7/Hz9ff5+/3v+H4wgAAAAlwSFlzAAAXEQAAFxEByibzPwAAAUNJREFUWEft2OtugkAQBeDhVqFiBURdhEX6/i/ZAieNsMwmHQhJm/1+mNkwniwXTRiC8EOpthNTKn9D0sgv9SWJfax+z4vjrK4irL4lOvdQrpDqMyoq6gOqdYJ7NW7s+Nhgg6My7z8DPb2ma/i6P9vrkLsAt5GBppmk8SjS3Dl3nxZMIt1SyrgtyhKPN1IJaoMoMdRUh6gNokTq6Mk+OtJE9pBLNLnEiZ0TrdBksCXK/PVEXDAGmgzWRNzWRS5xwiXOuUSDS5ywJlqhyWBLlNk3EafHQJNh5zuDLy9yiRMuce4/JzabvxdW7ARAlOi3VJ5QG0SJhwclCrUBf1sMNM3lGXkN+8ouMIxRYi2fRRnUMEQqymGxhdN4Cb16ixlXL9V4FP1ykzFXcH+Zxb23lxilVJS1P4O4XnCu8FRI1cXwUyH6AgHp1lClua0oAAAAAElFTkSuQmCC" preserveAspectRatio="none" id="img2"></image><clipPath id="clip3"><rect x="0" y="0" width="493818" height="396274"/></clipPath></defs><g clip-path="url(#clip0)" transform="translate(-384 -594)"><g clip-path="url(#clip1)" transform="matrix(0.000164028 0 0 0.000164028 384 594)"><g clip-path="url(#clip3)" transform="matrix(1 0 0 1 -0.188949 -0.177734)"><use width="100%" height="100%" xlink:href="#img2" transform="scale(6096.52 6096.52)"></use></g></g></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="75" height="60" viewBox="0 0 75 60">
+  <g id="L7" transform="translate(-295 -279)">
+    <g id="Rectangle_49" data-name="Rectangle 49" transform="translate(295 279)" fill="#fff" stroke="#cacad2" stroke-width="1.5">
+      <rect width="75" height="60" rx="6" stroke="none"/>
+      <rect x="0.75" y="0.75" width="73.5" height="58.5" rx="5.25" fill="none"/>
+    </g>
+    <rect id="Rectangle_70" data-name="Rectangle 70" width="11" height="30" transform="translate(348 293) rotate(90)" fill="#e0e0e4" opacity="0.8"/>
+    <rect id="Rectangle_71" data-name="Rectangle 71" width="12" height="30" transform="translate(348 306) rotate(90)" fill="#e0e0e4" opacity="0.8"/>
+    <rect id="Rectangle_72" data-name="Rectangle 72" width="12" height="30" transform="translate(348 320) rotate(90)" fill="#e0e0e4" opacity="0.8"/>
+  </g>
+</svg>

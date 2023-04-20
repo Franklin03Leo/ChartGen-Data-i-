@@ -1,1 +1,10 @@
-<svg width="65" height="69" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" overflow="hidden"><defs><clipPath id="clip0"><rect x="385" y="223" width="65" height="69"/></clipPath><clipPath id="clip1"><rect x="-6096.1" y="-0.170003" width="408467" height="420660"/></clipPath><image width="65" height="69" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEEAAABFCAMAAAAiuHthAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAABpUExURQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA0NDQAAAAAAAAQEBAAAAAAAAOfm5lkT18kAAAAhdFJOUwAIEBggKDA4QEhQWGBocHiAh4+Xn6evt7/Hz9fb3+/z9yB9edwAAAAJcEhZcwAAFxEAABcRAcom8z8AAAEYSURBVFhH7ZjBEoIgEIYXKqMyS6NCzMre/yEDd1M7Beut4TvgcthvHGRkfoBYFsbcu1CexlQZdSJSt5VSkma/EUoV9rqgmWPT5FTFMOmqprYIpNZYbK74ZFAe/Cgb3ht4hF25UXPW4MO6Blg1NOFx3sHxSDXc6GMHcKMWgN0ZjKIaulcwHbW4ndhCu6SaZ4AOnoJKtmGcJAOSDEgyIMmA/IfhQb/yAB7U4pgaePyfgXVufhnSnkSSAUkGJBmQZEC4hvn5wg7pl3Vuyvu8qAegzJy86qkKEPV3iI9jYV3czeohacVz2fpxTJzR5BjdhenzN4Pc0JWFKGsfwGORFz3eeaztaYi+gWRl06/BB7E3tFlCsYf+0gHgDU7CNgWLW7kZAAAAAElFTkSuQmCC" preserveAspectRatio="none" id="img2"></image><clipPath id="clip3"><rect x="0" y="0" width="396274" height="420660"/></clipPath></defs><g clip-path="url(#clip0)" transform="translate(-385 -223)"><g clip-path="url(#clip1)" transform="matrix(0.000164028 0 0 0.000164028 385 223)"><g clip-path="url(#clip3)" transform="matrix(1 0 0 1 0.0312178 -0.123519)"><use width="100%" height="100%" xlink:href="#img2" transform="scale(6096.52 6096.52)"></use></g></g></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="76" height="60" viewBox="0 0 76 60">
+  <g id="L3" transform="translate(-295 -204)">
+    <g id="Rectangle_45" data-name="Rectangle 45" transform="translate(295 204)" fill="#fff" stroke="#cacad2" stroke-width="1.5">
+      <rect width="76" height="60" rx="6" stroke="none"/>
+      <rect x="0.75" y="0.75" width="74.5" height="58.5" rx="5.25" fill="none"/>
+    </g>
+    <rect id="Rectangle_57" data-name="Rectangle 57" width="64" height="19" transform="translate(301 218)" fill="#e0e0e4" opacity="0.8"/>
+    <rect id="Rectangle_58" data-name="Rectangle 58" width="64" height="18" transform="translate(301 239)" fill="#e0e0e4" opacity="0.8"/>
+  </g>
+</svg>

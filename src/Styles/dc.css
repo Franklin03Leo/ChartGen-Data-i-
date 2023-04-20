@@ -333,9 +333,9 @@ table {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 }
 
-table tbody tr:nth-child(odd) td, table tbody tr:nth-child(odd) th {
+/* table tbody tr:nth-child(odd) td, table tbody tr:nth-child(odd) th {
     background-color: #f3f3f3;
-}
+} */
 
 thead tr {
     background-color: var(--theme);
@@ -565,7 +565,7 @@ a {
 .Icon {
     padding: 10px 5px 10px 5px;
     font-size: medium;
-    
+
 }
 
 .nav-bar {
@@ -638,10 +638,21 @@ p {
 }
 
 .divchart {
-    overflow-y: auto;
-    overflow-x: hidden;
+    /* overflow-y: auto;
+    overflow-x: hidden; */
     /* height: 87vh; */
     transition: all 0.5s ease;
+
+    width: 28%;
+    overflow-y: auto;
+    margin: 14px 6px 0px 14px;
+    border-radius: 10px;
+    background: white;
+    overflow: hidden;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 0px 0px 6px #00000029 !important;
+    border-radius: 8px;
+    opacity: 1;
 
 }
 
@@ -695,8 +706,8 @@ code {
 .switch {
     position: relative;
     display: inline-block;
-    width: 49px;
-    height: 23px;
+    width: 34px;
+    height: 17px;
 }
 
 .switch input {
@@ -712,7 +723,7 @@ code {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #ccc;
+    background-color: #B0B4BF;
     -webkit-transition: .4s;
     transition: .4s;
 }
@@ -720,12 +731,11 @@ code {
 .slider:before {
     position: absolute;
     content: "";
-    height: 16px;
-    width: 16px;
+    height: 12px;
+    width: 12px;
     left: 3px;
-    bottom: 4px;
+    bottom: 3px;
     background-color: white;
-    -webkit-transition: .4s;
     transition: .4s;
 }
 
@@ -738,9 +748,9 @@ input:focus+.slider {
 }
 
 input:checked+.slider:before {
-    -webkit-transform: translateX(26px);
-    -ms-transform: translateX(26px);
-    transform: translateX(26px);
+    -webkit-transform: translateX(17px);
+    -ms-transform: translateX(17px);
+    transform: translateX(17px);
 }
 
 /* Rounded sliders */
@@ -789,12 +799,13 @@ input:checked+.slider:before {
 
 .MuiTableRow-root td {
     line-height: 1.3rem !important;
-    padding: 6px 16px 6px 16px !important;
+    padding: 6px 0px 6px 9px !important;
     font-size: 14px !important;
+    background: white;
 }
 
 .tss-131sses-MUIDataTable-responsiveScroll {
-    max-height: 64.5vh !important;
+    max-height: calc(72.5vh - 30px) !important;
     margin: 0px 20px;
 }
 
@@ -915,7 +926,9 @@ input:checked+.slider:before {
     height: 38vh;
     padding: 10px;
     margin: 10px 0px;
-    border: 3px dotted #7c7c7c;
+    /* border: 3px dotted #7c7c7c; */
+    background: #FFFFFF4D !important;
+    border: 2px dashed #B0B4BF;
 }
 
 .filterswt {
@@ -978,15 +991,15 @@ input:checked+.slider:before {
     margin-left: 5px;
 }
 
-.Dashboardlayout-1 {
-    padding: 4px 5px;
-    /* border: 1px solid #000; */
-    height: 10vh;
-    width: 7vw;
-    /* margin: 5px; */
-    cursor: pointer;
-    border-radius: 9px;
+.Dashboardlayout {
+    /* padding: 4px 5px; */
+    /* height: 10vh;
+    width: 6vw;
+    cursor: pointer; */
+    /* border-radius: 9px; */
     animation: 1s ease-out 0s 1 slideInFromLeft;
+    border: 2px solid transparent;
+
 }
 
 .layoutContainer {
@@ -1002,9 +1015,10 @@ input:checked+.slider:before {
     margin: 10px 0px 0px 0px;
 }
 
-.Dashboardlayout-1.active {
-    background-color: rgb(213 226 252) !important;
-    border: 1px rgb(148 84 172) solid;
+.Dashboardlayout.active {
+    border-radius: 10px;
+    box-shadow: 0px 6px 6px #1D1D1D33;
+    border: 2px solid #2E89FF;
 }
 
 .feedback div.tss-131sses-MUIDataTable-responsiveScroll {
@@ -1104,8 +1118,8 @@ input:checked+.slider:before {
     position: absolute;
     left: 48%;
     top: 40%;
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     border-style: solid;
     border-color: var(--theme);
     border-top-color: transparent;
@@ -1178,4 +1192,11 @@ input:checked+.slider:before {
 .MuiList-root.MuiList-padding {
     padding-top: 0 !important;
     padding-bottom: 0 !important;
+}
+
+.div-layout {
+    padding: 10px 0px 0px 0px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
 }

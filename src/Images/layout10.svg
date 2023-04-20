@@ -1,1 +1,13 @@
-<svg width="103" height="72" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" overflow="hidden"><defs><clipPath id="clip0"><rect x="384" y="875" width="103" height="72"/></clipPath><clipPath id="clip1"><rect x="-0.0999147" y="-6096.19" width="627942" height="445047"/></clipPath><image width="103" height="72" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGcAAABICAMAAADcZRsoAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAABmUExURQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA0NDQAAAAAAAAAAAAQEBAAAAAAAAOfm5nTKtzQAAAAgdFJOUwAIEBggKDA4QEhQYGhweICHj5efr7e/x8/X29/n7/P3AHZ9OgAAAAlwSFlzAAAXEQAAFxEByibzPwAAAV5JREFUWEftmW2TgiAQgMG3yPI8UxHjKvv/f/IEVs+YnHGK7b7sk+PsDuQzqDg7wCbSQsqfISQXKb8zuPqEkH0lRAxZGCIhvpTOITPwWgoIQ5M0MoKQRe0BIgxEl7iAt3sXIJEqN6IaczQGIc05b2yCSVWMJ+W/e+GJNWeZggSTJmdlCTEmh5qhzZwlac/6FGJM+I1d5ul6hu+Sx/nNRssw/iaG+1Nch9cbLeR5hDzkMZCHPAbykMdAns95rlAOeVzfbLQsPZiQ5zX+xbNSjnvY6nxT15U6fm0aeNg/bOq6vDR5yDNCHvIYyEMew+c8Nw4hskfDKvYIqmexbonnSTQ7HSHG9Oxbc0yslMketmre1PWvvh4Hw3XY3ZhnWEdRQYaHVXCFvbIcK3vLkg73znG5c0GGupURy3l7KZHlvFoemkLBaAxRqU/LDbtQ7CpdPT6U6NjAWx+SrnBfNcZ+AQay6CEWeTjFAAAAAElFTkSuQmCC" preserveAspectRatio="none" id="img2"></image><clipPath id="clip3"><rect x="0" y="0" width="627942" height="438950"/></clipPath></defs><g clip-path="url(#clip0)" transform="translate(-384 -875)"><g clip-path="url(#clip1)" transform="matrix(0.000164028 0 0 0.000164028 384 875)"><g clip-path="url(#clip3)" transform="matrix(1 0 0 1 -0.188949 -0.0918291)"><use width="100%" height="100%" xlink:href="#img2" transform="scale(6096.52 6096.52)"></use></g></g></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="75" height="60" viewBox="0 0 75 60">
+  <g id="L10" transform="translate(-204 -354)">
+    <g id="Rectangle_52" data-name="Rectangle 52" transform="translate(204 354)" fill="#fff" stroke="#cacad2" stroke-width="1.5">
+      <rect width="75" height="60" rx="6" stroke="none"/>
+      <rect x="0.75" y="0.75" width="73.5" height="58.5" rx="5.25" fill="none"/>
+    </g>
+    <rect id="Rectangle_85" data-name="Rectangle 85" width="31" height="17" transform="translate(242 390)" fill="#e0e0e4" opacity="0.8"/>
+    <rect id="Rectangle_84" data-name="Rectangle 84" width="19" height="18" transform="translate(254 370)" fill="#e0e0e4" opacity="0.8"/>
+    <rect id="Rectangle_83" data-name="Rectangle 83" width="20" height="18" transform="translate(232 370)" fill="#e0e0e4" opacity="0.8"/>
+    <rect id="Rectangle_86" data-name="Rectangle 86" width="30" height="17" transform="translate(210 390)" fill="#e0e0e4" opacity="0.8"/>
+    <rect id="Rectangle_82" data-name="Rectangle 82" width="20" height="18" transform="translate(210 370)" fill="#e0e0e4" opacity="0.8"/>
+  </g>
+</svg>

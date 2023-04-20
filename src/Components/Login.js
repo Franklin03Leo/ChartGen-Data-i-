@@ -22,6 +22,9 @@ import axios from "axios";
 
 //Components
 import '../Styles/Login.css';
+
+import ABlogo from '../../src/Analytic_Brains_Logo.png';
+import SpectraIQlogo from '../../src/Spectra_logo.png';
 const Login = () => {
     const [validation, setvalidation] = React.useState({
         userID: {
@@ -189,6 +192,12 @@ const Login = () => {
         <>
             <ToastContainer />
             <div className="login-wrapper">
+                <div className="login-header">
+                    <div>
+                        <img src={SpectraIQlogo} alt='Logo'></img>
+
+                    </div>
+                </div>
                 <div className="login-container">
                     <div className="login-card"  >
                         {page === 'Login' &&
@@ -252,8 +261,8 @@ const Login = () => {
                                     </Button>
                                 </div>
                                 <div className="row col-lg-12" style={{ marginTop: '15px' }}>
-                                    <div className="forgot" style={{ color: '#222D4B',textDecoration:'none' }}>
-                                        Don’t have an account? <span className="forgot"  color="#717171" onClick={(e) => { setPage('Sign Up') }}>Sign up</span>
+                                    <div className="forgot" style={{ color: '#222D4B', textDecoration: 'none' }}>
+                                        Don’t have an account? <span className="forgot" color="#717171" onClick={(e) => { setPage('Sign Up') }}>Sign up</span>
                                     </div>
                                 </div>
                             </div>
@@ -437,12 +446,21 @@ const Login = () => {
                                     </Button>
                                 </div>
                                 <div className="row col-lg-12" style={{ float: 'right', marginTop: '15px' }}>
-                                    <div style={{ fontSize: '11px' }}>
-                                        Have an account?<span className="forgot" onClick={(e) => { setPage('Login') }}>Sign in</span>
+                                    <div className="forgot" style={{ color: '#222D4B', textDecoration: 'none',fontWeight:'normal' }}>
+                                        Already Have an account? <span className="forgot" onClick={(e) => { setPage('Login') }}> Sign in</span>
                                     </div>
                                 </div>
                             </div>
                         }
+                    </div>
+                </div>
+                <div className="footer">
+                    <div className="footer-copy forgot" style={{ color: '#222D4B', textDecoration: 'none' }}>
+                        Copyright © {new Date().getFullYear()} Spectraiq, All rights reserved. Privacy Policy | Legal
+                    </div>
+                    <div className="footer-powered">
+                        <div className="forgot" style={{ color: '#1D1D1D', textDecoration: 'none' }}>Powered by</div>
+                        <img src={ABlogo} alt='Logo'></img>
                     </div>
                 </div>
             </div>

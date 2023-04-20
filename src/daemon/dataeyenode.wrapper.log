@@ -1,2 +1,46 @@
 2023-03-01 15:50:33 - Starting C:\Program Files\nodejs\node.exe  --harmony F:\Xavier\ReactJS\DynamicChart\dynamic_chart_genarator\node_modules\node-windows\lib\wrapper.js --file F:\Xavier\ReactJS\DynamicChart\dynamic_chart_genarator\src\server.js --scriptoptions= --log "DataEye Node wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
 2023-03-01 15:50:33 - Started 16444
+2023-03-10 11:50:41 - Starting C:\Program Files\nodejs\node.exe  --harmony F:\Xavier\ReactJS\DynamicChart\dynamic_chart_genarator\node_modules\node-windows\lib\wrapper.js --file F:\Xavier\ReactJS\DynamicChart\dynamic_chart_genarator\src\server.js --scriptoptions= --log "DataEye Node wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2023-03-10 11:50:46 - Started 5908
+2023-03-16 20:21:35 - Stopping dataeyenode.exe
+2023-03-16 20:21:35 - ProcessKill 5908
+2023-03-16 20:21:47 - Shutdown exception
+Message:The type initializer for 'System.Management.ManagementPath' threw an exception.
+Stacktrace:   at System.Management.ManagementScope._Clone(ManagementScope scope, IdentifierChangedEventHandler handler)
+   at System.Management.ManagementObjectSearcher..ctor(ManagementScope scope, ObjectQuery query, EnumerationOptions options)
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2023-03-17 09:54:04 - Starting C:\Program Files\nodejs\node.exe  --harmony F:\Xavier\ReactJS\DynamicChart\dynamic_chart_genarator\node_modules\node-windows\lib\wrapper.js --file F:\Xavier\ReactJS\DynamicChart\dynamic_chart_genarator\src\server.js --scriptoptions= --log "DataEye Node wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2023-03-17 09:54:13 - Started 6872
+2023-03-17 10:36:37 - Stopping dataeyenode.exe
+2023-03-17 10:36:37 - ProcessKill 6872
+2023-03-17 10:37:12 - Shutdown exception
+Message:The type initializer for 'System.Management.ManagementPath' threw an exception.
+Stacktrace:   at System.Management.ManagementScope._Clone(ManagementScope scope, IdentifierChangedEventHandler handler)
+   at System.Management.ManagementObjectSearcher..ctor(ManagementScope scope, ObjectQuery query, EnumerationOptions options)
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2023-03-17 10:39:14 - Starting C:\Program Files\nodejs\node.exe  --harmony F:\Xavier\ReactJS\DynamicChart\dynamic_chart_genarator\node_modules\node-windows\lib\wrapper.js --file F:\Xavier\ReactJS\DynamicChart\dynamic_chart_genarator\src\server.js --scriptoptions= --log "DataEye Node wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2023-03-17 10:39:16 - Started 7880
+2023-03-17 11:45:01 - Starting C:\Program Files\nodejs\node.exe  --harmony F:\Xavier\ReactJS\DynamicChart\dynamic_chart_genarator\node_modules\node-windows\lib\wrapper.js --file F:\Xavier\ReactJS\DynamicChart\dynamic_chart_genarator\src\server.js --scriptoptions= --log "DataEye Node wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2023-03-17 11:45:05 - Started 5068
+2023-03-30 10:03:43 - Starting C:\Program Files\nodejs\node.exe  --harmony F:\Xavier\ReactJS\DynamicChart\dynamic_chart_genarator\node_modules\node-windows\lib\wrapper.js --file F:\Xavier\ReactJS\DynamicChart\dynamic_chart_genarator\src\server.js --scriptoptions= --log "DataEye Node wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2023-03-30 10:03:45 - Started 7160
+2023-04-13 10:07:36 - Starting C:\Program Files\nodejs\node.exe  --harmony F:\Xavier\ReactJS\DynamicChart\dynamic_chart_genarator\node_modules\node-windows\lib\wrapper.js --file F:\Xavier\ReactJS\DynamicChart\dynamic_chart_genarator\src\server.js --scriptoptions= --log "DataEye Node wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2023-04-13 10:07:44 - Started 6772
+2023-04-17 10:39:03 - Stopping dataeyenode.exe
+2023-04-17 10:39:03 - ProcessKill 6772
+2023-04-17 10:39:28 - Shutdown exception
+Message:The type initializer for 'System.Management.ManagementPath' threw an exception.
+Stacktrace:   at System.Management.ManagementScope._Clone(ManagementScope scope, IdentifierChangedEventHandler handler)
+   at System.Management.ManagementObjectSearcher..ctor(ManagementScope scope, ObjectQuery query, EnumerationOptions options)
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2023-04-17 10:40:57 - Starting C:\Program Files\nodejs\node.exe  --harmony F:\Xavier\ReactJS\DynamicChart\dynamic_chart_genarator\node_modules\node-windows\lib\wrapper.js --file F:\Xavier\ReactJS\DynamicChart\dynamic_chart_genarator\src\server.js --scriptoptions= --log "DataEye Node wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2023-04-17 10:41:01 - Started 6428

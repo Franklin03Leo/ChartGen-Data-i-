@@ -1,19 +1,77 @@
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;400;500;600;700;900&display=swap');
-div,.MuiTypography-root{
-  font: normal normal 13px/13px 'Poppins' !important;
-}
-:root {
-  --button: #2E89FF;
-  --accordian: #7984c2;
-  --theme: #2e89ff;
-  --highlight: #ffffff;
-}
 
-.App {
-  text-align: center;
-}
+  div, .MuiTypography-root {
+    font: normal normal 13px/13px 'Poppins' !important;
+  }
 
-/* div {
+  :root {
+    --button: #2E89FF;
+    --accordian: #7984c2;
+    --theme: #2e89ff;
+    --highlight: #ffffff;
+
+    --unnamed-color-1d1d1d: #1D1D1D;
+
+    /* Font/text values */
+    --unnamed-font-family-poppins: 'Poppins';
+    --unnamed-font-style-normal: normal;
+    --unnamed-font-weight-600: 600px;
+    --unnamed-font-weight-bold: bold;
+    --unnamed-font-weight-normal: normal;
+    --unnamed-font-size-15: 15px;
+    --unnamed-font-size-16: 16px;
+    --unnamed-font-size-18: 18px;
+    --unnamed-character-spacing-0: 0px;
+    --unnamed-line-spacing-23: 23px;
+    --unnamed-line-spacing-25: 25px;
+    --unnamed-line-spacing-27: 27px;
+  }
+
+  .h3-regular {
+    font-family: var(--unnamed-font-family-poppins);
+    font-style: var(--unnamed-font-style-normal);
+    font-weight: var(--unnamed-font-weight-normal);
+    font-size: var(--unnamed-font-size-15);
+    line-height: var(--unnamed-line-spacing-23);
+    letter-spacing: var(--unnamed-character-spacing-0);
+    color: var(--unnamed-color-1d1d1d);
+  }
+
+  .semi-bold {
+    font-family: var(--unnamed-font-family-poppins);
+    font-style: var(--unnamed-font-style-normal);
+    font-weight: var(--unnamed-font-weight-600);
+    font-size: var(--unnamed-font-size-15);
+    line-height: var(--unnamed-line-spacing-23);
+    letter-spacing: var(--unnamed-character-spacing-0);
+    color: var(--unnamed-color-1d1d1d);
+  }
+
+  div > span.panal-header{
+    font-family: var(--unnamed-font-family-poppins);
+    font-style: var(--unnamed-font-style-normal);
+    font-weight: var(--unnamed-font-weight-bold);
+    font-size: var(--unnamed-font-size-16);
+    line-height: var(--unnamed-line-spacing-25);
+    letter-spacing: var(--unnamed-character-spacing-0);
+    color: var(--unnamed-color-1d1d1d);
+  }
+
+  .h1 {
+    font-family: var(--unnamed-font-family-poppins);
+    font-style: var(--unnamed-font-style-normal);
+    font-weight: var(--unnamed-font-weight-bold);
+    font-size: var(--unnamed-font-size-18);
+    line-height: var(--unnamed-line-spacing-27);
+    letter-spacing: var(--unnamed-character-spacing-0);
+    color: var(--unnamed-color-1d1d1d);
+  }
+
+  .App {
+    text-align: center;
+  }
+
+  /* div {
   font-size: 14px
 }
 
@@ -21,83 +79,87 @@ div,.MuiTypography-root{
   font-family: "Avenir Next", sans-serif;
 } */
 
-.MuiInputLabel-root, .MuiMenuItem-root, .MuiTypography-root {
-  font-size: 13px !important;
-  line-height: 13px !important
-}
+  .MuiInputLabel-root, .MuiMenuItem-root, .MuiTypography-root {
+    font-size: 13px !important;
+    line-height: 13px !important
+  }
 
-.MuiSelect-select, p, .MuiInputBase-input {
-  font-size: 13px !important;
+  .MuiSelect-select, p, .MuiInputBase-input {
+    font-size: 13px !important;
 
-}
+  }
 
-.MuiInputBase-input {
-  height: inherit !important;
-}
+  .MuiInputBase-input {
+    height: inherit !important;
+  }
 
-.Mui-error {
-  margin-left: 0 !important;
-}
+  .Mui-error {
+    margin-left: 0 !important;
+  }
 
-.MuiInputBase-input {
-  padding: 10.5px 24px 10.5px 15px !important
-}
+  .MuiInputBase-input {
+    padding: 10.5px 24px 10.5px 15px !important
+  }
 
-input[type=file] {
-  font-size: 14px !important;
-  padding: 1px !important;
-}
+  input[type=file] {
+    font-size: 14px !important;
+    padding: 1px !important;
+  }
 
 
-[type='color'] {
-  width: 41px !important;
-  height: 41px !important;
-}
+  [type='color'] {
+    width: 41px !important;
+    height: 41px !important;
+  }
 
-button {
-  font-size: 12px !important;
-}
+  button {
+    font-size: 12px !important;
+  }
 
-.MuiCheckbox-root.MuiSvgIcon-root {
-  width: 0.8em !important;
-}
+  .MuiCheckbox-root.MuiSvgIcon-root {
+    width: 0.8em !important;
+  }
 
-.MuiCheckbox-root {
-  padding: 2px 9px !important;
-}
+  .MuiCheckbox-root {
+    padding: 2px 9px !important;
+  }
 
-.Mui-checked {
-  color: #5b78a6 !important;
-}
+  .Mui-checked {
+    color: #5b78a6 !important;
+  }
 
-.Mui-error {
-  font-size: inherit !important
-}
+  .Mui-error {
+    font-size: inherit !important
+  }
 
-.css-194a1fa-MuiSelect-select-MuiInputBase-input .css-194a1fa-MuiSelect-select-MuiInputBase-input .css-194a1fa-MuiSelect-select-MuiInputBase-input {
-  padding-right: 24px !important;
-}
+  .css-194a1fa-MuiSelect-select-MuiInputBase-input .css-194a1fa-MuiSelect-select-MuiInputBase-input .css-194a1fa-MuiSelect-select-MuiInputBase-input {
+    padding-right: 24px !important;
+  }
 
-::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  background-color: #F5F5F5;
-  border-radius: 8px;
-}
+  ::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    background-color: #F5F5F5;
+    border-radius: 8px;
+  }
 
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-  background-color: #F5F5F5;
-}
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+    background-color: #F5F5F5;
+    display: block; /* To hide scroll*/
+  }
 
-::-webkit-scrollbar-thumb {
-  border-radius: 8px;
-  background-image: linear-gradient(to left, #BDBBBE 0%, #9D9EA3 100%), radial-gradient(88% 271%, rgba(255, 255, 255, 0.25) 0%, rgba(254, 254, 254, 0.25) 1%, rgba(0, 0, 0, 0.25) 100%), radial-gradient(50% 100%, rgba(255, 255, 255, 0.30) 0%, rgba(0, 0, 0, 0.30) 100%);
-  background-blend-mode: normal, lighten, soft-light;
-}
-#root{
-  min-width: 1000px;
-}
-svg{
-  font-size: 20px !important;
-}
+  ::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    background-image: linear-gradient(to left, #BDBBBE 0%, #9D9EA3 100%), radial-gradient(88% 271%, rgba(255, 255, 255, 0.25) 0%, rgba(254, 254, 254, 0.25) 1%, rgba(0, 0, 0, 0.25) 100%), radial-gradient(50% 100%, rgba(255, 255, 255, 0.30) 0%, rgba(0, 0, 0, 0.30) 100%);
+    background-blend-mode: normal, lighten, soft-light;
+  }
+
+  #root {
+    min-width: 1000px;
+    overflow: hidden !important;
+  }
+
+  svg {
+    font-size: 20px !important;
+  }

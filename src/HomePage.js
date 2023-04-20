@@ -43,7 +43,7 @@ const HomePage = () => {
     const [play, setPlay] = React.useState({})
     const [show, Isshow] = React.useState({ 'NOCharts': 0, 'isRendered': false })
     const [navbar, setNavbar] = React.useState({ 'bar': 'Data' });
-    const [navwidth, setNavWidth] = React.useState({ 'navArea': '7%', 'inuptArea': '30%', 'ChartArea': '63%' });
+    const [navwidth, setNavWidth] = React.useState({ 'navArea': '7%', 'inuptArea': '28%', 'ChartArea': '63%' });
     const [value, setValue] = React.useState('1');
     const [changeType, setChangeType] = React.useState({ 'enableChange': false, 'Dimensions_': 'Select', 'DataTypes': '#' })
     const [error, setError] = React.useState({});
@@ -228,10 +228,10 @@ const HomePage = () => {
                 <div className="loader"></div>
                 <ToastContainer />
                 <Header />
-                <div className="row" style={{ marginRight: '0px', height: 'calc(100vh - 6vh)', paddingTop: '6vh' }}>
+                <div className="row" style={{ background:'#F4F4F8', marginRight: '0px', height: 'calc(94vh -14px)', paddingTop: '6vh' }}>
                     <InputBlock ChildtoParentHandshake={data} ExpandData={expand} dataTable={DataTable} demoVideo={video} showDashboard={showDashboard} feedback_={handleFeedback} project_={handleProject} />
                     {/* <div className="" style={{ backgroundColor: '#e9ecef', height: '87vh', width: navwidth.ChartArea }}> */}
-                    <div className="" style={{ backgroundColor: '#e9ecef', width: `${navwidth.ChartArea === '63%' ? 'calc(70% - 90px)' : 'calc(100% - 90px)'}`, height: 'calc(100vh - 6vh)' }}>
+                    <div className="" style={{ backgroundColor: '#F4F4F8 ', width: `${navwidth.ChartArea === '63%' ? 'calc(70% - 90px)' : 'calc(100% - 90px)'}`, height: 'calc(94vh)' }}>
                         {filedata.data === undefined && play.isPlay !== true && show.isShow !== true && feedback.Issues === undefined ?
                             <>
                                 {state !== undefined &&

@@ -68,7 +68,7 @@ import layout10 from '../../src/Images/layout10.svg';
 import layout11 from '../../src/Images/layout11.svg';
 
 
-import Data from '../../src/Images/Input-Data.svg';
+import Data from '../../src/Images/Input-Data.png';
 //Components
 import LoadingSpinner from "../Components/LoadingSpinner";
 
@@ -178,13 +178,13 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
     const [enabletemplate, setEnableTemplate] = React.useState(false);
     const [flag, setFlag] = React.useState(false);
     const [navopen, setNavOpen] = React.useState(true);
-    const [navwidth, setNavWidth] = React.useState({ 'navArea': '90px', 'inuptArea': '30%', 'ChartArea': '63%' });
+    const [navwidth, setNavWidth] = React.useState({ 'navArea': '90px', 'inuptArea': '28%', 'ChartArea': '63%' });
     const [isMobile, setIsMobile] = React.useState(false);
     const [open, setOpen] = React.useState({ 'Template': false, 'Dashboard': false, 'deleteTemplate': false });
     const [progress, setProgress] = React.useState({ 'loader': false });
     const [filter, setFilter] = React.useState({});
     const [filteringProps, setfilteringProps] = React.useState({ 'customFilter': [] });
-    const [others, setOthers] = React.useState({ 'StaticLayouts': true, 'selectedLayout': '1X2' });
+    const [others, setOthers] = React.useState({ 'StaticLayouts': true, 'selectedLayout': '1X2','CustomLayouts':false });
     const [feedback, setFeedback] = React.useState({
         'Categories': ['UI', 'Performance', 'Dataset', 'Statistics', 'Data Dictionary', 'Template', 'Dashboard', 'User Guide', 'Suggestions', 'Other'],
         'Reported By': sessionStorage.getItem('UserName') !== null && sessionStorage.getItem('UserName').split(',')[0]
@@ -285,7 +285,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
             }
             else {
                 setNavOpen(true)
-                setNavWidth({ 'navArea': '90px', 'inuptArea': '30%', 'ChartArea': '63%' })
+                setNavWidth({ 'navArea': '90px', 'inuptArea': '28%', 'ChartArea': '63%' })
                 setIsMobile(false)
 
             }
@@ -1244,7 +1244,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                 setNavWidth({ 'navArea': '90px', 'inuptArea': '60%', 'ChartArea': '94%' })
             }
             else if (!navopen && !isMobile) {
-                setNavWidth({ 'navArea': '90px', 'inuptArea': '30%', 'ChartArea': '63%' })
+                setNavWidth({ 'navArea': '90px', 'inuptArea': '28%', 'ChartArea': '63%' })
             }
             setNavOpen(!navopen)
             if (action === 'publish')
@@ -1639,6 +1639,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                     <div className="Icon">
                         <div>
                             <BootstrapTooltip title="Data" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
+                                {/* <img src={Data} color="white" alt='Logo'></img> */}
                                 <DatasetIcon className="Icon_" fontSize="large" color={navbar.bar === 'Data' ? 'primary' : '#979A9B'} onClick={handleNavbarChange} />
                             </BootstrapTooltip>
                         </div>
@@ -1717,7 +1718,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
     const Chartheader = ({ param }) => {
         return (
             <div>
-                <span style={{ float: "left", fontWeight: "bold", margin: '15px' }}>{param}</span>
+                <span className="panal-header" style={{ float: "left", fontWeight: "bold", margin: '15px' }}>{param}</span>
             </div>
         );
     };
@@ -1732,7 +1733,8 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                 <NavIcons />
                 {/* } */}
             </div>
-            <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12 divchart" style={{ height: 'calc(100vh - 6vh)', width: navwidth.inuptArea, overflowY: `${!navopen ? 'hidden' : 'auto'}`, padding: `${navopen ? '' : '0px'}` }}>
+            {/* <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12 divchart" style={{ width: navwidth.inuptArea, overflowY: `${!navopen ? 'hidden' : 'auto'}`, padding: `${navopen ? '' : '0px'}` }}> */}
+            <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12 divchart" style={{ height: 'calc(94vh - 14px)', width: navwidth.inuptArea, overflowY: `${!navopen ? 'hidden' : 'auto'}`, padding: `${navopen ? '' : '0px'}` }}>
                 <div className="nav-close">
                     {navopen ?
                         <BootstrapTooltip title="Collapse" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
@@ -3835,34 +3837,72 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                         <>
                             <div className="row col-lg-12" style={{ margin: "15px 0px 15px 13px" }}>
                                 <div className="row col-lg-12 filterswt">
-                                    <div className="row col-xm-9 col-sm-9 col-md-9 col-lg-9" >
+                                    <div className="row col-xm-9 col-sm-9 col-md-9 col-lg-9 semi-bold" >
                                         Layouts
                                     </div>
-                                    <div className=" col-xm-3 col-sm-3 col-md-3 col-lg-3" >
+                                    <div className="col-xm-3 col-sm-3 col-md-3 col-lg-3" style={{ display: 'contents' }} >
+                                        <div style={{ marginRight: '10px' }}>Custom</div>
                                         <label className="switch">
-                                            <input type="checkbox" name="StaticLayouts" checked={others.StaticLayouts} onChange={(e) => { setOthers({ ...others, 'StaticLayouts': e.target.checked, 'CustomLayouts': !e.target.checked }) }}></input>
+                                            <input type="checkbox" name="StaticLayouts" checked={others.CustomLayouts} onChange={(e) => { setOthers({ ...others, 'CustomLayouts': e.target.checked, 'StaticLayouts': !e.target.checked }) }}></input>
                                             <span className="slider round"></span>
                                         </label>
                                     </div>
                                     {others.StaticLayouts &&
                                         // <DashboardLayouts 
-                                        <div className="row col-lg-12">
-                                            <img alt="Loading..." src={layout1} className={`Dashboardlayout-1 ${others.selectedLayout === "1X0" ? 'active' : ''}`} id="1X0" onClick={dashboardLayouts}></img>
-                                            <img alt="Loading..." src={layout2} className={`Dashboardlayout-1 ${others.selectedLayout === "2X0" ? 'active' : ''}`} id="2X0" onClick={dashboardLayouts}></img>
-                                            <img alt="Loading..." src={layout3} className={`Dashboardlayout-1 ${others.selectedLayout === "1X1" ? 'active' : ''}`} id="1X1" onClick={dashboardLayouts}></img>
-                                            <img alt="Loading..." src={layout4} className={`Dashboardlayout-1 ${others.selectedLayout === "3X0" ? 'active' : ''}`} id="3X0" onClick={dashboardLayouts}></img>
-                                            <img alt="Loading..." src={layout5} className={`Dashboardlayout-1 ${others.selectedLayout === "2X1" ? 'active' : ''}`} id="2X1" onClick={dashboardLayouts}></img>
-                                            <img alt="Loading..." src={layout6} className={`Dashboardlayout-1 ${others.selectedLayout === "1X2" ? 'active' : ''}`} id="1X2" onClick={dashboardLayouts}></img>
-                                            <img alt="Loading..." src={layout7} className={`Dashboardlayout-1 ${others.selectedLayout === "1X1X1" ? 'active' : ''}`} id="1X1X1" onClick={dashboardLayouts}></img>
-                                            <img alt="Loading..." src={layout8} className={`Dashboardlayout-1 ${others.selectedLayout === "2X2" ? 'active' : ''}`} id="2X2" onClick={dashboardLayouts}></img>
-                                            <img alt="Loading..." src={layout9} className={`Dashboardlayout-1 ${others.selectedLayout === "2X3" ? 'active' : ''}`} id="2X3" onClick={dashboardLayouts}></img>
-                                            <img alt="Loading..." src={layout10} className={`Dashboardlayout-1 ${others.selectedLayout === "3X2" ? 'active' : ''}`} id="3X2" onClick={dashboardLayouts}></img>
-                                            <img alt="Loading..." src={layout11} className={`Dashboardlayout-1 ${others.selectedLayout === "3X3" ? 'active' : ''}`} id="3X3" onClick={dashboardLayouts}></img>
+                                        <div className="div-layout">
+                                            <img alt="Loading..." src={layout1} className={`Dashboardlayout ${others.selectedLayout === "1X0" ? 'active' : ''}`} id="1X0" onClick={dashboardLayouts}></img>
+                                            <img alt="Loading..." src={layout2} className={`Dashboardlayout ${others.selectedLayout === "2X0" ? 'active' : ''}`} id="2X0" onClick={dashboardLayouts}></img>
+                                            <img alt="Loading..." src={layout3} className={`Dashboardlayout ${others.selectedLayout === "1X1" ? 'active' : ''}`} id="1X1" onClick={dashboardLayouts}></img>
+                                            <img alt="Loading..." src={layout4} className={`Dashboardlayout ${others.selectedLayout === "3X0" ? 'active' : ''}`} id="3X0" onClick={dashboardLayouts}></img>
+                                            <img alt="Loading..." src={layout5} className={`Dashboardlayout ${others.selectedLayout === "2X1" ? 'active' : ''}`} id="2X1" onClick={dashboardLayouts}></img>
+                                            <img alt="Loading..." src={layout6} className={`Dashboardlayout ${others.selectedLayout === "1X2" ? 'active' : ''}`} id="1X2" onClick={dashboardLayouts}></img>
+                                            <img alt="Loading..." src={layout7} className={`Dashboardlayout ${others.selectedLayout === "1X1X1" ? 'active' : ''}`} id="1X1X1" onClick={dashboardLayouts}></img>
+                                            <img alt="Loading..." src={layout8} className={`Dashboardlayout ${others.selectedLayout === "2X2" ? 'active' : ''}`} id="2X2" onClick={dashboardLayouts}></img>
+                                            <img alt="Loading..." src={layout9} className={`Dashboardlayout ${others.selectedLayout === "2X3" ? 'active' : ''}`} id="2X3" onClick={dashboardLayouts}></img>
+                                            <img alt="Loading..." src={layout10} className={`Dashboardlayout ${others.selectedLayout === "3X2" ? 'active' : ''}`} id="3X2" onClick={dashboardLayouts}></img>
+                                            <img alt="Loading..." src={layout11} className={`Dashboardlayout ${others.selectedLayout === "3X3" ? 'active' : ''}`} id="3X3" onClick={dashboardLayouts}></img>
                                         </div>
                                     }
+                                    {others.CustomLayouts &&
+                                        <>
+                                            <div className="row col-xs-5 col-sm-5 col-md-5 col-lg-5">
+                                                <TextField id="NOCharts" className='input-field' name='Rows' label="Rows" variant="outlined" margin="dense"
+                                                    error={formValues.Rows.error}
+                                                    helperText={formValues.Rows.error && formValues.Rows.errorMessage}
+                                                    value={others.Rows}
+                                                    onChange={(e) => { handleValidation(e); setOthers({ ...others, 'Rows': e.target.value }) }}
+                                                />
+                                            </div>
+                                            <div className="row col-xs-5 col-sm-5 col-md-5 col-lg-6">
+                                                <div style={{ color: 'red' }}>Columns per row should be less than 4</div>
+                                            </div>
+                                            <>
+                                                {others.Rows !== undefined && others.Rows < 5 ?
+                                                    <div className="row col-lg-12">
+                                                        {(() => {
+                                                            let Item = [];
+                                                            for (let i = 1; i <= parseInt(others.Rows); i++) {
+                                                                Item.push(
+                                                                    <div className="row col-xs-5 col-sm-5 col-md-5 col-lg-5">
+                                                                        <TextField id="NOCharts" className='input-field' name={"Cols" + i} label={"Row " + i + " Columns"} variant="outlined" margin="dense"
+                                                                            value={others['Cols'] !== undefined ? others['Cols']["Cols" + i] : others["Cols" + i]}
+                                                                            onChange={(e) => { setOthers({ ...others, 'Cols': { ...others['Cols'], [e.target.name]: e.target.value } }) }}
+                                                                            onBlur={(e) => { handleValidation(e) }}
+                                                                        />
+                                                                    </div>
+                                                                )
+                                                            }
+                                                            return Item
+                                                        })()}
+                                                    </div>
+                                                    : ''
+                                                }
+                                            </>
+                                        </>
+                                    }
                                 </div>
-                                <div className="row col-lg-12 filterswt">
-                                    <div className="row col-xm-9 col-sm-9 col-md-9 col-lg-9" >
+                                {/* <div className="row col-lg-12 filterswt">
+                                    <div className="row col-xm-9 col-sm-9 col-md-9 col-lg-9 semi-bold" >
                                         Custom Layout
                                     </div>
                                     <div className=" col-xm-3 col-sm-3 col-md-3 col-lg-3" >
@@ -3908,7 +3948,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                             </>
                                         </>
                                     }
-                                </div>
+                                </div> */}
                                 <div className="row col-sm-4 col-md-12 col-lg-6" style={{ marginTop: '10px' }}>
                                     <Button id="saveTemp" variant="contained" className='input-field button' style={{ backgroundColor: '#6282b3', lineHeight: '1rem' }}
                                         onClick={e => {
@@ -3918,12 +3958,12 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                             });
                                             setPlay({ 'isPlay': undefined }); setIssues(undefined)
                                         }}>
-                                        Build Dashboard
+                                        Apply Layout
                                     </Button>
                                 </div>
                                 <div className="row col-xs-12 col-sm-12 col-md-4 col-lg-12 inputfield row1-container borderdivstyle" style={{ marginTop: "10px", maxHeight: '50vh', overflowY: 'auto' }}>
                                     <div className="col-lg-12 borderstyle">
-                                        <div className="col-lg-8" style={{ display: 'contents' }}>Templates</div>
+                                        <div className="col-lg-8 semi-bold" style={{ display: 'contents' }}>Templates</div>
                                         {/* <div className="col-lg-1" style={{ cursor: 'pointer' }}>
                                             <BootstrapTooltip title="Refresh" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
                                                 <Reload onClick={e => { setIsshow({ ...show, 'isShow': true, dashboard, 'NOCharts': others.NOCharts }) }} />
@@ -3975,7 +4015,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                     })()}
                                 </div>
                                 <div className="row col-lg-12 filterswt">
-                                    <div className="row col-xm-9 col-sm-9 col-md-9 col-lg-9" >
+                                    <div className="row col-xm-9 col-sm-9 col-md-9 col-lg-9 semi-bold" >
                                         Filter
                                     </div>
                                     <div className=" col-xm-3 col-sm-3 col-md-3 col-lg-3" >
