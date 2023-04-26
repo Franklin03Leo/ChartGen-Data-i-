@@ -408,12 +408,17 @@ thead tr {
     align-items: center;
     height: 200px;
     padding: 20px;
-    border-radius: 10px;
-    border: 2px dashed #555;
+    /* border-radius: 10px; */
+    /* border: 2px dashed #555; */
     color: #444;
     cursor: pointer;
     transition: background .2s ease-in-out, border .2s ease-in-out;
     width: 90%;
+
+    background: #F4F4F8 0% 0% no-repeat padding-box;
+    border: 2px dashed #B9B9B9;
+    border-radius: 6px;
+    opacity: 1;
 }
 
 .drop-container:hover {
@@ -426,11 +431,19 @@ thead tr {
 }
 
 .drop-title {
-    color: #444;
-    font-size: 20px;
+    /* color: #444; 
+     font-size: 20px;
     font-weight: bold;
-    text-align: center;
+    text-align: center; */
     transition: color .2s ease-in-out;
+    font: var(--unnamed-font-style-normal) normal var(--unnamed-font-weight-600) var(--unnamed-font-size-15)/var(--unnamed-line-spacing-23) var(--unnamed-font-family-poppins);
+    letter-spacing: var(--unnamed-character-spacing-0);
+    color: var(--unnamed-color-1d1d1d);
+    text-align: center;
+    font: normal normal 600 15px/23px Poppins;
+    letter-spacing: 0px;
+    color: #1D1D1D;
+    opacity: 1;
 }
 
 input[type=file] {
@@ -453,6 +466,7 @@ input[type=file]::file-selector-button {
     color: #fff;
     cursor: pointer;
     transition: background .2s ease-in-out;
+
 }
 
 input[type=file]::file-selector-button:hover {
@@ -563,9 +577,9 @@ a {
 }
 
 .Icon {
-    padding: 10px 5px 10px 5px;
+    padding: 4px 0px 4px 8px;
     font-size: medium;
-
+    /* margin: 10px 0px 10px 0px; */
 }
 
 .nav-bar {
@@ -645,7 +659,7 @@ p {
 
     width: 28%;
     overflow-y: auto;
-    margin: 14px 6px 0px 14px;
+    /* margin: 14px 6px 0px 14px; */
     border-radius: 10px;
     background: white;
     overflow: hidden;
@@ -767,7 +781,7 @@ input:checked+.slider:before {
 }
 
 .container-template {
-    border-radius: 0.3rem;
+    /* border-radius: 0.3rem;
     margin-bottom: 15px;
     position: relative;
     padding-bottom: 5px;
@@ -775,22 +789,59 @@ input:checked+.slider:before {
     border-top: 3px solid var(--theme);
     background-image: linear-gradient(to top, #fff1eb 0%, #ace0f9 100%);
     box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+    animation: 1s ease-out 0s 1 slideInFromTOP; */
+
+    position: relative;
+    padding-bottom: 5px;
+    width: 96%;
+    /* box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px; */
     animation: 1s ease-out 0s 1 slideInFromTOP;
+    border-top: 1px #c7c0c0 solid;
+    min-height: 10vh;
+    cursor: pointer;
 
 }
 
 .container-title {
-    padding: 2% 0% 2% 2%;
+    padding: 5% 0% 0% 2%;
+}
+
+.container-title>div>img {
+    filter: brightness(0.1);
+}
+
+.container-template .container-title>div {
+    margin-right: 10px;
+}
+
+.container-title>div+div {
+    font-weight: 600 !important;
+    color: #1D1D1D !important;
+    font-size: 14px !important;
 }
 
 .container-description {
-    padding: 2% 2% 2% 0%;
+    padding: 0% 2% 2% 0%;
     overflow-wrap: break-word;
     max-height: 100px;
     overflow-y: auto;
     text-align: start;
-    font-size: 14px;
-    border-top: 1px #c7c0c0 solid;
+    font-size: 12px !important;
+    /* border-top: 1px #c7c0c0 solid; */
+    text-align: left;
+    letter-spacing: 0px;
+    color: #1C252D !important;
+    margin-right: 10px;
+
+}
+
+.container-description>div>div {
+    text-align: left;
+    letter-spacing: 0px;
+    color: #1C252D !important;
+    font-size: 12px !important;
+    margin-left: 37px;
+    opacity: 0.7;
 }
 
 .temp-icon {
@@ -855,18 +906,16 @@ input:checked+.slider:before {
 }
 
 .borderstyle {
-    border-bottom: 1px solid rgb(0 0 0 / 13%) !important;
-    font-size: 14px;
-    padding: 0px 0px 8px 0px !important;
+    border-top: 4px solid #f4f4f8 !important;
+    padding: 19px 0px 14px 0px !important;
     display: flex !important;
-    /* margin-bottom: 25px; */
-    font-weight: bold;
 }
 
 .borderdivstyle {
-    border: 1px rgb(212, 206, 206) solid;
+    /* border: 1px rgb(212, 206, 206) solid;
     padding: 15px 5px;
-    border-radius: 10px;
+    border-radius: 10px; */
+    padding: 0;
 
 }
 
@@ -878,11 +927,18 @@ input:checked+.slider:before {
 }
 
 .box {
-    border-radius: 5px;
+    /* border-radius: 5px;
     box-shadow: 0px 30px 40px -20px var(--theme);
     padding: 7px;
     margin: 10px 10px 10px 0px;
-    box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px; */
+
+    padding: 7px;
+    margin: 10px 10px 10px 0px;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    border: 2px solid #DCDCE5;
+    border-radius: 6pt;
+    opacity: 1;
 }
 
 .header {
@@ -904,7 +960,7 @@ input:checked+.slider:before {
 }
 
 .cyan {
-    border-top: 3px solid var(--theme);
+    /* border-top: 3px solid var(--theme); */
     transition-duration: 0.3s;
 }
 
@@ -932,13 +988,10 @@ input:checked+.slider:before {
 }
 
 .filterswt {
-    border-top: 2px solid var(--theme);
+    border-top: 3px solid #f4f4f8;
     margin-top: 10px;
     background-color: inherit;
-    padding: 15px;
-    /* border-radius: 10px; */
-    box-shadow: rgb(17 17 26 / 5%) 0px 1px 0px, rgb(17 17 26 / 10%) 0px 0px 8px;
-    border-top: 3px #7984c2 solid;
+    padding: 15px 0px 15px 15px;
     transition: all 0.5s ease;
 }
 
@@ -1017,7 +1070,7 @@ input:checked+.slider:before {
 
 .Dashboardlayout.active {
     border-radius: 10px;
-    box-shadow: 0px 6px 6px #1D1D1D33;
+    /* box-shadow: 0px 6px 6px #1D1D1D33; */
     border: 2px solid #2E89FF;
 }
 
@@ -1051,11 +1104,20 @@ input:checked+.slider:before {
     visibility: hidden;
     opacity: 0;
     transition: visibility 0.3s, opacity 0.5s ease-in-out;
+
+}
+
+.TemplateIcon>img {
+    height: 13px;
 }
 
 .container-template:hover div.TemplateIcon {
     visibility: visible;
     opacity: 1;
+}
+
+.container-template:hover {
+    background-color: #F4F4F8 !important;
 }
 
 .expiry-modal-title {
@@ -1083,7 +1145,6 @@ input:checked+.slider:before {
     background-color: var(--button) !important;
     color: #fff !important;
     border: 1px solid #2E89FF;
-    /* padding: 0.5rem !important; */
     text-align: center !important;
     text-decoration: none !important;
     transition: all 0.5s ease-out !important;
@@ -1199,4 +1260,107 @@ input:checked+.slider:before {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 0.5rem;
+}
+
+.NavBar-active {
+    background: #FFFFFF;
+    border-radius: 10px 0px 0px 10px;
+    margin: 0px 0px 0px 7px;
+    padding: 12px 3px 12px 1px
+}
+
+.NavBar {
+    filter: brightness(8.2);
+    margin: 0px 0px 0px 7px;
+    padding: 12px 3px 12px 1px
+}
+
+.NavBar-parent {
+    margin-top: 20px;
+
+}
+
+.Nav-divider {
+    padding: 21px 15px 13px 23px;
+    color: #a39e9e;
+}
+
+
+
+
+.dashboard-layout {
+    /* position: relative;
+    padding-bottom: 5px;
+    width: 96%; */
+    animation: 1s ease-out 0s 1 slideInFromTOP;
+    border-top: 1px #c7c0c0 solid;
+    /* min-height: 10vh; */
+    cursor: pointer;
+    min-height: 60px;
+}
+
+.dashboard-layout .container-title {
+    padding: 5% 0% 0% 0%;
+}
+
+.dashboard-layout .container-title>div {
+    padding: 0;
+}
+
+.dashboard-layout .container-title>div>img {
+    filter: brightness(0.1);
+}
+
+.dashboard-layout .container-title>div+div>div:first-child {
+    margin-bottom: 5px;
+    opacity: 0.7;
+    text-align: left !important;
+    color: #1D1D1D !important;
+    font-size: 11px !important;
+    padding: 0;
+}
+
+.dashboard-layout .container-title>div+div>div:nth-child(2) {
+    font-weight: 600 !important;
+    color: #1D1D1D !important;
+    font-size: 12px !important;
+    padding: 0px;
+    text-align: left !important;
+}
+
+.MuiButton-root.MuiButton-containedPrimary.btn-transparant {
+    background-color: white !important;
+    color: #2E89FF !important;
+    box-shadow: none;
+    border-radius: 6px
+}
+
+.dashboard-layout .template-container-title {
+    padding: 5% 0% 0% 0%;
+}
+
+.dashboard-layout .template-container-title>div {
+    padding: 0;
+}
+
+.dashboard-layout .template-container-title>div>img {
+    filter: brightness(0.1);
+}
+
+.dashboard-layout .template-container-title>div+div>div:first-child {
+    margin-bottom: 5px;
+    text-align: left !important;
+    color: #1D1D1D !important;
+    font-size: 13px !important;
+    padding: 0;
+    font-weight: 600 !important;
+}
+
+.dashboard-layout .template-container-title>div+div>div:nth-child(2) {
+    font-size: 12px !important;
+    padding: 0px;
+    text-align: left !important;
+    color: #929292;
+    opacity: 1;
+
 }

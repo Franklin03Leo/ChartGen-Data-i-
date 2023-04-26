@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback } from "react";
 
 //MUI
 import './Styles/Custom.css';
@@ -22,7 +22,7 @@ import Backdrop from '@mui/material/Backdrop';
 //NPM's
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import axios from "axios";
+//import axios from "axios";
 import { useNavigate } from "react-router-dom";
 //Components
 import InputBlock from "./Components/InputBlock";
@@ -42,16 +42,16 @@ const HomePage = () => {
     const [filedata, setData] = React.useState({})
     const [play, setPlay] = React.useState({})
     const [show, Isshow] = React.useState({ 'NOCharts': 0, 'isRendered': false })
-    const [navbar, setNavbar] = React.useState({ 'bar': 'Data' });
+    //const [navbar, setNavbar] = React.useState({ 'bar': 'Data' });
     const [navwidth, setNavWidth] = React.useState({ 'navArea': '7%', 'inuptArea': '28%', 'ChartArea': '63%' });
     const [value, setValue] = React.useState('1');
     const [changeType, setChangeType] = React.useState({ 'enableChange': false, 'Dimensions_': 'Select', 'DataTypes': '#' })
     const [error, setError] = React.useState({});
     const [feedback, setFeedback] = React.useState({ 'Issues': undefined });
-    const [anchorEl, setAnchorEl] = React.useState(null);
+   // const [anchorEl, setAnchorEl] = React.useState(null);
     const [project, setProject] = React.useState({});
     const [open, setOpen] = React.useState({ 'SessionExpiry': false, 'StayConnected': false });
-    const [seconds, setSeconds] = React.useState();
+    //onst [seconds, setSeconds] = React.useState();
     // Custom styles
     const BootstrapTooltip = styled(({ className, ...props }) => (
         <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -84,7 +84,7 @@ const HomePage = () => {
     //     });
     // }, [])
     // React.useEffect(() => {
-    let timeout, downloadTimer
+    let timeout
     document.getElementById('root').addEventListener('mousemove', function () {
         clearTimeout(timeout);
         timeout = setTimeout(function () {
@@ -114,7 +114,7 @@ const HomePage = () => {
         setState(state)
         if (state !== undefined) {
             setEnable(enable)
-            setNavbar(navbar)
+            //setNavbar(navbar)
             setChangeType({ ...changeType, 'Dimensions': file.newArray, 'file': file.Uploaded_file })
         }
     }

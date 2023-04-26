@@ -42,8 +42,8 @@ import ArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
 import ArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
 import Numbers from '@mui/icons-material/Numbers';
 import Calendar from '@mui/icons-material/CalendarMonth';
-import Demo from '@mui/icons-material/YouTube';
-import Dashboard from '@mui/icons-material/Dashboard';
+// import Demo from '@mui/icons-material/YouTube';
+// import Dashboard from '@mui/icons-material/Dashboard';
 import Reload from '@mui/icons-material/Cached';
 import Barchart from '@mui/icons-material/BarChart';
 import Piechart from '@mui/icons-material/PieChart';
@@ -53,7 +53,7 @@ import Scatterplot from '@mui/icons-material/ScatterPlot';
 import Barlinechart from '@mui/icons-material/StackedLineChart';
 import Serieschart from '@mui/icons-material/MultilineChart';
 import FeedbackIcon from '@mui/icons-material/Feedback';
-import Project from '@mui/icons-material/AutoAwesomeMotion';
+// import Project from '@mui/icons-material/AutoAwesomeMotion';
 import Collections from '@mui/icons-material/Collections';
 import layout1 from '../../src/Images/layout1.svg';
 import layout2 from '../../src/Images/layout2.svg';
@@ -68,7 +68,21 @@ import layout10 from '../../src/Images/layout10.svg';
 import layout11 from '../../src/Images/layout11.svg';
 
 
+
 import Data from '../../src/Images/Input-Data.png';
+import Project from '../../src/Images/Project.png';
+import Dashboard from '../../src/Images/Dashboard.png';
+import Template from '../../src/Images/Template.png';
+import Demo from '../../src/Images/Demo.png';
+import Feedback from '../../src/Images/Feedback.png';
+import Edit from '../../src/Images/Edit.svg';
+import Remove from '../../src/Images/Remove.png';
+import Publish from '../../src/Images/Publish.svg';
+import Bar from '../../src/Images/Bar-chart.svg';
+import Bar_outlined from '../../src/Images/Bar-chart-outlined.svg';
+import Pie from '../../src/Images/Pie-chart.svg';
+import Line from '../../src/Images/LineIcon.svg';
+import Scatter from '../../src/Images/Scatter-chart.svg';
 //Components
 import LoadingSpinner from "../Components/LoadingSpinner";
 
@@ -178,13 +192,13 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
     const [enabletemplate, setEnableTemplate] = React.useState(false);
     const [flag, setFlag] = React.useState(false);
     const [navopen, setNavOpen] = React.useState(true);
-    const [navwidth, setNavWidth] = React.useState({ 'navArea': '90px', 'inuptArea': '28%', 'ChartArea': '63%' });
+    const [navwidth, setNavWidth] = React.useState({ 'navArea': '85px', 'inuptArea': '28%', 'ChartArea': '63%' });
     const [isMobile, setIsMobile] = React.useState(false);
     const [open, setOpen] = React.useState({ 'Template': false, 'Dashboard': false, 'deleteTemplate': false });
     const [progress, setProgress] = React.useState({ 'loader': false });
     const [filter, setFilter] = React.useState({});
     const [filteringProps, setfilteringProps] = React.useState({ 'customFilter': [] });
-    const [others, setOthers] = React.useState({ 'StaticLayouts': true, 'selectedLayout': '1X2','CustomLayouts':false });
+    const [others, setOthers] = React.useState({ 'StaticLayouts': true, 'selectedLayout': '1X2', 'CustomLayouts': false });
     const [feedback, setFeedback] = React.useState({
         'Categories': ['UI', 'Performance', 'Dataset', 'Statistics', 'Data Dictionary', 'Template', 'Dashboard', 'User Guide', 'Suggestions', 'Other'],
         'Reported By': sessionStorage.getItem('UserName') !== null && sessionStorage.getItem('UserName').split(',')[0]
@@ -225,6 +239,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         bgcolor: 'background.paper',
         boxShadow: 24,
         p: 4,
+        Fonts: '12px/13px Poppins'
     };
     const ITEM_HEIGHT = 48;
     const ITEM_PADDING_TOP = 8;
@@ -968,7 +983,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
     }
     // Sidebar navigation
     const handleNavbarChange = (event) => {
-        var data = event.currentTarget.dataset.testid;
+        var data = event.target.name;
         if (data !== 'FeedbackIcon')
             resetScreen()
         var bar = '';
@@ -988,7 +1003,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         else if (data === 'AutoAwesomeMotionIcon') bar = 'Project'
         else if (data === 'CollectionsIcon') bar = 'Collections'
 
-        setNavbar({ 'bar': bar })
+        setNavbar({ 'bar': data })
         setEnable({ ...enable, 'Piechart': false, 'Barchart': false, 'Scatter': false, 'Linechart': false, 'Compositechart': false, 'Serieschart': false, 'Barlinechart': false })
 
     }
@@ -1628,60 +1643,88 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
     const NavIcons = () => {
         return (
             <>
-                <div>
-                    {!navopen &&
-                        <BootstrapTooltip title="Expand" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
-                            <ArrowRightIcon onClick={(e) => { ExpandCollapse() }} fontSize="medium" style={{ cursor: 'pointer' }} />
-                        </BootstrapTooltip>
-                    }
+                <div style={{ visibility: `${!navopen ? 'visible' : 'hidden'}` }}>
+                    {/* {!navopen && */}
+                    <BootstrapTooltip title="Expand" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
+                        <ArrowRightIcon onClick={(e) => { ExpandCollapse() }} fontSize="medium" style={{ cursor: 'pointer' }} />
+                    </BootstrapTooltip>
+                    {/* } */}
                 </div>
-                <div>
+                <div className="NavBar-parent">
                     <div className="Icon">
-                        <div>
+                        <div className={navbar.bar === "Data" ? "NavBar-active" : "NavBar"}>
                             <BootstrapTooltip title="Data" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
-                                {/* <img src={Data} color="white" alt='Logo'></img> */}
-                                <DatasetIcon className="Icon_" fontSize="large" color={navbar.bar === 'Data' ? 'primary' : '#979A9B'} onClick={handleNavbarChange} />
+                                <img src={Data} name="Data" color="white" alt='Logo' onClick={handleNavbarChange}></img>
+                                {/* <DatasetIcon className="Icon_" fontSize="large" color={navbar.bar === 'Data' ? 'primary' : '#979A9B'} onClick={handleNavbarChange} /> */}
                             </BootstrapTooltip>
                         </div>
 
                     </div>
                     {state.Uploaded_file !== undefined &&
                         <div className="Icon">
-                            <BootstrapTooltip title="Chart" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
-                                <SignalCellularAltIcon className="Icon_" fontSize="large" color={navbar.bar === 'Charts' ? 'primary' : '#979A9B'} onClick={handleNavbarChange} />
-                            </BootstrapTooltip>
+                            <div className={navbar.bar === "Charts" ? "NavBar-active" : "NavBar"}>
+                                <BootstrapTooltip title="Chart" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
+                                    <img src={Dashboard} name="Charts" color="white" alt='Logo' onClick={handleNavbarChange}></img>
+                                    {/* <SignalCellularAltIcon className="Icon_" fontSize="large" color={navbar.bar === 'Charts' ? 'primary' : '#979A9B'} onClick={handleNavbarChange} /> */}
+                                </BootstrapTooltip>
+                            </div>
                         </div>
                     }
                     <div className="Icon">
-                        <BootstrapTooltip title="Templates" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
-                            <ArticleIcon className="Icon_" fontSize="large" color={navbar.bar === 'Templates' ? 'primary' : '#979A9B'} onClick={(e) => { handleNavbarChange(e); GetTemplate() }} />
-                        </BootstrapTooltip>
+                        <div className={navbar.bar === "Templates" ? "NavBar-active" : "NavBar"}>
+                            <BootstrapTooltip title="Templates" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
+                                <img src={Template} name="Templates" color="white" alt='Logo' style={{ height: '22px' }} onClick={(e) => { handleNavbarChange(e); GetTemplate() }}></img>
+                                {/* <ArticleIcon className="Icon_" fontSize="large" color={navbar.bar === 'Templates' ? 'primary' : '#979A9B'} onClick={(e) => { handleNavbarChange(e); GetTemplate() }} /> */}
+                            </BootstrapTooltip>
+                        </div>
+                    </div>
+                    <div className="Icon">
+                        <div className={navbar.bar === "Dashboard" ? "NavBar-active" : "NavBar"}>
+
+                            <BootstrapTooltip title="Dashboard" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
+                                <img src={Dashboard} name="Dashboard" color="white" alt='Logo' style={{ height: '16px', margin: '2px 0px' }} onClick={(e) => { handleNavbarChange(e); GetTemplate('Create Dashboard') }}></img>
+                                {/* <Dashboard className="Icon_" fontSize="large" color={navbar.bar === 'Dashboard' ? 'primary' : '#979A9B'} onClick={(e) => { handleNavbarChange(e); GetTemplate('Create Dashboard') }} /> */}
+                            </BootstrapTooltip>
+                        </div>
                     </div>
 
                     <div className="Icon">
-                        <BootstrapTooltip title="Dashboard" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
-                            <Dashboard className="Icon_" fontSize="large" color={navbar.bar === 'Dashboard' ? 'primary' : '#979A9B'} onClick={(e) => { handleNavbarChange(e); GetTemplate('Create Dashboard') }} />
-                        </BootstrapTooltip>
+                        <div className={navbar.bar === "Project" ? "NavBar-active" : "NavBar"}>
+
+                            <BootstrapTooltip title="Project" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
+                                <img src={Project} name="Project" color="white" alt='Logo' onClick={(e) => { handleNavbarChange(e); GetDashboard(); GetTemplate('Dashboard') }}></img>
+
+                                {/* <Project className="Icon_" fontSize="large" color={navbar.bar === 'Project' ? 'primary' : '#979A9B'} onClick={(e) => { handleNavbarChange(e); GetDashboard(); GetTemplate('Dashboard') }} /> */}
+                            </BootstrapTooltip>
+                        </div>
                     </div>
-                    <div className="Icon">
-                        <BootstrapTooltip title="Project" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
-                            <Project className="Icon_" fontSize="large" color={navbar.bar === 'Project' ? 'primary' : '#979A9B'} onClick={(e) => { handleNavbarChange(e); GetDashboard(); GetTemplate('Dashboard') }} />
-                        </BootstrapTooltip>
-                    </div>
+                    {/* 
+
                     <div className="Icon">
                         <BootstrapTooltip title="Template Collections" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
                             <Collections className="Icon_" fontSize="large" color={navbar.bar === 'Collections' ? 'primary' : '#979A9B'} onClick={(e) => { handleNavbarChange(e); GetPreDefinedTemplates('Fetch', e) }} />
                         </BootstrapTooltip>
+                    </div>*/}
+                    <div className="Nav-divider">{'   '}────</div>
+                    <div className="Icon">
+                        <div className={navbar.bar === "Demo" ? "NavBar-active" : "NavBar"}>
+
+                            <BootstrapTooltip title="Demo" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
+                                <img src={Demo} name="Demo" color="white" alt='Logo' onClick={handleNavbarChange}></img>
+
+                                {/* <Demo className="Icon_" fontSize="large" color={navbar.bar === 'Demo' ? 'primary' : '#979A9B'} onClick={handleNavbarChange} /> */}
+                            </BootstrapTooltip>
+                        </div>
                     </div>
                     <div className="Icon">
-                        <BootstrapTooltip title="Demo" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
-                            <Demo className="Icon_" fontSize="large" color={navbar.bar === 'Demo' ? 'primary' : '#979A9B'} onClick={handleNavbarChange} />
-                        </BootstrapTooltip>
-                    </div>
-                    <div className="Icon">
-                        <BootstrapTooltip title="Feedback" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
-                            <FeedbackIcon className="Icon_" fontSize="large" color={navbar.bar === 'Feedback' ? 'primary' : '#979A9B'} onClick={(e) => { handleNavbarChange(e); handleFeedback('Fetch') }} />
-                        </BootstrapTooltip>
+                        <div className={navbar.bar === "Feedback" ? "NavBar-active" : "NavBar"}>
+
+                            <BootstrapTooltip title="Feedback" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
+                                <img src={Feedback} name="Feedback" color="white" alt='Logo' onClick={(e) => { handleNavbarChange(e); handleFeedback('Fetch') }}></img>
+
+                                {/* <FeedbackIcon className="Icon_" fontSize="large" color={navbar.bar === 'Feedback' ? 'primary' : '#979A9B'} onClick={(e) => { handleNavbarChange(e); handleFeedback('Fetch') }} /> */}
+                            </BootstrapTooltip>
+                        </div>
                     </div>
                 </div>
 
@@ -1690,27 +1733,44 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
     }
     const DashboardIcons = ({ e }) => {
         return (
-            <div className="col-lg-4" style={{ paddingLeft: 0 }}>
-                {e === 'Bar Chart' &&
-                    <Barchart fontSize="large" style={{ color: '#6282b3' }} />
+            <div className="" style={{ paddingLeft: 0 }}>
+                {(e === 'Bar Chart' && navbar.bar === "Templates") ?
+                    <img src={Bar_outlined} name="Feedback" color="white" alt='Logo'></img>
+                    : (e === 'Bar Chart') ?
+                        <img src={Bar} name="Feedback" color="white" alt='Logo'></img>
+                        : ''
                 }
+
+
                 {e === 'Pie Chart' &&
-                    <Piechart fontSize="large" style={{ color: '#6282b3' }} />
+                    // <Piechart fontSize="large" style={{ color: '#6282b3' }} />
+                    <img src={Pie} alt='Logo'></img>
+
                 }
                 {e === 'Composite Chart' &&
-                    <Compositechart fontSize="large" style={{ color: '#6282b3' }} />
+                    // <Compositechart fontSize="large" style={{ color: '#6282b3' }} />
+                    <img src={Bar} alt='Logo'></img>
+
                 }
                 {e === 'Line Chart' &&
-                    <Linechart fontSize="large" style={{ color: '#6282b3' }} />
+                    // <Linechart fontSize="large" style={{ color: '#6282b3' }} />
+                    <img src={Line} alt='Logo'></img>
+
                 }
                 {e === 'ScatterPlot' &&
-                    <Scatterplot fontSize="large" style={{ color: '#6282b3' }} />
+                    // <Scatterplot fontSize="large" style={{ color: '#6282b3' }} />
+                    <img src={Scatter} alt='Logo'></img>
+
                 }
                 {e === 'Bar Line Chart' &&
-                    <Barlinechart fontSize="large" style={{ color: '#6282b3' }} />
+                    // <Barlinechart fontSize="large" style={{ color: '#6282b3' }} />
+                    <img src={Bar} alt='Logo'></img>
+
                 }
                 {e === 'Series Chart' &&
-                    <Serieschart fontSize="large" style={{ color: '#6282b3' }} />
+                    // <Serieschart fontSize="large" style={{ color: '#6282b3' }} />
+                    <img src={Line} alt='Logo'></img>
+
                 }
             </div>
         )
@@ -1719,6 +1779,14 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         return (
             <div>
                 <span className="panal-header" style={{ float: "left", fontWeight: "bold", margin: '15px' }}>{param}</span>
+                {param === 'Project' &&
+                    <div className="" style={{ float: "right" }}>
+                        <Button variant="contained" margin="normal" className='input-field button' style={{ backgroundColor: '#6282b3', float: 'left', marginTop: '10px' }}
+                            onClick={(e) => { setNavbar({ 'bar': 'Dashboard' }); setOthers({ ...others, 'EditDashboard': false }); GetTemplate('Create Dashboard') }}>
+                            New Project
+                        </Button>
+                    </div>
+                }
             </div>
         );
     };
@@ -1734,7 +1802,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                 {/* } */}
             </div>
             {/* <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12 divchart" style={{ width: navwidth.inuptArea, overflowY: `${!navopen ? 'hidden' : 'auto'}`, padding: `${navopen ? '' : '0px'}` }}> */}
-            <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12 divchart" style={{ height: 'calc(94vh - 14px)', width: navwidth.inuptArea, overflowY: `${!navopen ? 'hidden' : 'auto'}`, padding: `${navopen ? '' : '0px'}` }}>
+            <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12 divchart" style={{ height: 'calc(94vh)', width: navwidth.inuptArea, overflowY: `${!navopen ? 'hidden' : 'auto'}`, padding: `${navopen ? '' : '0px'}` }}>
                 <div className="nav-close">
                     {navopen ?
                         <BootstrapTooltip title="Collapse" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
@@ -1789,7 +1857,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                             <div className=" col-lg-12" style={{ margin: "15px" }}>
                                 <label className="drop-container">
                                     <span className="drop-title">Drop files here</span>
-                                    or
+                                    <span style={{ padding: '10px 0px' }}>OR</span>
                                     <input type="file" name="file" id="uploadFile" accept=".csv, .json, .xlsx, .xls" onChange={handleChange}></input>
                                 </label>
                             </div>
@@ -1851,7 +1919,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                     {(state.Uploaded_file !== undefined && error.invalidInputs === undefined) || template !== undefined ?
                         <>
                             {navbar.bar === 'Charts' || navbar.bar === 'Templates' ?
-                                <div className="row col-sm-12 col-md-12 col-lg-12" style={{ margin: "15px 0px 15px 10px" }}>
+                                <div className="row col-sm-12 col-md-12 col-lg-12" style={{ margin: "15px 0px 15px 0px" }}>
                                     {(enable.Imported || state.Uploaded_file !== undefined) && navbar.bar === 'Charts' ?
                                         <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                             <div className="row col-sm-6 col-md-6 col-lg-6 inputfield">
@@ -3765,8 +3833,8 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                 for (let a in template) {
                                                     if (template[a] !== undefined) {
                                                         Item.push(
-                                                            <div className="col-lg-12 container-template" >
-                                                                <div className="row col-lg-12 container-title">
+                                                            <div className="col-lg-12 dashboard-layout" >
+                                                                {/* <div className="row col-lg-12 container-title">
                                                                     <div style={{ fontWeight: 'bold' }} className="row col-sm-9 col-md-9 col-lg-9" >
                                                                         {a}
                                                                     </div>
@@ -3787,12 +3855,33 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                         </BootstrapTooltip>
                                                                     </div>
 
+                                                                </div> */}
+                                                                <div className="row col-lg-12 template-container-title">
+                                                                    {/* <div className="col-sm-1 col-md-1 col-lg-1 TemplateIcon">
+                                                                        <BootstrapTooltip title="Edit" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
+                                                                            <img src={Edit} id={a} color="white" alt='Logo' onClick={(e) => { handleDashboard('Edit', e) }}></img>
+                                                                        </BootstrapTooltip>
+                                                                    </div>
+                                                                    <div className="col-sm-1 col-md-1 col-lg-1 TemplateIcon">
+                                                                        <BootstrapTooltip title="Delete" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
+                                                                            <img src={Remove} id={a} color="white" alt='Logo' style={{ height: '20px' }} onClick={(e) => { handleDashboard('Delete', e) }}></img>
+                                                                        </BootstrapTooltip>
+                                                                    </div> */}
+                                                                    <div className="col-lg-2">
+                                                                        <div className=""><DashboardIcons e={template[a].Chart} /></div>
+                                                                    </div>
+                                                                    <div className="col-lg-10">
+                                                                        <div className="col-sm-12 col-md-12 col-lg-12">{a}</div>
+                                                                        <div className="col-sm-12 col-md-12 col-lg-12" >
+                                                                            {template[a].TempDescription}
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
-                                                                <div className="col-lg-12 container-description">
+                                                                {/* <div className="col-lg-12 container-description">
                                                                     <div className="row col-sm-12 col-md-12 col-lg-12" >
                                                                         <div>{template[a].TempDescription}</div>
                                                                     </div>
-                                                                </div>
+                                                                </div> */}
                                                             </div>
                                                         )
                                                     }
@@ -3949,8 +4038,8 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                         </>
                                     }
                                 </div> */}
-                                <div className="row col-sm-4 col-md-12 col-lg-6" style={{ marginTop: '10px' }}>
-                                    <Button id="saveTemp" variant="contained" className='input-field button' style={{ backgroundColor: '#6282b3', lineHeight: '1rem' }}
+                                <div className="" style={{ margin: '15px 0px 15px 0px' }}>
+                                    <Button id="saveTemp" variant="contained" className='input-field button' style={{ backgroundColor: '#6282b3', width: '226px' }}
                                         onClick={e => {
                                             setIsshow({
                                                 ...show, 'isShow': true, dashboard, 'Custom': others, 'CustomLayouts': others.CustomLayouts
@@ -3961,9 +4050,9 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                         Apply Layout
                                     </Button>
                                 </div>
-                                <div className="row col-xs-12 col-sm-12 col-md-4 col-lg-12 inputfield row1-container borderdivstyle" style={{ marginTop: "10px", maxHeight: '50vh', overflowY: 'auto' }}>
+                                <div className="row col-xs-12 col-sm-12 col-md-4 col-lg-12 inputfield row1-container borderdivstyle" style={{ marginTop: "10px", padding: '10px 10px 0px 14px' }}>
                                     <div className="col-lg-12 borderstyle">
-                                        <div className="col-lg-8 semi-bold" style={{ display: 'contents' }}>Templates</div>
+                                        <div className="col-lg-8 panal-header" style={{ display: 'contents' }}><span>My Saved Templates</span></div>
                                         {/* <div className="col-lg-1" style={{ cursor: 'pointer' }}>
                                             <BootstrapTooltip title="Refresh" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
                                                 <Reload onClick={e => { setIsshow({ ...show, 'isShow': true, dashboard, 'NOCharts': others.NOCharts }) }} />
@@ -3975,28 +4064,16 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                         for (let a in dashboard) {
                                             if (dashboard[a] !== undefined) {
                                                 Item.push(
-                                                    <div className="col-lg-5 box box-down cyan" style={{ cursor: 'grab', padding: '20px 0px 20px 20px;' }} draggable="true" id={a} onDragStart={(event) => { allowDrop(event) }}>
-                                                        <div className="col-lg-12 container-title">
-                                                            <div className="row col-lg-12">
-                                                                <div className="col-lg-4"><DashboardIcons e={dashboard[a].Chart} /></div>
-                                                                <div className="col-lg-8" style={{ paddingLeft: '0px' }}>{dashboard[a].Chart}</div>
-                                                                {/* <>
-                                                                    {filter[a] !== undefined && filter[a].Mode === true ?
-                                                                        <div className="col-lg-2">
-                                                                            <BootstrapTooltip title="Filter On" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
-                                                                                <FilterOn style={{ fontSize: '22px', cursor: 'pointer' }} onClick={(e) => { handleFilter(a, 'On') }} />
-                                                                            </BootstrapTooltip>
-                                                                        </div>
-                                                                        : <div className="col-lg-2">
-                                                                            <BootstrapTooltip title="Filter Off" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
-                                                                                <FilterOff style={{ fontSize: '22px', cursor: 'pointer' }} onClick={(e) => { handleFilter(a, 'Off') }} />
-                                                                            </BootstrapTooltip>
-                                                                        </div>
-                                                                    }
-                                                                </> */}
+                                                    <div className="col-lg-5 box box-down cyan dashboard-layout" style={{ cursor: 'grab' }} draggable="true" id={a} onDragStart={(event) => { allowDrop(event) }}>
+                                                        <div className="row col-lg-12 container-title">
+                                                            <div className="col-lg-4">
+                                                                <div className=""><DashboardIcons e={dashboard[a].Chart} /></div>
                                                             </div>
-                                                            <div style={{ fontWeight: 'bold' }} className="col-sm-12 col-md-12 col-lg-12" >
-                                                                {a}
+                                                            <div className="col-lg-8">
+                                                                <div className="col-sm-12 col-md-12 col-lg-12">{dashboard[a].Chart}</div>
+                                                                <div className="col-sm-12 col-md-12 col-lg-12" >
+                                                                    {a}
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -4014,7 +4091,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
 
                                     })()}
                                 </div>
-                                <div className="row col-lg-12 filterswt">
+                                <div className="row col-lg-12 filterswt" style={{ borderTop: '4px solid #f4f4f8' }}>
                                     <div className="row col-xm-9 col-sm-9 col-md-9 col-lg-9 semi-bold" >
                                         Filter
                                     </div>
@@ -4028,8 +4105,8 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                     {filter.filterSwatch &&
                                         <>
                                             {filteringProps.Dimensions !== undefined ?
-                                                <div className="row col-lg-12 borderdivstyle" style={{ margin: "25px 0px 0px 0px" }}>
-                                                    <div className="row col-sm-12 col-md-12 col-lg-12" >
+                                                <div className="row col-lg-12 borderdivstyle" style={{ margin: "15px 0px 0px 0px" }}>
+                                                    <div className="row col-sm-12 col-md-12 col-lg-12" style={{ padding: '0px' }}>
                                                         <FormControl sx={{ m: 1, paddingRight: 2, width: 300 }}>
                                                             <InputLabel id="filter">Dimensions</InputLabel>
                                                             <Select
@@ -4098,16 +4175,16 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                 </div> */}
                                 {!others.EditDashboard === true ?
                                     <>
-                                        <div className="row col-sm-4 col-md-12 col-lg-6" style={{ marginTop: '10px' }}>
-                                            <Button id="saveTemp" variant="contained" className='input-field button' style={{ backgroundColor: '#6282b3', lineHeight: '1rem' }}
-                                                onClick={(e) => { ExpandCollapse('publish'); handleFilter('Apply Filter'); setIssues(undefined) }}>
-                                                Publish Dashboard
-                                            </Button>
-                                        </div>
                                         <div className="row col-sm-4 col-md-12 col-lg-4" style={{ marginTop: '10px' }}>
-                                            <Button id="saveTemp" variant="contained" className='input-field button' style={{ backgroundColor: '#6282b3', lineHeight: '1rem' }}
+                                            <Button id="saveTemp" variant="contained" className='input-field button btn-transparant'
                                                 onClick={(e) => { setOpen({ 'Dashboard': true }) }}>
                                                 Save
+                                            </Button>
+                                        </div>
+                                        <div className="row col-sm-4 col-md-12 col-lg-8" style={{ marginTop: '10px' }}>
+                                            <Button id="saveTemp" variant="contained" className='input-field button'
+                                                onClick={(e) => { ExpandCollapse('publish'); handleFilter('Apply Filter'); setIssues(undefined) }}>
+                                                <span style={{ display: 'flex' }}>Publish Dashboard <img src={Publish} style={{ width: '16px', height: '16px', marginLeft: '10px' }}></img></span>
                                             </Button>
                                         </div>
                                     </>
@@ -4139,31 +4216,38 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                     for (let a in project) {
                                         if (project[a] !== undefined) {
                                             Item.push(
-                                                <div className="col-lg-12 container-template" >
-                                                    <div className="row col-lg-12 container-title">
-                                                        <div style={{ fontWeight: 'bold' }} className="row col-sm-9 col-md-9 col-lg-9" >
+                                                <div className="col-lg-12 container-template" id={a} onClick={(e) => { handleDashboard('Preview', e) }}>
+                                                    <div className="row col-lg-12 container-title" >
+                                                        <div className="col-sm-1 col-md-1 col-lg-1">
+                                                            <img src={Project} name="Data" color="white" alt='Logo'></img>
+
+                                                        </div>
+                                                        <div className="row col-sm-8 col-md-8 col-lg-8" >
                                                             {a}
                                                         </div>
-
+                                                        {/* 
                                                         <div className="col-sm-1 col-md-1 col-lg-1 TemplateIcon">
                                                             <BootstrapTooltip title="Preview" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
                                                                 <RemoveRedEyeIcon id={a} className='temp-icon' onClick={(e) => { handleDashboard('Preview', e) }} />
                                                             </BootstrapTooltip>
-                                                        </div>
+                                                        </div> */}
                                                         <div className="col-sm-1 col-md-1 col-lg-1 TemplateIcon">
                                                             <BootstrapTooltip title="Edit" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
-                                                                <EditIcon id={a} className='temp-icon' onClick={(e) => { handleDashboard('Edit', e) }} />
+                                                                <img src={Edit} id={a} color="white" alt='Logo' onClick={(e) => { handleDashboard('Edit', e) }}></img>
+                                                                {/* <EditIcon id={a} className='temp-icon' onClick={(e) => { handleDashboard('Edit', e) }} /> */}
                                                             </BootstrapTooltip>
                                                         </div>
                                                         <div className="col-sm-1 col-md-1 col-lg-1 TemplateIcon">
                                                             <BootstrapTooltip title="Delete" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
-                                                                <DeleteIcon id={a} className='temp-icon' onClick={(e) => { handleDashboard('Delete', e) }} />
+                                                                <img src={Remove} id={a} color="white" alt='Logo' style={{ height: '20px' }} onClick={(e) => { handleDashboard('Delete', e) }}></img>
+
+                                                                {/* <DeleteIcon id={a} className='temp-icon' onClick={(e) => { handleDashboard('Delete', e) }} /> */}
                                                             </BootstrapTooltip>
                                                         </div>
 
                                                     </div>
                                                     <div className="col-lg-12 container-description">
-                                                        <div className="row col-sm-12 col-md-12 col-lg-12" >
+                                                        <div className="row col-sm-11 col-md-11 col-lg-11" >
                                                             <div>{project[a].DashboardDescription}</div>
                                                         </div>
                                                     </div>
@@ -4183,14 +4267,14 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                             </>
                                         )
                                     }
-                                    Item.push(
-                                        <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                            <Button variant="contained" margin="normal" className='input-field button' style={{ backgroundColor: '#6282b3', float: 'left', marginTop: '10px' }}
-                                                onClick={(e) => { setNavbar({ 'bar': 'Dashboard' }); setOthers({ ...others, 'EditDashboard': false }); GetTemplate('Dashboard') }}>
-                                                Create new project
-                                            </Button>
-                                        </div>
-                                    )
+                                    // Item.push(
+                                    //     <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                    //         <Button variant="contained" margin="normal" className='input-field button' style={{ backgroundColor: '#6282b3', float: 'left', marginTop: '10px' }}
+                                    //             onClick={(e) => { setNavbar({ 'bar': 'Dashboard' }); setOthers({ ...others, 'EditDashboard': false }); GetTemplate('Dashboard') }}>
+                                    //             Create new project
+                                    //         </Button>
+                                    //     </div>
+                                    // )
                                     return Item
 
                                 })()}
