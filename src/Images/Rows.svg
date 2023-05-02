@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="41" height="26.989" viewBox="0 0 41 26.989">
+  <g id="Rows" transform="translate(-128 -239)">
+    <g id="Path_71" data-name="Path 71" transform="translate(128 239)" fill="#fff">
+      <path d="M 40.5 26.48913764953613 L 0.5 26.48913764953613 L 0.5 0.4999978840351105 L 40.5 0.4999978840351105 L 40.5 26.48913764953613 Z" stroke="none"/>
+      <path d="M 1 0.9999980926513672 L 1 25.98913764953613 L 40 25.98913764953613 L 40 0.9999980926513672 L 1 0.9999980926513672 M 0 -1.9073486328125e-06 L 41 -1.9073486328125e-06 L 41 26.98913764953613 L 0 26.98913764953613 L 0 -1.9073486328125e-06 Z" stroke="none" fill="#c5c5c9"/>
+    </g>
+    <g id="Group_45" data-name="Group 45" transform="translate(138.5 239.435)" opacity="0.3">
+      <line id="Line_22" data-name="Line 22" y2="26.554" transform="translate(0 0)" fill="none" stroke="#c5c5c9" stroke-width="1"/>
+      <line id="Line_23" data-name="Line 23" y2="26.554" transform="translate(10 0)" fill="none" stroke="#c5c5c9" stroke-width="1"/>
+      <line id="Line_24" data-name="Line 24" y2="26.554" transform="translate(20 0)" fill="none" stroke="#c5c5c9" stroke-width="1"/>
+    </g>
+    <line id="Line_23-2" data-name="Line 23" y2="40" transform="translate(168 252.495) rotate(90)" fill="none" stroke="#c5c5c9" stroke-width="1"/>
+    <line id="Line_24-2" data-name="Line 24" y2="40" transform="translate(168 259.46) rotate(90)" fill="none" stroke="#c5c5c9" stroke-width="1"/>
+    <line id="Line_26" data-name="Line 26" y2="40" transform="translate(168 245.53) rotate(90)" fill="none" stroke="#c5c5c9" stroke-width="1"/>
+    <rect id="Rectangle_95" data-name="Rectangle 95" width="39" height="6" transform="translate(129 246)" fill="#2e89ff" opacity="0.2"/>
+  </g>
+</svg>

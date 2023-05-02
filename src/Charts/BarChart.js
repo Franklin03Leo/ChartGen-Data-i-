@@ -216,7 +216,7 @@ const BarChart = ({ params }) => {
       .dimension(table_)
       .size(Infinity)
       .showSections(false)
-      .columns(params.GroupByCopy_.map((e) => e.split(' ').slice(1, 3).join(' ')))
+      .columns(params.GroupByCopy_.map((e) => e.split(' ').slice(1, 20).join(' ')))
       .order(d3.ascending)
       .on('preRender', update_offset)
       .on('preRedraw', update_offset)

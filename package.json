@@ -42,7 +42,7 @@
     "react-dom": "^18.2.0",
     "react-fontawesome": "^1.7.1",
     "react-router-dom": "^6.7.0",
-    "react-scripts": "5.0.1",
+    "react-scripts": "^5.0.1",
     "react-toastify": "^9.1.1",
     "reactcss": "file:node_modules/reactcss",
     "simple-statistics": "^7.8.0",

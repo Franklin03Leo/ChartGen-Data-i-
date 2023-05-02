@@ -148,7 +148,7 @@ const HomePage = () => {
             let TypeChanged = changeType.DataTypes + ' ' + SelectedDimension.split(' ').splice(1).join(' ')
             let DimensionsCopy = changeType.Dimensions
 
-            let value = SelectedDimension.split(' ').slice(1, 3).join(' ');
+            let value = SelectedDimension.split(' ').slice(1, 30).join(' ');
             let datatype = SelectedDimension.split(' ').splice(0, 1)[0]
             value = changeType.file[0][value]
             if (changeType.DataTypes === '#') {
@@ -231,7 +231,7 @@ const HomePage = () => {
                 <div className="row" style={{ background:'#F4F4F8', marginRight: '0px', height: 'calc(94vh -14px)', paddingTop: '6vh' }}>
                     <InputBlock ChildtoParentHandshake={data} ExpandData={expand} dataTable={DataTable} demoVideo={video} showDashboard={showDashboard} feedback_={handleFeedback} project_={handleProject} />
                     {/* <div className="" style={{ backgroundColor: '#e9ecef', height: '87vh', width: navwidth.ChartArea }}> */}
-                    <div className="" style={{ backgroundColor: '#F4F4F8 ', width: `${navwidth.ChartArea === '63%' ? 'calc(70% - 90px)' : 'calc(100% - 90px)'}`, height: 'calc(94vh)' }}>
+                    <div className="" style={{ backgroundColor: '#F4F4F8 ', width: `${navwidth.ChartArea === '63%' ? 'calc(72% - 90px)' : 'calc(100% - 90px)'}`, height: 'calc(94vh)' }}>
                         {filedata.data === undefined && play.isPlay !== true && show.isShow !== true && feedback.Issues === undefined ?
                             <>
                                 {state !== undefined &&

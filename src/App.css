@@ -37,17 +37,13 @@
     color: var(--unnamed-color-1d1d1d);
   }
 
-  .semi-bold {
-    font-family: var(--unnamed-font-family-poppins);
-    font-style: var(--unnamed-font-style-normal);
-    font-weight: var(--unnamed-font-weight-600);
-    font-size: var(--unnamed-font-size-15);
-    line-height: var(--unnamed-line-spacing-23);
-    letter-spacing: var(--unnamed-character-spacing-0);
-    color: var(--unnamed-color-1d1d1d);
+  .semi-bold{
+    font-size: 14px !important;
+    color: #1D1D1D !important;
+    font-weight: 600!important;
   }
 
-  div > span.panal-header {
+  div.panal-header > span {
     font-family: var(--unnamed-font-family-poppins);
     font-style: var(--unnamed-font-style-normal);
     font-weight: var(--unnamed-font-weight-bold);

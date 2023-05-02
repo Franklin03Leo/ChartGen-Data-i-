@@ -78,6 +78,9 @@ import Feedback from '../../src/Images/Feedback.png';
 import Edit from '../../src/Images/Edit.svg';
 import Remove from '../../src/Images/Remove.png';
 import Publish from '../../src/Images/Publish.svg';
+import Column from '../../src/Images/Column.svg';
+import Rows from '../../src/Images/Rows.svg';
+
 import Bar from '../../src/Images/Bar-chart.svg';
 import Bar_outlined from '../../src/Images/Bar-chart-outlined.svg';
 import Pie from '../../src/Images/Pie-chart.svg';
@@ -486,7 +489,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
             var value = ''
             value = event.target.value.split(' ')
             if (value.length > 1)
-                value = value.slice(1, 3).join(' ')
+                value = value.slice(1, 30).join(' ')
             else
                 value = event.target.value
             const unique = [...new Set(state.Uploaded_file.map(item => item[value]))];
@@ -532,7 +535,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
             var value = ''
             value = event.target.value.split(' ')
             if (value.length > 1)
-                value = value.slice(1, 3).join(' ')
+                value = value.slice(1, 30).join(' ')
             else
                 value = event.target.value
             setState({ ...state, 'XAxis': value, [event.target.name]: event.target.value });
@@ -541,7 +544,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
             var value = ''
             value = event.target.value.split(' ')
             if (value.length > 1)
-                value = value.slice(1, 3).join(' ')
+                value = value.slice(1, 30).join(' ')
             else
                 value = event.target.value
             setState({ ...state, 'YAxis': value, [event.target.name]: event.target.value });
@@ -758,6 +761,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         var CheckTypeYAxis = ''
         var CheckTypeGroupBy = ''
         var CheckType_ = ''
+       
         // To check axis cols
         if (state.XAxisCopy !== undefined)
             CheckTypeXAxis = state.XAxisCopy.split(' ').splice(0, 1)[0]
@@ -942,9 +946,9 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         setPlay({ "isPlay": undefined })
         setIsshow({ "isShow": undefined })
         setIssues(undefined)
-        // console.log('Chart Props', state)
-        // console.log('Template value', template)
-        // console.log('Dashboard value', dashboard)
+        console.log('Chart Props', state)
+        console.log('Template value', template)
+        console.log('Dashboard value', dashboard)
         setTimeout(() => {
             document.querySelector('.loader').style.display = 'none';
         }, 100);
@@ -1223,7 +1227,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         if (filter.data === undefined) data = dashboard[Object.keys(dashboard)[0]].Uploaded_file
         else data = filter.data
         for (let i = 0; i < customFilter.length; i++) {
-            const Dimensions = customFilter[i].split(' ').slice(1, 3).join(' ')
+            const Dimensions = customFilter[i].split(' ').slice(1, 30).join(' ')
             const unique = data.map((item) => item[Dimensions])
                 .filter((value, index, self) => self.indexOf(value) === index);
             props_[Dimensions] = unique;
@@ -1664,7 +1668,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                         <div className="Icon">
                             <div className={navbar.bar === "Charts" ? "NavBar-active" : "NavBar"}>
                                 <BootstrapTooltip title="Chart" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
-                                    <img src={Dashboard} name="Charts" color="white" alt='Logo' onClick={handleNavbarChange}></img>
+                                    <img src={Bar_outlined} name="Charts" color="white" alt='Logo' style={{ height: '16px' }} onClick={handleNavbarChange}></img>
                                     {/* <SignalCellularAltIcon className="Icon_" fontSize="large" color={navbar.bar === 'Charts' ? 'primary' : '#979A9B'} onClick={handleNavbarChange} /> */}
                                 </BootstrapTooltip>
                             </div>
@@ -1777,8 +1781,8 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
     }
     const Chartheader = ({ param }) => {
         return (
-            <div>
-                <span className="panal-header" style={{ float: "left", fontWeight: "bold", margin: '15px' }}>{param}</span>
+            <div className="panal-header">
+                <span style={{ float: "left", fontWeight: "bold", margin: '15px' }}>{param}</span>
                 {param === 'Project' &&
                     <div className="" style={{ float: "right" }}>
                         <Button variant="contained" margin="normal" className='input-field button' style={{ backgroundColor: '#6282b3', float: 'left', marginTop: '10px' }}
@@ -3833,7 +3837,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                 for (let a in template) {
                                                     if (template[a] !== undefined) {
                                                         Item.push(
-                                                            <div className="col-lg-12 dashboard-layout" >
+                                                            <div className="col-lg-12 dashboard-layout" onClick={(e) => { handleTemplate(a, 'Preview') }}>
                                                                 {/* <div className="row col-lg-12 container-title">
                                                                     <div style={{ fontWeight: 'bold' }} className="row col-sm-9 col-md-9 col-lg-9" >
                                                                         {a}
@@ -3857,24 +3861,25 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
 
                                                                 </div> */}
                                                                 <div className="row col-lg-12 template-container-title">
-                                                                    {/* <div className="col-sm-1 col-md-1 col-lg-1 TemplateIcon">
-                                                                        <BootstrapTooltip title="Edit" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
-                                                                            <img src={Edit} id={a} color="white" alt='Logo' onClick={(e) => { handleDashboard('Edit', e) }}></img>
-                                                                        </BootstrapTooltip>
-                                                                    </div>
-                                                                    <div className="col-sm-1 col-md-1 col-lg-1 TemplateIcon">
-                                                                        <BootstrapTooltip title="Delete" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
-                                                                            <img src={Remove} id={a} color="white" alt='Logo' style={{ height: '20px' }} onClick={(e) => { handleDashboard('Delete', e) }}></img>
-                                                                        </BootstrapTooltip>
-                                                                    </div> */}
+
                                                                     <div className="col-lg-2">
                                                                         <div className=""><DashboardIcons e={template[a].Chart} /></div>
                                                                     </div>
-                                                                    <div className="col-lg-10">
+                                                                    <div className="col-lg-8">
                                                                         <div className="col-sm-12 col-md-12 col-lg-12">{a}</div>
                                                                         <div className="col-sm-12 col-md-12 col-lg-12" >
                                                                             {template[a].TempDescription}
                                                                         </div>
+                                                                    </div>
+                                                                    <div className="col-sm-1 col-md-1 col-lg-1 TemplateIcon">
+                                                                        <BootstrapTooltip title="Edit" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
+                                                                            <img src={Edit} id={a} color="white" alt='Logo' onClick={(e) => { handleTemplate(a, 'Edit') }}></img>
+                                                                        </BootstrapTooltip>
+                                                                    </div>
+                                                                    <div className="col-sm-1 col-md-1 col-lg-1 TemplateIcon">
+                                                                        <BootstrapTooltip title="Delete" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
+                                                                            <img src={Remove} id={a} color="white" alt='Logo' style={{ height: '20px' }} onClick={(e) => { handleTemplate(a, 'templeDelete') }}></img>
+                                                                        </BootstrapTooltip>
                                                                     </div>
                                                                 </div>
                                                                 {/* <div className="col-lg-12 container-description">
@@ -3954,36 +3959,51 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                     }
                                     {others.CustomLayouts &&
                                         <>
-                                            <div className="row col-xs-5 col-sm-5 col-md-5 col-lg-5">
-                                                <TextField id="NOCharts" className='input-field' name='Rows' label="Rows" variant="outlined" margin="dense"
-                                                    error={formValues.Rows.error}
-                                                    helperText={formValues.Rows.error && formValues.Rows.errorMessage}
-                                                    value={others.Rows}
-                                                    onChange={(e) => { handleValidation(e); setOthers({ ...others, 'Rows': e.target.value }) }}
-                                                />
+                                            <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ marginTop: '15px' }}>
+                                                <div className="col-xs-8 col-sm-8 col-md-8 col-lg-2" style={{ padding: '16px 0px 0px 0px' }}>
+                                                    <img src={Rows} style={{ float: 'left' }}></img>
+                                                </div>
+                                                <div className="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+                                                    <TextField id="NOCharts" className='input-field' name='Rows' label="Total Rows" variant="outlined" margin="dense"
+                                                        error={formValues.Rows.error}
+                                                        helperText={formValues.Rows.error && formValues.Rows.errorMessage}
+                                                        value={others.Rows}
+                                                        onChange={(e) => { handleValidation(e); setOthers({ ...others, 'Rows': e.target.value }) }}
+                                                    />
+                                                    <div className="warning-msg">Maximum 4 Rows can be added</div>
+
+                                                </div>
                                             </div>
-                                            <div className="row col-xs-5 col-sm-5 col-md-5 col-lg-6">
-                                                <div style={{ color: 'red' }}>Columns per row should be less than 4</div>
-                                            </div>
+
                                             <>
                                                 {others.Rows !== undefined && others.Rows < 5 ?
-                                                    <div className="row col-lg-12">
-                                                        {(() => {
-                                                            let Item = [];
-                                                            for (let i = 1; i <= parseInt(others.Rows); i++) {
-                                                                Item.push(
-                                                                    <div className="row col-xs-5 col-sm-5 col-md-5 col-lg-5">
-                                                                        <TextField id="NOCharts" className='input-field' name={"Cols" + i} label={"Row " + i + " Columns"} variant="outlined" margin="dense"
-                                                                            value={others['Cols'] !== undefined ? others['Cols']["Cols" + i] : others["Cols" + i]}
-                                                                            onChange={(e) => { setOthers({ ...others, 'Cols': { ...others['Cols'], [e.target.name]: e.target.value } }) }}
-                                                                            onBlur={(e) => { handleValidation(e) }}
-                                                                        />
-                                                                    </div>
-                                                                )
-                                                            }
-                                                            return Item
-                                                        })()}
-                                                    </div>
+                                                    <>
+                                                        <div className="divider">
+                                                        </div>
+                                                        <div style={{ marginTop: '15px' }}>
+                                                            {(() => {
+                                                                let Item = [];
+                                                                for (let i = 1; i <= parseInt(others.Rows); i++) {
+                                                                    Item.push(
+                                                                        <div className="row col-lg-12" style={{ marginBottom: '10px' }}>
+                                                                            <div className="col-xs-8 col-sm-8 col-md-8 col-lg-2" style={{ padding: '16px 0px 0px 0px', visibility: i === 1 ? `visible` : `hidden` }}>
+                                                                                <img src={Column} style={{ float: 'left' }}></img>
+                                                                            </div>
+                                                                            <div className="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+                                                                                <TextField id="NOCharts" className='input-field' name={"Cols" + i} label={"Row " + i + " Columns"} variant="outlined" margin="dense"
+                                                                                    value={others['Cols'] !== undefined ? others['Cols']["Cols" + i] : others["Cols" + i]}
+                                                                                    onChange={(e) => { setOthers({ ...others, 'Cols': { ...others['Cols'], [e.target.name]: e.target.value } }) }}
+                                                                                    onBlur={(e) => { handleValidation(e) }}
+                                                                                />
+                                                                                <div className="warning-msg" style={{ display: i === parseInt(others.Rows) ? 'block' : 'none' }}>3 Columns per Row allowed</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    )
+                                                                }
+                                                                return Item
+                                                            })()}
+                                                        </div>
+                                                    </>
                                                     : ''
                                                 }
                                             </>
@@ -4052,7 +4072,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                 </div>
                                 <div className="row col-xs-12 col-sm-12 col-md-4 col-lg-12 inputfield row1-container borderdivstyle" style={{ marginTop: "10px", padding: '10px 10px 0px 14px' }}>
                                     <div className="col-lg-12 borderstyle">
-                                        <div className="col-lg-8 panal-header" style={{ display: 'contents' }}><span>My Saved Templates</span></div>
+                                        <div className="col-lg-8 semi-bold" style={{ display: 'contents' }}><span>My Saved Templates</span></div>
                                         {/* <div className="col-lg-1" style={{ cursor: 'pointer' }}>
                                             <BootstrapTooltip title="Refresh" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
                                                 <Reload onClick={e => { setIsshow({ ...show, 'isShow': true, dashboard, 'NOCharts': others.NOCharts }) }} />
