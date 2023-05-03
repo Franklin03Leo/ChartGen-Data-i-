@@ -8,7 +8,7 @@ import LineChart from "../Charts/LineChart";
 import Compose from "../Charts/CompositeChart";
 import SeriesChart from "../Charts/SeriesChart";
 import BarLineChart from "../Charts/BarLineChart";
-
+import SunBurstChart from "../Charts/SunBurstChart";
 
 import DownloadIcon from '@mui/icons-material/Download';
 import { Fade, Switch } from "@material-ui/core";
@@ -158,6 +158,8 @@ const ChartBlock = ({ enable, state }) => {
                         <SeriesChart params={state} />}
                     {state.Chart === 'Bar Line Chart' &&
                         <BarLineChart params={state} />}
+                    {state.Chart === 'Sunburst Chart' &&
+                        <SunBurstChart params={state} />}
                 </div>
             </>
         )

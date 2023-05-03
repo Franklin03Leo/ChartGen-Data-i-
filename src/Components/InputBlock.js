@@ -91,7 +91,7 @@ import LoadingSpinner from "../Components/LoadingSpinner";
 
 const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, showDashboard, feedback_, project_ }) => {
     // Global variables declaration
-    const ChartType = ['Select', 'Pie Chart', 'Bar Chart', 'ScatterPlot', 'Line Chart', 'Composite Chart', 'Series Chart', 'Bar Line Chart']
+    const ChartType = ['Select', 'Pie Chart', 'Bar Chart', 'ScatterPlot', 'Line Chart', 'Composite Chart', 'Series Chart', 'Bar Line Chart', 'Sunburst Chart']
     const Fonts = ['Arial', 'Verdana', 'Tahoma', 'Trebuchet', 'Times New Roman', 'Georgia', 'Garamond', 'Courier']
     const TooltipContent = ['All', 'X', 'Y']
     const LablesContent = ['X', 'Y', 'Title']
@@ -722,7 +722,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
             }
         }
 
-        else if (state.Chart === 'Bar Chart' || state.Chart === 'Pie Chart') {
+        else if (state.Chart === 'Bar Chart' || state.Chart === 'Pie Chart' || state.Chart === 'Sunburst Chart') {
             if (event.target.name === 'XAxisCopy') {
                 CheckType = event.target.value.split(' ').splice(0, 1)[0]
                 CheckType_ = 'Date'
@@ -768,7 +768,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         if (state.YAxisCopy !== undefined)
             CheckTypeYAxis = state.YAxisCopy.split(' ').splice(0, 1)[0]
 
-        if (state.Chart === 'Bar Chart' || state.Chart === 'Pie Chart' || state.Chart === 'Composite Chart' || state.Chart === 'Line Chart') {
+        if (state.Chart === 'Bar Chart' || state.Chart === 'Pie Chart' || state.Chart === 'Composite Chart' || state.Chart === 'Line Chart' || state.Chart === 'Sunburst Chart') {
             if (CheckTypeXAxis === "Da") {
                 CheckType_ = 'Date'
                 setFormValues({ ...formValues, 'XAxisCopy': { ...formValues['XAxisCopy'], error: true, errorMessage: `Please select other than ${CheckType_}` } })
@@ -936,7 +936,9 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         }
         else if (state.Chart === 'Bar Line Chart') {
             setEnable({ 'Barlinechart': true })
-
+        }
+        else if (state.Chart === 'Sunburst Chart') {
+            setEnable({ 'Barlinechart': true })
         }
         setData({ 'data': undefined })
 
@@ -1132,7 +1134,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         var validYAxis = []
         var validGroupAxis = []
 
-        if (chart === 'Bar Chart' || chart === 'Pie Chart' || chart === 'Line Chart') {
+        if (chart === 'Bar Chart' || chart === 'Pie Chart' || chart === 'Line Chart' || chart === 'Sunburst Chart') {
             //X Axis
             Notvalid = ['Da']
             state['CheckType'].map((e) => {
@@ -1999,7 +2001,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                     <AccordionDetails>
                                                         <Typography>
                                                             <div className="col-lg-12" style={{ margin: "10px 0px 15px 0px" }}>
-                                                                {(state.Chart === 'Pie Chart') &&
+                                                                {(state.Chart === 'Pie Chart' || state.Chart === 'Sunburst Chart') &&
                                                                     <div className="col-lg-12">
                                                                         <div className="row col-lg-12">
                                                                             <p className="row col-lg-12">X-Axis</p>
@@ -2146,7 +2148,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                     </div>
                                                                 }
 
-                                                                {(state.Chart !== 'Pie Chart') ?
+                                                                {(state.Chart !== 'Pie Chart' && state.Chart !== 'Sunburst Chart') ?
                                                                     <>
                                                                         <div className="col-lg-12" >
                                                                             <p className="row col-lg-12">X-Axis</p>
@@ -3268,6 +3270,70 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                         </Accordion>
                                         : ''
                                     }
+                                    {(state.Chart === 'Sunburst Chart' && navbar.bar === 'Charts') && (enable.Imported || state.Uploaded_file !== undefined) ?
+                                        <Accordion className="acd">
+                                            <AccordionSummary
+                                                className="acdsummary"
+                                                expandIcon={<ExpandMoreIcon />}
+                                                aria-controls="panel1a-content"
+                                                id="panel1a-header"
+                                            >
+                                                <Typography className="acdTitle">SunBurst&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</Typography>
+                                            </AccordionSummary>
+
+                                            <AccordionDetails>
+                                                <Typography>
+                                                    <div className="col-lg-12">
+                                                        <div className="col-lg-12" >
+                                                            {navbar.bar === 'Charts' &&
+                                                                <>
+                                                                    <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ marginTop: '10px' }}>
+                                                                        <div className="row col-sm-12 col-md-12 col-lg-6" >
+                                                                            <TextField
+                                                                                error={formValues.Innerradius.error}
+                                                                                helperText={formValues.Innerradius.error && formValues.Innerradius.errorMessage}
+                                                                                id="Innerradius" className='input-field' name='Innerradius' label="Innerradius*" variant="outlined"
+                                                                                value={state.Innerradius}
+                                                                                onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ marginTop: '20px' }}>
+                                                                        <div className="row col-lg-12" >
+                                                                            <div className="row col-xm-3 col-sm-3 col-md-3 col-lg-3" >
+                                                                            SunBurst
+                                                                            </div>
+                                                                            <div className="row col-xm-4 col-sm-4 col-md-4 col-lg-4" >
+                                                                                <label className="switch">
+                                                                                    <input type="checkbox" name="Pieswatch" checked={state.Pieswatch_} onChange={handleShowProps}></input>
+                                                                                    <span className="slider round"></span>
+                                                                                </label>
+                                                                            </div>
+
+                                                                        </div>
+                                                                        {state.Pieswatch_ &&
+                                                                            <>
+                                                                                <p className="row col-lg-12">Background</p>
+                                                                                <div className="row col-xs-12 col-sm-2 col-md-2 col-lg-2 inputfield">
+                                                                                    <input type="color" name='BGColor'
+                                                                                        value={state.BGColor}
+                                                                                        defaultValue={'#ffffff'}
+                                                                                        id="colorPicker" onChange={handleChange}>
+                                                                                    </input>
+
+                                                                                </div>
+                                                                            </>
+                                                                        }
+
+                                                                    </div>
+                                                                </>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </Typography>
+                                            </AccordionDetails>
+                                        </Accordion>
+                                        : ''
+                                    }
                                     {(state.Chart === 'Bar Chart' && navbar.bar === 'Charts') && (enable.Imported || state.Uploaded_file !== undefined) ?
                                         <Accordion className="acd">
                                             <AccordionSummary
@@ -3918,7 +3984,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                             </div>
                             <div className="row1-container">
                                 <div className="box box-down cyan">
-                                    <h2>Data(i)</h2>
+                                    <h2>SpectraIQ</h2>
                                     <p>Join us on a project tour!</p>
                                     <Button id="playVideo" variant="contained" className='input-field button' style={{ backgroundColor: '#6282b3', lineHeight: '1rem', float: 'right', marginTop: '10px' }} onClick={(e) => { setPlay({ 'isPlay': true }); setData({ 'data': undefined }); setIsshow({ ...show, 'isShow': undefined }); setIssues(undefined) }}>
                                         Play

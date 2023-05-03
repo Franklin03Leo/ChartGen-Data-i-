@@ -1,10 +1,10 @@
 
-import React, { useEffect, useState, useRef } from "react"; //, { useEffect, useRef, useState }
+import React from "react"; 
 import * as dc from "dc";
 import * as d3 from "d3";
 import * as crossfilter from "crossfilter2/crossfilter";
 import Grid from '@material-ui/core/Grid';
-import { legend, pieChart } from "dc";
+import { legend } from "dc";
 
 const PieChart = ({ params }) => {
   const div = React.useRef(null);
