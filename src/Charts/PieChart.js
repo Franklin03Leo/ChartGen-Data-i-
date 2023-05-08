@@ -139,9 +139,6 @@ const PieChart = ({ params }) => {
       .dimension(runDimension)
       .group(speedSumGroup)
       .title(function (y) {
-        var tooltip = params.XAxis + ': ' + y.key + '\n'
-          + params.YAxis + ': ' + y.value
-
         return ''
       })
       .renderlet(function (fileChart) {

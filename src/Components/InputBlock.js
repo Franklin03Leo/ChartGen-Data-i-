@@ -80,6 +80,8 @@ import Remove from '../../src/Images/Remove.png';
 import Publish from '../../src/Images/Publish.svg';
 import Column from '../../src/Images/Column.svg';
 import Rows from '../../src/Images/Rows.svg';
+import Saved_Templates from '../../src/Images/Saved_Templates.svg';
+import Pre_Templates from '../../src/Images/Pre_Templates.svg';
 
 import Bar from '../../src/Images/Bar-chart.svg';
 import Bar_outlined from '../../src/Images/Bar-chart-outlined.svg';
@@ -184,7 +186,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
     const [state, setState] = React.useState({
         'InputType': 'Enter Inputs', 'Heigth_': 280, 'Width_': 600, 'YAxisPadding': '10',
         'SlicesCap': 10, 'Innerradius': 10, 'ExternalRadiusPadding': 60, 'SymbolSize': 7, 'TooltipContent': 'All',
-        'TooltipTickColor': '#000000', 'GroupByCol': 'Sum', 'Color': '#8495e6',
+        'TooltipTickColor': '#000000', 'GroupByCol': 'Sum', 'Color': '#8495e6', 'SunBurstX_Axis': [],
         'LabelsContent': 'X', 'userID': sessionStorage.getItem('UserName') !== null && user.userID
     });
     const [enable, setEnable] = React.useState({})
@@ -195,13 +197,13 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
     const [enabletemplate, setEnableTemplate] = React.useState(false);
     const [flag, setFlag] = React.useState(false);
     const [navopen, setNavOpen] = React.useState(true);
-    const [navwidth, setNavWidth] = React.useState({ 'navArea': '85px', 'inuptArea': '28%', 'ChartArea': '63%' });
+    const [navwidth, setNavWidth] = React.useState({ 'navArea': '70px', 'inuptArea': '28%', 'ChartArea': '63%' });
     const [isMobile, setIsMobile] = React.useState(false);
     const [open, setOpen] = React.useState({ 'Template': false, 'Dashboard': false, 'deleteTemplate': false });
     const [progress, setProgress] = React.useState({ 'loader': false });
     const [filter, setFilter] = React.useState({});
     const [filteringProps, setfilteringProps] = React.useState({ 'customFilter': [] });
-    const [others, setOthers] = React.useState({ 'StaticLayouts': true, 'selectedLayout': '1X2', 'CustomLayouts': false });
+    const [others, setOthers] = React.useState({ 'StaticLayouts': true, 'selectedLayout': '1X2', 'CustomLayouts': false, 'CustomCards': false });
     const [feedback, setFeedback] = React.useState({
         'Categories': ['UI', 'Performance', 'Dataset', 'Statistics', 'Data Dictionary', 'Template', 'Dashboard', 'User Guide', 'Suggestions', 'Other'],
         'Reported By': sessionStorage.getItem('UserName') !== null && sessionStorage.getItem('UserName').split(',')[0]
@@ -359,7 +361,8 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                 'XAxis_': newArray,
                                 'YAxis_': newArray,
                                 'GroupByCopy_': newArray,
-                                'CheckType': newArray
+                                'CheckType': newArray,
+                                'SunBurstX_Axis': []
                             })
 
                             setError({ 'invalidFile': undefined })
@@ -402,7 +405,8 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                 'XAxis_': newArray,
                                 'YAxis_': newArray,
                                 'GroupByCopy_': newArray,
-                                'CheckType': newArray
+                                'CheckType': newArray,
+                                'SunBurstX_Axis': []
                             })
                             setError({ 'invalidFile': undefined })
                             setData({ 'data': data })
@@ -454,7 +458,8 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                             'XAxis_': newArray,
                             'YAxis_': newArray,
                             'GroupByCopy_': newArray,
-                            'CheckType': newArray
+                            'CheckType': newArray,
+                            'SunBurstX_Axis': []
                         })
                         setError({ 'invalidFile': undefined })
                         setData({ 'data': json })
@@ -761,14 +766,14 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         var CheckTypeYAxis = ''
         var CheckTypeGroupBy = ''
         var CheckType_ = ''
-       
+
         // To check axis cols
         if (state.XAxisCopy !== undefined)
             CheckTypeXAxis = state.XAxisCopy.split(' ').splice(0, 1)[0]
         if (state.YAxisCopy !== undefined)
             CheckTypeYAxis = state.YAxisCopy.split(' ').splice(0, 1)[0]
 
-        if (state.Chart === 'Bar Chart' || state.Chart === 'Pie Chart' || state.Chart === 'Composite Chart' || state.Chart === 'Line Chart' || state.Chart === 'Sunburst Chart') {
+        if (state.Chart === 'Bar Chart' || state.Chart === 'Pie Chart' || state.Chart === 'Composite Chart' || state.Chart === 'Line Chart') {
             if (CheckTypeXAxis === "Da") {
                 CheckType_ = 'Date'
                 setFormValues({ ...formValues, 'XAxisCopy': { ...formValues['XAxisCopy'], error: true, errorMessage: `Please select other than ${CheckType_}` } })
@@ -869,7 +874,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
 
         //var MissedFields = []
         for (let i = 0; i < Common.length; i++) {
-            if (state[Common[i]] === undefined || state[Common[i]] === '' || state[Common[i]] === 'Select') {
+            if ((state[Common[i]] === undefined || state[Common[i]] === '' || state[Common[i]] === 'Select') && state.Chart !== 'Sunburst Chart') {
                 if (Common[i] === 'Width_') Common[i] = 'Width'
                 if (Common[i] === 'Heigth_') Common[i] = 'Heigth'
                 if (Common[i] === 'XAxisCopy') Common[i] = 'XAxis'
@@ -1088,7 +1093,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
 
             axios.post(`http://${path.Location}:8000/DeleteTemplate`, { 'TempName': name, 'userID': user.userID }).then((response) => {
                 console.log('data', response);
-                toast.success('Your Chart has been Deleted', {
+                toast.success('Your Template has been Deleted', {
                     position: toast.POSITION.BOTTOM_RIGHT,
                     hideProgressBar: true,
                     autoClose: 2000
@@ -1245,11 +1250,14 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
             setIsshow({ ...show, 'isShow': true, dashboard, 'NOCharts': others.NOCharts, 'Filter': filter, 'FilteringProps': props, 'isBublished': true, 'Build': false })
         }
     }
-    const handlecustomFilter = (event) => {
+    const handleMultiselect = (event) => {
         const {
             target: { value },
         } = event;
-        setfilteringProps({ ...filteringProps, [event.target.name]: typeof value === 'string' ? value.split(',') : value, });
+        if (event.target.name === 'SunBurstX_Axis')
+            setState({ ...state, [event.target.name]: typeof value === 'string' ? value.split(',') : value, });
+        else
+            setfilteringProps({ ...filteringProps, [event.target.name]: typeof value === 'string' ? value.split(',') : value, });
     }
     //Expand/Collapse
     const ExpandCollapse = (action) => {
@@ -1679,7 +1687,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                     <div className="Icon">
                         <div className={navbar.bar === "Templates" ? "NavBar-active" : "NavBar"}>
                             <BootstrapTooltip title="Templates" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
-                                <img src={Template} name="Templates" color="white" alt='Logo' style={{ height: '22px' }} onClick={(e) => { handleNavbarChange(e); GetTemplate() }}></img>
+                                <img src={Template} name="Templates" color="white" alt='Logo' style={{ height: '22px' }} onClick={(e) => { handleNavbarChange(e); GetTemplate(); GetPreDefinedTemplates('Fetch') }}></img>
                                 {/* <ArticleIcon className="Icon_" fontSize="large" color={navbar.bar === 'Templates' ? 'primary' : '#979A9B'} onClick={(e) => { handleNavbarChange(e); GetTemplate() }} /> */}
                             </BootstrapTooltip>
                         </div>
@@ -1739,7 +1747,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
     }
     const DashboardIcons = ({ e }) => {
         return (
-            <div className="" style={{ paddingLeft: 0 }}>
+            <div className="" style={{ paddingLeft: 0, float: navbar.bar === "Templates" ? 'left' : '' }}>
                 {(e === 'Bar Chart' && navbar.bar === "Templates") ?
                     <img src={Bar_outlined} name="Feedback" color="white" alt='Logo'></img>
                     : (e === 'Bar Chart') ?
@@ -1793,6 +1801,19 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                         </Button>
                     </div>
                 }
+                {param === 'Templates' &&
+                    <div className="" style={{ float: "right" }}>
+                        <Button variant="contained" margin="normal" className='input-field button' style={{ backgroundColor: '#6282b3', float: 'left', marginTop: '10px' }}
+                            onClick={(e) => {
+                                setNavbar({ 'bar': 'Data' }); setTimeout(() => {
+                                    document.getElementById('uploadFile').click()
+                                }, 0);
+                            }}>
+                            New Template
+                        </Button>
+                    </div>
+                }
+
             </div>
         );
     };
@@ -2005,45 +2026,86 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                     <div className="col-lg-12">
                                                                         <div className="row col-lg-12">
                                                                             <p className="row col-lg-12">X-Axis</p>
-                                                                            <div className="row col-sm-6 col-md-5 col-lg-6 inputfield">
-                                                                                <TextField
-                                                                                    error={formValues.XAxisCopy.error}
-                                                                                    helperText={formValues.XAxisCopy.error && formValues.XAxisCopy.errorMessage}
-                                                                                    id="XAxis"
-                                                                                    select
-                                                                                    name='XAxisCopy'
-                                                                                    label={
-                                                                                        <Fragment>
-                                                                                            <BootstrapTooltip title="Accepts numbers" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
-                                                                                                <Numbers fontSize="small" />
-                                                                                            </BootstrapTooltip>
+                                                                            {state.Chart === 'Pie Chart' ?
+                                                                                <div className="row col-sm-6 col-md-5 col-lg-6 inputfield">
+                                                                                    <TextField
+                                                                                        error={formValues.XAxisCopy.error}
+                                                                                        helperText={formValues.XAxisCopy.error && formValues.XAxisCopy.errorMessage}
+                                                                                        id="XAxis"
+                                                                                        select
+                                                                                        name='XAxisCopy'
+                                                                                        label={
+                                                                                            <Fragment>
+                                                                                                <BootstrapTooltip title="Accepts numbers" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
+                                                                                                    <Numbers fontSize="small" />
+                                                                                                </BootstrapTooltip>
 
-                                                                                            &nbsp;
-                                                                                            <BootstrapTooltip title="Accepts strings" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
-                                                                                                {/* <Text style={{ height: '27px' }} /> */}
-                                                                                                <span style={{ fontWeight: '700' }}>ABC</span>
-                                                                                            </BootstrapTooltip>
-                                                                                            &nbsp;
-                                                                                            <span style={{ fontWeight: '900' }}>*</span>
-                                                                                        </Fragment>
-                                                                                    }
-                                                                                    className='input-field '
-                                                                                    margin="dense"
-                                                                                    onChange={(e) => { handleChange(e) }}
-                                                                                    onBlur={(e) => { handleValidation(e) }}
-                                                                                    value={state.XAxisCopy}
-                                                                                    defaultValue={'Select'}
-                                                                                >
-                                                                                    <MenuItem key={-1} value={'Select'}>
-                                                                                        {'Select'}
-                                                                                    </MenuItem>
-                                                                                    {state.XAxis_.map((option, index) => (
-                                                                                        <MenuItem key={option} value={option}>
-                                                                                            {option}
+                                                                                                &nbsp;
+                                                                                                <BootstrapTooltip title="Accepts strings" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
+                                                                                                    <span style={{ fontWeight: '700' }}>ABC</span>
+                                                                                                </BootstrapTooltip>
+                                                                                                &nbsp;
+                                                                                                <span style={{ fontWeight: '900' }}>*</span>
+                                                                                            </Fragment>
+                                                                                        }
+                                                                                        className='input-field '
+                                                                                        margin="dense"
+                                                                                        onChange={(e) => { handleChange(e) }}
+                                                                                        onBlur={(e) => { handleValidation(e) }}
+                                                                                        value={state.XAxisCopy}
+                                                                                        defaultValue={'Select'}
+                                                                                    >
+                                                                                        <MenuItem key={-1} value={'Select'}>
+                                                                                            {'Select'}
                                                                                         </MenuItem>
-                                                                                    ))}
-                                                                                </TextField>
-                                                                            </div>
+                                                                                        {state.XAxis_.map((option, index) => (
+                                                                                            <MenuItem key={option} value={option}>
+                                                                                                {option}
+                                                                                            </MenuItem>
+                                                                                        ))}
+                                                                                    </TextField>
+                                                                                </div>
+                                                                                :
+                                                                                <div className="row col-lg-12 inputfield">
+                                                                                    <FormControl sx={{ width: 300 }}>
+                                                                                        <InputLabel id="filter">
+                                                                                            <Fragment>
+                                                                                                <BootstrapTooltip title="Accepts numbers" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
+                                                                                                    <Numbers fontSize="small" style={{ fontWeight: '700', fontSize: '11px' }} />
+                                                                                                </BootstrapTooltip>
+
+                                                                                                &nbsp;
+                                                                                                <BootstrapTooltip title="Accepts strings" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
+                                                                                                    {/* <Text style={{ height: '27px' }} /> */}
+                                                                                                    <span style={{ fontWeight: '700', fontSize: '11px' }}>ABC</span>
+                                                                                                </BootstrapTooltip>
+                                                                                                &nbsp;
+                                                                                                <span style={{ fontWeight: '900', fontSize: '11px' }}>*</span>
+                                                                                            </Fragment>
+                                                                                        </InputLabel>
+                                                                                        <Select
+                                                                                            labelId="demo-multiple-checkbox-label"
+                                                                                            id="demo-multiple-checkbox"
+                                                                                            multiple
+                                                                                            value={state.SunBurstX_Axis === undefined ? [] : state.SunBurstX_Axis}
+                                                                                            name='SunBurstX_Axis'
+                                                                                            onChange={handleMultiselect}
+                                                                                            input={<OutlinedInput label="Tag" />}
+                                                                                            renderValue={(selected) => selected.join(', ')}
+                                                                                            MenuProps={MenuProps}
+                                                                                            placeholder="Dimensions"
+                                                                                        >
+
+                                                                                            {state.XAxis_.map((name) => (
+                                                                                                <MenuItem key={name} value={name}>
+                                                                                                    <Checkbox checked={state.SunBurstX_Axis === undefined ? false : state.SunBurstX_Axis.indexOf(name) > -1} />
+                                                                                                    <ListItemText key={name} primary={name} />
+                                                                                                </MenuItem>
+                                                                                            ))}
+                                                                                        </Select>
+                                                                                    </FormControl>
+                                                                                </div>
+                                                                            }
                                                                             <p className="row col-lg-12">Y-Axis</p>
                                                                             <div className="row col-sm-6 col-md-5 col-lg-6" >
                                                                                 <TextField
@@ -3300,7 +3362,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                     <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ marginTop: '20px' }}>
                                                                         <div className="row col-lg-12" >
                                                                             <div className="row col-xm-3 col-sm-3 col-md-3 col-lg-3" >
-                                                                            SunBurst
+                                                                                SunBurst
                                                                             </div>
                                                                             <div className="row col-xm-4 col-sm-4 col-md-4 col-lg-4" >
                                                                                 <label className="switch">
@@ -3898,77 +3960,121 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                     {/* {(navbar.bar === 'Templates') && (enable.Imported || state.Uploaded_file !== undefined) ? */}
                                     {(navbar.bar === 'Templates') ?
                                         <>
-                                            {(() => {
-                                                let Item = [];
-                                                for (let a in template) {
-                                                    if (template[a] !== undefined) {
-                                                        Item.push(
-                                                            <div className="col-lg-12 dashboard-layout" onClick={(e) => { handleTemplate(a, 'Preview') }}>
-                                                                {/* <div className="row col-lg-12 container-title">
-                                                                    <div style={{ fontWeight: 'bold' }} className="row col-sm-9 col-md-9 col-lg-9" >
-                                                                        {a}
-                                                                    </div>
-
-                                                                    <div className="col-sm-1 col-md-1 col-lg-1 TemplateIcon">
-                                                                        <BootstrapTooltip title="Preview" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
-                                                                            <RemoveRedEyeIcon id={a} className='temp-icon' onClick={(e) => { handleTemplate(a, 'Preview') }} />
-                                                                        </BootstrapTooltip>
-                                                                    </div>
-                                                                    <div className="col-sm-1 col-md-1 col-lg-1 TemplateIcon">
-                                                                        <BootstrapTooltip title="Edit" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
-                                                                            <EditIcon id={a} className='temp-icon' onClick={(e) => { handleTemplate(a, 'Edit') }} />
-                                                                        </BootstrapTooltip>
-                                                                    </div>
-                                                                    <div className="col-sm-1 col-md-1 col-lg-1 TemplateIcon">
-                                                                        <BootstrapTooltip title="Delete" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
-                                                                            <DeleteIcon id={a} className='temp-icon' onClick={(e) => { handleTemplate(a, 'templeDelete') }} />
-                                                                        </BootstrapTooltip>
-                                                                    </div>
-
-                                                                </div> */}
-                                                                <div className="row col-lg-12 template-container-title">
-
-                                                                    <div className="col-lg-2">
-                                                                        <div className=""><DashboardIcons e={template[a].Chart} /></div>
-                                                                    </div>
-                                                                    <div className="col-lg-8">
-                                                                        <div className="col-sm-12 col-md-12 col-lg-12">{a}</div>
-                                                                        <div className="col-sm-12 col-md-12 col-lg-12" >
-                                                                            {template[a].TempDescription}
+                                            <Accordion className="acd">
+                                                <AccordionSummary
+                                                    className="acdsummary"
+                                                    expandIcon={<ExpandMoreIcon />}
+                                                    aria-controls="panel1a-content"
+                                                    id="panel1a-header"
+                                                >
+                                                    <Typography className="acdTitle"><img src={Saved_Templates} style={{ marginRight: '10px' }}></img>My Saved Templates<span className="txtOrdinary" style={{ marginLeft: '5px' }}>{`(${Object.keys(template).length})`}</span></Typography>
+                                                </AccordionSummary>
+                                                <AccordionDetails>
+                                                    <Typography>
+                                                        {(() => {
+                                                            let Item = [],AllCharts = [];
+                                                            for (let a in template) {
+                                                                if (template[a] !== undefined) {
+                                                                    Item.push(
+                                                                        <div className="col-lg-12 dashboard-layout">
+                                                                            <div className="row col-lg-12 template-container-title">
+                                                                                <div className="col-lg-2"  onClick={(e) => { handleTemplate(a, 'Preview') }}>
+                                                                                    <div className="row" style={{ marginLeft: '15px' }}><DashboardIcons e={template[a].Chart} /></div>
+                                                                                </div>
+                                                                                <div className="col-lg-8"  onClick={(e) => { handleTemplate(a, 'Preview') }}>
+                                                                                    <div className="col-sm-12 col-md-12 col-lg-12">{a}</div>
+                                                                                    <div className="col-sm-12 col-md-12 col-lg-12" >
+                                                                                        {template[a].TempDescription}
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div className="col-sm-1 col-md-1 col-lg-1 TemplateIcon">
+                                                                                    <BootstrapTooltip title="Edit" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
+                                                                                        <img src={Edit} id={a} color="white" alt='Logo' onClick={(e) => { handleTemplate(a, 'Edit') }}></img>
+                                                                                    </BootstrapTooltip>
+                                                                                </div>
+                                                                                <div className="col-sm-1 col-md-1 col-lg-1 TemplateIcon">
+                                                                                    <BootstrapTooltip title="Delete" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
+                                                                                        <img src={Remove} id={a} color="white" alt='Logo' style={{ height: '20px' }} onClick={(e) => { handleTemplate(a, 'templeDelete') }}></img>
+                                                                                    </BootstrapTooltip>
+                                                                                </div>
+                                                                            </div>
+                                                                           
+                                                                        </div>
+                                                                    )
+                                                                }
+                                                            }
+                                                            if (Item.length === 0) {
+                                                                Item.push(
+                                                                    <div className="col-lg-12 container-template" >
+                                                                        <div className="row col-lg-12 container-title">
+                                                                            No Template Found !!!
                                                                         </div>
                                                                     </div>
-                                                                    <div className="col-sm-1 col-md-1 col-lg-1 TemplateIcon">
-                                                                        <BootstrapTooltip title="Edit" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
-                                                                            <img src={Edit} id={a} color="white" alt='Logo' onClick={(e) => { handleTemplate(a, 'Edit') }}></img>
-                                                                        </BootstrapTooltip>
-                                                                    </div>
-                                                                    <div className="col-sm-1 col-md-1 col-lg-1 TemplateIcon">
-                                                                        <BootstrapTooltip title="Delete" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
-                                                                            <img src={Remove} id={a} color="white" alt='Logo' style={{ height: '20px' }} onClick={(e) => { handleTemplate(a, 'templeDelete') }}></img>
-                                                                        </BootstrapTooltip>
-                                                                    </div>
-                                                                </div>
-                                                                {/* <div className="col-lg-12 container-description">
-                                                                    <div className="row col-sm-12 col-md-12 col-lg-12" >
-                                                                        <div>{template[a].TempDescription}</div>
-                                                                    </div>
-                                                                </div> */}
-                                                            </div>
-                                                        )
-                                                    }
-                                                }
-                                                if (Item.length === 0) {
-                                                    Item.push(
-                                                        <div className="col-lg-12 container-template" >
-                                                            <div className="row col-lg-12 container-title">
-                                                                No Template Found !!!
-                                                            </div>
-                                                        </div>
-                                                    )
-                                                }
-                                                return Item
+                                                                )
+                                                            }
+                                                            return Item
 
-                                            })()}
+                                                        })()}
+                                                    </Typography>
+                                                </AccordionDetails>
+                                            </Accordion>
+
+                                            <Accordion className="acd">
+                                                <AccordionSummary
+                                                    className="acdsummary"
+                                                    expandIcon={<ExpandMoreIcon />}
+                                                    aria-controls="panel1a-content"
+                                                    id="panel1a-header"
+                                                >
+                                                    <Typography className="acdTitle"><img src={Pre_Templates} style={{ marginRight: '10px' }}></img>Template Collections <span className="txtOrdinary" style={{ marginLeft: '5px' }}>{`(${Object.keys(TemplatesCollections).length})`}</span></Typography>
+                                                </AccordionSummary>
+                                                <AccordionDetails>
+                                                    <Typography>
+                                                        <div className="row col-sm-12 col-md-12 col-lg-12 Collections">
+                                                            <>
+                                                                {(() => {
+                                                                    let Item = [];
+                                                                    for (let a in TemplatesCollections) {
+                                                                        if (TemplatesCollections[a] !== undefined) {
+                                                                            Item.push(
+                                                                                <div className="box box-down cyan" style={{ cursor: 'pointer', padding: '20px 0px 20px 20px;' }} id={a} onClick={(e) => { GetPreDefinedTemplates('Preview', e) }}>
+                                                                                    <div className="container-title">
+                                                                                        <div style={{ display: 'flex' }}>
+                                                                                            <div className="col-lg-3"><DashboardIcons e={TemplatesCollections[a].Chart} /></div>
+                                                                                            <div className="col-lg-8 semi-bold-sm" style={{ textAlign: 'left' }}>
+                                                                                                <div className="col-sm-12 col-md-12 col-lg-12 txtOrdinary">
+                                                                                                    {TemplatesCollections[a].Chart}
+                                                                                                </div>
+                                                                                                <div className="col-sm-12 col-md-12 col-lg-12 semi-bold" style={{ marginTop: '5px' }}>
+                                                                                                    {TemplatesCollections[a].TempName}
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div className="">
+                                                                                        <div style={{ overflowWrap: 'anywhere', marginTop: '10px' }} className="col-sm-12 col-md-12 col-lg-12 txtOrdinary" >
+                                                                                            {TemplatesCollections[a].TempDescription}
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            )
+                                                                        }
+                                                                    }
+                                                                    if (Item.length === 0) {
+                                                                        Item.push(
+                                                                            <div className="col-lg-12 none-tamplate" onClick={(e) => { setNavbar({ 'bar': 'Data' }) }}>
+                                                                                Please Create any template
+                                                                            </div>
+                                                                        )
+                                                                    }
+                                                                    return Item
+
+                                                                })()}
+                                                            </>
+                                                        </div>
+                                                    </Typography>
+                                                </AccordionDetails>
+                                            </Accordion>
                                         </>
                                         : ''
                                     }
@@ -3997,15 +4103,17 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                         <>
                             <div className="row col-lg-12" style={{ margin: "15px 0px 15px 13px" }}>
                                 <div className="row col-lg-12 filterswt">
-                                    <div className="row col-xm-9 col-sm-9 col-md-9 col-lg-9 semi-bold" >
-                                        Layouts
-                                    </div>
-                                    <div className="col-xm-3 col-sm-3 col-md-3 col-lg-3" style={{ display: 'contents' }} >
-                                        <div style={{ marginRight: '10px' }}>Custom</div>
-                                        <label className="switch">
-                                            <input type="checkbox" name="StaticLayouts" checked={others.CustomLayouts} onChange={(e) => { setOthers({ ...others, 'CustomLayouts': e.target.checked, 'StaticLayouts': !e.target.checked }) }}></input>
-                                            <span className="slider round"></span>
-                                        </label>
+                                    <div style={{ display: 'flex', padding: '0px' }}>
+                                        <div className="semi-bold" style={{ display: 'flex', width: '80%' }}>
+                                            Layouts
+                                        </div>
+                                        <div style={{ display: 'flex' }}>
+                                            <div style={{ marginRight: '10px' }}>Custom</div>
+                                            <label className="switch">
+                                                <input type="checkbox" name="StaticLayouts" checked={others.CustomLayouts} onChange={(e) => { setOthers({ ...others, 'CustomLayouts': e.target.checked, 'StaticLayouts': !e.target.checked }) }}></input>
+                                                <span className="slider round"></span>
+                                            </label>
+                                        </div>
                                     </div>
                                     {others.StaticLayouts &&
                                         // <DashboardLayouts 
@@ -4075,55 +4183,75 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                             </>
                                         </>
                                     }
+
                                 </div>
-                                {/* <div className="row col-lg-12 filterswt">
-                                    <div className="row col-xm-9 col-sm-9 col-md-9 col-lg-9 semi-bold" >
-                                        Custom Layout
+
+                                <div className="row" style={{ padding: '0px' }}>
+                                    <div style={{ display: 'flex' }}>
+                                        <div className="semi-bold" style={{ display: 'flex', width: '80%' }}>
+                                            Cards
+                                        </div>
+                                        <div style={{ display: 'flex' }}>
+                                            <div style={{ marginRight: '10px' }}>Custom</div>
+                                            <label className="switch">
+                                                <input type="checkbox" name="StaticLayouts" checked={others.CustomCards} onChange={(e) => { setOthers({ ...others, 'CustomCards': e.target.checked }) }}></input>
+                                                <span className="slider round"></span>
+                                            </label>
+                                        </div>
                                     </div>
-                                    <div className=" col-xm-3 col-sm-3 col-md-3 col-lg-3" >
-                                        <label className="switch">
-                                            <input type="checkbox" name="CustomLayouts" checked={others.CustomLayouts} onChange={(e) => { setOthers({ ...others, 'CustomLayouts': e.target.checked, 'StaticLayouts': !e.target.checked }) }}></input>
-                                            <span className="slider round"></span>
-                                        </label>
-                                    </div>
-                                    {others.CustomLayouts &&
-                                        <>
-                                            <div className="row col-xs-5 col-sm-5 col-md-5 col-lg-5">
-                                                <TextField id="NOCharts" className='input-field' name='Rows' label="Rows" variant="outlined" margin="dense"
-                                                    error={formValues.Rows.error}
-                                                    helperText={formValues.Rows.error && formValues.Rows.errorMessage}
-                                                    value={others.Rows}
-                                                    onChange={(e) => { handleValidation(e); setOthers({ ...others, 'Rows': e.target.value }) }}
+                                </div>
+                                {others.CustomCards &&
+                                    <>
+                                        <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ marginTop: '15px' }}>
+                                            <div className="col-xs-8 col-sm-8 col-md-8 col-lg-2" style={{ padding: '16px 0px 0px 0px' }}>
+                                                <img src={Rows} style={{ float: 'left' }}></img>
+                                            </div>
+                                            <div className="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+                                                <TextField id="NOCards" className='input-field' name='CardRows' label="Total Cards" variant="outlined" margin="dense"
+                                                    // error={formValues.CardRows.error}
+                                                    // helperText={formValues.CardRows.error && formValues.CardRows.errorMessage}
+                                                    value={others.CardRows}
+                                                    onChange={(e) => { handleValidation(e); setOthers({ ...others, 'CardRows': e.target.value }) }}
                                                 />
+                                                <div className="warning-msg">Maximum 4 Cards can be added</div>
+
                                             </div>
-                                            <div className="row col-xs-5 col-sm-5 col-md-5 col-lg-6">
-                                                <div style={{ color: 'red' }}>Columns per row should be less than 4</div>
-                                            </div>
-                                            <>
-                                                {others.Rows !== undefined && others.Rows < 5 ?
-                                                    <div className="row col-lg-12">
+                                        </div>
+
+                                        <>
+                                            {others.CardRows !== undefined && others.CardRows < 5 ?
+                                                <>
+                                                    <div className="divider">
+                                                    </div>
+                                                    <div style={{ marginTop: '15px' }}>
                                                         {(() => {
                                                             let Item = [];
-                                                            for (let i = 1; i <= parseInt(others.Rows); i++) {
+                                                            for (let i = 1; i <= parseInt(others.CardRows); i++) {
                                                                 Item.push(
-                                                                    <div className="row col-xs-5 col-sm-5 col-md-5 col-lg-5">
-                                                                        <TextField id="NOCharts" className='input-field' name={"Cols" + i} label={"Row " + i + " Columns"} variant="outlined" margin="dense"
-                                                                            value={others['Cols'] !== undefined ? others['Cols']["Cols" + i] : others["Cols" + i]}
-                                                                            onChange={(e) => { setOthers({ ...others, 'Cols': { ...others['Cols'], [e.target.name]: e.target.value } }) }}
-                                                                            onBlur={(e) => { handleValidation(e) }}
-                                                                        />
+                                                                    <div className="row col-lg-12" style={{ marginBottom: '10px' }}>
+                                                                        <div className="col-xs-8 col-sm-8 col-md-8 col-lg-2" style={{ padding: '16px 0px 0px 0px', visibility: i === 1 ? `visible` : `hidden` }}>
+                                                                            <img src={Column} style={{ float: 'left' }}></img>
+                                                                        </div>
+                                                                        <div className="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+                                                                            <TextField id="NOCharts" className='input-field' name={"Card" + i} label={"Card " + i} variant="outlined" margin="dense"
+                                                                                value={others['Card'] !== undefined ? others['Card']["Card" + i] : others["Card" + i]}
+                                                                                onChange={(e) => { setOthers({ ...others, 'Card': { ...others['Card'], [e.target.name]: e.target.value } }) }}
+                                                                                onBlur={(e) => { handleValidation(e) }}
+                                                                            />
+                                                                            {/* <div className="warning-msg" style={{ display: i === parseInt(others.Rows) ? 'block' : 'none' }}>3 Cards per Row allowed</div> */}
+                                                                        </div>
                                                                     </div>
                                                                 )
                                                             }
                                                             return Item
                                                         })()}
                                                     </div>
-                                                    : ''
-                                                }
-                                            </>
+                                                </>
+                                                : ''
+                                            }
                                         </>
-                                    }
-                                </div> */}
+                                    </>
+                                }
                                 <div className="" style={{ margin: '15px 0px 15px 0px' }}>
                                     <Button id="saveTemp" variant="contained" className='input-field button' style={{ backgroundColor: '#6282b3', width: '226px' }}
                                         onClick={e => {
@@ -4150,7 +4278,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                         for (let a in dashboard) {
                                             if (dashboard[a] !== undefined) {
                                                 Item.push(
-                                                    <div className="col-lg-5 box box-down cyan dashboard-layout" style={{ cursor: 'grab' }} draggable="true" id={a} onDragStart={(event) => { allowDrop(event) }}>
+                                                    <div className="box box-down cyan dashboard-layout" style={{ cursor: 'grab' }} draggable="true" id={a} onDragStart={(event) => { allowDrop(event) }}>
                                                         <div className="row col-lg-12 container-title">
                                                             <div className="col-lg-4">
                                                                 <div className=""><DashboardIcons e={dashboard[a].Chart} /></div>
@@ -4201,7 +4329,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                 multiple
                                                                 value={filteringProps.customFilter === undefined ? [] : filteringProps.customFilter}
                                                                 name='customFilter'
-                                                                onChange={handlecustomFilter}
+                                                                onChange={handleMultiselect}
                                                                 input={<OutlinedInput label="Tag" />}
                                                                 renderValue={(selected) => selected.join(', ')}
                                                                 MenuProps={MenuProps}
@@ -4295,7 +4423,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                         </>
                     }
                     {(navbar.bar === 'Project') ?
-                        <div className="row col-sm-12 col-md-12 col-lg-12" style={{ margin: "15px 0px 15px 10px" }}>
+                        <div className="row col-sm-12 col-md-12 col-lg-12" style={{ margin: "0px" }}>
                             <>
                                 {(() => {
                                     let Item = [];
@@ -4368,47 +4496,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                         </div>
                         : ''
                     }
-                    {(navbar.bar === 'Collections') ?
-                        <div className="row col-sm-12 col-md-12 col-lg-12 Collections" style={{ margin: "15px 0px 15px 10px" }}>
-                            <>
-                                {(() => {
-                                    let Item = [];
-                                    for (let a in TemplatesCollections) {
-                                        if (TemplatesCollections[a] !== undefined) {
-                                            Item.push(
-                                                <div className="col-lg-5 box box-down cyan" style={{ cursor: 'pointer', padding: '20px 0px 20px 20px;' }} id={a} onClick={(e) => { GetPreDefinedTemplates('Preview', e) }}>
-                                                    <div className="col-lg-12 container-title">
-                                                        <div className="row col-lg-12">
-                                                            <div className="col-lg-4"><DashboardIcons e={TemplatesCollections[a].Chart} /></div>
-                                                            <div className="col-lg-8" style={{ paddingLeft: '0px' }}>{TemplatesCollections[a].Chart}</div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="row col-lg-12 PredefinedTempBody">
-                                                        <div style={{ fontWeight: 'bold', marginBottom: '10px' }} className="col-sm-12 col-md-12 col-lg-12" >
-                                                            {TemplatesCollections[a].TempName}
-                                                        </div>
-                                                        <div style={{ fontSize: '13px', overflowWrap: 'anywhere' }} className="col-sm-12 col-md-12 col-lg-12" >
-                                                            {TemplatesCollections[a].TempDescription}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            )
-                                        }
-                                    }
-                                    if (Item.length === 0) {
-                                        Item.push(
-                                            <div className="col-lg-12 none-tamplate" onClick={(e) => { setNavbar({ 'bar': 'Data' }) }}>
-                                                Please Create any template
-                                            </div>
-                                        )
-                                    }
-                                    return Item
 
-                                })()}
-                            </>
-                        </div>
-                        : ''
-                    }
                     {navbar.bar === 'Feedback' &&
                         <>
                             <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ margin: '15px 0px 15px 10px' }}>
@@ -4520,7 +4608,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                 >
                     <Fade in={open.Template}>
                         <Box sx={style}>
-                            <Typography id="transition-modal-title" variant="h6" component="h2">
+                            <Typography id="transition-modal-title" variant="h6" component="h2" className="semi-bold">
                                 Template
                             </Typography>
                             {open.deleteTemplate ?

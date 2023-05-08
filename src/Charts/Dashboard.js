@@ -19,6 +19,7 @@ import LineChart from "../Charts/LineChart";
 import Compose from "../Charts/CompositeChart";
 import SeriesChart from "../Charts/SeriesChart";
 import BarLineChart from "../Charts/BarLineChart";
+import SunBurstChart from "../Charts/SunBurstChart";
 import DashboardFilter from "../Components/DashboardFilter";
 import DatasetTable from "../Components/DatasetTable";
 //NPM's
@@ -148,6 +149,8 @@ const Dashboard = ({ params }) => {
                         <SeriesChart params={state} />}
                     {state.Chart === 'Bar Line Chart' &&
                         <BarLineChart params={state} />}
+                    {state.Chart === 'Sunburst Chart' &&
+                        <SunBurstChart params={state} />}
                 </div>
             </>
         )
@@ -156,186 +159,192 @@ const Dashboard = ({ params }) => {
 
     }
     function CreatingUploadArea() {
-        console.log('charts re-rendered')
-        if (Object.keys(template).length !== 0) {
-            setTimeout(() => {
-                document.querySelector('.loader').style.display = 'none';
-            }, 100);
+        try {
+
+
+            console.log('charts re-rendered')
+            if (Object.keys(template).length !== 0) {
+                setTimeout(() => {
+                    document.querySelector('.loader').style.display = 'none';
+                }, 100);
+            }
+            return (
+                <>
+                    {(() => {
+                        let Item = [];
+                        for (let i = 0; i < parseInt(layouts[0]); i++) {
+                            Item.push(
+                                // <div className={filter.filterSwatch ? " col-lg-6" : " col-lg-4"} id={"chart" + i} onDrop={(event) => { drop(event) }} onDragOver={(event) => { allowDrop(event) }}>
+                                <div className={parseInt(layouts[0]) === 1 ? "col-lg-12" : parseInt(layouts[0]) === 2 ? 'col-lg-6' : 'col-lg-4'} id={"chart" + i} onDrop={(event) => { drop(event) }} onDragOver={(event) => { allowDrop(event) }}>
+                                    {chartsID["chart" + i] !== undefined ?
+                                        <div style={{ marginTop: '10px' }}>
+                                            {template[chartsID["chart" + i]] !== undefined ?
+                                                <>
+                                                    <ZoomOut style={{ float: 'right', cursor: 'pointer', paddingTop: '6px' }} onClick={e => { handleOpen(i) }} />
+                                                    {(!isBublished && params.userID === undefined) || (params.action !== undefined && params.action === 'Edit') || (params.action !== undefined && params.action === 'Update') ?
+                                                        <DeleteIcon style={{ float: 'right', cursor: 'pointer', paddingTop: '6px' }} onClick={e => { RemoveChart(i) }} />
+                                                        : ''
+                                                    }
+                                                    {filter.filterSwatch ?
+                                                        <Chart state={filteredtemplate[chartsID["chart" + i]]} />
+
+                                                        :
+                                                        <Chart state={template[chartsID["chart" + i]]} />
+                                                    }
+                                                </>
+                                                :
+                                                <div className="divdashboard" >
+                                                    <div style={{ color: 'red', position: 'relative', top: '40%' }}>
+                                                        <div className="col-lg-12">You might have deleted</div>
+                                                        <div className="col-lg-12">the</div>
+                                                        <div className="col-lg-12">Template</div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                        :
+                                        <div className="divdashboard" >
+                                            <div style={{ color: '#9d9d9b', position: 'relative', top: '40%' }}>
+                                                <div className="col-lg-12">Drag the template</div>
+                                                <div className="col-lg-12">and</div>
+                                                <div className="col-lg-12">Drop here</div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            )
+                        }
+                        for (let i = parseInt(layouts[0]); i < parseInt(layouts[0]) + parseInt(layouts[1]); i++) {
+                            Item.push(
+                                // <div className={filter.filterSwatch ? " col-lg-6" : " col-lg-4"} id={"chart" + i} onDrop={(event) => { drop(event) }} onDragOver={(event) => { allowDrop(event) }}>
+                                <div className={parseInt(layouts[1]) === 1 ? "col-lg-12" : parseInt(layouts[1]) === 2 ? 'col-lg-6' : 'col-lg-4'} id={"chart" + i} onDrop={(event) => { drop(event) }} onDragOver={(event) => { allowDrop(event) }}>
+                                    {chartsID["chart" + i] !== undefined ?
+                                        <div style={{ marginTop: '10px' }}>
+                                            {template[chartsID["chart" + i]] !== undefined ?
+                                                <>
+                                                    <ZoomOut style={{ float: 'right', cursor: 'pointer', paddingTop: '6px' }} onClick={e => { handleOpen(i) }} />
+                                                    {(!isBublished && params.userID === undefined) || (params.action !== undefined && params.action === 'Edit') || (params.action !== undefined && params.action === 'Update') ?
+                                                        <DeleteIcon style={{ float: 'right', cursor: 'pointer', paddingTop: '6px' }} onClick={e => { RemoveChart(i) }} />
+                                                        : ''
+                                                    }
+                                                    {filter.filterSwatch ?
+                                                        <Chart state={filteredtemplate[chartsID["chart" + i]]} />
+
+                                                        :
+                                                        <Chart state={template[chartsID["chart" + i]]} />
+                                                    }
+                                                </>
+                                                :
+                                                <div className="divdashboard" >
+                                                    <div style={{ color: 'red', position: 'relative', top: '40%' }}>
+                                                        <div className="col-lg-12">Please Refresh</div>
+                                                        <div className="col-lg-12">the</div>
+                                                        <div className="col-lg-12">Templates</div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                        :
+                                        <div className="divdashboard" >
+                                            <div style={{ color: '#9d9d9b', position: 'relative', top: '40%' }}>
+                                                <div className="col-lg-12">Drag the template</div>
+                                                <div className="col-lg-12">and</div>
+                                                <div className="col-lg-12">Drop here</div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            )
+                        }
+                        for (let i = parseInt(layouts[0]) + parseInt(layouts[1]); i < `${layouts[2] !== undefined && (parseInt(layouts[0]) + parseInt(layouts[1])) + parseInt(layouts[2])}`; i++) {
+                            Item.push(
+                                <div className={parseInt(layouts[2]) === 1 ? "col-lg-12" : parseInt(layouts[2]) === 2 ? 'col-lg-6' : 'col-lg-4'} id={"chart" + i} onDrop={(event) => { drop(event) }} onDragOver={(event) => { allowDrop(event) }}>
+                                    {chartsID["chart" + i] !== undefined ?
+                                        <div style={{ marginTop: '10px' }}>
+                                            {template[chartsID["chart" + i]] !== undefined ?
+                                                <>
+                                                    <ZoomOut style={{ float: 'right', cursor: 'pointer', paddingTop: '6px' }} onClick={e => { handleOpen(i) }} />
+                                                    {(!isBublished && params.userID === undefined) || (params.action !== undefined && params.action === 'Edit') || (params.action !== undefined && params.action === 'Update') ?
+                                                        <DeleteIcon style={{ float: 'right', cursor: 'pointer', paddingTop: '6px' }} onClick={e => { RemoveChart(i) }} />
+                                                        : ''
+                                                    }
+                                                    {filter.filterSwatch ?
+                                                        <Chart state={filteredtemplate[chartsID["chart" + i]]} />
+
+                                                        :
+                                                        <Chart state={template[chartsID["chart" + i]]} />
+                                                    }
+                                                </>
+                                                :
+                                                <div className="divdashboard" >
+                                                    <div style={{ color: 'red', position: 'relative', top: '40%' }}>
+                                                        <div className="col-lg-12">Please Refresh</div>
+                                                        <div className="col-lg-12">the</div>
+                                                        <div className="col-lg-12">Templates</div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                        :
+                                        <div className="divdashboard" >
+                                            <div style={{ color: '#9d9d9b', position: 'relative', top: '40%' }}>
+                                                <div className="col-lg-12">Drag the template</div>
+                                                <div className="col-lg-12">and</div>
+                                                <div className="col-lg-12">Drop here</div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            )
+                        }
+                        for (let i = parseInt(layouts[0]) + parseInt(layouts[1]) + parseInt(layouts[2]); i < `${layouts[3] !== undefined && (parseInt(layouts[0]) + parseInt(layouts[1])) + parseInt(layouts[2]) + parseInt(layouts[3])}`; i++) {
+                            Item.push(
+                                <div className={parseInt(layouts[3]) === 1 ? "col-lg-12" : parseInt(layouts[3]) === 2 ? 'col-lg-6' : 'col-lg-4'} id={"chart" + i} onDrop={(event) => { drop(event) }} onDragOver={(event) => { allowDrop(event) }}>
+                                    {chartsID["chart" + i] !== undefined ?
+                                        <div style={{ marginTop: '10px' }}>
+                                            {template[chartsID["chart" + i]] !== undefined ?
+                                                <>
+                                                    <ZoomOut style={{ float: 'right', cursor: 'pointer', paddingTop: '6px' }} onClick={e => { handleOpen(i) }} />
+                                                    {(!isBublished && params.userID === undefined) || (params.action !== undefined && params.action === 'Edit') || (params.action !== undefined && params.action === 'Update') ?
+                                                        <DeleteIcon style={{ float: 'right', cursor: 'pointer', paddingTop: '6px' }} onClick={e => { RemoveChart(i) }} />
+                                                        : ''
+                                                    }
+                                                    {filter.filterSwatch ?
+                                                        <Chart state={filteredtemplate[chartsID["chart" + i]]} />
+
+                                                        :
+                                                        <Chart state={template[chartsID["chart" + i]]} />
+                                                    }
+                                                </>
+                                                :
+                                                <div className="divdashboard" >
+                                                    <div style={{ color: 'red', position: 'relative', top: '40%' }}>
+                                                        <div className="col-lg-12">Please Refresh</div>
+                                                        <div className="col-lg-12">the</div>
+                                                        <div className="col-lg-12">Templates</div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                        :
+                                        <div className="divdashboard" >
+                                            <div style={{ color: '#9d9d9b', position: 'relative', top: '40%' }}>
+                                                <div className="col-lg-12">Drag the template</div>
+                                                <div className="col-lg-12">and</div>
+                                                <div className="col-lg-12">Drop here</div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            )
+                        }
+                        return Item
+                    })()}
+                </>
+            )
+        } catch (error) {
+            console.log('Error while creating dragging area')
         }
-        return (
-            <>
-                {(() => {
-                    let Item = [];
-                    for (let i = 0; i < parseInt(layouts[0]); i++) {
-                        Item.push(
-                            // <div className={filter.filterSwatch ? " col-lg-6" : " col-lg-4"} id={"chart" + i} onDrop={(event) => { drop(event) }} onDragOver={(event) => { allowDrop(event) }}>
-                            <div className={parseInt(layouts[0]) === 1 ? "col-lg-12" : parseInt(layouts[0]) === 2 ? 'col-lg-6' : 'col-lg-4'} id={"chart" + i} onDrop={(event) => { drop(event) }} onDragOver={(event) => { allowDrop(event) }}>
-                                {chartsID["chart" + i] !== undefined ?
-                                    <div style={{ marginTop: '10px' }}>
-                                        {template[chartsID["chart" + i]] !== undefined ?
-                                            <>
-                                                <ZoomOut style={{ float: 'right', cursor: 'pointer', paddingTop: '6px' }} onClick={e => { handleOpen(i) }} />
-                                                {(!isBublished && params.userID === undefined) || (params.action !== undefined && params.action === 'Edit') || (params.action !== undefined && params.action === 'Update') ?
-                                                    <DeleteIcon style={{ float: 'right', cursor: 'pointer', paddingTop: '6px' }} onClick={e => { RemoveChart(i) }} />
-                                                    : ''
-                                                }
-                                                {filter.filterSwatch ?
-                                                    <Chart state={filteredtemplate[chartsID["chart" + i]]} />
-
-                                                    :
-                                                    <Chart state={template[chartsID["chart" + i]]} />
-                                                }
-                                            </>
-                                            :
-                                            <div className="divdashboard" >
-                                                <div style={{ color: 'red', position: 'relative', top: '40%' }}>
-                                                    <div className="col-lg-12">You might have deleted</div>
-                                                    <div className="col-lg-12">the</div>
-                                                    <div className="col-lg-12">Template</div>
-                                                </div>
-                                            </div>
-                                        }
-                                    </div>
-                                    :
-                                    <div className="divdashboard" >
-                                        <div style={{ color: '#9d9d9b', position: 'relative', top: '40%' }}>
-                                            <div className="col-lg-12">Drag the template</div>
-                                            <div className="col-lg-12">and</div>
-                                            <div className="col-lg-12">Drop here</div>
-                                        </div>
-                                    </div>
-                                }
-                            </div>
-                        )
-                    }
-                    for (let i = parseInt(layouts[0]); i < parseInt(layouts[0]) + parseInt(layouts[1]); i++) {
-                        Item.push(
-                            // <div className={filter.filterSwatch ? " col-lg-6" : " col-lg-4"} id={"chart" + i} onDrop={(event) => { drop(event) }} onDragOver={(event) => { allowDrop(event) }}>
-                            <div className={parseInt(layouts[1]) === 1 ? "col-lg-12" : parseInt(layouts[1]) === 2 ? 'col-lg-6' : 'col-lg-4'} id={"chart" + i} onDrop={(event) => { drop(event) }} onDragOver={(event) => { allowDrop(event) }}>
-                                {chartsID["chart" + i] !== undefined ?
-                                    <div style={{ marginTop: '10px' }}>
-                                        {template[chartsID["chart" + i]] !== undefined ?
-                                            <>
-                                                <ZoomOut style={{ float: 'right', cursor: 'pointer', paddingTop: '6px' }} onClick={e => { handleOpen(i) }} />
-                                                {(!isBublished && params.userID === undefined) || (params.action !== undefined && params.action === 'Edit') || (params.action !== undefined && params.action === 'Update') ?
-                                                    <DeleteIcon style={{ float: 'right', cursor: 'pointer', paddingTop: '6px' }} onClick={e => { RemoveChart(i) }} />
-                                                    : ''
-                                                }
-                                                {filter.filterSwatch ?
-                                                    <Chart state={filteredtemplate[chartsID["chart" + i]]} />
-
-                                                    :
-                                                    <Chart state={template[chartsID["chart" + i]]} />
-                                                }
-                                            </>
-                                            :
-                                            <div className="divdashboard" >
-                                                <div style={{ color: 'red', position: 'relative', top: '40%' }}>
-                                                    <div className="col-lg-12">Please Refresh</div>
-                                                    <div className="col-lg-12">the</div>
-                                                    <div className="col-lg-12">Templates</div>
-                                                </div>
-                                            </div>
-                                        }
-                                    </div>
-                                    :
-                                    <div className="divdashboard" >
-                                        <div style={{ color: '#9d9d9b', position: 'relative', top: '40%' }}>
-                                            <div className="col-lg-12">Drag the template</div>
-                                            <div className="col-lg-12">and</div>
-                                            <div className="col-lg-12">Drop here</div>
-                                        </div>
-                                    </div>
-                                }
-                            </div>
-                        )
-                    }
-                    for (let i = parseInt(layouts[0]) + parseInt(layouts[1]); i < `${layouts[2] !== undefined && (parseInt(layouts[0]) + parseInt(layouts[1])) + parseInt(layouts[2])}`; i++) {
-                        Item.push(
-                            <div className={parseInt(layouts[2]) === 1 ? "col-lg-12" : parseInt(layouts[2]) === 2 ? 'col-lg-6' : 'col-lg-4'} id={"chart" + i} onDrop={(event) => { drop(event) }} onDragOver={(event) => { allowDrop(event) }}>
-                                {chartsID["chart" + i] !== undefined ?
-                                    <div style={{ marginTop: '10px' }}>
-                                        {template[chartsID["chart" + i]] !== undefined ?
-                                            <>
-                                                <ZoomOut style={{ float: 'right', cursor: 'pointer', paddingTop: '6px' }} onClick={e => { handleOpen(i) }} />
-                                                {(!isBublished && params.userID === undefined) || (params.action !== undefined && params.action === 'Edit') || (params.action !== undefined && params.action === 'Update') ?
-                                                    <DeleteIcon style={{ float: 'right', cursor: 'pointer', paddingTop: '6px' }} onClick={e => { RemoveChart(i) }} />
-                                                    : ''
-                                                }
-                                                {filter.filterSwatch ?
-                                                    <Chart state={filteredtemplate[chartsID["chart" + i]]} />
-
-                                                    :
-                                                    <Chart state={template[chartsID["chart" + i]]} />
-                                                }
-                                            </>
-                                            :
-                                            <div className="divdashboard" >
-                                                <div style={{ color: 'red', position: 'relative', top: '40%' }}>
-                                                    <div className="col-lg-12">Please Refresh</div>
-                                                    <div className="col-lg-12">the</div>
-                                                    <div className="col-lg-12">Templates</div>
-                                                </div>
-                                            </div>
-                                        }
-                                    </div>
-                                    :
-                                    <div className="divdashboard" >
-                                        <div style={{ color: '#9d9d9b', position: 'relative', top: '40%' }}>
-                                            <div className="col-lg-12">Drag the template</div>
-                                            <div className="col-lg-12">and</div>
-                                            <div className="col-lg-12">Drop here</div>
-                                        </div>
-                                    </div>
-                                }
-                            </div>
-                        )
-                    }
-                    for (let i = parseInt(layouts[0]) + parseInt(layouts[1]) + parseInt(layouts[2]); i < `${layouts[3] !== undefined && (parseInt(layouts[0]) + parseInt(layouts[1])) + parseInt(layouts[2]) + parseInt(layouts[3])}`; i++) {
-                        Item.push(
-                            <div className={parseInt(layouts[3]) === 1 ? "col-lg-12" : parseInt(layouts[3]) === 2 ? 'col-lg-6' : 'col-lg-4'} id={"chart" + i} onDrop={(event) => { drop(event) }} onDragOver={(event) => { allowDrop(event) }}>
-                                {chartsID["chart" + i] !== undefined ?
-                                    <div style={{ marginTop: '10px' }}>
-                                        {template[chartsID["chart" + i]] !== undefined ?
-                                            <>
-                                                <ZoomOut style={{ float: 'right', cursor: 'pointer', paddingTop: '6px' }} onClick={e => { handleOpen(i) }} />
-                                                {(!isBublished && params.userID === undefined) || (params.action !== undefined && params.action === 'Edit') || (params.action !== undefined && params.action === 'Update') ?
-                                                    <DeleteIcon style={{ float: 'right', cursor: 'pointer', paddingTop: '6px' }} onClick={e => { RemoveChart(i) }} />
-                                                    : ''
-                                                }
-                                                {filter.filterSwatch ?
-                                                    <Chart state={filteredtemplate[chartsID["chart" + i]]} />
-
-                                                    :
-                                                    <Chart state={template[chartsID["chart" + i]]} />
-                                                }
-                                            </>
-                                            :
-                                            <div className="divdashboard" >
-                                                <div style={{ color: 'red', position: 'relative', top: '40%' }}>
-                                                    <div className="col-lg-12">Please Refresh</div>
-                                                    <div className="col-lg-12">the</div>
-                                                    <div className="col-lg-12">Templates</div>
-                                                </div>
-                                            </div>
-                                        }
-                                    </div>
-                                    :
-                                    <div className="divdashboard" >
-                                        <div style={{ color: '#9d9d9b', position: 'relative', top: '40%' }}>
-                                            <div className="col-lg-12">Drag the template</div>
-                                            <div className="col-lg-12">and</div>
-                                            <div className="col-lg-12">Drop here</div>
-                                        </div>
-                                    </div>
-                                }
-                            </div>
-                        )
-                    }
-                    return Item
-                })()}
-            </>
-        )
     }
     const PreviewModal = () => {
         return (
@@ -406,12 +415,21 @@ const Dashboard = ({ params }) => {
     const drop = (event) => {
         // SetTemplate(params.template)
         //document.querySelector('.loader').style.display = 'block';
-        SetChartsID({ ...chartsID, [event.currentTarget.id]: event.dataTransfer.getData('text') })
-        if (Tab.data === undefined)
-            setTab({ ...Tab, 'data': template[event.dataTransfer.getData('text')].Uploaded_file })
+        try {
+            SetChartsID({ ...chartsID, [event.currentTarget.id]: event.dataTransfer.getData('text') })
+            if (Tab.data === undefined)
+                setTab({ ...Tab, 'data': template[event.dataTransfer.getData('text')].Uploaded_file })
+        } catch (error) {
+            console.log('Error while dragging on')
+        }
+
     }
     const allowDrop = (event) => {
-        event.preventDefault();
+        try {
+            event.preventDefault();
+        } catch (error) {
+            console.log('Error while allowingDrop')
+        }
     }
     const handleOpen = (index) => {
         setOpen({ 'Chart': true })
@@ -445,25 +463,10 @@ const Dashboard = ({ params }) => {
             setTab({ ...Tab, 'Dashboard': false, 'data': template[chartsID[Object.keys(chartsID)[0]]].Uploaded_file })
         }
     }
-    const resetDimension = () => {
-        // SetIsrendered(params.isRendered)
-        // if (Object.keys(chartsID).length > 0) {
-        //     for (let i = 0; i < Object.keys(chartsID).length; i++) {
-        //         SetTemplate({
-        //             ...template, [chartsID[Object.keys(chartsID)[i]]]: {
-        //                 ...template[chartsID[Object.keys(chartsID)[i]]],
-        //                 Width_: null, Heigth_: '230'
-        //             }
-        //         })
-
-        //     }
-        // }
-    }
     const DashboardArea = React.useMemo(() => {
         const dashboard = CreatingUploadArea()
         return dashboard
-    }
-        , [template, filteredtemplate, chartsID, layouts])
+    }, [template, filteredtemplate, chartsID, layouts])
     const NavTabs = React.useMemo(() => Tabs(), [Tab, filter])
     //const charts = React.useMemo((state) => Chart({state}), [template])
     //const handleClick = useCallback(() => onclick(DashboardArea), [DashboardArea, onclick]);
