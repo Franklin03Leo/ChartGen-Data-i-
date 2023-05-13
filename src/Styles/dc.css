@@ -557,11 +557,11 @@ body {
     font-family: 'Arial'
 }
 
-@media (max-width: 988px) {
+/* @media (max-width: 988px) {
     div.row {
         margin-top: 10px;
     }
-}
+} */
 
 .site-identity {
     float: left;
@@ -629,6 +629,9 @@ p {
     margin-bottom: 10px;
     border-bottom: 4px #F4F4F8 solid;
     box-shadow: none !important;
+}
+.acd::before{
+    background-color: inherit !important;
 }
 
 /* .acd:hover {
@@ -903,10 +906,6 @@ input:checked+.slider:before {
     /* height: 43.5vh; */
 }
 
-.Mui-selected {
-    background-color: white !important;
-    /* box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px; */
-}
 
 .borderstyle {
     border-top: 4px solid #f4f4f8 !important;
@@ -976,7 +975,9 @@ input:checked+.slider:before {
     justify-content: flex-start;
     align-items: center;
 }
-
+.row1-container > div.dashboard-layout {
+    border: 2px solid #DCDCE5 !important;
+}
 .css-13xfq8m-MuiTabPanel-root {
     padding: 10px !important;
 }
@@ -1280,7 +1281,7 @@ input:checked+.slider:before {
 .NavBar-active {
     background: #FFFFFF;
     border-radius: 10px 0px 0px 10px;
-    margin: 0px 0px 0px 7px;
+    margin: 0px 0px 0px 10px;
     padding: 12px 3px 12px 1px
 }
 
@@ -1308,7 +1309,7 @@ input:checked+.slider:before {
     padding-bottom: 5px;
     width: 96%; */
     animation: 1s ease-out 0s 1 slideInFromTOP;
-    border-top: 3px #F4F4F8 solid;
+    border-top: 3px #F4F4F8 solid; /*Commented for saved template impact in dashboard*/
     /* min-height: 10vh; */
     cursor: pointer;
     min-height: 60px;

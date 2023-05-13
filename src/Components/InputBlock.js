@@ -299,13 +299,13 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
 
             if (window.innerWidth < 1010) {
                 setNavOpen(false)
-                setNavWidth({ 'navArea': '90px', 'inuptArea': '0%', 'ChartArea': '94%' })
+                setNavWidth({ 'navArea': '70px', 'inuptArea': '0%', 'ChartArea': '94%' })
 
                 setIsMobile(true)
             }
             else {
                 setNavOpen(true)
-                setNavWidth({ 'navArea': '90px', 'inuptArea': '28%', 'ChartArea': '63%' })
+                setNavWidth({ 'navArea': '70px', 'inuptArea': '28%', 'ChartArea': '63%' })
                 setIsMobile(false)
 
             }
@@ -325,6 +325,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
     const handleChange = (event) => {
         if (event.target.name === 'file') {
             document.querySelector('.loader').style.display = 'block'
+
             if (event.target.files[0] === undefined) {
                 setState({
                     ...state, 'Uploaded_file': undefined,
@@ -478,7 +479,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                     })
                 }
             }
-
+            setFilter({ ...filter, 'filterSwatch': false })
             setFlag(false)
 
         }
@@ -1264,16 +1265,16 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         setTimeout(() => {
 
             if (navopen && !isMobile) {
-                setNavWidth({ 'navArea': '90px', 'inuptArea': '0%', 'ChartArea': '95%' })
+                setNavWidth({ 'navArea': '70px', 'inuptArea': '0%', 'ChartArea': '95%' })
             }
             else if (navopen && isMobile) {
-                setNavWidth({ 'navArea': '90px', 'inuptArea': '0%', 'ChartArea': '94%' })
+                setNavWidth({ 'navArea': '70px', 'inuptArea': '0%', 'ChartArea': '94%' })
             }
             else if (!navopen && isMobile) {
-                setNavWidth({ 'navArea': '90px', 'inuptArea': '60%', 'ChartArea': '94%' })
+                setNavWidth({ 'navArea': '70px', 'inuptArea': '60%', 'ChartArea': '94%' })
             }
             else if (!navopen && !isMobile) {
-                setNavWidth({ 'navArea': '90px', 'inuptArea': '28%', 'ChartArea': '63%' })
+                setNavWidth({ 'navArea': '70px', 'inuptArea': '28%', 'ChartArea': '63%' })
             }
             setNavOpen(!navopen)
             if (action === 'publish')
@@ -1576,6 +1577,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
             }
             setProject(obj);
             setNavbar({ 'bar': 'Project' });
+            GetTemplate();
             // if (Object.keys(project).length !== 0) {
             setTimeout(() => {
                 document.querySelector('.loader').style.display = 'none';
@@ -1687,7 +1689,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                     <div className="Icon">
                         <div className={navbar.bar === "Templates" ? "NavBar-active" : "NavBar"}>
                             <BootstrapTooltip title="Templates" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
-                                <img src={Template} name="Templates" color="white" alt='Logo' style={{ height: '22px' }} onClick={(e) => { handleNavbarChange(e); GetTemplate(); GetPreDefinedTemplates('Fetch') }}></img>
+                                <img src={Template} name="Templates" color="white" alt='Logo' style={{ height: '22px' }} onClick={(e) => { handleNavbarChange(e); GetPreDefinedTemplates('Fetch') }}></img>
                                 {/* <ArticleIcon className="Icon_" fontSize="large" color={navbar.bar === 'Templates' ? 'primary' : '#979A9B'} onClick={(e) => { handleNavbarChange(e); GetTemplate() }} /> */}
                             </BootstrapTooltip>
                         </div>
@@ -1948,8 +1950,9 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                             {navbar.bar === 'Charts' || navbar.bar === 'Templates' ?
                                 <div className="row col-sm-12 col-md-12 col-lg-12" style={{ margin: "15px 0px 15px 0px" }}>
                                     {(enable.Imported || state.Uploaded_file !== undefined) && navbar.bar === 'Charts' ?
-                                        <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                            <div className="row col-sm-6 col-md-6 col-lg-6 inputfield">
+                                        <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ marginLeft: '10px' }}>
+                                            {/* <div className="row-parent"> */}
+                                            <div className="row width-lg" style={{ padding: '0px' }}>
                                                 <TextField
                                                     error={formValues.Chart.error}
                                                     helperText={formValues.Chart.error && formValues.Chart.errorMessage}
@@ -1968,8 +1971,9 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                     ))}
                                                 </TextField>
                                             </div>
-                                            <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                                <div className="col-xs-12 col-sm-6 col-md-6 col-lg-6" style={{ paddingLeft: '0' }}>
+                                            {/* </div> */}
+                                            <div className="row-parent">
+                                                <div className="row width-lg">
                                                     <TextField
                                                         error={formValues.Heigth_.error}
                                                         helperText={formValues.Heigth_.error && formValues.Heigth_.errorMessage}
@@ -1984,7 +1988,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                         onBlur={(e) => { handleValidation(e) }}
                                                     />
                                                 </div>
-                                                <div className="col-xs-12 col-sm-6 col-md-6 col-lg-6" style={{ paddingLeft: '0' }}>
+                                                <div className="width-lg" style={{ marginLeft: '10px' }}>
                                                     <TextField
                                                         error={formValues.Width_.error}
                                                         helperText={formValues.Width_.error && formValues.Width_.errorMessage}
@@ -2007,107 +2011,332 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                     }
                                     {(enable.Imported || state.Uploaded_file !== undefined) && (navbar.bar === 'Charts') ?
                                         <>
-                                            {(navbar.bar === 'Charts') && (enable.Imported || state.Uploaded_file !== undefined) ?
-                                                <Accordion className="acd">
-                                                    <AccordionSummary
-                                                        className="acdsummary"
-                                                        expandIcon={<ExpandMoreIcon />}
-                                                        aria-controls="panel1a-content"
-                                                        id="panel1a-header"
-                                                    >
-                                                        <Typography className="acdTitle">Dimensions</Typography>
+                                            <Accordion className="acd">
+                                                <AccordionSummary
+                                                    className="acdsummary"
+                                                    expandIcon={<ExpandMoreIcon />}
+                                                    aria-controls="panel1a-content"
+                                                    id="panel1a-header"
+                                                >
+                                                    <Typography className="acdTitle">Dimensions</Typography>
 
-                                                    </AccordionSummary>
+                                                </AccordionSummary>
 
-                                                    <AccordionDetails>
-                                                        <Typography>
-                                                            <div className="col-lg-12" style={{ margin: "10px 0px 15px 0px" }}>
-                                                                {(state.Chart === 'Pie Chart' || state.Chart === 'Sunburst Chart') &&
+                                                <AccordionDetails>
+                                                    <Typography>
+                                                        <div className="col-lg-12" style={{ margin: "10px" }}>
+                                                            {(state.Chart === 'Pie Chart' || state.Chart === 'Sunburst Chart') &&
+                                                                <div className="col-lg-12">
+                                                                    {/* <div className="row col-lg-12"> */}
+                                                                    <p className="row col-lg-12 subTitle">X-Axis</p>
+                                                                    {state.Chart === 'Pie Chart' ?
+                                                                        <div className="row width-lg">
+                                                                            <TextField
+                                                                                error={formValues.XAxisCopy.error}
+                                                                                helperText={formValues.XAxisCopy.error && formValues.XAxisCopy.errorMessage}
+                                                                                id="XAxis"
+                                                                                select
+                                                                                name='XAxisCopy'
+                                                                                label={
+                                                                                    <Fragment>
+                                                                                        <BootstrapTooltip title="Accepts numbers" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
+                                                                                            <Numbers fontSize="small" />
+                                                                                        </BootstrapTooltip>
+
+                                                                                        &nbsp;
+                                                                                        <BootstrapTooltip title="Accepts strings" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
+                                                                                            <span style={{ fontWeight: '700' }}>ABC</span>
+                                                                                        </BootstrapTooltip>
+                                                                                        &nbsp;
+                                                                                        <span style={{ fontWeight: '900' }}>*</span>
+                                                                                    </Fragment>
+                                                                                }
+                                                                                className='input-field '
+                                                                                margin="dense"
+                                                                                onChange={(e) => { handleChange(e) }}
+                                                                                onBlur={(e) => { handleValidation(e) }}
+                                                                                value={state.XAxisCopy}
+                                                                                defaultValue={'Select'}
+                                                                            >
+                                                                                <MenuItem key={-1} value={'Select'}>
+                                                                                    {'Select'}
+                                                                                </MenuItem>
+                                                                                {state.XAxis_.map((option, index) => (
+                                                                                    <MenuItem key={option} value={option}>
+                                                                                        {option}
+                                                                                    </MenuItem>
+                                                                                ))}
+                                                                            </TextField>
+                                                                        </div>
+                                                                        :
+                                                                        <div className="row">
+                                                                            <FormControl sx={{ width: 300 }}>
+                                                                                <InputLabel id="filter">
+                                                                                    <Fragment>
+                                                                                        <BootstrapTooltip title="Accepts numbers" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
+                                                                                            <Numbers fontSize="small" style={{ fontWeight: '700', fontSize: '11px' }} />
+                                                                                        </BootstrapTooltip>
+
+                                                                                        &nbsp;
+                                                                                        <BootstrapTooltip title="Accepts strings" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
+                                                                                            {/* <Text style={{ height: '27px' }} /> */}
+                                                                                            <span style={{ fontWeight: '700', fontSize: '11px' }}>ABC</span>
+                                                                                        </BootstrapTooltip>
+                                                                                        &nbsp;
+                                                                                        <span style={{ fontWeight: '900', fontSize: '11px' }}>*</span>
+                                                                                    </Fragment>
+                                                                                </InputLabel>
+                                                                                <Select
+                                                                                    labelId="demo-multiple-checkbox-label"
+                                                                                    id="demo-multiple-checkbox"
+                                                                                    multiple
+                                                                                    value={state.SunBurstX_Axis === undefined ? [] : state.SunBurstX_Axis}
+                                                                                    name='SunBurstX_Axis'
+                                                                                    onChange={handleMultiselect}
+                                                                                    input={<OutlinedInput label="Tag" />}
+                                                                                    renderValue={(selected) => selected.join(', ')}
+                                                                                    MenuProps={MenuProps}
+                                                                                    placeholder="Dimensions"
+                                                                                >
+
+                                                                                    {state.XAxis_.map((name) => (
+                                                                                        <MenuItem key={name} value={name}>
+                                                                                            <Checkbox checked={state.SunBurstX_Axis === undefined ? false : state.SunBurstX_Axis.indexOf(name) > -1} />
+                                                                                            <ListItemText key={name} primary={name} />
+                                                                                        </MenuItem>
+                                                                                    ))}
+                                                                                </Select>
+                                                                            </FormControl>
+                                                                        </div>
+                                                                    }
+                                                                    <p className="row col-lg-12 subTitle">Y-Axis</p>
+                                                                    <div className="row-parent">
+                                                                        <div className="row width-lg" >
+                                                                            <TextField
+                                                                                error={formValues.YAxisCopy.error}
+                                                                                helperText={formValues.YAxisCopy.error && formValues.YAxisCopy.errorMessage}
+                                                                                id="YAxis"
+                                                                                select
+                                                                                name='YAxisCopy'
+                                                                                label={
+                                                                                    <Fragment>
+                                                                                        <BootstrapTooltip title="Accepts numbers" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
+                                                                                            <Numbers fontSize="small" />
+                                                                                        </BootstrapTooltip>
+                                                                                        <span style={{ fontWeight: '900' }}>*</span>
+                                                                                    </Fragment>
+                                                                                }
+                                                                                margin="dense"
+                                                                                className='input-field '
+                                                                                onChange={(e) => { handleChange(e) }}
+                                                                                onBlur={(e) => { handleValidation(e) }}
+                                                                                value={state.YAxisCopy}
+                                                                                defaultValue={'Select'}
+                                                                            >
+                                                                                <MenuItem key={-1} value={'Select'}>
+                                                                                    {'Select'}
+                                                                                </MenuItem>
+                                                                                {state.YAxis_.map((option, index) => (
+                                                                                    <MenuItem key={option} value={option}>
+                                                                                        {option}
+                                                                                    </MenuItem>
+                                                                                ))}
+                                                                            </TextField>
+                                                                        </div>
+                                                                        <div className="row width-lg" style={{ marginLeft: '10px' }}>
+                                                                            <TextField
+                                                                                id="GroupBy"
+                                                                                select
+                                                                                name='GroupByCol'
+                                                                                label="Group By"
+                                                                                margin="dense"
+                                                                                value={state.GroupByCol}
+                                                                                className='input-field '
+                                                                                defaultValue={'Sum'}
+                                                                                onChange={(e) => { handleValidation(e); handleChange(e); setFlag(false) }}
+                                                                            >
+                                                                                {GroupByCol.map((option, index) => (
+                                                                                    <MenuItem key={option} value={option}>
+                                                                                        {option}
+                                                                                    </MenuItem>
+                                                                                ))}
+                                                                            </TextField>
+                                                                        </div>
+                                                                    </div>
+                                                                    {/* </div> */}
+                                                                    {/* <div className="row col-lg-12"> */}
+                                                                    <p className="row col-lg-12 subTitle">Text Style</p>
+                                                                    <div className="row-parent">
+                                                                        <div className="row width-lg">
+                                                                            <TextField
+                                                                                //error={formValues.GroupBy.error}
+                                                                                // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
+                                                                                id="Font"
+                                                                                select
+                                                                                name='pFont'
+                                                                                label="Font"
+                                                                                className='input-field '
+                                                                                onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                                value={state.pFont}
+                                                                            >
+                                                                                {Fonts.map((option, index) => (
+                                                                                    <MenuItem key={option} value={option}>
+                                                                                        <span style={{ fontFamily: option }}>{option}</span>
+                                                                                    </MenuItem>
+                                                                                ))}
+                                                                            </TextField>
+                                                                        </div>
+                                                                        <div className="row width-mid-md">
+                                                                            <TextField
+                                                                                //error={formValues.GroupBy.error}
+                                                                                // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
+                                                                                id="Font"
+                                                                                select
+                                                                                name='pSize'
+                                                                                label="Size"
+                                                                                className='input-field '
+                                                                                onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                                value={state.pSize}
+                                                                            >
+                                                                                {(() => {
+                                                                                    let Item = [];
+                                                                                    for (let i = 10; i <= 30; i++) {
+                                                                                        Item.push(<MenuItem key={i} value={i}> <span style={{ fontSize: `${i}px` }}>{i}</span> </MenuItem>)
+                                                                                    }
+                                                                                    return Item
+                                                                                })()}
+                                                                            </TextField>
+                                                                        </div>
+                                                                        <div className="" style={{ width: '20%' }}>
+                                                                            <input type="color" name='pColor'
+                                                                                value={state.pColor}
+                                                                                id="colorPicker" onChange={handleChange}></input>
+                                                                        </div>
+                                                                    </div>
+                                                                    {/* </div> */}
+                                                                </div>
+                                                            }
+
+                                                            {(state.Chart !== 'Pie Chart' && state.Chart !== 'Sunburst Chart') ?
+                                                                <>
                                                                     <div className="col-lg-12">
-                                                                        <div className="row col-lg-12">
-                                                                            <p className="row col-lg-12">X-Axis</p>
-                                                                            {state.Chart === 'Pie Chart' ?
-                                                                                <div className="row col-sm-6 col-md-5 col-lg-6 inputfield">
-                                                                                    <TextField
-                                                                                        error={formValues.XAxisCopy.error}
-                                                                                        helperText={formValues.XAxisCopy.error && formValues.XAxisCopy.errorMessage}
-                                                                                        id="XAxis"
-                                                                                        select
-                                                                                        name='XAxisCopy'
-                                                                                        label={
-                                                                                            <Fragment>
+                                                                        <p className="row col-lg-12 subTitle">X-Axis</p>
+                                                                        <div className="row-parent">
+                                                                            <div className="row width-lg">
+                                                                                <TextField
+                                                                                    error={formValues.XAxisCopy.error}
+                                                                                    helperText={formValues.XAxisCopy.error && formValues.XAxisCopy.errorMessage}
+                                                                                    id="XAxis"
+                                                                                    select
+                                                                                    name='XAxisCopy'
+                                                                                    label={
+                                                                                        <Fragment>
+                                                                                            {state.Chart !== 'Series Chart' &&
                                                                                                 <BootstrapTooltip title="Accepts numbers" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
                                                                                                     <Numbers fontSize="small" />
                                                                                                 </BootstrapTooltip>
-
-                                                                                                &nbsp;
+                                                                                            }
+                                                                                            &nbsp;
+                                                                                            {state.Chart !== 'ScatterPlot' && state.Chart !== 'Series Chart' && state.Chart !== 'Bar Line Chart' ?
                                                                                                 <BootstrapTooltip title="Accepts strings" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
+                                                                                                    {/* <Text fontSize="large" /> */}
                                                                                                     <span style={{ fontWeight: '700' }}>ABC</span>
                                                                                                 </BootstrapTooltip>
-                                                                                                &nbsp;
-                                                                                                <span style={{ fontWeight: '900' }}>*</span>
-                                                                                            </Fragment>
-                                                                                        }
-                                                                                        className='input-field '
-                                                                                        margin="dense"
-                                                                                        onChange={(e) => { handleChange(e) }}
-                                                                                        onBlur={(e) => { handleValidation(e) }}
-                                                                                        value={state.XAxisCopy}
-                                                                                        defaultValue={'Select'}
-                                                                                    >
-                                                                                        <MenuItem key={-1} value={'Select'}>
-                                                                                            {'Select'}
+                                                                                                : ''
+                                                                                            }
+                                                                                            &nbsp;
+                                                                                            {state.Chart === 'Series Chart' && state.Chart !== 'Bar Line Chart' ?
+                                                                                                <BootstrapTooltip title="Accepts dates" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
+                                                                                                    <Calendar fontSize="small" />
+                                                                                                </BootstrapTooltip>
+                                                                                                : ''
+                                                                                            }
+                                                                                            <span style={{ fontWeight: '900' }}>*</span>
+                                                                                        </Fragment>
+                                                                                    }
+                                                                                    className='input-field '
+                                                                                    value={state.XAxisCopy}
+                                                                                    margin="dense"
+                                                                                    onChange={(e) => { handleChange(e) }}
+                                                                                    onBlur={(e) => { handleValidation(e) }}
+                                                                                    defaultValue={'Select'}
+                                                                                >
+                                                                                    <MenuItem key={-1} value={'Select'}>
+                                                                                        {'Select'}
+                                                                                    </MenuItem>
+                                                                                    {state.XAxis_.map((option, index) => (
+                                                                                        <MenuItem key={option} value={option}>
+                                                                                            {option}
                                                                                         </MenuItem>
-                                                                                        {state.XAxis_.map((option, index) => (
-                                                                                            <MenuItem key={option} value={option}>
-                                                                                                {option}
-                                                                                            </MenuItem>
-                                                                                        ))}
-                                                                                    </TextField>
-                                                                                </div>
-                                                                                :
-                                                                                <div className="row col-lg-12 inputfield">
-                                                                                    <FormControl sx={{ width: 300 }}>
-                                                                                        <InputLabel id="filter">
-                                                                                            <Fragment>
-                                                                                                <BootstrapTooltip title="Accepts numbers" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
-                                                                                                    <Numbers fontSize="small" style={{ fontWeight: '700', fontSize: '11px' }} />
-                                                                                                </BootstrapTooltip>
-
-                                                                                                &nbsp;
-                                                                                                <BootstrapTooltip title="Accepts strings" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
-                                                                                                    {/* <Text style={{ height: '27px' }} /> */}
-                                                                                                    <span style={{ fontWeight: '700', fontSize: '11px' }}>ABC</span>
-                                                                                                </BootstrapTooltip>
-                                                                                                &nbsp;
-                                                                                                <span style={{ fontWeight: '900', fontSize: '11px' }}>*</span>
-                                                                                            </Fragment>
-                                                                                        </InputLabel>
-                                                                                        <Select
-                                                                                            labelId="demo-multiple-checkbox-label"
-                                                                                            id="demo-multiple-checkbox"
-                                                                                            multiple
-                                                                                            value={state.SunBurstX_Axis === undefined ? [] : state.SunBurstX_Axis}
-                                                                                            name='SunBurstX_Axis'
-                                                                                            onChange={handleMultiselect}
-                                                                                            input={<OutlinedInput label="Tag" />}
-                                                                                            renderValue={(selected) => selected.join(', ')}
-                                                                                            MenuProps={MenuProps}
-                                                                                            placeholder="Dimensions"
-                                                                                        >
-
-                                                                                            {state.XAxis_.map((name) => (
-                                                                                                <MenuItem key={name} value={name}>
-                                                                                                    <Checkbox checked={state.SunBurstX_Axis === undefined ? false : state.SunBurstX_Axis.indexOf(name) > -1} />
-                                                                                                    <ListItemText key={name} primary={name} />
-                                                                                                </MenuItem>
-                                                                                            ))}
-                                                                                        </Select>
-                                                                                    </FormControl>
-                                                                                </div>
-                                                                            }
-                                                                            <p className="row col-lg-12">Y-Axis</p>
-                                                                            <div className="row col-sm-6 col-md-5 col-lg-6" >
+                                                                                    ))}
+                                                                                </TextField>
+                                                                            </div>
+                                                                            <div className="width-lg" style={{ marginLeft: '10px' }}>
+                                                                                <TextField
+                                                                                    //error={formValues.YAxisPadding.error}
+                                                                                    //helperText={formValues.YAxisPadding.error && formValues.YAxisPadding.errorMessage}
+                                                                                    id="Rotate" className='input-field' name='Rotate' label="Rotate" variant="outlined"
+                                                                                    value={state.Rotate}
+                                                                                    margin="dense"
+                                                                                    onChange={(e) => { handleChange(e) }}
+                                                                                    onBlur={(e) => { handleValidation(e) }}
+                                                                                />
+                                                                            </div>
+                                                                        </div>
+                                                                        {/* <div className="row col-lg-12" style={{ marginTop: '10px' }}> */}
+                                                                        <p className="row col-lg-12 subTitle">Text Style</p>
+                                                                        <div className="row-parent">
+                                                                            <div className="row width-lg">
+                                                                                <TextField
+                                                                                    //error={formValues.GroupBy.error}
+                                                                                    // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
+                                                                                    id="Font"
+                                                                                    select
+                                                                                    name='xFont'
+                                                                                    label="Font"
+                                                                                    className='input-field '
+                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                                    value={state.xFont}
+                                                                                >
+                                                                                    {Fonts.map((option, index) => (
+                                                                                        <MenuItem key={option} value={option}>
+                                                                                            <span style={{ fontFamily: option }}>{option}</span>
+                                                                                        </MenuItem>
+                                                                                    ))}
+                                                                                </TextField>
+                                                                            </div>
+                                                                            <div className="row width-mid-md">
+                                                                                <TextField
+                                                                                    //error={formValues.GroupBy.error}
+                                                                                    // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
+                                                                                    id="Font"
+                                                                                    select
+                                                                                    name='xSize'
+                                                                                    label="Size"
+                                                                                    className='input-field '
+                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                                    value={state.xSize}
+                                                                                >
+                                                                                    {(() => {
+                                                                                        let Item = [];
+                                                                                        for (let i = 10; i <= 30; i++) {
+                                                                                            Item.push(<MenuItem key={i} value={i}> <span style={{ fontSize: `${i}px` }}>{i}</span> </MenuItem>)
+                                                                                        }
+                                                                                        return Item
+                                                                                    })()}
+                                                                                </TextField>
+                                                                            </div>
+                                                                            <div className="" style={{ width: '20%' }}>
+                                                                                <input type="color" name='xColor'
+                                                                                    value={state.xColor}
+                                                                                    id="colorPicker" onChange={handleChange}></input>
+                                                                            </div>
+                                                                        </div>
+                                                                        {/* </div> */}
+                                                                        {/* <div className=" col-lg-12" style={{ marginTop: '10px' }}> */}
+                                                                        <p className="row col-lg-12 subTitle">Y-Axis</p>
+                                                                        <div className="row-parent">
+                                                                            <div className="row width-lg">
                                                                                 <TextField
                                                                                     error={formValues.YAxisCopy.error}
                                                                                     helperText={formValues.YAxisCopy.error && formValues.YAxisCopy.errorMessage}
@@ -2121,13 +2350,14 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                                             </BootstrapTooltip>
                                                                                             <span style={{ fontWeight: '900' }}>*</span>
                                                                                         </Fragment>
+
                                                                                     }
-                                                                                    margin="dense"
+                                                                                    value={state.YAxisCopy}
                                                                                     className='input-field '
                                                                                     onChange={(e) => { handleChange(e) }}
-                                                                                    onBlur={(e) => { handleValidation(e) }}
-                                                                                    value={state.YAxisCopy}
                                                                                     defaultValue={'Select'}
+                                                                                    margin="dense"
+                                                                                    onBlur={(e) => { handleValidation(e) }}
                                                                                 >
                                                                                     <MenuItem key={-1} value={'Select'}>
                                                                                         {'Select'}
@@ -2139,7 +2369,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                                     ))}
                                                                                 </TextField>
                                                                             </div>
-                                                                            <div className="row col-sm-6 col-md-6 col-lg-6 inputfield">
+                                                                            <div className="row width-lg removeGutter">
                                                                                 <TextField
                                                                                     id="GroupBy"
                                                                                     select
@@ -2159,19 +2389,33 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                                 </TextField>
                                                                             </div>
                                                                         </div>
-                                                                        <div className="row col-lg-12">
-                                                                            <p className="row col-lg-12 inputfield">Text Style</p>
-                                                                            <div className="row col-xs-6 col-sm-6 col-md-4 col-lg-6 inputfield">
+                                                                        {state.Chart === 'Bar Chart' &&
+                                                                            <div className="row-parent">
+                                                                                <div className="row width-lg">
+                                                                                    <TextField
+                                                                                        error={formValues.YAxisPadding.error}
+                                                                                        helperText={formValues.YAxisPadding.error && formValues.YAxisPadding.errorMessage}
+                                                                                        id="YAxisPadding" className='input-field' name='YAxisPadding' label="Y-Axis Padding*" variant="outlined"
+                                                                                        value={state.YAxisPadding}
+                                                                                        margin="dense"
+                                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                                </div>
+                                                                            </div>
+                                                                        }
+                                                                        {/* <div className="row col-lg-12"> */}
+                                                                        <p className="row col-lg-12 subTitle">Text Style</p>
+                                                                        <div className="row-parent">
+                                                                            <div className="row width-lg">
                                                                                 <TextField
                                                                                     //error={formValues.GroupBy.error}
                                                                                     // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
                                                                                     id="Font"
                                                                                     select
-                                                                                    name='pFont'
+                                                                                    name='yFont'
                                                                                     label="Font"
                                                                                     className='input-field '
                                                                                     onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                                    value={state.pFont}
+                                                                                    value={state.yFont}
                                                                                 >
                                                                                     {Fonts.map((option, index) => (
                                                                                         <MenuItem key={option} value={option}>
@@ -2180,17 +2424,17 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                                     ))}
                                                                                 </TextField>
                                                                             </div>
-                                                                            <div className="row col-xs-4 col-sm-4 col-md-4 col-lg-4 inputfield">
+                                                                            <div className="row width-mid-md">
                                                                                 <TextField
                                                                                     //error={formValues.GroupBy.error}
                                                                                     // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
                                                                                     id="Font"
                                                                                     select
-                                                                                    name='pSize'
+                                                                                    name='ySize'
                                                                                     label="Size"
                                                                                     className='input-field '
                                                                                     onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                                    value={state.pSize}
+                                                                                    value={state.ySize}
                                                                                 >
                                                                                     {(() => {
                                                                                         let Item = [];
@@ -2201,138 +2445,71 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                                     })()}
                                                                                 </TextField>
                                                                             </div>
-                                                                            <div className="row col-xs-2 col-sm-2 col-md-2 col-lg-2 inputfield">
-                                                                                <input type="color" name='pColor'
-                                                                                    value={state.pColor}
+                                                                            <div className="" style={{ width: '20%' }}>
+                                                                                <input type="color" name='yColor'
+                                                                                    value={state.yColor}
                                                                                     id="colorPicker" onChange={handleChange}></input>
                                                                             </div>
                                                                         </div>
+                                                                        {/* </div> */}
+                                                                        {/* </div> */}
                                                                     </div>
-                                                                }
+                                                                    {state.Chart === 'Composite Chart' || state.Chart === 'Series Chart' ?
+                                                                        <div className="row-parent">
+                                                                            <div className="row width-lg">
+                                                                                <TextField
+                                                                                    error={formValues.GroupByCopy.error}
+                                                                                    helperText={formValues.GroupByCopy.error && formValues.GroupByCopy.errorMessage}
+                                                                                    id="GroupBy"
+                                                                                    select
+                                                                                    name='GroupByCopy'
+                                                                                    label={
+                                                                                        <Fragment>
+                                                                                            <BootstrapTooltip title="Accepts strings" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
+                                                                                                {/* <Text fontSize="large" /> */}
+                                                                                                <span style={{ fontWeight: '700' }}>ABC</span>
+                                                                                            </BootstrapTooltip>
 
-                                                                {(state.Chart !== 'Pie Chart' && state.Chart !== 'Sunburst Chart') ?
-                                                                    <>
-                                                                        <div className="col-lg-12" >
-                                                                            <p className="row col-lg-12">X-Axis</p>
-                                                                            <div className="row col-lg-12 inputfield" style={{ marginTop: '10px' }}>
-
-                                                                                <div className="row col-xs-12 col-sm-6 col-md-6 col-lg-6" >
-                                                                                    <TextField
-                                                                                        error={formValues.XAxisCopy.error}
-                                                                                        helperText={formValues.XAxisCopy.error && formValues.XAxisCopy.errorMessage}
-                                                                                        id="XAxis"
-                                                                                        select
-                                                                                        name='XAxisCopy'
-                                                                                        label={
-                                                                                            <Fragment>
-                                                                                                {state.Chart !== 'Series Chart' &&
-                                                                                                    <BootstrapTooltip title="Accepts numbers" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
-                                                                                                        <Numbers fontSize="small" />
-                                                                                                    </BootstrapTooltip>
-                                                                                                }
-                                                                                                &nbsp;
-                                                                                                {state.Chart !== 'ScatterPlot' && state.Chart !== 'Series Chart' && state.Chart !== 'Bar Line Chart' ?
-                                                                                                    <BootstrapTooltip title="Accepts strings" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
-                                                                                                        {/* <Text fontSize="large" /> */}
-                                                                                                        <span style={{ fontWeight: '700' }}>ABC</span>
-                                                                                                    </BootstrapTooltip>
-                                                                                                    : ''
-                                                                                                }
-                                                                                                &nbsp;
-                                                                                                {state.Chart === 'Series Chart' && state.Chart !== 'Bar Line Chart' ?
-                                                                                                    <BootstrapTooltip title="Accepts dates" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
-                                                                                                        <Calendar fontSize="small" />
-                                                                                                    </BootstrapTooltip>
-                                                                                                    : ''
-                                                                                                }
-                                                                                                <span style={{ fontWeight: '900' }}>*</span>
-                                                                                            </Fragment>
-                                                                                        }
-                                                                                        className='input-field '
-                                                                                        value={state.XAxisCopy}
-                                                                                        onChange={(e) => { handleChange(e) }}
-                                                                                        onBlur={(e) => { handleValidation(e) }}
-                                                                                        defaultValue={'Select'}
-                                                                                    >
-                                                                                        <MenuItem key={-1} value={'Select'}>
-                                                                                            {'Select'}
-                                                                                        </MenuItem>
-                                                                                        {state.XAxis_.map((option, index) => (
-                                                                                            <MenuItem key={option} value={option}>
-                                                                                                {option}
-                                                                                            </MenuItem>
-                                                                                        ))}
-                                                                                    </TextField>
-                                                                                </div>
-                                                                                <div className="row col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                                                                    <TextField
-                                                                                        //error={formValues.YAxisPadding.error}
-                                                                                        //helperText={formValues.YAxisPadding.error && formValues.YAxisPadding.errorMessage}
-                                                                                        id="Rotate" className='input-field' name='Rotate' label="Rotate" variant="outlined"
-                                                                                        value={state.Rotate}
-                                                                                        onChange={(e) => { handleChange(e) }}
-                                                                                        onBlur={(e) => { handleValidation(e) }}
-                                                                                    />
-                                                                                </div>
-                                                                            </div>
-                                                                            <div className="row col-lg-12" style={{ marginTop: '10px' }}>
-                                                                                <p className="row col-lg-12 inputfield">Text Style</p>
-                                                                                <div className="row col-xs-4 col-sm-6 col-md-6 col-lg-6 inputfield">
-                                                                                    <TextField
-                                                                                        //error={formValues.GroupBy.error}
-                                                                                        // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
-                                                                                        id="Font"
-                                                                                        select
-                                                                                        name='xFont'
-                                                                                        label="Font"
-                                                                                        className='input-field '
-                                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                                        value={state.xFont}
-                                                                                    >
-                                                                                        {Fonts.map((option, index) => (
-                                                                                            <MenuItem key={option} value={option}>
-                                                                                                <span style={{ fontFamily: option }}>{option}</span>
-                                                                                            </MenuItem>
-                                                                                        ))}
-                                                                                    </TextField>
-                                                                                </div>
-                                                                                <div className="row col-xs-4 col-sm-4 col-md-4 col-lg-4 inputfield">
-                                                                                    <TextField
-                                                                                        //error={formValues.GroupBy.error}
-                                                                                        // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
-                                                                                        id="Font"
-                                                                                        select
-                                                                                        name='xSize'
-                                                                                        label="Size"
-                                                                                        className='input-field '
-                                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                                        value={state.xSize}
-                                                                                    >
-                                                                                        {(() => {
-                                                                                            let Item = [];
-                                                                                            for (let i = 10; i <= 30; i++) {
-                                                                                                Item.push(<MenuItem key={i} value={i}> <span style={{ fontSize: `${i}px` }}>{i}</span> </MenuItem>)
+                                                                                            {state.Chart !== 'Composite Chart' ?
+                                                                                                <BootstrapTooltip title="Accepts numbers" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
+                                                                                                    <Numbers fontSize="small" />
+                                                                                                </BootstrapTooltip>
+                                                                                                : ''
                                                                                             }
-                                                                                            return Item
-                                                                                        })()}
-                                                                                    </TextField>
-                                                                                </div>
-                                                                                <div className="row col-xs-4 col-sm-2 col-md-2 col-lg-2 inputfield">
-                                                                                    <input type="color" name='xColor'
-                                                                                        value={state.xColor}
-                                                                                        id="colorPicker" onChange={handleChange}></input>
-                                                                                </div>
+                                                                                            <span style={{ fontWeight: '900' }}>*</span>
+                                                                                        </Fragment>
+                                                                                    }
+                                                                                    className='input-field '
+                                                                                    onChange={(e) => { handleChange(e) }}
+                                                                                    onBlur={(e) => { handleValidation(e) }}
+                                                                                    value={state.GroupByCopy}
+                                                                                    defaultValue={'Select'}
+                                                                                >
+                                                                                    <MenuItem key={-1} value={'Select'}>
+                                                                                        {'Select'}
+                                                                                    </MenuItem>
+                                                                                    {state.GroupByCopy_.map((option, index) => (
+                                                                                        <MenuItem key={option} value={option}>
+                                                                                            {option}
+                                                                                        </MenuItem>
+                                                                                    ))}
+                                                                                </TextField>
                                                                             </div>
-                                                                            <div className=" col-lg-12" style={{ marginTop: '10px' }}>
-                                                                                <p className="row col-lg-12">Y-Axis</p>
-                                                                                <div className="row col-lg-12" style={{ marginTop: '10px' }}>
-                                                                                    <div className="row col-xs-12 col-sm-6 col-md-6 col-lg-6 inputfield">
+                                                                        </div>
+                                                                        : ''
+                                                                    }
+                                                                    {state.Chart === 'Bar Line Chart' ?
+                                                                        <div className="col-lg-12" style={{ marginTop: '10px' }}>
+                                                                            <div className="col-lg-12">
+                                                                                <p className="row col-lg-12 subTitle">Right Y-Axis</p>
+                                                                                <div className="row-parent">
+                                                                                    <div className="row width-lg">
                                                                                         <TextField
-                                                                                            error={formValues.YAxisCopy.error}
-                                                                                            helperText={formValues.YAxisCopy.error && formValues.YAxisCopy.errorMessage}
-                                                                                            id="YAxis"
+                                                                                            error={formValues.GroupByCopy.error}
+                                                                                            helperText={formValues.GroupByCopy.error && formValues.GroupByCopy.errorMessage}
+                                                                                            id="GroupBy"
                                                                                             select
-                                                                                            name='YAxisCopy'
+                                                                                            name='GroupByCopy'
                                                                                             label={
                                                                                                 <Fragment>
                                                                                                     <BootstrapTooltip title="Accepts numbers" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
@@ -2340,71 +2517,37 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                                                     </BootstrapTooltip>
                                                                                                     <span style={{ fontWeight: '900' }}>*</span>
                                                                                                 </Fragment>
-
                                                                                             }
-                                                                                            value={state.YAxisCopy}
                                                                                             className='input-field '
                                                                                             onChange={(e) => { handleChange(e) }}
-                                                                                            defaultValue={'Select'}
                                                                                             onBlur={(e) => { handleValidation(e) }}
+                                                                                            value={state.GroupByCopy}
+                                                                                            defaultValue={'Select'}
                                                                                         >
                                                                                             <MenuItem key={-1} value={'Select'}>
                                                                                                 {'Select'}
                                                                                             </MenuItem>
-                                                                                            {state.YAxis_.map((option, index) => (
+                                                                                            {state.XAxis_.map((option, index) => (
                                                                                                 <MenuItem key={option} value={option}>
                                                                                                     {option}
                                                                                                 </MenuItem>
                                                                                             ))}
                                                                                         </TextField>
                                                                                     </div>
-                                                                                    <div className="row col-sm-6 col-md-6 col-lg-6 inputfield">
-                                                                                        <TextField
-                                                                                            id="GroupBy"
-                                                                                            select
-                                                                                            name='GroupByCol'
-                                                                                            label="Group By"
-                                                                                            //   margin="dense"
-                                                                                            value={state.GroupByCol}
-                                                                                            className='input-field '
-                                                                                            defaultValue={'Sum'}
-                                                                                            onChange={(e) => { handleValidation(e); handleChange(e); setFlag(false) }}
-                                                                                        >
-                                                                                            {GroupByCol.map((option, index) => (
-                                                                                                <MenuItem key={option} value={option}>
-                                                                                                    {option}
-                                                                                                </MenuItem>
-                                                                                            ))}
-                                                                                        </TextField>
-                                                                                    </div>
-                                                                                    {state.Chart === 'Bar Chart' &&
-                                                                                        <>
-                                                                                            <div className="row col-xs-12 col-sm-6 col-md-6 col-lg-6 inputfield">
-                                                                                                <TextField
-                                                                                                    error={formValues.YAxisPadding.error}
-                                                                                                    helperText={formValues.YAxisPadding.error && formValues.YAxisPadding.errorMessage}
-                                                                                                    id="YAxisPadding" className='input-field' name='YAxisPadding' label="Y-Axis Padding*" variant="outlined"
-                                                                                                    value={state.YAxisPadding}
-                                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }} />
-                                                                                            </div>
-
-                                                                                        </>
-                                                                                    }
-
                                                                                 </div>
-                                                                                <div className="row col-lg-12">
+                                                                                <div className="row-parent">
                                                                                     {/* <p className="row col-lg-12">Text Style</p> */}
-                                                                                    <div className="row col-xs-4 col-sm-6 col-md-4 col-lg-6 inputfield">
+                                                                                    <div className="row width-lg">
                                                                                         <TextField
                                                                                             //error={formValues.GroupBy.error}
                                                                                             // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
                                                                                             id="Font"
                                                                                             select
-                                                                                            name='yFont'
+                                                                                            name='ryFont'
                                                                                             label="Font"
                                                                                             className='input-field '
                                                                                             onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                                            value={state.yFont}
+                                                                                            value={state.ryFont}
                                                                                         >
                                                                                             {Fonts.map((option, index) => (
                                                                                                 <MenuItem key={option} value={option}>
@@ -2413,17 +2556,17 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                                             ))}
                                                                                         </TextField>
                                                                                     </div>
-                                                                                    <div className="row col-xs-4 col-sm-4 col-md-4 col-lg-4 inputfield">
+                                                                                    <div className="row width-mid-md">
                                                                                         <TextField
                                                                                             //error={formValues.GroupBy.error}
                                                                                             // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
                                                                                             id="Font"
                                                                                             select
-                                                                                            name='ySize'
+                                                                                            name='rySize'
                                                                                             label="Size"
                                                                                             className='input-field '
                                                                                             onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                                            value={state.ySize}
+                                                                                            value={state.rySize}
                                                                                         >
                                                                                             {(() => {
                                                                                                 let Item = [];
@@ -2434,157 +2577,26 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                                             })()}
                                                                                         </TextField>
                                                                                     </div>
-                                                                                    <div className="row col-xs-4 col-sm-2 col-md-2 col-lg-2 inputfield">
-                                                                                        <input type="color" name='yColor'
-                                                                                            value={state.yColor}
+                                                                                    <div className="" style={{ width: '20%' }}>
+                                                                                        <input type="color" name='ryColor'
+                                                                                            value={state.ryColor}
                                                                                             id="colorPicker" onChange={handleChange}></input>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
-                                                                        {state.Chart === 'Composite Chart' || state.Chart === 'Series Chart' ?
-                                                                            <div className="row col-lg-12" style={{ marginTop: '10px' }}>
-                                                                                <div className="row col-sm-6 col-md-6 col-lg-6">
-                                                                                    <TextField
-                                                                                        error={formValues.GroupByCopy.error}
-                                                                                        helperText={formValues.GroupByCopy.error && formValues.GroupByCopy.errorMessage}
-                                                                                        id="GroupBy"
-                                                                                        select
-                                                                                        name='GroupByCopy'
-                                                                                        label={
-                                                                                            <Fragment>
-                                                                                                <BootstrapTooltip title="Accepts strings" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
-                                                                                                    {/* <Text fontSize="large" /> */}
-                                                                                                    <span style={{ fontWeight: '700' }}>ABC</span>
-                                                                                                </BootstrapTooltip>
+                                                                        : ''
+                                                                    }
+                                                                </>
+                                                                : ''
+                                                            }
+                                                        </div>
+                                                    </Typography>
+                                                </AccordionDetails>
+                                            </Accordion>
 
-                                                                                                {state.Chart !== 'Composite Chart' ?
-                                                                                                    <BootstrapTooltip title="Accepts numbers" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
-                                                                                                        <Numbers fontSize="small" />
-                                                                                                    </BootstrapTooltip>
-                                                                                                    : ''
-                                                                                                }
-                                                                                                <span style={{ fontWeight: '900' }}>*</span>
-                                                                                            </Fragment>
-                                                                                        }
-                                                                                        className='input-field '
-                                                                                        onChange={(e) => { handleChange(e) }}
-                                                                                        onBlur={(e) => { handleValidation(e) }}
-                                                                                        value={state.GroupByCopy}
-                                                                                        defaultValue={'Select'}
-                                                                                    >
-                                                                                        <MenuItem key={-1} value={'Select'}>
-                                                                                            {'Select'}
-                                                                                        </MenuItem>
-                                                                                        {state.GroupByCopy_.map((option, index) => (
-                                                                                            <MenuItem key={option} value={option}>
-                                                                                                {option}
-                                                                                            </MenuItem>
-                                                                                        ))}
-                                                                                    </TextField>
-                                                                                </div>
-                                                                            </div>
-                                                                            : ''
-                                                                        }
-                                                                        {state.Chart === 'Bar Line Chart' ?
-                                                                            <div className="col-lg-12" style={{ marginTop: '10px' }}>
-                                                                                <div className="col-lg-12" >
-                                                                                    <p className="row col-lg-12">Right Y-Axis</p>
-                                                                                    <div className="row col-lg-12" style={{ marginTop: '10px' }}>
-                                                                                        <div className="row col-sm-6 col-md-6 col-lg-6">
-                                                                                            <TextField
-                                                                                                error={formValues.GroupByCopy.error}
-                                                                                                helperText={formValues.GroupByCopy.error && formValues.GroupByCopy.errorMessage}
-                                                                                                id="GroupBy"
-                                                                                                select
-                                                                                                name='GroupByCopy'
-                                                                                                label={
-                                                                                                    <Fragment>
-                                                                                                        <BootstrapTooltip title="Accepts numbers" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
-                                                                                                            <Numbers fontSize="small" />
-                                                                                                        </BootstrapTooltip>
-                                                                                                        <span style={{ fontWeight: '900' }}>*</span>
-                                                                                                    </Fragment>
-                                                                                                }
-                                                                                                className='input-field '
-                                                                                                onChange={(e) => { handleChange(e) }}
-                                                                                                onBlur={(e) => { handleValidation(e) }}
-                                                                                                value={state.GroupByCopy}
-                                                                                                defaultValue={'Select'}
-                                                                                            >
-                                                                                                <MenuItem key={-1} value={'Select'}>
-                                                                                                    {'Select'}
-                                                                                                </MenuItem>
-                                                                                                {state.XAxis_.map((option, index) => (
-                                                                                                    <MenuItem key={option} value={option}>
-                                                                                                        {option}
-                                                                                                    </MenuItem>
-                                                                                                ))}
-                                                                                            </TextField>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div className="row col-lg-12" style={{ marginTop: '10px' }}>
-                                                                                        {/* <p className="row col-lg-12">Text Style</p> */}
-                                                                                        <div className="row col-xs-6 col-sm-6 col-md-6 col-lg-6 inputfield">
-                                                                                            <TextField
-                                                                                                //error={formValues.GroupBy.error}
-                                                                                                // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
-                                                                                                id="Font"
-                                                                                                select
-                                                                                                name='ryFont'
-                                                                                                label="Font"
-                                                                                                className='input-field '
-                                                                                                onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                                                value={state.ryFont}
-                                                                                            >
-                                                                                                {Fonts.map((option, index) => (
-                                                                                                    <MenuItem key={option} value={option}>
-                                                                                                        <span style={{ fontFamily: option }}>{option}</span>
-                                                                                                    </MenuItem>
-                                                                                                ))}
-                                                                                            </TextField>
-                                                                                        </div>
-                                                                                        <div className="row col-xs-4 col-sm-4 col-md-4 col-lg-4 inputfield">
-                                                                                            <TextField
-                                                                                                //error={formValues.GroupBy.error}
-                                                                                                // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
-                                                                                                id="Font"
-                                                                                                select
-                                                                                                name='rySize'
-                                                                                                label="Size"
-                                                                                                className='input-field '
-                                                                                                onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                                                value={state.rySize}
-                                                                                            >
-                                                                                                {(() => {
-                                                                                                    let Item = [];
-                                                                                                    for (let i = 10; i <= 30; i++) {
-                                                                                                        Item.push(<MenuItem key={i} value={i}> <span style={{ fontSize: `${i}px` }}>{i}</span> </MenuItem>)
-                                                                                                    }
-                                                                                                    return Item
-                                                                                                })()}
-                                                                                            </TextField>
-                                                                                        </div>
-                                                                                        <div className="row col-xs-2 col-sm-2 col-md-2 col-lg-2 inputfield">
-                                                                                            <input type="color" name='ryColor'
-                                                                                                value={state.ryColor}
-                                                                                                id="colorPicker" onChange={handleChange}></input>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            : ''
-                                                                        }
-                                                                    </>
-                                                                    : ''
-                                                                }
-                                                            </div>
-                                                        </Typography>
-                                                    </AccordionDetails>
-                                                </Accordion>
-                                                : ''
-                                            }
-                                            {(enable.Imported || state.Uploaded_file !== undefined) && (state.Chart !== 'Pie Chart') && (navbar.bar === 'Charts') ?
+                                            {state.Chart !== 'Pie Chart' ?
+                                                // {(enable.Imported || state.Uploaded_file !== undefined) && (state.Chart !== 'Pie Chart') && (navbar.bar === 'Charts') ?
                                                 <Accordion className="acd">
                                                     <AccordionSummary
                                                         className="acdsummary"
@@ -2593,18 +2605,16 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                         id="panel1a-header"
                                                     >
                                                         <Typography className="acdTitle">Axes Labels</Typography>
-
                                                     </AccordionSummary>
-
                                                     <AccordionDetails>
                                                         <Typography>
-                                                            <div className="col-lg-12">
-                                                                <div className="col-lg-12" style={{ margin: "0px 0px 15px 0px" }}>
-                                                                    <div className="row col-lg-12" >
-                                                                        <div className="row col-xm-3 col-sm-3 col-md-3 col-lg-3" >
+                                                            <div className="col-lg-12" style={{ marginBottom: '10px' }}>
+                                                                <div className="col-lg-12">
+                                                                    <div className="row-parent" style={{ justifyContent: 'space-between' }} >
+                                                                        <div>
                                                                             Axes
                                                                         </div>
-                                                                        <div className="row col-xm-4 col-sm-4 col-md-4 col-lg-4" >
+                                                                        <div>
                                                                             <label className="switch">
                                                                                 <input type="checkbox" name="Axesswatch" checked={state.Axesswatch_} onChange={handleShowProps}></input>
                                                                                 <span className="slider round"></span>
@@ -2612,19 +2622,18 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                         </div>
                                                                     </div>
                                                                     {state.Axesswatch_ &&
-                                                                        <>
-                                                                            <p className="row col-lg-12" style={{ marginTop: '20px' }}>X-Axis</p>
-                                                                            <div className="row col-lg-12 inputfield" style={{ marginTop: '10px' }}>
-                                                                                <div className="row col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                                                        <div style={{ margin: "10px" }}>
+                                                                            <p className="row col-lg-12 subTitle">X-Axis</p>
+                                                                            <div className="row-parent">
+                                                                                <div className="row width-lg">
                                                                                     <TextField id="XAxisLabel" className='input-field' name='XAxisLabel' label="X-AxisLabel" variant="outlined"
                                                                                         value={state.XAxisLabel}
                                                                                         onChange={handleChange} />
                                                                                 </div>
-
                                                                             </div>
-                                                                            <p className="row col-lg-12 inputfield">Text Style</p>
-                                                                            <div className="row col-lg-12" >
-                                                                                <div className="row col-xs-6 col-sm-6 col-md-6 col-lg-6 inputfield">
+                                                                            <p className="row col-lg-12 subTitle">Text Style</p>
+                                                                            <div className="row-parent">
+                                                                                <div className="row width-lg">
                                                                                     <TextField
                                                                                         //error={formValues.GroupBy.error}
                                                                                         // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
@@ -2644,7 +2653,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                                         ))}
                                                                                     </TextField>
                                                                                 </div>
-                                                                                <div className="row col-xs-4 col-sm-4 col-md-4 col-lg-4 inputfield">
+                                                                                <div className="row width-mid-md">
                                                                                     <TextField
                                                                                         //error={formValues.GroupBy.error}
                                                                                         // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
@@ -2666,25 +2675,25 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                                         })()}
                                                                                     </TextField>
                                                                                 </div>
-                                                                                <div className="row col-xs-2 col-sm-2 col-md-2 col-lg-2 inputfield">
+                                                                                <div className="" style={{ width: '20%' }}>
                                                                                     <input type="color" name='xlColor'
                                                                                         value={state.xlColor}
                                                                                         defaultValue={'#000000'}
                                                                                         id="colorPicker" onChange={handleChange}></input>
                                                                                 </div>
                                                                             </div>
-                                                                            <p className="row col-lg-12">Y-Axis</p>
-                                                                            <div className="row col-lg-12 inputfield" style={{ marginTop: '10px' }}>
-                                                                                <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-6">
+                                                                            <p className="row col-lg-12 subTitle">Y-Axis</p>
+                                                                            <div className="row-parent">
+                                                                                <div className="row width-lg">
                                                                                     <TextField id="YAxisLabel" className='input-field' name='YAxisLabel' label="Y-AxisLabel" variant="outlined"
                                                                                         value={state.YAxisLabel}
                                                                                         onChange={handleChange} />
                                                                                 </div>
 
                                                                             </div>
-                                                                            <p className="row col-lg-12 inputfield">Text Style</p>
-                                                                            <div className="row col-lg-12" >
-                                                                                <div className="row col-xs-6 col-sm-6 col-md-6 col-lg-6 inputfield">
+                                                                            <p className="row col-lg-12 subTitle">Text Style</p>
+                                                                            <div className="row-parent" >
+                                                                                <div className="row width-lg">
                                                                                     <TextField
                                                                                         //error={formValues.GroupBy.error}
                                                                                         // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
@@ -2704,7 +2713,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                                         ))}
                                                                                     </TextField>
                                                                                 </div>
-                                                                                <div className="row col-xs-4 col-sm-4 col-md-4 col-lg-4 inputfield">
+                                                                                <div className="row width-mid-md">
                                                                                     <TextField
                                                                                         //error={formValues.GroupBy.error}
                                                                                         // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
@@ -2726,7 +2735,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                                         })()}
                                                                                     </TextField>
                                                                                 </div>
-                                                                                <div className="row col-xs-2 col-sm-2 col-md-2 col-lg-2 inputfield">
+                                                                                <div className="" style={{ width: '20%' }}>
                                                                                     <input type="color" name='ylColor'
                                                                                         value={state.ylColor}
                                                                                         defaultValue={'#000000'}
@@ -2735,17 +2744,17 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                             </div>
                                                                             {state.Chart === 'Bar Line Chart' &&
                                                                                 <>
-                                                                                    <p className="row col-lg-12">Right Y-Axis</p>
-                                                                                    <div className="row col-lg-12" style={{ marginTop: '10px' }}>
-                                                                                        <div className="row col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                                                                    <p className="row col-lg-12 subTitle">Right Y-Axis</p>
+                                                                                    <div className="row-parent">
+                                                                                        <div className="row width-lg">
                                                                                             <TextField id="YAxisLabel" className='input-field' name='RYAxisLabel' label="Right Y-Axis Label" variant="outlined"
                                                                                                 value={state.RYAxisLabel}
+                                                                                                margin="dense"
                                                                                                 onChange={handleChange} />
                                                                                         </div>
-
                                                                                     </div>
-                                                                                    <div className="row col-lg-12" style={{ marginTop: '20px' }}>
-                                                                                        <div className="row col-xs-6 col-sm-6 col-md-6 col-lg-6 inputfield">
+                                                                                    <div className="row-parent">
+                                                                                        <div className="row width-lg">
                                                                                             <TextField
                                                                                                 //error={formValues.GroupBy.error}
                                                                                                 // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
@@ -2765,7 +2774,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                                                 ))}
                                                                                             </TextField>
                                                                                         </div>
-                                                                                        <div className="row col-xs-4 col-sm-4 col-md-4 col-lg-4 inputfield">
+                                                                                        <div className="row width-mid-md">
                                                                                             <TextField
                                                                                                 //error={formValues.GroupBy.error}
                                                                                                 // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
@@ -2787,7 +2796,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                                                 })()}
                                                                                             </TextField>
                                                                                         </div>
-                                                                                        <div className="row col-xs-4 col-sm-2 col-md-2 col-lg-2 inputfield">
+                                                                                        <div className="" style={{ width: '20%' }}>
                                                                                             <input type="color" name='rylColor'
                                                                                                 value={state.rylColor}
                                                                                                 defaultValue={'#000000'}
@@ -2796,7 +2805,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                                     </div>
                                                                                 </>
                                                                             }
-                                                                        </>
+                                                                        </div>
                                                                     }
                                                                 </div>
                                                             </div>
@@ -2819,85 +2828,89 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
 
                                                 <AccordionDetails className="acdDetails">
                                                     <Typography>
-                                                        <div className="row col-lg-12" style={{ marginTop: '0px' }}>
-
-                                                            <div className="row col-lg-12 inputfield" >
-                                                                <div className="row col-xm-3 col-sm-3 col-md-3 col-lg-3" >
-                                                                    Title
+                                                        <div className="col-lg-12" style={{ marginBottom: '10px' }}>
+                                                            <div className="col-lg-12" >
+                                                                <div className="row-parent" style={{ justifyContent: 'space-between' }} >
+                                                                    <div>
+                                                                        Title
+                                                                    </div>
+                                                                    <div>
+                                                                        <label className="switch">
+                                                                            <input type="checkbox" name="Titleswatch" checked={state.Titleswatch_} onChange={handleShowProps}></input>
+                                                                            <span className="slider round"></span>
+                                                                        </label>
+                                                                    </div>
                                                                 </div>
-                                                                <div className="row col-xm-4 col-sm-4 col-md-4 col-lg-4" >
-                                                                    <label className="switch">
-                                                                        <input type="checkbox" name="Titleswatch" checked={state.Titleswatch_} onChange={handleShowProps}></input>
-                                                                        <span className="slider round"></span>
-                                                                    </label>
-                                                                </div>
+                                                                {state.Titleswatch_ &&
+                                                                    <div style={{ margin: "10px" }}>
+                                                                        {/* <p className="row col-lg-12">Title</p> */}
+                                                                        <div className="row-parent" >
+                                                                            <div className="row width-lg">
+                                                                                <TextField
+                                                                                    error={formValues.Title.error}
+                                                                                    helperText={formValues.Title.error && formValues.Title.errorMessage}
+                                                                                    id="Title" className='input-field' name='Title' label="Title" variant="outlined"
+                                                                                    value={state.Title}
+                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                                {/* <SketchPicker /> */}
+                                                                            </div>
+                                                                        </div>
+                                                                        <p className="row col-lg-12 subTitle">Text Style</p>
+                                                                        <div className="row-parent" >
+                                                                            <div className="row width-lg">
+                                                                                <TextField
+                                                                                    //error={formValues.GroupBy.error}
+                                                                                    // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
+                                                                                    id="Font"
+                                                                                    select
+                                                                                    name='TitleFont'
+                                                                                    label="Font"
+                                                                                    className='input-field '
+                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                                    value={state.TitleFont}
+                                                                                    defaultValue={'Arial'}
 
+                                                                                >
+                                                                                    {Fonts.map((option, index) => (
+                                                                                        <MenuItem key={option} value={option}>
+                                                                                            <span style={{ fontFamily: option }}>{option}</span>
+                                                                                        </MenuItem>
+                                                                                    ))}
+                                                                                </TextField>
+                                                                            </div>
+                                                                            <div className="row width-mid-md">
+                                                                                <TextField
+                                                                                    //error={formValues.GroupBy.error}
+                                                                                    // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
+                                                                                    id="Font"
+                                                                                    select
+                                                                                    name='TitleSize'
+                                                                                    label="Size"
+                                                                                    className='input-field '
+                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                                    value={state.TitleSize}
+                                                                                    defaultValue={'14'}
+                                                                                >
+                                                                                    {(() => {
+                                                                                        let Item = [];
+                                                                                        for (let i = 10; i <= 30; i++) {
+                                                                                            Item.push(<MenuItem key={i} value={i}> <span style={{ fontSize: `${i}px` }}>{i}</span> </MenuItem>)
+                                                                                        }
+                                                                                        return Item
+                                                                                    })()}
+                                                                                </TextField>
+                                                                            </div>
+                                                                            <div className="" style={{ width: '20%' }}>
+                                                                                <input type="color" name='TitleColor'
+                                                                                    value={state.TitleColor}
+                                                                                    defaultValue={'#000000'}
+                                                                                    id="colorPicker" onChange={handleChange}></input>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                }
                                                             </div>
-                                                            {state.Titleswatch_ &&
-                                                                <>
-                                                                    {/* <p className="row col-lg-12">Title</p> */}
-                                                                    <div className="row col-sm-6 col-md-6 col-lg-6 inputfield">
-                                                                        <TextField
-                                                                            error={formValues.Title.error}
-                                                                            helperText={formValues.Title.error && formValues.Title.errorMessage}
-                                                                            id="Title" className='input-field' name='Title' label="Title" variant="outlined"
-                                                                            value={state.Title}
-                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }} />
-                                                                        {/* <SketchPicker /> */}
-                                                                    </div>
 
-                                                                    <p className="row col-lg-12 inputfield">Text Style</p>
-                                                                    <div className="row col-xs-6 col-sm-6 col-md-6 col-lg-6 inputfield">
-                                                                        <TextField
-                                                                            //error={formValues.GroupBy.error}
-                                                                            // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
-                                                                            id="Font"
-                                                                            select
-                                                                            name='TitleFont'
-                                                                            label="Font"
-                                                                            className='input-field '
-                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                            value={state.TitleFont}
-                                                                            defaultValue={'Arial'}
-
-                                                                        >
-                                                                            {Fonts.map((option, index) => (
-                                                                                <MenuItem key={option} value={option}>
-                                                                                    <span style={{ fontFamily: option }}>{option}</span>
-                                                                                </MenuItem>
-                                                                            ))}
-                                                                        </TextField>
-                                                                    </div>
-                                                                    <div className="row col-xs-4 col-sm-4 col-md-4 col-lg-4 inputfield">
-                                                                        <TextField
-                                                                            //error={formValues.GroupBy.error}
-                                                                            // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
-                                                                            id="Font"
-                                                                            select
-                                                                            name='TitleSize'
-                                                                            label="Size"
-                                                                            className='input-field '
-                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                            value={state.TitleSize}
-                                                                            defaultValue={'14'}
-                                                                        >
-                                                                            {(() => {
-                                                                                let Item = [];
-                                                                                for (let i = 10; i <= 30; i++) {
-                                                                                    Item.push(<MenuItem key={i} value={i}> <span style={{ fontSize: `${i}px` }}>{i}</span> </MenuItem>)
-                                                                                }
-                                                                                return Item
-                                                                            })()}
-                                                                        </TextField>
-                                                                    </div>
-                                                                    <div className="row col-xs-2 col-sm-2 col-md-2 col-lg-2 inputfield">
-                                                                        <input type="color" name='TitleColor'
-                                                                            value={state.TitleColor}
-                                                                            defaultValue={'#000000'}
-                                                                            id="colorPicker" onChange={handleChange}></input>
-                                                                    </div>
-                                                                </>
-                                                            }
                                                         </div>
                                                     </Typography>
                                                 </AccordionDetails>
@@ -2911,18 +2924,16 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                         id="panel1a-header"
                                                     >
                                                         <Typography className="acdTitle">Legend</Typography>
-
                                                     </AccordionSummary>
                                                     <AccordionDetails>
                                                         <Typography>
-
-                                                            <div className="col-lg-12" style={{ margin: "0px 0px 15px 0px" }}>
-                                                                <div className="row col-lg-12">
-                                                                    <div className="row col-lg-12" >
-                                                                        <div className="row col-xm-3 col-sm-3 col-md-3 col-lg-3" >
+                                                            <div className="col-lg-12" style={{ marginBottom: '15px' }}>
+                                                                <div className="col-lg-12">
+                                                                    <div className="row-parent" style={{ justifyContent: 'space-between' }}>
+                                                                        <div>
                                                                             Legend
                                                                         </div>
-                                                                        <div className="row col-xm-4 col-sm-4 col-md-4 col-lg-4" >
+                                                                        <div>
                                                                             <label className="switch">
                                                                                 <input type="checkbox" name="Legendswatch" checked={state.Legendswatch_} onChange={handleShowProps}></input>
                                                                                 <span className="slider round"></span>
@@ -2930,80 +2941,83 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                         </div>
                                                                     </div>
                                                                     {state.Legendswatch_ &&
-                                                                        <>
-                                                                            {/* <p className="row col-lg-12 inputfield" style={{ marginTop: '20px' }}>Text Style</p> */}
+                                                                        <div style={{ margin: "10px" }}>
+                                                                            <div className="row-parent" >
+                                                                                <div className="row width-lg">
+                                                                                    <TextField
+                                                                                        // error={formValues.InputType.error}
+                                                                                        // helperText={formValues.InputType.error && formValues.InputType.errorMessage}
+                                                                                        id="LengendPosition"
+                                                                                        select
+                                                                                        name='LengendPosition'
+                                                                                        label="Position"
+                                                                                        className='Horizontal'
+                                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                                        value={state.LengendPosition}
+                                                                                        defaultValue={false}
+                                                                                    >
+                                                                                        <MenuItem key={1} value={true} >Horizontal</MenuItem>
+                                                                                        <MenuItem key={2} value={false}>Vertical</MenuItem>
 
-                                                                            <div className="row col-xs-6 col-sm-6 col-md-6 col-lg-6 inputfield" >
-                                                                                <TextField
-                                                                                    //error={formValues.GroupBy.error}
-                                                                                    // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
-                                                                                    id="Font"
-                                                                                    select
-                                                                                    name='LegendFont'
-                                                                                    label="Font"
-                                                                                    className='input-field '
-                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                                    value={state.LegendFont}
-                                                                                    defaultValue={'Arial'}
-                                                                                >
-                                                                                    {Fonts.map((option, index) => (
-                                                                                        <MenuItem key={option} value={option}>
-                                                                                            <span style={{ fontFamily: option }}>{option}</span>
-                                                                                        </MenuItem>
-                                                                                    ))}
-                                                                                </TextField>
+                                                                                    </TextField>
+                                                                                </div>
                                                                             </div>
-                                                                            <div className="row col-xs-4 col-sm-4 col-md-4 col-lg-4 inputfield">
-                                                                                <TextField
-                                                                                    //error={formValues.GroupBy.error}
-                                                                                    // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
-                                                                                    id="Font"
-                                                                                    select
-                                                                                    name='LegendSize'
-                                                                                    label="Size"
-                                                                                    className='input-field '
-                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                                    value={state.LegendSize}
-                                                                                    defaultValue={'14'}
-                                                                                >
-                                                                                    {(() => {
-                                                                                        let Item = [];
-                                                                                        for (let i = 10; i <= 30; i++) {
-                                                                                            Item.push(<MenuItem key={i} value={i}> <span style={{ fontSize: `${i}px` }}>{i}</span> </MenuItem>)
-                                                                                        }
-                                                                                        return Item
-                                                                                    })()}
-                                                                                </TextField>
+                                                                            <p className="row col-lg-12 subTitle">Text Style</p>
+                                                                            <div className="row-parent" >
+                                                                                <div className="row width-lg" >
+                                                                                    <TextField
+                                                                                        //error={formValues.GroupBy.error}
+                                                                                        // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
+                                                                                        id="Font"
+                                                                                        select
+                                                                                        name='LegendFont'
+                                                                                        label="Font"
+                                                                                        className='input-field '
+                                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                                        value={state.LegendFont}
+                                                                                        defaultValue={'Arial'}
+                                                                                    >
+                                                                                        {Fonts.map((option, index) => (
+                                                                                            <MenuItem key={option} value={option}>
+                                                                                                <span style={{ fontFamily: option }}>{option}</span>
+                                                                                            </MenuItem>
+                                                                                        ))}
+                                                                                    </TextField>
+                                                                                </div>
+                                                                                <div className="row width-mid-md">
+                                                                                    <TextField
+                                                                                        //error={formValues.GroupBy.error}
+                                                                                        // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
+                                                                                        id="Font"
+                                                                                        select
+                                                                                        name='LegendSize'
+                                                                                        label="Size"
+                                                                                        className='input-field '
+                                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                                        value={state.LegendSize}
+                                                                                        defaultValue={'14'}
+                                                                                    >
+                                                                                        {(() => {
+                                                                                            let Item = [];
+                                                                                            for (let i = 10; i <= 30; i++) {
+                                                                                                Item.push(<MenuItem key={i} value={i}> <span style={{ fontSize: `${i}px` }}>{i}</span> </MenuItem>)
+                                                                                            }
+                                                                                            return Item
+                                                                                        })()}
+                                                                                    </TextField>
+                                                                                </div>
+                                                                                <div className="" style={{ width: '20%' }}>
+                                                                                    <input type="color" name='LegendColor'
+                                                                                        value={state.LegendColor}
+                                                                                        defaultValue={'#000000'}
+                                                                                        id="colorPicker" onChange={handleChange}></input>
+                                                                                </div>
                                                                             </div>
-                                                                            <div className="row col-xs-2 col-sm-2 col-md-2 col-lg-2 inputfield">
-                                                                                <input type="color" name='LegendColor'
-                                                                                    value={state.LegendColor}
-                                                                                    defaultValue={'#000000'}
-                                                                                    id="colorPicker" onChange={handleChange}></input>
-                                                                            </div>
-                                                                            <div className="row col-xs-12 col-sm-6 col-md-6 col-lg-6 inputfield">
-                                                                                <TextField
-                                                                                    // error={formValues.InputType.error}
-                                                                                    // helperText={formValues.InputType.error && formValues.InputType.errorMessage}
-                                                                                    id="LengendPosition"
-                                                                                    select
-                                                                                    name='LengendPosition'
-                                                                                    label="Position"
-                                                                                    className='Horizontal'
-                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                                    value={state.LengendPosition}
-                                                                                    defaultValue={false}
-                                                                                >
-                                                                                    <MenuItem key={1} value={true} >Horizontal</MenuItem>
-                                                                                    <MenuItem key={2} value={false}>Vertical</MenuItem>
 
-                                                                                </TextField>
-                                                                            </div>
-                                                                        </>
+                                                                        </div>
                                                                     }
                                                                 </div>
                                                             </div>
-
                                                         </Typography>
                                                     </AccordionDetails>
                                                 </Accordion>
@@ -3018,16 +3032,15 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                         id="panel1a-header"
                                                     >
                                                         <Typography className="acdTitle">Tooltip&nbsp;</Typography>
-
                                                     </AccordionSummary>
                                                     <AccordionDetails>
                                                         <Typography>
-                                                            <div className="row col-lg-12" style={{ margin: "0px 0px 15px 0px" }}>
-                                                                <div className="row col-lg-12" >
-                                                                    <div className="row col-xm-3 col-sm-3 col-md-3 col-lg-3" >
+                                                            <div className="col-lg-12" style={{ marginBottom: '10px' }}>
+                                                                <div className="row-parent" style={{ justifyContent: 'space-between' }}>
+                                                                    <div >
                                                                         Tooltip
                                                                     </div>
-                                                                    <div className="row col-xm-4 col-sm-4 col-md-4 col-lg-4" >
+                                                                    <div>
                                                                         <label className="switch">
                                                                             <input type="checkbox" name="Tooltipswatch" checked={state.Tooltipswatch_} onChange={handleShowProps}></input>
                                                                             <span className="slider round"></span>
@@ -3035,113 +3048,117 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                     </div>
                                                                 </div>
                                                                 {state.Tooltipswatch_ &&
-                                                                    <>
-                                                                        <div className="row col-xs-6 col-sm-6 col-md-6 col-lg-6 inputfield" style={{ marginTop: '20px' }}>
-                                                                            <TextField
-                                                                                //error={formValues.GroupBy.error}
-                                                                                // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
-                                                                                id="TContent"
-                                                                                select
-                                                                                name='TooltipContent'
-                                                                                label="Content"
-                                                                                className='input-field '
-                                                                                onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                                defaultValue={'All'}
-                                                                                value={state.TooltipContent}
-                                                                                style={{ marginTop: '10px' }}
-                                                                            >
+                                                                    <div style={{ margin: "10px" }}>
+                                                                        <div className="row-parent">
+                                                                            <div className="row width-lg">
+                                                                                <TextField
+                                                                                    //error={formValues.GroupBy.error}
+                                                                                    // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
+                                                                                    id="TContent"
+                                                                                    select
+                                                                                    name='TooltipContent'
+                                                                                    label="Content"
+                                                                                    className='input-field '
+                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                                    defaultValue={'All'}
+                                                                                    value={state.TooltipContent}
+                                                                                    style={{ marginTop: '10px' }}
+                                                                                >
 
-                                                                                {TooltipContent.map((option, index) => (
-                                                                                    <MenuItem key={option} value={option}>
-                                                                                        {option}
-                                                                                    </MenuItem>
-                                                                                ))}
-                                                                                {state.Chart === 'Composite Chart' || state.Chart === 'Series Chart' || state.Chart === 'Bar Line Chart' ?
-                                                                                    <MenuItem key={'Group'} value={'Group'}>
-                                                                                        {'Group'}
-                                                                                    </MenuItem>
-                                                                                    : ''
-                                                                                }
-                                                                            </TextField>
-                                                                        </div>
-                                                                        <p className="row col-lg-12 inputfield">Text Style</p>
-                                                                        <div className="row col-xs-6 col-sm-6 col-md-6 col-lg-6 inputfield">
-                                                                            <TextField
-                                                                                //error={formValues.GroupBy.error}
-                                                                                // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
-                                                                                id="Font"
-                                                                                select
-                                                                                name='TooltipFont'
-                                                                                label="Font"
-                                                                                className='input-field '
-                                                                                onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                                value={state.TooltipFont}
-                                                                                defaultValue={'Arial'}
-                                                                            >
-                                                                                {Fonts.map((option, index) => (
-                                                                                    <MenuItem key={option} value={option}>
-                                                                                        <span style={{ fontFamily: option }}>{option}</span>
-                                                                                    </MenuItem>
-                                                                                ))}
-                                                                            </TextField>
-                                                                        </div>
-                                                                        <div className="row col-xs-4 col-sm-4 col-md-4 col-lg-4 inputfield">
-                                                                            <TextField
-                                                                                //error={formValues.GroupBy.error}
-                                                                                // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
-                                                                                id="Font"
-                                                                                select
-                                                                                name='TooltipSize'
-                                                                                label="Size"
-                                                                                className='input-field '
-                                                                                onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                                value={state.TooltipSize}
-                                                                                defaultValue={'14'}
-                                                                            >
-                                                                                {(() => {
-                                                                                    let Item = [];
-                                                                                    for (let i = 10; i <= 30; i++) {
-                                                                                        Item.push(<MenuItem key={i} value={i}> <span style={{ fontSize: `${i}px` }}>{i}</span> </MenuItem>)
+                                                                                    {TooltipContent.map((option, index) => (
+                                                                                        <MenuItem key={option} value={option}>
+                                                                                            {option}
+                                                                                        </MenuItem>
+                                                                                    ))}
+                                                                                    {state.Chart === 'Composite Chart' || state.Chart === 'Series Chart' || state.Chart === 'Bar Line Chart' ?
+                                                                                        <MenuItem key={'Group'} value={'Group'}>
+                                                                                            {'Group'}
+                                                                                        </MenuItem>
+                                                                                        : ''
                                                                                     }
-                                                                                    return Item
-                                                                                })()}
-                                                                            </TextField>
+                                                                                </TextField>
+                                                                            </div>
                                                                         </div>
-                                                                        <div className="row col-xs-2 col-sm-2 col-md-2 col-lg-2 inputfield">
-                                                                            <input type="color" name='TooltipColor'
-                                                                                value={state.TooltipColor}
-                                                                                defaultValue={'#ffffff'}
-                                                                                id="colorPicker" onChange={handleChange}></input>
+                                                                        <p className="row col-lg-12 subTitle">Text Style</p>
+                                                                        <div className="row-parent">
+                                                                            <div className="row width-lg">
+                                                                                <TextField
+                                                                                    //error={formValues.GroupBy.error}
+                                                                                    // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
+                                                                                    id="Font"
+                                                                                    select
+                                                                                    name='TooltipFont'
+                                                                                    label="Font"
+                                                                                    className='input-field '
+                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                                    value={state.TooltipFont}
+                                                                                    defaultValue={'Arial'}
+                                                                                >
+                                                                                    {Fonts.map((option, index) => (
+                                                                                        <MenuItem key={option} value={option}>
+                                                                                            <span style={{ fontFamily: option }}>{option}</span>
+                                                                                        </MenuItem>
+                                                                                    ))}
+                                                                                </TextField>
+                                                                            </div>
+                                                                            <div className="row width-mid-md">
+                                                                                <TextField
+                                                                                    //error={formValues.GroupBy.error}
+                                                                                    // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
+                                                                                    id="Font"
+                                                                                    select
+                                                                                    name='TooltipSize'
+                                                                                    label="Size"
+                                                                                    className='input-field '
+                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                                    value={state.TooltipSize}
+                                                                                    defaultValue={'14'}
+                                                                                >
+                                                                                    {(() => {
+                                                                                        let Item = [];
+                                                                                        for (let i = 10; i <= 30; i++) {
+                                                                                            Item.push(<MenuItem key={i} value={i}> <span style={{ fontSize: `${i}px` }}>{i}</span> </MenuItem>)
+                                                                                        }
+                                                                                        return Item
+                                                                                    })()}
+                                                                                </TextField>
+                                                                            </div>
+                                                                            <div className="row" style={{ width: '20%' }}>
+                                                                                <input type="color" name='TooltipColor'
+                                                                                    value={state.TooltipColor}
+                                                                                    defaultValue={'#ffffff'}
+                                                                                    id="colorPicker" onChange={handleChange}></input>
+                                                                            </div>
                                                                         </div>
-                                                                        <p className="row col-lg-12">Background</p>
-                                                                        <div className="row col-xs-2 col-sm-2 col-md-2 col-lg-2 inputfield">
-                                                                            <input type="color" name='TooltipBGColor'
-                                                                                value={state.TooltipBGColor}
-                                                                                defaultValue={'#6282b3'}
-                                                                                id="TooltipBGColor" onChange={handleChange}></input>
+                                                                        <p className="row col-lg-12 subTitle">Background</p>
+                                                                        <div className="row-parent">
+                                                                            <div className="" style={{ width: '20%' }}>
+                                                                                <input type="color" name='TooltipBGColor'
+                                                                                    value={state.TooltipBGColor}
+                                                                                    defaultValue={'#6282b3'}
+                                                                                    id="TooltipBGColor" onChange={handleChange}></input>
+                                                                            </div>
                                                                         </div>
-                                                                        <p className="row col-lg-12 inputfield">Border Style</p>
+                                                                        <p className="row col-lg-12 subTitle">Border Style</p>
+                                                                        <div className="row-parent">
+                                                                            <div className="row width-lg">
+                                                                                <TextField id="Color" className='input-field'
+                                                                                    value={state.TooltipThickness}
+                                                                                    name='TooltipThickness' label="Width" variant="outlined"
+                                                                                    defaultValue={'0'}
+                                                                                    onChange={handleChange} />
+                                                                            </div>
+                                                                            <div className="" style={{ width: '20%' }}>
+                                                                                <input type="color" name='TooltipTickColor'
+                                                                                    value={state.TooltipTickColor}
+                                                                                    defaultValue={'#000000'}
+                                                                                    id="colorPicker" onChange={handleChange}></input>
 
-                                                                        <div className="row col-xs-6 col-sm-6 col-md-6 col-lg-6 inputfield">
-                                                                            <TextField id="Color" className='input-field'
-                                                                                value={state.TooltipThickness}
-                                                                                name='TooltipThickness' label="Width" variant="outlined"
-                                                                                defaultValue={'0'}
-                                                                                onChange={handleChange} />
+                                                                            </div>
                                                                         </div>
-                                                                        <div className="row col-xs-2 col-sm-2 col-md-2 col-lg-2 inputfield">
-                                                                            <input type="color" name='TooltipTickColor'
-                                                                                value={state.TooltipTickColor}
-                                                                                defaultValue={'#000000'}
-                                                                                id="colorPicker" onChange={handleChange}></input>
-
-                                                                        </div>
-                                                                    </>
+                                                                    </div>
                                                                 }
-
                                                             </div>
-
-
                                                         </Typography>
                                                     </AccordionDetails>
                                                 </Accordion>
@@ -3158,13 +3175,13 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                     </AccordionSummary>
                                                     <AccordionDetails>
                                                         <Typography>
-                                                            <div className="col-lg-12" style={{ margin: "0px 0px 15px 0px" }}>
-                                                                <div className="row col-lg-12">
-                                                                    <div className="row col-lg-12" >
-                                                                        <div className="row col-xm-3 col-sm-3 col-md-3 col-lg-4" >
+                                                            <div className="col-lg-12" style={{ marginBottom: '10px' }}>
+                                                                <div className="col-lg-12">
+                                                                    <div className="row-parent" style={{ justifyContent: 'space-between' }} >
+                                                                        <div >
                                                                             Data Labels
                                                                         </div>
-                                                                        <div className="row col-xm-4 col-sm-4 col-md-4 col-lg-4" >
+                                                                        <div>
                                                                             <label className="switch">
                                                                                 <input type="checkbox" name="Labelsswatch" checked={state.Labelsswatch_} onChange={handleShowProps}></input>
                                                                                 <span className="slider round"></span>
@@ -3172,73 +3189,77 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                         </div>
                                                                     </div>
                                                                     {state.Labelsswatch_ &&
-                                                                        <>
-                                                                            <div className="row col-xs-6 col-sm-6 col-md-6 col-lg-6 inputfield" style={{ marginTop: '20px' }}>
-                                                                                <TextField
-                                                                                    id="TContent"
-                                                                                    select
-                                                                                    name='LabelsContent'
-                                                                                    label="Content"
-                                                                                    className='input-field '
-                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                                    defaultValue={'X'}
-                                                                                    value={state.LabelsContent}
-                                                                                    style={{ marginTop: '10px' }}
-                                                                                >
+                                                                        <div style={{ margin: "10px" }}>
+                                                                            <div className="row-parent">
+                                                                                <div className="row width-lg">
+                                                                                    <TextField
+                                                                                        id="TContent"
+                                                                                        select
+                                                                                        name='LabelsContent'
+                                                                                        label="Content"
+                                                                                        className='input-field '
+                                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                                        defaultValue={'X'}
+                                                                                        value={state.LabelsContent}
+                                                                                        style={{ marginTop: '10px' }}
+                                                                                    >
 
-                                                                                    {LablesContent.map((option, index) => (
-                                                                                        <MenuItem key={option} value={option}>
-                                                                                            {option}
-                                                                                        </MenuItem>
-                                                                                    ))}
-                                                                                </TextField>
+                                                                                        {LablesContent.map((option, index) => (
+                                                                                            <MenuItem key={option} value={option}>
+                                                                                                {option}
+                                                                                            </MenuItem>
+                                                                                        ))}
+                                                                                    </TextField>
+                                                                                </div>
                                                                             </div>
-                                                                            <p className="row col-lg-12 inputfield">Text Style</p>
-                                                                            <div className="row col-xs-6 col-sm-6 col-md-6 col-lg-6 inputfield">
-                                                                                <TextField
-                                                                                    id="Font"
-                                                                                    select
-                                                                                    name='LabelsFont'
-                                                                                    label="Font"
-                                                                                    className='input-field '
-                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                                    value={state.LabelsFont}
-                                                                                    defaultValue={'Arial'}
-                                                                                >
-                                                                                    {Fonts.map((option, index) => (
-                                                                                        <MenuItem key={option} value={option}>
-                                                                                            <span style={{ fontFamily: option }}>{option}</span>
-                                                                                        </MenuItem>
-                                                                                    ))}
-                                                                                </TextField>
+                                                                            <p className="row col-lg-12 subTitle">Text Style</p>
+                                                                            <div className="row-parent">
+                                                                                <div className="row width-lg">
+                                                                                    <TextField
+                                                                                        id="Font"
+                                                                                        select
+                                                                                        name='LabelsFont'
+                                                                                        label="Font"
+                                                                                        className='input-field '
+                                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                                        value={state.LabelsFont}
+                                                                                        defaultValue={'Arial'}
+                                                                                    >
+                                                                                        {Fonts.map((option, index) => (
+                                                                                            <MenuItem key={option} value={option}>
+                                                                                                <span style={{ fontFamily: option }}>{option}</span>
+                                                                                            </MenuItem>
+                                                                                        ))}
+                                                                                    </TextField>
+                                                                                </div>
+                                                                                <div className="row width-mid-md">
+                                                                                    <TextField
+                                                                                        id="Font"
+                                                                                        select
+                                                                                        name='Labelsize'
+                                                                                        label="Size"
+                                                                                        className='input-field '
+                                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                                        value={state.LabelsSize}
+                                                                                        defaultValue={'14'}
+                                                                                    >
+                                                                                        {(() => {
+                                                                                            let Item = [];
+                                                                                            for (let i = 10; i <= 30; i++) {
+                                                                                                Item.push(<MenuItem key={i} value={i}> <span style={{ fontSize: `${i}px` }}>{i}</span> </MenuItem>)
+                                                                                            }
+                                                                                            return Item
+                                                                                        })()}
+                                                                                    </TextField>
+                                                                                </div>
+                                                                                <div className="" style={{ width: '20%' }}>
+                                                                                    <input type="color" name='LabelsColor'
+                                                                                        value={state.LabelsColor}
+                                                                                        defaultValue={'#000000'}
+                                                                                        id="colorPicker" onChange={handleChange}></input>
+                                                                                </div>
                                                                             </div>
-                                                                            <div className="row col-xs-4 col-sm-4 col-md-4 col-lg-4 inputfield">
-                                                                                <TextField
-                                                                                    id="Font"
-                                                                                    select
-                                                                                    name='Labelsize'
-                                                                                    label="Size"
-                                                                                    className='input-field '
-                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                                    value={state.LabelsSize}
-                                                                                    defaultValue={'14'}
-                                                                                >
-                                                                                    {(() => {
-                                                                                        let Item = [];
-                                                                                        for (let i = 10; i <= 30; i++) {
-                                                                                            Item.push(<MenuItem key={i} value={i}> <span style={{ fontSize: `${i}px` }}>{i}</span> </MenuItem>)
-                                                                                        }
-                                                                                        return Item
-                                                                                    })()}
-                                                                                </TextField>
-                                                                            </div>
-                                                                            <div className="row col-xs-2 col-sm-2 col-md-2 col-lg-2 inputfield">
-                                                                                <input type="color" name='LabelsColor'
-                                                                                    value={state.LabelsColor}
-                                                                                    defaultValue={'#000000'}
-                                                                                    id="colorPicker" onChange={handleChange}></input>
-                                                                            </div>
-                                                                        </>
+                                                                        </div>
                                                                     }
                                                                 </div>
                                                             </div>
@@ -3265,9 +3286,9 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                     <div className="col-lg-12">
                                                         <div className="col-lg-12" >
                                                             {navbar.bar === 'Charts' &&
-                                                                <>
-                                                                    <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ marginTop: '10px' }}>
-                                                                        <div className="row col-sm-12 col-md-12 col-lg-6" >
+                                                                <div style={{ margin: "10px" }}>
+                                                                    <div className="row-parent">
+                                                                        <div className="row width-lg">
                                                                             <TextField
                                                                                 error={formValues.Innerradius.error}
                                                                                 helperText={formValues.Innerradius.error && formValues.Innerradius.errorMessage}
@@ -3275,7 +3296,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                                 value={state.Innerradius}
                                                                                 onChange={(e) => { handleValidation(e); handleChange(e); }} />
                                                                         </div>
-                                                                        <div className="row col-sm-12 col-md-12 col-lg-6"   >
+                                                                        <div className="width-lg" style={{ marginLeft: '10px' }}>
                                                                             <TextField
                                                                                 error={formValues.SlicesCap.error}
                                                                                 helperText={formValues.SlicesCap.error && formValues.SlicesCap.errorMessage}
@@ -3285,33 +3306,37 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                                 onBlur={(e) => { handleValidation(e) }}
                                                                             />
                                                                         </div>
-                                                                        <div className="row col-sm-12 col-md-12 col-lg-6" style={{ marginTop: '20px' }} >
+                                                                    </div>
+                                                                    <div className="row-parent">
+                                                                        <div className="row width-lg">
                                                                             <TextField
                                                                                 error={formValues.ExternalRadiusPadding.error}
                                                                                 helperText={formValues.ExternalRadiusPadding.error && formValues.ExternalRadiusPadding.errorMessage}
                                                                                 id="ExternalRadiusPadding" className='input-field' name='ExternalRadiusPadding' label="ExternalRadiusPadding*" variant="outlined"
                                                                                 value={state.ExternalRadiusPadding}
+                                                                                margin="dense"
                                                                                 onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                        </div>
+                                                                    </div>
+                                                                    {/* <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ marginTop: '20px' }}> */}
+                                                                    <div className="row-parent" style={{ justifyContent: 'space-between' }}>
+                                                                        <div>
+                                                                            Pie
+                                                                        </div>
+                                                                        <div>
+                                                                            <label className="switch">
+                                                                                <input type="checkbox" name="Pieswatch" checked={state.Pieswatch_} onChange={handleShowProps}></input>
+                                                                                <span className="slider round"></span>
+                                                                            </label>
                                                                         </div>
 
                                                                     </div>
-                                                                    <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ marginTop: '20px' }}>
-                                                                        <div className="row col-lg-12" >
-                                                                            <div className="row col-xm-3 col-sm-3 col-md-3 col-lg-3" >
-                                                                                Pie
-                                                                            </div>
-                                                                            <div className="row col-xm-4 col-sm-4 col-md-4 col-lg-4" >
-                                                                                <label className="switch">
-                                                                                    <input type="checkbox" name="Pieswatch" checked={state.Pieswatch_} onChange={handleShowProps}></input>
-                                                                                    <span className="slider round"></span>
-                                                                                </label>
-                                                                            </div>
+                                                                    {state.Pieswatch_ &&
+                                                                        <div style={{ margin: "10px" }}>
+                                                                            <p className="row col-lg-12 subTitle">Background</p>
+                                                                            <div className="row-parent">
 
-                                                                        </div>
-                                                                        {state.Pieswatch_ &&
-                                                                            <>
-                                                                                <p className="row col-lg-12">Background</p>
-                                                                                <div className="row col-xs-12 col-sm-2 col-md-2 col-lg-2 inputfield">
+                                                                                <div className="row" style={{ width: '20%' }}>
                                                                                     <input type="color" name='BGColor'
                                                                                         value={state.BGColor}
                                                                                         defaultValue={'#ffffff'}
@@ -3319,11 +3344,12 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                                     </input>
 
                                                                                 </div>
-                                                                            </>
-                                                                        }
+                                                                            </div>
+                                                                        </div>
+                                                                    }
 
-                                                                    </div>
-                                                                </>
+                                                                    {/* </div> */}
+                                                                </div>
                                                             }
                                                         </div>
                                                     </div>
@@ -3348,34 +3374,36 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                     <div className="col-lg-12">
                                                         <div className="col-lg-12" >
                                                             {navbar.bar === 'Charts' &&
-                                                                <>
-                                                                    <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ marginTop: '10px' }}>
-                                                                        <div className="row col-sm-12 col-md-12 col-lg-6" >
+                                                                <div>
+                                                                    <div className="row-parent">
+                                                                        <div className="row width-lg">
                                                                             <TextField
                                                                                 error={formValues.Innerradius.error}
                                                                                 helperText={formValues.Innerradius.error && formValues.Innerradius.errorMessage}
                                                                                 id="Innerradius" className='input-field' name='Innerradius' label="Innerradius*" variant="outlined"
                                                                                 value={state.Innerradius}
+                                                                                margin="dense"
                                                                                 onChange={(e) => { handleValidation(e); handleChange(e); }} />
                                                                         </div>
                                                                     </div>
-                                                                    <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ marginTop: '20px' }}>
-                                                                        <div className="row col-lg-12" >
-                                                                            <div className="row col-xm-3 col-sm-3 col-md-3 col-lg-3" >
-                                                                                SunBurst
-                                                                            </div>
-                                                                            <div className="row col-xm-4 col-sm-4 col-md-4 col-lg-4" >
-                                                                                <label className="switch">
-                                                                                    <input type="checkbox" name="Pieswatch" checked={state.Pieswatch_} onChange={handleShowProps}></input>
-                                                                                    <span className="slider round"></span>
-                                                                                </label>
-                                                                            </div>
-
+                                                                    {/* <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ marginTop: '20px' }}> */}
+                                                                    <div className="row-parent" style={{ justifyContent: 'space-between' }}>
+                                                                        <div>
+                                                                            SunBurst
                                                                         </div>
-                                                                        {state.Pieswatch_ &&
-                                                                            <>
-                                                                                <p className="row col-lg-12">Background</p>
-                                                                                <div className="row col-xs-12 col-sm-2 col-md-2 col-lg-2 inputfield">
+                                                                        <div >
+                                                                            <label className="switch">
+                                                                                <input type="checkbox" name="Pieswatch" checked={state.Pieswatch_} onChange={handleShowProps}></input>
+                                                                                <span className="slider round"></span>
+                                                                            </label>
+                                                                        </div>
+
+                                                                    </div>
+                                                                    {state.Pieswatch_ &&
+                                                                        <div style={{ margin: "10px" }}>
+                                                                            <p className="row col-lg-12 subTitle">Background</p>
+                                                                            <div className="row-parent">
+                                                                                <div className="row" style={{ width: '20%' }}>
                                                                                     <input type="color" name='BGColor'
                                                                                         value={state.BGColor}
                                                                                         defaultValue={'#ffffff'}
@@ -3383,11 +3411,12 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                                     </input>
 
                                                                                 </div>
-                                                                            </>
-                                                                        }
+                                                                            </div>
+                                                                        </div>
+                                                                    }
 
-                                                                    </div>
-                                                                </>
+                                                                    {/* </div> */}
+                                                                </div>
                                                             }
                                                         </div>
                                                     </div>
@@ -3409,33 +3438,32 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
 
                                             <AccordionDetails>
                                                 <Typography>
-                                                    <div className="col-lg-12" style={{ marginTop: '10px' }}>
+                                                    <div className="col-lg-12">
                                                         {navbar.bar === 'Charts' &&
-                                                            <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ margin: "0px 0px 15px 0px" }}>
-                                                                <div className="row col-lg-12" >
-                                                                    <div className="row col-xm-3 col-sm-3 col-md-3 col-lg-3" >
+                                                            <div>
+                                                                <div className="row-parent" style={{ justifyContent: 'space-between' }}>
+                                                                    <div>
                                                                         Bar
                                                                     </div>
-                                                                    <div className="row col-xm-4 col-sm-4 col-md-4 col-lg-4" >
+                                                                    <div>
                                                                         <label className="switch">
                                                                             <input type="checkbox" name="Barswatch" checked={state.Barswatch_} onChange={handleShowProps}></input>
                                                                             <span className="slider round"></span>
                                                                         </label>
                                                                     </div>
-
                                                                 </div>
                                                                 {state.Barswatch_ &&
-                                                                    <>
-                                                                        <p className="row col-lg-12" style={{ marginTop: '10px' }}>Padding</p>
+                                                                    <div style={{ margin: "10px" }}>
+                                                                        <p className="row col-lg-12 subTitle">Padding</p>
 
-                                                                        <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" >
-                                                                            <div className="row col-sm-12 col-md-12 col-lg-3" >
+                                                                        <div className="row-parent">
+                                                                            <div className="row" style={{ width: '24%' }}>
                                                                                 <TextField
                                                                                     id="PadTop" className='input-field' name='PadTop' label="Top" variant="outlined"
                                                                                     value={state.PadTop}
                                                                                     onChange={(e) => { handleValidation(e); handleChange(e); }} />
                                                                             </div>
-                                                                            <div className="row col-sm-12 col-md-12 col-lg-3"   >
+                                                                            <div className="" style={{ width: '24%', marginLeft: '10px' }}>
                                                                                 <TextField
                                                                                     id="PadBottom" className='input-field' name='PadBottom' label="Bottom" variant="outlined"
                                                                                     value={state.PadBottom}
@@ -3443,13 +3471,13 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                                     onBlur={(e) => { handleValidation(e) }}
                                                                                 />
                                                                             </div>
-                                                                            <div className="row col-sm-12 col-md-12 col-lg-3" >
+                                                                            <div className="" style={{ width: '24%', marginLeft: '10px' }}>
                                                                                 <TextField
                                                                                     id="PadRight" className='input-field' name='PadRight' label="Right" variant="outlined"
                                                                                     value={state.PadRight}
                                                                                     onChange={(e) => { handleValidation(e); handleChange(e); }} />
                                                                             </div>
-                                                                            <div className="row col-sm-12 col-md-12 col-lg-3" >
+                                                                            <div className="" style={{ width: '24%', marginLeft: '10px' }}>
                                                                                 <TextField
                                                                                     id="PadLeft" className='input-field' name='PadLeft' label="Left" variant="outlined"
                                                                                     value={state.PadLeft}
@@ -3458,18 +3486,21 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
 
                                                                         </div>
 
-                                                                        <p className="row col-lg-12" style={{ marginTop: '10px' }}>Bar Color</p>
+                                                                        <p className="row col-lg-12 subTitle" style={{ marginTop: '10px' }}>Bar Color</p>
+                                                                        <div className="row-parent">
+                                                                            <div className="row" style={{ width: '20%' }}>
+                                                                                <input type="color" name='Color' value={state.Color} defaultValue={'#8495e6'} id="colorPicker" onChange={handleChange}></input>
 
-                                                                        <div className="row col-xs-12 col-sm-2 col-md-4 col-lg-3 inputfield">
-                                                                            <input type="color" name='Color' value={state.Color} defaultValue={'#8495e6'} id="colorPicker" onChange={handleChange}></input>
-
+                                                                            </div>
                                                                         </div>
-                                                                        <p className="row col-lg-12">Background</p>
-                                                                        <div className="row col-xs-12 col-sm-2 col-md-4 col-lg-3 inputfield">
-                                                                            <input type="color" name='BGColor' defaultValue={'#ffffff'} value={state.BGColor} id="colorPicker" onChange={handleChange}></input>
+                                                                        <p className="row col-lg-12 subTitle">Background</p>
+                                                                        <div className="row-parent">
+                                                                            <div className="row" style={{ width: '20%' }}>
+                                                                                <input type="color" name='BGColor' defaultValue={'#ffffff'} value={state.BGColor} id="colorPicker" onChange={handleChange}></input>
 
+                                                                            </div>
                                                                         </div>
-                                                                    </>
+                                                                    </div>
                                                                 }
                                                             </div>
                                                         }
@@ -3492,21 +3523,23 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
 
                                             <AccordionDetails>
                                                 <Typography>
-                                                    <div className=" col-lg-12" style={{ marginTop: '10px' }}>
-                                                        <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ margin: "0px 0px 15px 0px" }}>
-                                                            <div className="row col-xs-12 col-sm-6 col-md-6 col-lg-6" >
-                                                                <TextField
-                                                                    error={formValues.SymbolSize.error}
-                                                                    helperText={formValues.SymbolSize.error && formValues.SymbolSize.errorMessage}
-                                                                    id="SymbolSize" className='input-field' name='SymbolSize' label="SymbolSize*" variant="outlined"
-                                                                    value={state.SymbolSize}
-                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                    <div className=" col-lg-12" >
+                                                        <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                            <div className="row-parent">
+                                                                <div className="row width-lg" >
+                                                                    <TextField
+                                                                        error={formValues.SymbolSize.error}
+                                                                        helperText={formValues.SymbolSize.error && formValues.SymbolSize.errorMessage}
+                                                                        id="SymbolSize" className='input-field' name='SymbolSize' label="SymbolSize*" variant="outlined"
+                                                                        value={state.SymbolSize}
+                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                </div>
                                                             </div>
-                                                            <div className="row col-lg-12" style={{ marginTop: '10px' }}>
-                                                                <div className="row col-xm-3 col-sm-3 col-md-3 col-lg-3" >
+                                                            <div className="row-parent" style={{ justifyContent: 'space-between' }}>
+                                                                <div>
                                                                     Scatter
                                                                 </div>
-                                                                <div className="row col-xm-4 col-sm-4 col-md-4 col-lg-4" >
+                                                                <div>
                                                                     <label className="switch">
                                                                         <input type="checkbox" name="Scatterswatch" checked={state.Scatterswatch_} onChange={handleShowProps}></input>
                                                                         <span className="slider round"></span>
@@ -3515,8 +3548,8 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
 
                                                             </div>
                                                             {state.Scatterswatch_ &&
-                                                                <>
-                                                                    <p className="row col-lg-12" style={{ marginTop: '10px' }}>Padding</p>
+                                                                <div style={{ margin: "10px" }}>
+                                                                    <p className="row col-lg-12 subTitle">Padding</p>
 
                                                                     <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" >
                                                                         <div className="row col-sm-12 col-md-12 col-lg-3" >
@@ -3558,7 +3591,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                         <input type="color" name='BGColor' defaultValue={'#ffffff'} value={state.BGColor} id="colorPicker" onChange={handleChange}></input>
 
                                                                     </div>
-                                                                </>
+                                                                </div>
                                                             }
                                                         </div>
                                                     </div>
@@ -3972,16 +4005,16 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                 <AccordionDetails>
                                                     <Typography>
                                                         {(() => {
-                                                            let Item = [],AllCharts = [];
+                                                            let Item = [], AllCharts = [];
                                                             for (let a in template) {
                                                                 if (template[a] !== undefined) {
                                                                     Item.push(
                                                                         <div className="col-lg-12 dashboard-layout">
                                                                             <div className="row col-lg-12 template-container-title">
-                                                                                <div className="col-lg-2"  onClick={(e) => { handleTemplate(a, 'Preview') }}>
+                                                                                <div className="col-lg-2" onClick={(e) => { handleTemplate(a, 'Preview') }}>
                                                                                     <div className="row" style={{ marginLeft: '15px' }}><DashboardIcons e={template[a].Chart} /></div>
                                                                                 </div>
-                                                                                <div className="col-lg-8"  onClick={(e) => { handleTemplate(a, 'Preview') }}>
+                                                                                <div className="col-lg-8" onClick={(e) => { handleTemplate(a, 'Preview') }}>
                                                                                     <div className="col-sm-12 col-md-12 col-lg-12">{a}</div>
                                                                                     <div className="col-sm-12 col-md-12 col-lg-12" >
                                                                                         {template[a].TempDescription}
@@ -3998,7 +4031,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                                     </BootstrapTooltip>
                                                                                 </div>
                                                                             </div>
-                                                                           
+
                                                                         </div>
                                                                     )
                                                                 }
@@ -4185,28 +4218,29 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                     }
 
                                 </div>
-
-                                <div className="row" style={{ padding: '0px' }}>
-                                    <div style={{ display: 'flex' }}>
-                                        <div className="semi-bold" style={{ display: 'flex', width: '80%' }}>
-                                            Cards
-                                        </div>
+                                {state.Uploaded_file !== undefined &&
+                                    <div className="row" style={{ padding: '0px' }}>
                                         <div style={{ display: 'flex' }}>
-                                            <div style={{ marginRight: '10px' }}>Custom</div>
-                                            <label className="switch">
-                                                <input type="checkbox" name="StaticLayouts" checked={others.CustomCards} onChange={(e) => { setOthers({ ...others, 'CustomCards': e.target.checked }) }}></input>
-                                                <span className="slider round"></span>
-                                            </label>
+                                            <div className="semi-bold" style={{ display: 'flex', width: '80%' }}>
+                                                Cards
+                                            </div>
+                                            <div style={{ display: 'flex' }}>
+                                                <div style={{ marginRight: '10px' }}>Custom</div>
+                                                <label className="switch">
+                                                    <input type="checkbox" name="StaticLayouts" checked={others.CustomCards} onChange={(e) => { setOthers({ ...others, 'CustomCards': e.target.checked }) }}></input>
+                                                    <span className="slider round"></span>
+                                                </label>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                }
                                 {others.CustomCards &&
                                     <>
                                         <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ marginTop: '15px' }}>
                                             <div className="col-xs-8 col-sm-8 col-md-8 col-lg-2" style={{ padding: '16px 0px 0px 0px' }}>
-                                                <img src={Rows} style={{ float: 'left' }}></img>
+                                                <img src={Rows} alt="Cards" style={{ float: 'left' }}></img>
                                             </div>
-                                            <div className="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+                                            <div className="row col-xs-8 col-sm-8 col-md-8 col-lg-8">
                                                 <TextField id="NOCards" className='input-field' name='CardRows' label="Total Cards" variant="outlined" margin="dense"
                                                     // error={formValues.CardRows.error}
                                                     // helperText={formValues.CardRows.error && formValues.CardRows.errorMessage}
@@ -4226,19 +4260,73 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                     <div style={{ marginTop: '15px' }}>
                                                         {(() => {
                                                             let Item = [];
+                                                            let IntCols = state.CheckType.filter(e => e.split(' ')[0] === '#')
+                                                            let CardCols = IntCols.map(e => {
+                                                                if (e.split(' ')[0] === '#')
+                                                                    return e.split(' ').slice(1, 30).join(' ')
+                                                            })
                                                             for (let i = 1; i <= parseInt(others.CardRows); i++) {
                                                                 Item.push(
                                                                     <div className="row col-lg-12" style={{ marginBottom: '10px' }}>
                                                                         <div className="col-xs-8 col-sm-8 col-md-8 col-lg-2" style={{ padding: '16px 0px 0px 0px', visibility: i === 1 ? `visible` : `hidden` }}>
-                                                                            <img src={Column} style={{ float: 'left' }}></img>
+                                                                            <img src={Column} alt="Cards" style={{ float: 'left' }}></img>
                                                                         </div>
-                                                                        <div className="col-xs-8 col-sm-8 col-md-8 col-lg-8">
-                                                                            <TextField id="NOCharts" className='input-field' name={"Card" + i} label={"Card " + i} variant="outlined" margin="dense"
+                                                                        <div className="row col-xs-8 col-sm-8 col-md-8 col-lg-6">
+                                                                            {/* <TextField className='input-field'
+                                                                                name={"Card" + i}
+                                                                                label={"Card " + i}
+                                                                                variant="outlined"
+                                                                                margin="dense"
                                                                                 value={others['Card'] !== undefined ? others['Card']["Card" + i] : others["Card" + i]}
                                                                                 onChange={(e) => { setOthers({ ...others, 'Card': { ...others['Card'], [e.target.name]: e.target.value } }) }}
                                                                                 onBlur={(e) => { handleValidation(e) }}
-                                                                            />
+                                                                            /> */}
+
+                                                                            <TextField
+                                                                                //error={formValues.GroupBy.error}
+                                                                                // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
+                                                                                id="Card"
+                                                                                select
+                                                                                name={"Card" + i}
+                                                                                label={"Card " + i}
+                                                                                variant="outlined"
+                                                                                margin="dense"
+                                                                                className='input-field '
+                                                                                value={others['Card'] !== undefined ? others['Card']["Card" + i] : others["Card" + i]}
+                                                                                onChange={(e) => { setOthers({ ...others, 'Card': { ...others['Card'], [e.target.name]: e.target.value } }) }}
+                                                                                onBlur={(e) => { handleValidation(e) }}
+                                                                                defaultValue={'Select'}
+                                                                            >
+                                                                                <MenuItem key={-1} value={-1}>
+                                                                                    <span>{'Select'}</span>
+                                                                                </MenuItem>
+                                                                                {CardCols.map((option, index) => (
+                                                                                    <MenuItem key={index} value={option}>
+                                                                                        <span>{option}</span>
+                                                                                    </MenuItem>
+                                                                                ))}
+                                                                            </TextField>
+
                                                                             {/* <div className="warning-msg" style={{ display: i === parseInt(others.Rows) ? 'block' : 'none' }}>3 Cards per Row allowed</div> */}
+                                                                        </div>
+                                                                        <div className="row col-sm-4 col-md-4 col-lg-4 inputfield">
+                                                                            <TextField
+                                                                                id="GroupBy"
+                                                                                select
+                                                                                name='GroupByCol'
+                                                                                label="Group By"
+                                                                                margin="dense"
+                                                                                value={state.GroupByCol}
+                                                                                className='input-field '
+                                                                                defaultValue={'Sum'}
+                                                                                onChange={(e) => { handleValidation(e); handleChange(e); setFlag(false) }}
+                                                                            >
+                                                                                {GroupByCol.map((option, index) => (
+                                                                                    <MenuItem key={option} value={option}>
+                                                                                        {option}
+                                                                                    </MenuItem>
+                                                                                ))}
+                                                                            </TextField>
                                                                         </div>
                                                                     </div>
                                                                 )
@@ -4312,7 +4400,12 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                     <div className=" col-xm-3 col-sm-3 col-md-3 col-lg-3" >
                                         <label className="switch">
                                             <input type="checkbox" name="Filterswatch" checked={filter.filterSwatch}
-                                                onChange={(e) => { setFilter({ ...filter, 'filterSwatch': e.target.checked, 'data': dashboard[Object.keys(dashboard)[0]].Uploaded_file }); setfilteringProps({ ...filteringProps, 'Dimensions': dashboard[Object.keys(dashboard)[0]].CheckType }) }}></input>
+                                                onChange={(e) => {
+                                                    setFilter({ ...filter, 'filterSwatch': e.target.checked, 'data': dashboard[Object.keys(dashboard)[0]].Uploaded_file });
+                                                    setfilteringProps({ ...filteringProps, 'Dimensions': state.CheckType === undefined ? dashboard[Object.keys(dashboard)[0]].CheckType : state.CheckType })
+                                                }}>
+
+                                            </input>
                                             <span className="slider round"></span>
                                         </label>
                                     </div>
@@ -4343,13 +4436,6 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                             </Select>
                                                         </FormControl>
                                                     </div>
-                                                    {/* <div className="col-sm-6 col-md-6 col-lg-6">
-                                                <Button variant="contained" className='input-field button' style={{ backgroundColor: '#6282b3', float: 'left' }} onClick={(e) => { }}>
-                                                    Filter
-                                                </Button>
-                                            </div> */}
-
-
                                                     {error.mandatoryFields !== undefined ?
                                                         <div className="col-xs-3 col-sm-10 col-md-10 col-lg-10" style={{ margin: "15px 0px 15px  0px", padding: 0 }}>
                                                             <Alert severity="error">{error.mandatoryFields}</Alert>
@@ -4424,6 +4510,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                     }
                     {(navbar.bar === 'Project') ?
                         <div className="row col-sm-12 col-md-12 col-lg-12" style={{ margin: "0px" }}>
+                            <span className="txtOrdinary" style={{ display: 'flex' }}>{`Available Projects (${Object.keys(project).length})`}</span>
                             <>
                                 {(() => {
                                     let Item = [];
