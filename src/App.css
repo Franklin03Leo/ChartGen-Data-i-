@@ -197,6 +197,12 @@
   .Mui-selected {
     background-color: #2E89FF !important;
     color: white !important;
+    margin: 3px !important;
+    border-radius: 4px !important;
+  }
+
+  .MuiCheckbox-root.Mui-checked{
+    color: white !important;
   }
 
   /* lg:large */
@@ -217,7 +223,7 @@
   }
 
   .subTitle {
-    margin-top: 10px;
+    margin: 10px 0px 10px 0px;
   }
   .row-parent{
     margin-top: 10px;

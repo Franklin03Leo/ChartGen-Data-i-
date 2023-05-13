@@ -238,13 +238,14 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         position: 'absolute',
         top: '35%',
         left: '50%',
-        width: '30%',
+        width: '26%',
         transform: 'translate(-50%, -50%)',
         // width: 400,
         bgcolor: 'background.paper',
-        boxShadow: 24,
-        p: 4,
-        Fonts: '12px/13px Poppins'
+        p: 5,
+        fonts: '12px/13px Poppins',
+        borderRadius:'8px',
+        boxShadow: '0px 6px 20px #0000001A'
     };
     const ITEM_HEIGHT = 48;
     const ITEM_PADDING_TOP = 8;
@@ -2019,9 +2020,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                     id="panel1a-header"
                                                 >
                                                     <Typography className="acdTitle">Dimensions</Typography>
-
                                                 </AccordionSummary>
-
                                                 <AccordionDetails>
                                                     <Typography>
                                                         <div className="col-lg-12" style={{ margin: "10px" }}>
@@ -2069,7 +2068,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                             </TextField>
                                                                         </div>
                                                                         :
-                                                                        <div className="row">
+                                                                        <div className="row width-lg">
                                                                             <FormControl sx={{ width: 300 }}>
                                                                                 <InputLabel id="filter">
                                                                                     <Fragment>
@@ -3123,7 +3122,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                                     })()}
                                                                                 </TextField>
                                                                             </div>
-                                                                            <div className="row" style={{ width: '20%' }}>
+                                                                            <div className="" style={{ width: '20%' }}>
                                                                                 <input type="color" name='TooltipColor'
                                                                                     value={state.TooltipColor}
                                                                                     defaultValue={'#ffffff'}
@@ -3132,7 +3131,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                         </div>
                                                                         <p className="row col-lg-12 subTitle">Background</p>
                                                                         <div className="row-parent">
-                                                                            <div className="" style={{ width: '20%' }}>
+                                                                            <div className="row" style={{ width: '20%' }}>
                                                                                 <input type="color" name='TooltipBGColor'
                                                                                     value={state.TooltipBGColor}
                                                                                     defaultValue={'#6282b3'}
@@ -3176,92 +3175,90 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                     <AccordionDetails>
                                                         <Typography>
                                                             <div className="col-lg-12" style={{ marginBottom: '10px' }}>
-                                                                <div className="col-lg-12">
-                                                                    <div className="row-parent" style={{ justifyContent: 'space-between' }} >
-                                                                        <div >
-                                                                            Data Labels
+                                                                <div className="row-parent" style={{ justifyContent: 'space-between' }} >
+                                                                    <div >
+                                                                        Data Labels
+                                                                    </div>
+                                                                    <div>
+                                                                        <label className="switch">
+                                                                            <input type="checkbox" name="Labelsswatch" checked={state.Labelsswatch_} onChange={handleShowProps}></input>
+                                                                            <span className="slider round"></span>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                                {state.Labelsswatch_ &&
+                                                                    <div style={{ margin: "10px" }}>
+                                                                        <div className="row-parent">
+                                                                            <div className="row width-lg">
+                                                                                <TextField
+                                                                                    id="TContent"
+                                                                                    select
+                                                                                    name='LabelsContent'
+                                                                                    label="Content"
+                                                                                    className='input-field '
+                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                                    defaultValue={'X'}
+                                                                                    value={state.LabelsContent}
+                                                                                    style={{ marginTop: '10px' }}
+                                                                                >
+
+                                                                                    {LablesContent.map((option, index) => (
+                                                                                        <MenuItem key={option} value={option}>
+                                                                                            {option}
+                                                                                        </MenuItem>
+                                                                                    ))}
+                                                                                </TextField>
+                                                                            </div>
                                                                         </div>
-                                                                        <div>
-                                                                            <label className="switch">
-                                                                                <input type="checkbox" name="Labelsswatch" checked={state.Labelsswatch_} onChange={handleShowProps}></input>
-                                                                                <span className="slider round"></span>
-                                                                            </label>
+                                                                        <p className="row col-lg-12 subTitle">Text Style</p>
+                                                                        <div className="row-parent">
+                                                                            <div className="row width-lg">
+                                                                                <TextField
+                                                                                    id="Font"
+                                                                                    select
+                                                                                    name='LabelsFont'
+                                                                                    label="Font"
+                                                                                    className='input-field '
+                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                                    value={state.LabelsFont}
+                                                                                    defaultValue={'Arial'}
+                                                                                >
+                                                                                    {Fonts.map((option, index) => (
+                                                                                        <MenuItem key={option} value={option}>
+                                                                                            <span style={{ fontFamily: option }}>{option}</span>
+                                                                                        </MenuItem>
+                                                                                    ))}
+                                                                                </TextField>
+                                                                            </div>
+                                                                            <div className="row width-mid-md">
+                                                                                <TextField
+                                                                                    id="Font"
+                                                                                    select
+                                                                                    name='Labelsize'
+                                                                                    label="Size"
+                                                                                    className='input-field '
+                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }}
+                                                                                    value={state.LabelsSize}
+                                                                                    defaultValue={'14'}
+                                                                                >
+                                                                                    {(() => {
+                                                                                        let Item = [];
+                                                                                        for (let i = 10; i <= 30; i++) {
+                                                                                            Item.push(<MenuItem key={i} value={i}> <span style={{ fontSize: `${i}px` }}>{i}</span> </MenuItem>)
+                                                                                        }
+                                                                                        return Item
+                                                                                    })()}
+                                                                                </TextField>
+                                                                            </div>
+                                                                            <div className="" style={{ width: '20%' }}>
+                                                                                <input type="color" name='LabelsColor'
+                                                                                    value={state.LabelsColor}
+                                                                                    defaultValue={'#000000'}
+                                                                                    id="colorPicker" onChange={handleChange}></input>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
-                                                                    {state.Labelsswatch_ &&
-                                                                        <div style={{ margin: "10px" }}>
-                                                                            <div className="row-parent">
-                                                                                <div className="row width-lg">
-                                                                                    <TextField
-                                                                                        id="TContent"
-                                                                                        select
-                                                                                        name='LabelsContent'
-                                                                                        label="Content"
-                                                                                        className='input-field '
-                                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                                        defaultValue={'X'}
-                                                                                        value={state.LabelsContent}
-                                                                                        style={{ marginTop: '10px' }}
-                                                                                    >
-
-                                                                                        {LablesContent.map((option, index) => (
-                                                                                            <MenuItem key={option} value={option}>
-                                                                                                {option}
-                                                                                            </MenuItem>
-                                                                                        ))}
-                                                                                    </TextField>
-                                                                                </div>
-                                                                            </div>
-                                                                            <p className="row col-lg-12 subTitle">Text Style</p>
-                                                                            <div className="row-parent">
-                                                                                <div className="row width-lg">
-                                                                                    <TextField
-                                                                                        id="Font"
-                                                                                        select
-                                                                                        name='LabelsFont'
-                                                                                        label="Font"
-                                                                                        className='input-field '
-                                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                                        value={state.LabelsFont}
-                                                                                        defaultValue={'Arial'}
-                                                                                    >
-                                                                                        {Fonts.map((option, index) => (
-                                                                                            <MenuItem key={option} value={option}>
-                                                                                                <span style={{ fontFamily: option }}>{option}</span>
-                                                                                            </MenuItem>
-                                                                                        ))}
-                                                                                    </TextField>
-                                                                                </div>
-                                                                                <div className="row width-mid-md">
-                                                                                    <TextField
-                                                                                        id="Font"
-                                                                                        select
-                                                                                        name='Labelsize'
-                                                                                        label="Size"
-                                                                                        className='input-field '
-                                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }}
-                                                                                        value={state.LabelsSize}
-                                                                                        defaultValue={'14'}
-                                                                                    >
-                                                                                        {(() => {
-                                                                                            let Item = [];
-                                                                                            for (let i = 10; i <= 30; i++) {
-                                                                                                Item.push(<MenuItem key={i} value={i}> <span style={{ fontSize: `${i}px` }}>{i}</span> </MenuItem>)
-                                                                                            }
-                                                                                            return Item
-                                                                                        })()}
-                                                                                    </TextField>
-                                                                                </div>
-                                                                                <div className="" style={{ width: '20%' }}>
-                                                                                    <input type="color" name='LabelsColor'
-                                                                                        value={state.LabelsColor}
-                                                                                        defaultValue={'#000000'}
-                                                                                        id="colorPicker" onChange={handleChange}></input>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    }
-                                                                </div>
+                                                                }
                                                             </div>
                                                         </Typography>
                                                     </AccordionDetails>
@@ -3278,80 +3275,73 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                 aria-controls="panel1a-content"
                                                 id="panel1a-header"
                                             >
-                                                <Typography className="acdTitle">Pie&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</Typography>
+                                                <Typography className="acdTitle">Pie</Typography>
                                             </AccordionSummary>
-
                                             <AccordionDetails>
                                                 <Typography>
                                                     <div className="col-lg-12">
-                                                        <div className="col-lg-12" >
-                                                            {navbar.bar === 'Charts' &&
-                                                                <div style={{ margin: "10px" }}>
-                                                                    <div className="row-parent">
-                                                                        <div className="row width-lg">
-                                                                            <TextField
-                                                                                error={formValues.Innerradius.error}
-                                                                                helperText={formValues.Innerradius.error && formValues.Innerradius.errorMessage}
-                                                                                id="Innerradius" className='input-field' name='Innerradius' label="Innerradius*" variant="outlined"
-                                                                                value={state.Innerradius}
-                                                                                onChange={(e) => { handleValidation(e); handleChange(e); }} />
-                                                                        </div>
-                                                                        <div className="width-lg" style={{ marginLeft: '10px' }}>
-                                                                            <TextField
-                                                                                error={formValues.SlicesCap.error}
-                                                                                helperText={formValues.SlicesCap.error && formValues.SlicesCap.errorMessage}
-                                                                                id="SlicesCap" className='input-field' name='SlicesCap' label="SlicesCap*" variant="outlined"
-                                                                                value={state.SlicesCap}
-                                                                                onChange={(e) => { handleChange(e) }}
-                                                                                onBlur={(e) => { handleValidation(e) }}
-                                                                            />
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="row-parent">
-                                                                        <div className="row width-lg">
-                                                                            <TextField
-                                                                                error={formValues.ExternalRadiusPadding.error}
-                                                                                helperText={formValues.ExternalRadiusPadding.error && formValues.ExternalRadiusPadding.errorMessage}
-                                                                                id="ExternalRadiusPadding" className='input-field' name='ExternalRadiusPadding' label="ExternalRadiusPadding*" variant="outlined"
-                                                                                value={state.ExternalRadiusPadding}
-                                                                                margin="dense"
-                                                                                onChange={(e) => { handleValidation(e); handleChange(e); }} />
-                                                                        </div>
-                                                                    </div>
-                                                                    {/* <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ marginTop: '20px' }}> */}
-                                                                    <div className="row-parent" style={{ justifyContent: 'space-between' }}>
-                                                                        <div>
-                                                                            Pie
-                                                                        </div>
-                                                                        <div>
-                                                                            <label className="switch">
-                                                                                <input type="checkbox" name="Pieswatch" checked={state.Pieswatch_} onChange={handleShowProps}></input>
-                                                                                <span className="slider round"></span>
-                                                                            </label>
-                                                                        </div>
-
-                                                                    </div>
-                                                                    {state.Pieswatch_ &&
-                                                                        <div style={{ margin: "10px" }}>
-                                                                            <p className="row col-lg-12 subTitle">Background</p>
-                                                                            <div className="row-parent">
-
-                                                                                <div className="row" style={{ width: '20%' }}>
-                                                                                    <input type="color" name='BGColor'
-                                                                                        value={state.BGColor}
-                                                                                        defaultValue={'#ffffff'}
-                                                                                        id="colorPicker" onChange={handleChange}>
-                                                                                    </input>
-
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    }
-
-                                                                    {/* </div> */}
+                                                        <div style={{ marginLeft: '10px' }}>
+                                                            <div className="row-parent">
+                                                                <div className="row width-lg">
+                                                                    <TextField
+                                                                        error={formValues.Innerradius.error}
+                                                                        helperText={formValues.Innerradius.error && formValues.Innerradius.errorMessage}
+                                                                        id="Innerradius" className='input-field' name='Innerradius' label="Innerradius*" variant="outlined"
+                                                                        value={state.Innerradius}
+                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }} />
                                                                 </div>
-                                                            }
+                                                                <div className="width-lg" style={{ marginLeft: '10px' }}>
+                                                                    <TextField
+                                                                        error={formValues.SlicesCap.error}
+                                                                        helperText={formValues.SlicesCap.error && formValues.SlicesCap.errorMessage}
+                                                                        id="SlicesCap" className='input-field' name='SlicesCap' label="SlicesCap*" variant="outlined"
+                                                                        value={state.SlicesCap}
+                                                                        onChange={(e) => { handleChange(e) }}
+                                                                        onBlur={(e) => { handleValidation(e) }}
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                            <div className="row-parent">
+                                                                <div className="row width-lg">
+                                                                    <TextField
+                                                                        error={formValues.ExternalRadiusPadding.error}
+                                                                        helperText={formValues.ExternalRadiusPadding.error && formValues.ExternalRadiusPadding.errorMessage}
+                                                                        id="ExternalRadiusPadding" className='input-field' name='ExternalRadiusPadding' label="ExternalRadiusPadding*" variant="outlined"
+                                                                        value={state.ExternalRadiusPadding}
+                                                                        margin="dense"
+                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                </div>
+                                                            </div>
                                                         </div>
+                                                        {/* <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ marginTop: '20px' }}> */}
+                                                        <div className="row-parent inputfield" style={{ justifyContent: 'space-between' }}>
+                                                            <div>
+                                                                Pie
+                                                            </div>
+                                                            <div>
+                                                                <label className="switch">
+                                                                    <input type="checkbox" name="Pieswatch" checked={state.Pieswatch_} onChange={handleShowProps}></input>
+                                                                    <span className="slider round"></span>
+                                                                </label>
+                                                            </div>
+
+                                                        </div>
+                                                        {state.Pieswatch_ &&
+                                                            <div style={{ margin: "10px" }}>
+                                                                <p className="row col-lg-12 subTitle">Background</p>
+                                                                <div className="row-parent">
+
+                                                                    <div className="row" style={{ width: '20%' }}>
+                                                                        <input type="color" name='BGColor'
+                                                                            value={state.BGColor}
+                                                                            defaultValue={'#ffffff'}
+                                                                            id="colorPicker" onChange={handleChange}>
+                                                                        </input>
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        }
                                                     </div>
                                                 </Typography>
                                             </AccordionDetails>
@@ -3372,53 +3362,45 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                             <AccordionDetails>
                                                 <Typography>
                                                     <div className="col-lg-12">
-                                                        <div className="col-lg-12" >
-                                                            {navbar.bar === 'Charts' &&
-                                                                <div>
-                                                                    <div className="row-parent">
-                                                                        <div className="row width-lg">
-                                                                            <TextField
-                                                                                error={formValues.Innerradius.error}
-                                                                                helperText={formValues.Innerradius.error && formValues.Innerradius.errorMessage}
-                                                                                id="Innerradius" className='input-field' name='Innerradius' label="Innerradius*" variant="outlined"
-                                                                                value={state.Innerradius}
-                                                                                margin="dense"
-                                                                                onChange={(e) => { handleValidation(e); handleChange(e); }} />
-                                                                        </div>
-                                                                    </div>
-                                                                    {/* <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ marginTop: '20px' }}> */}
-                                                                    <div className="row-parent" style={{ justifyContent: 'space-between' }}>
-                                                                        <div>
-                                                                            SunBurst
-                                                                        </div>
-                                                                        <div >
-                                                                            <label className="switch">
-                                                                                <input type="checkbox" name="Pieswatch" checked={state.Pieswatch_} onChange={handleShowProps}></input>
-                                                                                <span className="slider round"></span>
-                                                                            </label>
-                                                                        </div>
-
-                                                                    </div>
-                                                                    {state.Pieswatch_ &&
-                                                                        <div style={{ margin: "10px" }}>
-                                                                            <p className="row col-lg-12 subTitle">Background</p>
-                                                                            <div className="row-parent">
-                                                                                <div className="row" style={{ width: '20%' }}>
-                                                                                    <input type="color" name='BGColor'
-                                                                                        value={state.BGColor}
-                                                                                        defaultValue={'#ffffff'}
-                                                                                        id="colorPicker" onChange={handleChange}>
-                                                                                    </input>
-
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    }
-
-                                                                    {/* </div> */}
-                                                                </div>
-                                                            }
+                                                        <div className="row-parent" style={{ marginLeft: '10px' }}>
+                                                            <div className="row width-lg">
+                                                                <TextField
+                                                                    error={formValues.Innerradius.error}
+                                                                    helperText={formValues.Innerradius.error && formValues.Innerradius.errorMessage}
+                                                                    id="Innerradius" className='input-field' name='Innerradius' label="Innerradius*" variant="outlined"
+                                                                    value={state.Innerradius}
+                                                                    margin="dense"
+                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                            </div>
                                                         </div>
+                                                        <div className="row-parent inputfield" style={{ justifyContent: 'space-between' }}>
+                                                            <div>
+                                                                SunBurst
+                                                            </div>
+                                                            <div >
+                                                                <label className="switch">
+                                                                    <input type="checkbox" name="Pieswatch" checked={state.Pieswatch_} onChange={handleShowProps}></input>
+                                                                    <span className="slider round"></span>
+                                                                </label>
+                                                            </div>
+
+                                                        </div>
+                                                        {state.Pieswatch_ &&
+                                                            <div style={{ margin: "10px" }}>
+                                                                <p className="row col-lg-12 subTitle">Background</p>
+                                                                <div className="row-parent">
+                                                                    <div className="row" style={{ width: '20%' }}>
+                                                                        <input type="color" name='BGColor'
+                                                                            value={state.BGColor}
+                                                                            defaultValue={'#ffffff'}
+                                                                            id="colorPicker" onChange={handleChange}>
+                                                                        </input>
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        }
+
                                                     </div>
                                                 </Typography>
                                             </AccordionDetails>
@@ -3439,69 +3421,64 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                             <AccordionDetails>
                                                 <Typography>
                                                     <div className="col-lg-12">
-                                                        {navbar.bar === 'Charts' &&
+                                                        <div className="row-parent inputfield" style={{ justifyContent: 'space-between' }}>
                                                             <div>
-                                                                <div className="row-parent" style={{ justifyContent: 'space-between' }}>
-                                                                    <div>
-                                                                        Bar
+                                                                Bar
+                                                            </div>
+                                                            <div>
+                                                                <label className="switch">
+                                                                    <input type="checkbox" name="Barswatch" checked={state.Barswatch_} onChange={handleShowProps}></input>
+                                                                    <span className="slider round"></span>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        {state.Barswatch_ &&
+                                                            <div style={{ margin: "10px" }}>
+                                                                <p className="row col-lg-12 subTitle">Padding</p>
+                                                                <div className="row-parent">
+                                                                    <div className="row" style={{ width: '24%' }}>
+                                                                        <TextField
+                                                                            id="PadTop" className='input-field' name='PadTop' label="Top" variant="outlined"
+                                                                            value={state.PadTop}
+                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }} />
                                                                     </div>
-                                                                    <div>
-                                                                        <label className="switch">
-                                                                            <input type="checkbox" name="Barswatch" checked={state.Barswatch_} onChange={handleShowProps}></input>
-                                                                            <span className="slider round"></span>
-                                                                        </label>
+                                                                    <div className="" style={{ width: '24%', marginLeft: '10px' }}>
+                                                                        <TextField
+                                                                            id="PadBottom" className='input-field' name='PadBottom' label="Bottom" variant="outlined"
+                                                                            value={state.PadBottom}
+                                                                            onChange={(e) => { handleChange(e) }}
+                                                                            onBlur={(e) => { handleValidation(e) }}
+                                                                        />
+                                                                    </div>
+                                                                    <div className="" style={{ width: '24%', marginLeft: '10px' }}>
+                                                                        <TextField
+                                                                            id="PadRight" className='input-field' name='PadRight' label="Right" variant="outlined"
+                                                                            value={state.PadRight}
+                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                    </div>
+                                                                    <div className="" style={{ width: '24%', marginLeft: '10px' }}>
+                                                                        <TextField
+                                                                            id="PadLeft" className='input-field' name='PadLeft' label="Left" variant="outlined"
+                                                                            value={state.PadLeft}
+                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                    </div>
+
+                                                                </div>
+
+                                                                <p className="row col-lg-12 subTitle" style={{ marginTop: '10px' }}>Bar Color</p>
+                                                                <div className="row-parent">
+                                                                    <div className="row" style={{ width: '20%' }}>
+                                                                        <input type="color" name='Color' value={state.Color} defaultValue={'#8495e6'} id="colorPicker" onChange={handleChange}></input>
+
                                                                     </div>
                                                                 </div>
-                                                                {state.Barswatch_ &&
-                                                                    <div style={{ margin: "10px" }}>
-                                                                        <p className="row col-lg-12 subTitle">Padding</p>
+                                                                <p className="row col-lg-12 subTitle">Background</p>
+                                                                <div className="row-parent">
+                                                                    <div className="row" style={{ width: '20%' }}>
+                                                                        <input type="color" name='BGColor' defaultValue={'#ffffff'} value={state.BGColor} id="colorPicker" onChange={handleChange}></input>
 
-                                                                        <div className="row-parent">
-                                                                            <div className="row" style={{ width: '24%' }}>
-                                                                                <TextField
-                                                                                    id="PadTop" className='input-field' name='PadTop' label="Top" variant="outlined"
-                                                                                    value={state.PadTop}
-                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }} />
-                                                                            </div>
-                                                                            <div className="" style={{ width: '24%', marginLeft: '10px' }}>
-                                                                                <TextField
-                                                                                    id="PadBottom" className='input-field' name='PadBottom' label="Bottom" variant="outlined"
-                                                                                    value={state.PadBottom}
-                                                                                    onChange={(e) => { handleChange(e) }}
-                                                                                    onBlur={(e) => { handleValidation(e) }}
-                                                                                />
-                                                                            </div>
-                                                                            <div className="" style={{ width: '24%', marginLeft: '10px' }}>
-                                                                                <TextField
-                                                                                    id="PadRight" className='input-field' name='PadRight' label="Right" variant="outlined"
-                                                                                    value={state.PadRight}
-                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }} />
-                                                                            </div>
-                                                                            <div className="" style={{ width: '24%', marginLeft: '10px' }}>
-                                                                                <TextField
-                                                                                    id="PadLeft" className='input-field' name='PadLeft' label="Left" variant="outlined"
-                                                                                    value={state.PadLeft}
-                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }} />
-                                                                            </div>
-
-                                                                        </div>
-
-                                                                        <p className="row col-lg-12 subTitle" style={{ marginTop: '10px' }}>Bar Color</p>
-                                                                        <div className="row-parent">
-                                                                            <div className="row" style={{ width: '20%' }}>
-                                                                                <input type="color" name='Color' value={state.Color} defaultValue={'#8495e6'} id="colorPicker" onChange={handleChange}></input>
-
-                                                                            </div>
-                                                                        </div>
-                                                                        <p className="row col-lg-12 subTitle">Background</p>
-                                                                        <div className="row-parent">
-                                                                            <div className="row" style={{ width: '20%' }}>
-                                                                                <input type="color" name='BGColor' defaultValue={'#ffffff'} value={state.BGColor} id="colorPicker" onChange={handleChange}></input>
-
-                                                                            </div>
-                                                                        </div>
                                                                     </div>
-                                                                }
+                                                                </div>
                                                             </div>
                                                         }
                                                     </div>
@@ -3524,76 +3501,74 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                             <AccordionDetails>
                                                 <Typography>
                                                     <div className=" col-lg-12" >
-                                                        <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                                            <div className="row-parent">
-                                                                <div className="row width-lg" >
-                                                                    <TextField
-                                                                        error={formValues.SymbolSize.error}
-                                                                        helperText={formValues.SymbolSize.error && formValues.SymbolSize.errorMessage}
-                                                                        id="SymbolSize" className='input-field' name='SymbolSize' label="SymbolSize*" variant="outlined"
-                                                                        value={state.SymbolSize}
-                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }} />
-                                                                </div>
+                                                        <div className="row-parent" style={{ marginLeft: '10px' }}>
+                                                            <div className="row width-lg" >
+                                                                <TextField
+                                                                    error={formValues.SymbolSize.error}
+                                                                    helperText={formValues.SymbolSize.error && formValues.SymbolSize.errorMessage}
+                                                                    id="SymbolSize" className='input-field' name='SymbolSize' label="SymbolSize*" variant="outlined"
+                                                                    value={state.SymbolSize}
+                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }} />
                                                             </div>
-                                                            <div className="row-parent" style={{ justifyContent: 'space-between' }}>
-                                                                <div>
-                                                                    Scatter
-                                                                </div>
-                                                                <div>
-                                                                    <label className="switch">
-                                                                        <input type="checkbox" name="Scatterswatch" checked={state.Scatterswatch_} onChange={handleShowProps}></input>
-                                                                        <span className="slider round"></span>
-                                                                    </label>
-                                                                </div>
-
-                                                            </div>
-                                                            {state.Scatterswatch_ &&
-                                                                <div style={{ margin: "10px" }}>
-                                                                    <p className="row col-lg-12 subTitle">Padding</p>
-
-                                                                    <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" >
-                                                                        <div className="row col-sm-12 col-md-12 col-lg-3" >
-                                                                            <TextField
-                                                                                id="PadTop" className='input-field' name='PadTop' label="Top" variant="outlined"
-                                                                                value={state.PadTop}
-                                                                                onChange={(e) => { handleValidation(e); handleChange(e); }} />
-                                                                        </div>
-                                                                        <div className="row col-sm-12 col-md-12 col-lg-3"   >
-                                                                            <TextField
-                                                                                id="PadBottom" className='input-field' name='PadBottom' label="Bottom" variant="outlined"
-                                                                                value={state.PadBottom}
-                                                                                onChange={(e) => { handleChange(e) }}
-                                                                                onBlur={(e) => { handleValidation(e) }}
-                                                                            />
-                                                                        </div>
-                                                                        <div className="row col-sm-12 col-md-12 col-lg-3" >
-                                                                            <TextField
-                                                                                id="PadRight" className='input-field' name='PadRight' label="Right" variant="outlined"
-                                                                                value={state.PadRight}
-                                                                                onChange={(e) => { handleValidation(e); handleChange(e); }} />
-                                                                        </div>
-                                                                        <div className="row col-sm-12 col-md-12 col-lg-3" >
-                                                                            <TextField
-                                                                                id="PadLeft" className='input-field' name='PadLeft' label="Left" variant="outlined"
-                                                                                value={state.PadLeft}
-                                                                                onChange={(e) => { handleValidation(e); handleChange(e); }} />
-                                                                        </div>
-
-                                                                    </div>
-                                                                    <p className="row col-lg-12" style={{ marginTop: '10px' }}>Color</p>
-
-                                                                    <div className="row col-xs-12 col-sm-2 col-md-4 col-lg-3 inputfield">
-                                                                        <input type="color" name='Color' defaultValue={'#000000'} value={state.Color} id="colorPicker" onChange={handleChange}></input>
-
-                                                                    </div>
-                                                                    <p className="row col-lg-12">Background</p>
-                                                                    <div className="row col-xs-12 col-sm-2 col-md-4 col-lg-3 inputfield">
-                                                                        <input type="color" name='BGColor' defaultValue={'#ffffff'} value={state.BGColor} id="colorPicker" onChange={handleChange}></input>
-
-                                                                    </div>
-                                                                </div>
-                                                            }
                                                         </div>
+                                                        <div className="row-parent inputfield" style={{ justifyContent: 'space-between' }}>
+                                                            <div>
+                                                                Scatter
+                                                            </div>
+                                                            <div>
+                                                                <label className="switch">
+                                                                    <input type="checkbox" name="Scatterswatch" checked={state.Scatterswatch_} onChange={handleShowProps}></input>
+                                                                    <span className="slider round"></span>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        {state.Scatterswatch_ &&
+                                                            <div style={{ margin: "10px" }}>
+                                                                <p className="row col-lg-12 subTitle">Padding</p>
+                                                                <div className="row-parent">
+                                                                    <div className="row" style={{ width: '24%' }}>
+                                                                        <TextField
+                                                                            id="PadTop" className='input-field' name='PadTop' label="Top" variant="outlined"
+                                                                            value={state.PadTop}
+                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                    </div>
+                                                                    <div className="" style={{ width: '24%', marginLeft: '10px' }}>
+                                                                        <TextField
+                                                                            id="PadBottom" className='input-field' name='PadBottom' label="Bottom" variant="outlined"
+                                                                            value={state.PadBottom}
+                                                                            onChange={(e) => { handleChange(e) }}
+                                                                            onBlur={(e) => { handleValidation(e) }}
+                                                                        />
+                                                                    </div>
+                                                                    <div className="" style={{ width: '24%', marginLeft: '10px' }}>
+                                                                        <TextField
+                                                                            id="PadRight" className='input-field' name='PadRight' label="Right" variant="outlined"
+                                                                            value={state.PadRight}
+                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                    </div>
+                                                                    <div className="" style={{ width: '24%', marginLeft: '10px' }}>
+                                                                        <TextField
+                                                                            id="PadLeft" className='input-field' name='PadLeft' label="Left" variant="outlined"
+                                                                            value={state.PadLeft}
+                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                    </div>
+
+                                                                </div>
+                                                                <p className="row col-lg-12 subTitle" style={{ marginTop: '10px' }}>Color</p>
+                                                                <div className="row-parent">
+                                                                    <div className="row" style={{ width: '20%' }}>
+                                                                        <input type="color" name='Color' value={state.Color} defaultValue={'#8495e6'} id="colorPicker" onChange={handleChange}></input>
+
+                                                                    </div>
+                                                                </div>
+                                                                <p className="row col-lg-12 subTitle">Background</p>
+                                                                <div className="row-parent">
+                                                                    <div className="row" style={{ width: '20%' }}>
+                                                                        <input type="color" name='BGColor' defaultValue={'#ffffff'} value={state.BGColor} id="colorPicker" onChange={handleChange}></input>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        }
                                                     </div>
                                                 </Typography>
                                             </AccordionDetails>
@@ -3613,71 +3588,65 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                             <AccordionDetails>
                                                 <Typography>
                                                     <div className="col-lg-12">
-                                                        <div className=" col-lg-12" style={{ margin: "0px 0px 15px 0px" }}>
-                                                            {navbar.bar === 'Charts' &&
+                                                        <div className="row-parent inputfield" style={{ justifyContent: 'space-between' }}>
+                                                            <div>
+                                                                Line
+                                                            </div>
+                                                            <div>
+                                                                <label className="switch">
+                                                                    <input type="checkbox" name="Lineswatch" checked={state.Lineswatch_} onChange={handleShowProps}></input>
+                                                                    <span className="slider round"></span>
+                                                                </label>
+                                                            </div>
 
-                                                                <>
-                                                                    <div className="row col-lg-12">
-                                                                        <div className="row col-xm-3 col-sm-3 col-md-3 col-lg-3" >
-                                                                            Line
-                                                                        </div>
-                                                                        <div className="row col-xm-4 col-sm-4 col-md-4 col-lg-4" >
-                                                                            <label className="switch">
-                                                                                <input type="checkbox" name="Lineswatch" checked={state.Lineswatch_} onChange={handleShowProps}></input>
-                                                                                <span className="slider round"></span>
-                                                                            </label>
-                                                                        </div>
+                                                        </div>
+                                                        {state.Lineswatch_ &&
+                                                            <div style={{ margin: "10px" }}>
+                                                                <p className="row col-lg-12 subTitle">Padding</p>
+                                                                <div className="row-parent">
+                                                                    <div className="row" style={{ width: '24%' }}>
+                                                                        <TextField
+                                                                            id="PadTop" className='input-field' name='PadTop' label="Top" variant="outlined"
+                                                                            value={state.PadTop}
+                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                    </div>
+                                                                    <div className="" style={{ width: '24%', marginLeft: '10px' }}>
+                                                                        <TextField
+                                                                            id="PadBottom" className='input-field' name='PadBottom' label="Bottom" variant="outlined"
+                                                                            value={state.PadBottom}
+                                                                            onChange={(e) => { handleChange(e) }}
+                                                                            onBlur={(e) => { handleValidation(e) }}
+                                                                        />
+                                                                    </div>
+                                                                    <div className="" style={{ width: '24%', marginLeft: '10px' }}>
+                                                                        <TextField
+                                                                            id="PadRight" className='input-field' name='PadRight' label="Right" variant="outlined"
+                                                                            value={state.PadRight}
+                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                    </div>
+                                                                    <div className="" style={{ width: '24%', marginLeft: '10px' }}>
+                                                                        <TextField
+                                                                            id="PadLeft" className='input-field' name='PadLeft' label="Left" variant="outlined"
+                                                                            value={state.PadLeft}
+                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                    </div>
+
+                                                                </div>
+                                                                <p className="row col-lg-12 subTitle" style={{ marginTop: '10px' }}>Color</p>
+                                                                <div className="row-parent">
+                                                                    <div className="row" style={{ width: '20%' }}>
+                                                                        <input type="color" name='Color' value={state.Color} defaultValue={'#8495e6'} id="colorPicker" onChange={handleChange}></input>
 
                                                                     </div>
-                                                                    {state.Lineswatch_ &&
-                                                                        <>
-                                                                            <p className="row col-lg-12" style={{ marginTop: '10px' }}>Padding</p>
-
-                                                                            <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" >
-                                                                                <div className="row col-sm-12 col-md-12 col-lg-3" >
-                                                                                    <TextField
-                                                                                        id="PadTop" className='input-field' name='PadTop' label="Top" variant="outlined"
-                                                                                        value={state.PadTop}
-                                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }} />
-                                                                                </div>
-                                                                                <div className="row col-sm-12 col-md-12 col-lg-3"   >
-                                                                                    <TextField
-                                                                                        id="PadBottom" className='input-field' name='PadBottom' label="Bottom" variant="outlined"
-                                                                                        value={state.PadBottom}
-                                                                                        onChange={(e) => { handleChange(e) }}
-                                                                                        onBlur={(e) => { handleValidation(e) }}
-                                                                                    />
-                                                                                </div>
-                                                                                <div className="row col-sm-12 col-md-12 col-lg-3" >
-                                                                                    <TextField
-                                                                                        id="PadRight" className='input-field' name='PadRight' label="Right" variant="outlined"
-                                                                                        value={state.PadRight}
-                                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }} />
-                                                                                </div>
-                                                                                <div className="row col-sm-12 col-md-12 col-lg-3" >
-                                                                                    <TextField
-                                                                                        id="PadLeft" className='input-field' name='PadLeft' label="Left" variant="outlined"
-                                                                                        value={state.PadLeft}
-                                                                                        onChange={(e) => { handleValidation(e); handleChange(e); }} />
-                                                                                </div>
-
-                                                                            </div>
-                                                                            <p className="row col-lg-12" style={{ marginTop: '10px' }}>Color</p>
-
-                                                                            <div className="row col-xs-12 col-sm-2 col-md-4 col-lg-3 inputfield">
-                                                                                <input type="color" name='Color' defaultValue={'#6282b3'} value={state.Color} id="colorPicker" onChange={handleChange}></input>
-
-                                                                            </div>
-                                                                            <p className="row col-lg-12">Background</p>
-                                                                            <div className="row col-xs-12 col-sm-2 col-md-4 col-lg-3 inputfield">
-                                                                                <input type="color" name='BGColor' defaultValue={'#ffffff'} value={state.BGColor} id="colorPicker" onChange={handleChange}></input>
-
-                                                                            </div>
-                                                                        </>
-                                                                    }
-                                                                </>
-                                                            }
-                                                        </div>
+                                                                </div>
+                                                                <p className="row col-lg-12 subTitle">Background</p>
+                                                                <div className="row-parent">
+                                                                    <div className="row" style={{ width: '20%' }}>
+                                                                        <input type="color" name='BGColor' defaultValue={'#ffffff'} value={state.BGColor} id="colorPicker" onChange={handleChange}></input>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        }
                                                     </div>
                                                 </Typography>
                                             </AccordionDetails>
@@ -3699,67 +3668,62 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                             <AccordionDetails>
                                                 <Typography>
                                                     <div className=" col-lg-12" >
-                                                        {navbar.bar === 'Charts' &&
-                                                            <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ margin: "0px 0px 15px 0px" }}>
-
-                                                                <div className="row col-lg-12">
-                                                                    <div className="row col-xm-3 col-sm-3 col-md-3 col-lg-3" >
-                                                                        Series
+                                                        <div className="row-parent inputfield" style={{ justifyContent: 'space-between' }}>
+                                                            <div>
+                                                                Series
+                                                            </div>
+                                                            <div>
+                                                                <label className="switch">
+                                                                    <input type="checkbox" name="Seriesswatch" checked={state.Seriesswatch_} onChange={handleShowProps}></input>
+                                                                    <span className="slider round"></span>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        {state.Seriesswatch_ &&
+                                                            <div style={{ margin: "10px" }}>
+                                                                <p className="row col-lg-12 subTitle">Padding</p>
+                                                                <div className="row-parent">
+                                                                    <div className="row" style={{ width: '24%' }}>
+                                                                        <TextField
+                                                                            id="PadTop" className='input-field' name='PadTop' label="Top" variant="outlined"
+                                                                            value={state.PadTop}
+                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }} />
                                                                     </div>
-                                                                    <div className="row col-xm-4 col-sm-4 col-md-4 col-lg-4" >
-                                                                        <label className="switch">
-                                                                            <input type="checkbox" name="Seriesswatch" checked={state.Seriesswatch_} onChange={handleShowProps}></input>
-                                                                            <span className="slider round"></span>
-                                                                        </label>
+                                                                    <div className="" style={{ width: '24%', marginLeft: '10px' }}>
+                                                                        <TextField
+                                                                            id="PadBottom" className='input-field' name='PadBottom' label="Bottom" variant="outlined"
+                                                                            value={state.PadBottom}
+                                                                            onChange={(e) => { handleChange(e) }}
+                                                                            onBlur={(e) => { handleValidation(e) }}
+                                                                        />
+                                                                    </div>
+                                                                    <div className="" style={{ width: '24%', marginLeft: '10px' }}>
+                                                                        <TextField
+                                                                            id="PadRight" className='input-field' name='PadRight' label="Right" variant="outlined"
+                                                                            value={state.PadRight}
+                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                    </div>
+                                                                    <div className="" style={{ width: '24%', marginLeft: '10px' }}>
+                                                                        <TextField
+                                                                            id="PadLeft" className='input-field' name='PadLeft' label="Left" variant="outlined"
+                                                                            value={state.PadLeft}
+                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }} />
                                                                     </div>
 
                                                                 </div>
-                                                                {state.Seriesswatch_ &&
-                                                                    <>
-                                                                        <p className="row col-lg-12" style={{ marginTop: '10px' }}>Padding</p>
+                                                                <p className="row col-lg-12 subTitle" style={{ marginTop: '10px' }}>Color</p>
+                                                                <div className="row-parent">
+                                                                    <div className="row" style={{ width: '20%' }}>
+                                                                        <input type="color" name='Color' value={state.Color} defaultValue={'#8495e6'} id="colorPicker" onChange={handleChange}></input>
 
-                                                                        <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" >
-                                                                            <div className="row col-sm-12 col-md-12 col-lg-3" >
-                                                                                <TextField
-                                                                                    id="PadTop" className='input-field' name='PadTop' label="Top" variant="outlined"
-                                                                                    value={state.PadTop}
-                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }} />
-                                                                            </div>
-                                                                            <div className="row col-sm-12 col-md-12 col-lg-3"   >
-                                                                                <TextField
-                                                                                    id="PadBottom" className='input-field' name='PadBottom' label="Bottom" variant="outlined"
-                                                                                    value={state.PadBottom}
-                                                                                    onChange={(e) => { handleChange(e) }}
-                                                                                    onBlur={(e) => { handleValidation(e) }}
-                                                                                />
-                                                                            </div>
-                                                                            <div className="row col-sm-12 col-md-12 col-lg-3" >
-                                                                                <TextField
-                                                                                    id="PadRight" className='input-field' name='PadRight' label="Right" variant="outlined"
-                                                                                    value={state.PadRight}
-                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }} />
-                                                                            </div>
-                                                                            <div className="row col-sm-12 col-md-12 col-lg-3" >
-                                                                                <TextField
-                                                                                    id="PadLeft" className='input-field' name='PadLeft' label="Left" variant="outlined"
-                                                                                    value={state.PadLeft}
-                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }} />
-                                                                            </div>
-
-                                                                        </div>
-                                                                        <p className="row col-lg-12" style={{ marginTop: '10px' }}>Color</p>
-
-                                                                        <div className="row col-xs-12 col-sm-2 col-md-4 col-lg-3 inputfield">
-                                                                            <input type="color" name='Color' defaultValue={'#6282b3'} value={state.Color} id="colorPicker" onChange={handleChange}></input>
-
-                                                                        </div>
-                                                                        <p className="row col-lg-12">Background</p>
-                                                                        <div className="row col-xs-12 col-sm-2 col-md-4 col-lg-3 inputfield">
-                                                                            <input type="color" name='BGColor' defaultValue={'#ffffff'} value={state.BGColor} id="colorPicker" onChange={handleChange}></input>
-
-                                                                        </div>
-                                                                    </>
-                                                                }
+                                                                    </div>
+                                                                </div>
+                                                                <p className="row col-lg-12 subTitle">Background</p>
+                                                                <div className="row-parent">
+                                                                    <div className="row" style={{ width: '20%' }}>
+                                                                        <input type="color" name='BGColor' defaultValue={'#ffffff'} value={state.BGColor} id="colorPicker" onChange={handleChange}></input>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         }
                                                     </div>
@@ -3777,74 +3741,62 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                 id="panel1a-header"
                                             >
                                                 <Typography className="acdTitle">Composite&nbsp;&nbsp;</Typography>
-                                                {/* <Typography className="acdTitle acdswatch" style={{ paddingLeft: '48%' }}>
-                                            <div>
-                                                <label className="switch">
-                                                    <input type="checkbox" name="Compositeswatch" checked={state.Compositeswatch_} onChange={handleShowProps}></input>
-                                                    <span className="slider round"></span>
-                                                </label>
-                                            </div>
-                                        </Typography> */}
                                             </AccordionSummary>
 
                                             <AccordionDetails>
                                                 <Typography>
-                                                    <div className=" col-lg-12" style={{ marginTop: '10px' }}>
-                                                        {navbar.bar === 'Charts' &&
-                                                            <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ margin: "0px 0px 15px 0px" }}>
-                                                                <div className="row col-lg-12">
-                                                                    <div className="row col-xm-3 col-sm-3 col-md-3 col-lg-3" >
-                                                                        Composite
+                                                    <div className=" col-lg-12">
+                                                        <div className="row-parent inputfield" style={{ justifyContent: 'space-between' }}>
+                                                            <div>
+                                                                Composite
+                                                            </div>
+                                                            <div>
+                                                                <label className="switch">
+                                                                    <input type="checkbox" name="Compositeswatch" checked={state.Compositeswatch_} onChange={handleShowProps}></input>
+                                                                    <span className="slider round"></span>
+                                                                </label>
+                                                            </div>
+
+                                                        </div>
+                                                        {state.Compositeswatch_ &&
+                                                            <div style={{ margin: "10px" }}>
+                                                                <p className="row col-lg-12" style={{ marginTop: '10px' }}>Padding</p>
+                                                                <div className="row-parent">
+                                                                    <div className="row" style={{ width: '24%' }}>
+                                                                        <TextField
+                                                                            id="PadTop" className='input-field' name='PadTop' label="Top" variant="outlined"
+                                                                            value={state.PadTop}
+                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }} />
                                                                     </div>
-                                                                    <div className="row col-xm-4 col-sm-4 col-md-4 col-lg-4" >
-                                                                        <label className="switch">
-                                                                            <input type="checkbox" name="Compositeswatch" checked={state.Compositeswatch_} onChange={handleShowProps}></input>
-                                                                            <span className="slider round"></span>
-                                                                        </label>
+                                                                    <div className="" style={{ width: '24%', marginLeft: '10px' }}>
+                                                                        <TextField
+                                                                            id="PadBottom" className='input-field' name='PadBottom' label="Bottom" variant="outlined"
+                                                                            value={state.PadBottom}
+                                                                            onChange={(e) => { handleChange(e) }}
+                                                                            onBlur={(e) => { handleValidation(e) }}
+                                                                        />
+                                                                    </div>
+                                                                    <div className="" style={{ width: '24%', marginLeft: '10px' }}>
+                                                                        <TextField
+                                                                            id="PadRight" className='input-field' name='PadRight' label="Right" variant="outlined"
+                                                                            value={state.PadRight}
+                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                    </div>
+                                                                    <div className="" style={{ width: '24%', marginLeft: '10px' }}>
+                                                                        <TextField
+                                                                            id="PadLeft" className='input-field' name='PadLeft' label="Left" variant="outlined"
+                                                                            value={state.PadLeft}
+                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }} />
                                                                     </div>
 
                                                                 </div>
-                                                                {state.Compositeswatch_ &&
-                                                                    <>
-                                                                        <p className="row col-lg-12" style={{ marginTop: '10px' }}>Padding</p>
 
-                                                                        <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" >
-                                                                            <div className="row col-sm-12 col-md-12 col-lg-3" >
-                                                                                <TextField
-                                                                                    id="PadTop" className='input-field' name='PadTop' label="Top" variant="outlined"
-                                                                                    value={state.PadTop}
-                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }} />
-                                                                            </div>
-                                                                            <div className="row col-sm-12 col-md-12 col-lg-3"   >
-                                                                                <TextField
-                                                                                    id="PadBottom" className='input-field' name='PadBottom' label="Bottom" variant="outlined"
-                                                                                    value={state.PadBottom}
-                                                                                    onChange={(e) => { handleChange(e) }}
-                                                                                    onBlur={(e) => { handleValidation(e) }}
-                                                                                />
-                                                                            </div>
-                                                                            <div className="row col-sm-12 col-md-12 col-lg-3" >
-                                                                                <TextField
-                                                                                    id="PadRight" className='input-field' name='PadRight' label="Right" variant="outlined"
-                                                                                    value={state.PadRight}
-                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }} />
-                                                                            </div>
-                                                                            <div className="row col-sm-12 col-md-12 col-lg-3" >
-                                                                                <TextField
-                                                                                    id="PadLeft" className='input-field' name='PadLeft' label="Left" variant="outlined"
-                                                                                    value={state.PadLeft}
-                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }} />
-                                                                            </div>
-
-                                                                        </div>
-
-                                                                        <p className="row col-lg-12" style={{ marginTop: '10px' }}>Background</p>
-                                                                        <div className="row col-xs-12 col-sm-2 col-md-4 col-lg-3 inputfield">
-                                                                            <input type="color" name='BGColor' defaultValue={'#ffffff'} value={state.BGColor} id="colorPicker" onChange={handleChange}></input>
-
-                                                                        </div>
-                                                                    </>
-                                                                }
+                                                                <p className="row col-lg-12 subTitle">Background</p>
+                                                                <div className="row-parent">
+                                                                    <div className="row" style={{ width: '20%' }}>
+                                                                        <input type="color" name='BGColor' defaultValue={'#ffffff'} value={state.BGColor} id="colorPicker" onChange={handleChange}></input>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         }
                                                     </div>
@@ -3867,73 +3819,69 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                             <AccordionDetails>
                                                 <Typography>
                                                     <div className=" col-lg-12" >
-                                                        {navbar.bar === 'Charts' &&
-                                                            <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ margin: "0px 0px 15px 0px" }}>
+                                                        <div className="row-parent inputfield" style={{ justifyContent: 'space-between' }}>
+                                                            <div>
+                                                                Bar Line
+                                                            </div>
+                                                            <div>
+                                                                <label className="switch">
+                                                                    <input type="checkbox" name="BarLineswatch" checked={state.BarLineswatch_} onChange={handleShowProps}></input>
+                                                                    <span className="slider round"></span>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        {state.BarLineswatch_ &&
+                                                            <div style={{ margin: "10px" }}>
+                                                                <p className="row col-lg-12" style={{ marginTop: '10px' }}>Padding</p>
 
-                                                                <div className="row col-lg-12">
-                                                                    <div className="row col-xm-3 col-sm-3 col-md-3 col-lg-3" >
-                                                                        Bar Line
+                                                                <div className="row-parent">
+                                                                    <div className="row" style={{ width: '24%' }}>
+                                                                        <TextField
+                                                                            id="PadTop" className='input-field' name='PadTop' label="Top" variant="outlined"
+                                                                            value={state.PadTop}
+                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }} />
                                                                     </div>
-                                                                    <div className="row col-xm-4 col-sm-4 col-md-4 col-lg-4" >
-                                                                        <label className="switch">
-                                                                            <input type="checkbox" name="BarLineswatch" checked={state.BarLineswatch_} onChange={handleShowProps}></input>
-                                                                            <span className="slider round"></span>
-                                                                        </label>
+                                                                    <div className="" style={{ width: '24%', marginLeft: '10px' }}>
+                                                                        <TextField
+                                                                            id="PadBottom" className='input-field' name='PadBottom' label="Bottom" variant="outlined"
+                                                                            value={state.PadBottom}
+                                                                            onChange={(e) => { handleChange(e) }}
+                                                                            onBlur={(e) => { handleValidation(e) }}
+                                                                        />
+                                                                    </div>
+                                                                    <div className="" style={{ width: '24%', marginLeft: '10px' }}>
+                                                                        <TextField
+                                                                            id="PadRight" className='input-field' name='PadRight' label="Right" variant="outlined"
+                                                                            value={state.PadRight}
+                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }} />
+                                                                    </div>
+                                                                    <div className="" style={{ width: '24%', marginLeft: '10px' }}>
+                                                                        <TextField
+                                                                            id="PadLeft" className='input-field' name='PadLeft' label="Left" variant="outlined"
+                                                                            value={state.PadLeft}
+                                                                            onChange={(e) => { handleValidation(e); handleChange(e); }} />
                                                                     </div>
 
                                                                 </div>
-                                                                {state.BarLineswatch &&
-                                                                    <>
-                                                                        <p className="row col-lg-12" style={{ marginTop: '10px' }}>Padding</p>
+                                                                <p className="row col-lg-12 subTitle">Color</p>
 
-                                                                        <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" >
-                                                                            <div className="row col-sm-12 col-md-12 col-lg-3" >
-                                                                                <TextField
-                                                                                    id="PadTop" className='input-field' name='PadTop' label="Top" variant="outlined"
-                                                                                    value={state.PadTop}
-                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }} />
-                                                                            </div>
-                                                                            <div className="row col-sm-12 col-md-12 col-lg-3"   >
-                                                                                <TextField
-                                                                                    id="PadBottom" className='input-field' name='PadBottom' label="Bottom" variant="outlined"
-                                                                                    value={state.PadBottom}
-                                                                                    onChange={(e) => { handleChange(e) }}
-                                                                                    onBlur={(e) => { handleValidation(e) }}
-                                                                                />
-                                                                            </div>
-                                                                            <div className="row col-sm-12 col-md-12 col-lg-3" >
-                                                                                <TextField
-                                                                                    id="PadRight" className='input-field' name='PadRight' label="Right" variant="outlined"
-                                                                                    value={state.PadRight}
-                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }} />
-                                                                            </div>
-                                                                            <div className="row col-sm-12 col-md-12 col-lg-3" >
-                                                                                <TextField
-                                                                                    id="PadLeft" className='input-field' name='PadLeft' label="Left" variant="outlined"
-                                                                                    value={state.PadLeft}
-                                                                                    onChange={(e) => { handleValidation(e); handleChange(e); }} />
-                                                                            </div>
-
-                                                                        </div>
-                                                                        <p className="row col-lg-12" style={{ marginTop: '10px' }}>Color</p>
-
-                                                                        <div className="row col-xs-12 col-sm-2 col-md-4 col-lg-3 inputfield">
-                                                                            <input type="color" name='Color' defaultValue={'#6282b3'} value={state.Color} id="colorPicker" onChange={handleChange}></input>
-
-                                                                        </div>
-                                                                        <p className="row col-lg-12">Line Color</p>
-
-                                                                        <div className="row col-xs-12 col-sm-2 col-md-4 col-lg-3 inputfield">
-                                                                            <input type="color" name='LineColor' defaultValue={'#FF0000'} value={state.LineColor} id="colorPicker" onChange={handleChange}></input>
-
-                                                                        </div>
-                                                                        <p className="row col-lg-12">Background</p>
-                                                                        <div className="row col-xs-12 col-sm-2 col-md-4 col-lg-3 inputfield">
-                                                                            <input type="color" name='BGColor' defaultValue={'#ffffff'} value={state.BGColor} id="colorPicker" onChange={handleChange}></input>
-
-                                                                        </div>
-                                                                    </>
-                                                                }
+                                                                <div className="row-parent">
+                                                                    <div className="row" style={{ width: '20%' }}>
+                                                                        <input type="color" name='Color' defaultValue={'#6282b3'} value={state.Color} id="colorPicker" onChange={handleChange}></input>
+                                                                    </div>
+                                                                </div>
+                                                                <p className="row col-lg-12 subTitle">Line Color</p>
+                                                                <div className="row-parent">
+                                                                    <div className="row" style={{ width: '20%' }}>
+                                                                        <input type="color" name='LineColor' defaultValue={'#FF0000'} value={state.LineColor} id="colorPicker" onChange={handleChange}></input>
+                                                                    </div>
+                                                                </div>
+                                                                <p className="row col-lg-12 subTitle">Background</p>
+                                                                <div className="row-parent">
+                                                                    <div className="row" style={{ width: '20%' }}>
+                                                                        <input type="color" name='BGColor' defaultValue={'#ffffff'} value={state.BGColor} id="colorPicker" onChange={handleChange}></input>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         }
                                                     </div>
@@ -3943,44 +3891,47 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                         : ''
                                     }
                                     {flag && navbar.bar === 'Charts' ?
-                                        <div className="col-sm-12 col-md-12 col-lg-12" style={{ marginTop: '10px' }}>
-                                            <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                                <TextField
-                                                    id="TempDescription" label="Description" value={state.TempDescription} name="TempDescription" fullWidth multiline maxRows={4}
-                                                    onChange={handleChange}
-                                                />
-                                            </div>
+                                        <div>
+                                            <TextField
+                                                id="TempDescription" label="Description" value={state.TempDescription} name="TempDescription" fullWidth multiline maxRows={4}
+                                                onChange={handleChange}
+                                            />
                                         </div>
                                         : ''
                                     }
                                     {navbar.bar === 'Charts' &&
-                                        <div className="row col-sm-12 col-md-12 col-lg-12" style={{ marginTop: '10px' }}>
-                                            {navbar.bar === 'Charts' && state.Uploaded_file !== undefined && flag !== true ?
-
-                                                <div className="row col-sm-4 col-md-12 col-lg-6" style={{ marginTop: '10px' }}>
-                                                    <Button disabled={disable} variant="contained" id="ChartGen" className='input-field button' style={{ backgroundColor: '#6282b3' }} onClick={(e) => { setProgress({ 'loader': true }); GenerateChart() }}>
-                                                        Generate Chart
+                                        <div className="row-parent" style={{ marginTop: '10px' }}>
+                                            {state.Chart !== 'Select' && state.Chart !== undefined && navbar.bar === 'Charts' && flag === false ?
+                                                <div className="row width-lg" style={{ marginLeft: '10px' }}>
+                                                    <Button id="saveTemp" variant="contained" className='input-field button' style={{ backgroundColor: '#6282b3', lineHeight: '1rem' }} onClick={(e) => { setOpen({ 'Template': true }) }}>
+                                                        Save as Template
                                                     </Button>
                                                 </div>
                                                 : ''
                                             }
-                                            {state.Chart !== 'Select' && state.Chart !== undefined && navbar.bar === 'Charts' && flag === false ?
-                                                <div className="row col-sm-4 col-md-12 col-lg-6" style={{ marginTop: '10px' }}>
-                                                    <Button id="saveTemp" variant="contained" className='input-field button' style={{ backgroundColor: '#6282b3', lineHeight: '1rem' }} onClick={(e) => { setOpen({ 'Template': true }) }}>
-                                                        Save Template
+                                            {navbar.bar === 'Charts' && state.Uploaded_file !== undefined && flag !== true ?
+                                                <div className="row width-lg" style={{ marginLeft: '10px' }}>
+                                                    <Button
+                                                        disabled={disable}
+                                                        variant="contained"
+                                                        id="ChartGen"
+                                                        className='input-field button btn-transparant'
+                                                        style={{ backgroundColor: '#6282b3' }}
+                                                        onClick={(e) => { setProgress({ 'loader': true }); GenerateChart() }}>
+                                                        Generate Chart
                                                     </Button>
                                                 </div>
                                                 : ''
                                             }
                                             {state.Chart !== 'Select' && state.Chart !== undefined && navbar.bar === 'Charts' && flag === true ?
                                                 <>
-                                                    <div className="row col-sm-4 col-md-12 col-lg-3" style={{ marginTop: '10px' }}>
+                                                    <div className="row width-mid-md">
                                                         <Button id="saveTemp" variant="contained" className='input-field button' style={{ backgroundColor: '#6282b3', lineHeight: '1rem' }} onClick={(e) => { saveTemplate('update') }}>
                                                             Update
                                                         </Button>
                                                     </div>
-                                                    <div className="row col-sm-4 col-md-12 col-lg-3" style={{ marginTop: '10px' }}>
-                                                        <Button id="saveTemp" variant="contained" className='input-field button' style={{ backgroundColor: '#6282b3', lineHeight: '1rem' }} onClick={(e) => { saveTemplate('cancel') }}>
+                                                    <div className="row width-mid-md">
+                                                        <Button id="saveTemp" variant="contained" className='input-field button btn-transparant' style={{ backgroundColor: '#6282b3', lineHeight: '1rem' }} onClick={(e) => { saveTemplate('cancel') }}>
                                                             Cancel
                                                         </Button>
                                                     </div>
@@ -4118,7 +4069,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                         : ''
                     }
                     {navbar.bar === 'Demo' &&
-                        <div className="row col-sm-12 col-md-12 col-lg-12" style={{ margin: "15px 0px 15px 10px" }}>
+                        <div className="row col-sm-12 col-md-12 col-lg-12" style={{ margin: "15px 0px 15px 0px" }}>
                             <div className="col-sm-12 col-md-4 col-lg-4">
                             </div>
                             <div className="row1-container">
@@ -4586,17 +4537,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
 
                     {navbar.bar === 'Feedback' &&
                         <>
-                            <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ margin: '15px 0px 15px 10px' }}>
-                                {/* <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                    <TextField id="Username"
-                                        error={formValues.UName.error}
-                                        helperText={formValues.UName.error && formValues.UName.errorMessage}
-                                        margin="dense" fullWidth className='input-field' name='UName' label="User Name*" variant="outlined"
-                                        // value={state.YAxisLabel}
-                                        onChange={(e) => { setFeedback({ ...feedback, 'Reported By': e.target.value }) }}
-                                        onBlur={(e) => { handleValidation(e) }}
-                                    />
-                                </div> */}
+                            <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ margin: '15px 10px 15px 10px' }}>
                                 <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" >
                                     <TextField
                                         error={formValues.Category.error}
@@ -4671,8 +4612,8 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                         onBlur={(e) => { handleValidation(e) }}
                                     />
                                 </div>
-                                <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{ display: 'flex' }}>
-                                    <Button variant="contained" margin="normal" className='input-field button' style={{ backgroundColor: '#6282b3', float: 'left', marginTop: '10px' }} onClick={(e) => { handleFeedback() }}>
+                                <div className="row width-mid-md" style={{ display: 'flex',margin:'0px' }}>
+                                    <Button variant="contained" margin="normal" className='input-field button' style={{ float: 'left', marginTop: '10px' }} onClick={(e) => { handleFeedback() }}>
                                         Report
                                     </Button>
                                 </div>
@@ -4700,26 +4641,26 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                             </Typography>
                             {open.deleteTemplate ?
                                 <>
-                                    <Typography id="transition-modal-description" sx={{ mt: 2 }} style={{ marginTop: '10px' }}>
+                                    <Typography id="transition-modal-description" sx={{ mt: 2 }} style={{ marginTop: '10%' }}>
                                         {/* <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12"> */}
                                         <Alert severity="warning">Are you sure want to delete <strong>"{open.tempName}"</strong> Template?
                                             This will impact <strong>"{open.dashboardName}"</strong> Dashboard.</Alert>
                                         {/* </div> */}
                                     </Typography>
-                                    <Typography id="transition-modal-description" sx={{ mt: 5 }} style={{ marginTop: '10px' }}>
+                                    <Typography id="transition-modal-description" sx={{ mt: 5 }} style={{ marginTop: '5%' }}>
                                         <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12" >
-                                            <Button variant="contained" margin="normal" className='input-field button' style={{ backgroundColor: '#6282b3', float: 'right' }} onClick={(e) => { setOpen({ ...open, 'Template': false }) }}>
-                                                Cancel
-                                            </Button>
-                                            <Button variant="contained" margin="normal" className='input-field button' style={{ backgroundColor: '#6282b3', float: 'right', marginRight: '10px' }} onClick={(e) => { handleTemplate(open.tempName, 'Delete') }}>
+                                            <Button variant="contained" margin="normal" className='input-field button' style={{marginRight: '10px' }} onClick={(e) => { handleTemplate(open.tempName, 'Delete') }}>
                                                 Proceed
+                                            </Button>
+                                            <Button variant="contained" margin="normal" className='input-field button btn-transparant' onClick={(e) => { setOpen({ ...open, 'Template': false }) }}>
+                                                Cancel
                                             </Button>
                                         </div>
                                     </Typography>
                                 </>
                                 :
                                 <>
-                                    <Typography id="transition-modal-description" sx={{ mt: 2 }} style={{ marginTop: '10px' }}>
+                                    <Typography id="transition-modal-description" sx={{ mt: 2 }} style={{ marginTop: '10%' }}>
                                         <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                             <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                 <TextField id="Template"
@@ -4730,7 +4671,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                     onChange={(e) => { handleValidation(e); handleChange(e); }}
                                                 />
                                             </div>
-                                            <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                            <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12 inputfield">
                                                 <TextField
                                                     id="TempDescription" className="Description" label="Description" name="TempDescription" fullWidth margin="dense" multiline maxRows={4}
                                                     onChange={handleChange}
@@ -4738,13 +4679,13 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                             </div>
                                         </div>
                                     </Typography>
-                                    <Typography id="transition-modal-description" sx={{ mt: 5 }} style={{ marginTop: '10px' }}>
+                                    <Typography id="transition-modal-description" sx={{ mt: 5 }} style={{ marginTop: '5%' }}>
                                         <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12" >
-                                            <Button variant="contained" margin="normal" className='input-field button' style={{ backgroundColor: '#6282b3', float: 'right' }} onClick={(e) => { setOpen({ ...open, 'Template': false }) }}>
-                                                Cancel
-                                            </Button>
-                                            <Button variant="contained" margin="normal" className='input-field button' style={{ backgroundColor: '#6282b3', float: 'right', marginRight: '10px' }} onClick={(e) => { saveTemplate('save') }}>
+                                            <Button variant="contained" margin="normal" className='input-field button' style={{marginRight: '10px' }} onClick={(e) => { saveTemplate('save') }}>
                                                 Save
+                                            </Button>
+                                            <Button variant="contained" margin="normal" className='input-field button btn-transparant' onClick={(e) => { setOpen({ ...open, 'Template': false }) }}>
+                                                Cancel
                                             </Button>
                                         </div>
                                     </Typography>
@@ -4770,7 +4711,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                             <Typography id="transition-modal-title" variant="h6" component="h2">
                                 Dashboard
                             </Typography>
-                            <Typography id="transition-modal-description" sx={{ mt: 2 }} style={{ marginTop: '10px' }}>
+                            <Typography id="transition-modal-description" sx={{ mt: 2 }} style={{ marginTop: '20px' }}>
                                 <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                     <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                         <TextField id="Dashboard"
@@ -4781,7 +4722,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                             onChange={(e) => { setprojectDetails({ ...projectDetails, [e.target.name]: e.target.value }) }}
                                         />
                                     </div>
-                                    <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                    <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12 inputfield">
                                         <TextField
                                             id="TempDescription" className="Description" label="Description" name="DashboardDescription" fullWidth margin="dense" multiline maxRows={4}
                                             onChange={(e) => { setprojectDetails({ ...projectDetails, [e.target.name]: e.target.value }) }}
@@ -4789,13 +4730,13 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                     </div>
                                 </div>
                             </Typography>
-                            <Typography id="transition-modal-description" sx={{ mt: 5 }} style={{ marginTop: '10px' }}>
+                            <Typography id="transition-modal-description" sx={{ mt: 5 }} style={{ marginTop: '15px' }}>
                                 <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12" >
-                                    <Button variant="contained" margin="normal" className='input-field button' style={{ backgroundColor: '#6282b3', float: 'right' }} onClick={(e) => { setOpen({ 'Dashboard': false }) }}>
-                                        Cancel
-                                    </Button>
-                                    <Button variant="contained" margin="normal" className='input-field button' style={{ backgroundColor: '#6282b3', float: 'right', marginRight: '10px' }} onClick={(e) => { handleDashboard('Save') }}>
+                                    <Button variant="contained" margin="normal" className='input-field button' style={{ marginRight: '10px' }} onClick={(e) => { handleDashboard('Save') }}>
                                         Save
+                                    </Button>
+                                    <Button variant="contained" margin="normal" className='input-field button btn-transparant' onClick={(e) => { setOpen({ 'Dashboard': false }) }}>
+                                        Cancel
                                     </Button>
                                 </div>
                             </Typography>
