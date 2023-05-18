@@ -24,6 +24,10 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import { useNavigate } from "react-router-dom";
+import Menu from '@mui/material/Menu';
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+
+
 //NPM's
 import Papa from "papaparse";
 import * as xlsx from "xlsx";
@@ -67,7 +71,7 @@ import layout9 from '../../src/Images/layout9.svg';
 import layout10 from '../../src/Images/layout10.svg';
 import layout11 from '../../src/Images/layout11.svg';
 
-
+// import Draggable from '../Components/Draggable'
 
 import Data from '../../src/Images/Input-Data.png';
 import Project from '../../src/Images/Project.png';
@@ -199,7 +203,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
     const [navopen, setNavOpen] = React.useState(true);
     const [navwidth, setNavWidth] = React.useState({ 'navArea': '70px', 'inuptArea': '28%', 'ChartArea': '63%' });
     const [isMobile, setIsMobile] = React.useState(false);
-    const [open, setOpen] = React.useState({ 'Template': false, 'Dashboard': false, 'deleteTemplate': false });
+    const [open, setOpen] = React.useState({ 'Template': false, 'Dashboard': false, 'deleteTemplate': false, 'AxisOrder': false });
     const [progress, setProgress] = React.useState({ 'loader': false });
     const [filter, setFilter] = React.useState({});
     const [filteringProps, setfilteringProps] = React.useState({ 'customFilter': [] });
@@ -217,6 +221,9 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
     const [TemplatesCollections, setTemplatesCollections] = React.useState({});
     const [path, setPath] = React.useState({ 'Location': window.location.hostname }) //49.204.124.69/
     const [Dataset, setDataset] = React.useState({});
+
+    // React state to track order of items
+    const [ItemOrderList, setItemOrderList] = React.useState([])
 
     // Data passing
     const [filedata, setData] = React.useState({})
@@ -244,7 +251,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         bgcolor: 'background.paper',
         p: 5,
         fonts: '12px/13px Poppins',
-        borderRadius:'8px',
+        borderRadius: '8px',
         boxShadow: '0px 6px 20px #0000001A'
     };
     const ITEM_HEIGHT = 48;
@@ -1256,8 +1263,11 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         const {
             target: { value },
         } = event;
-        if (event.target.name === 'SunBurstX_Axis')
-            setState({ ...state, [event.target.name]: typeof value === 'string' ? value.split(',') : value, });
+        if (event.target.name === 'SunBurstX_Axis'){
+            setState({ ...state, [event.target.name]: typeof value === 'string' ? value.split(',') : value ,
+            'OrderedList': typeof value === 'string' ? value.split(',') : value });
+            //setItemOrderList(typeof value === 'string' ? value.split(',') : value,)
+        }
         else
             setfilteringProps({ ...filteringProps, [event.target.name]: typeof value === 'string' ? value.split(',') : value, });
     }
@@ -1300,7 +1310,9 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
         setPlay({ "isPlay": undefined })
         ChildtoParentHandshake(undefined)
     }
-
+    // const handleClose = () => {
+    //     setAnchorEl(null);
+    // };
     // Service call's
     const PostTemplate = (action) => {
         try {
@@ -1654,6 +1666,23 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
             setData({ 'data': Dataset[id] })
         }
     }
+
+
+
+    const handleDrop = (droppedItem) => {
+        // Ignore drop outside droppable container
+        if (!droppedItem.destination) return;
+        var updatedList = [...state.OrderedList];
+        // Remove dragged item
+        const [reorderedItem] = updatedList.splice(droppedItem.source.index, 1);
+        // Add dropped item
+        updatedList.splice(droppedItem.destination.index, 0, reorderedItem);
+        // Update State
+        setState({...state,'OrderedList':updatedList})
+        //setItemOrderList(updatedList);
+    };
+
+    // btn.addEventListener('click', addNewItem);
 
 
     //Components
@@ -2029,7 +2058,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                     {/* <div className="row col-lg-12"> */}
                                                                     <p className="row col-lg-12 subTitle">X-Axis</p>
                                                                     {state.Chart === 'Pie Chart' ?
-                                                                        <div className="row width-lg">
+                                                                        <div className="row width-xlg">
                                                                             <TextField
                                                                                 error={formValues.XAxisCopy.error}
                                                                                 helperText={formValues.XAxisCopy.error && formValues.XAxisCopy.errorMessage}
@@ -2068,45 +2097,89 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                             </TextField>
                                                                         </div>
                                                                         :
-                                                                        <div className="row width-lg">
-                                                                            <FormControl sx={{ width: 300 }}>
-                                                                                <InputLabel id="filter">
-                                                                                    <Fragment>
-                                                                                        <BootstrapTooltip title="Accepts numbers" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
-                                                                                            <Numbers fontSize="small" style={{ fontWeight: '700', fontSize: '11px' }} />
-                                                                                        </BootstrapTooltip>
+                                                                        <>
+                                                                            <div className="row-parent">
+                                                                                <div className="row width-xlg">
+                                                                                    <FormControl className="width-xlg">
+                                                                                        <InputLabel id="filter">
+                                                                                            <Fragment>
+                                                                                                <BootstrapTooltip title="Accepts numbers" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
+                                                                                                    <Numbers fontSize="small" style={{ fontWeight: '700', fontSize: '11px' }} />
+                                                                                                </BootstrapTooltip>
 
-                                                                                        &nbsp;
-                                                                                        <BootstrapTooltip title="Accepts strings" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
-                                                                                            {/* <Text style={{ height: '27px' }} /> */}
-                                                                                            <span style={{ fontWeight: '700', fontSize: '11px' }}>ABC</span>
-                                                                                        </BootstrapTooltip>
-                                                                                        &nbsp;
-                                                                                        <span style={{ fontWeight: '900', fontSize: '11px' }}>*</span>
-                                                                                    </Fragment>
-                                                                                </InputLabel>
-                                                                                <Select
-                                                                                    labelId="demo-multiple-checkbox-label"
-                                                                                    id="demo-multiple-checkbox"
-                                                                                    multiple
-                                                                                    value={state.SunBurstX_Axis === undefined ? [] : state.SunBurstX_Axis}
-                                                                                    name='SunBurstX_Axis'
-                                                                                    onChange={handleMultiselect}
-                                                                                    input={<OutlinedInput label="Tag" />}
-                                                                                    renderValue={(selected) => selected.join(', ')}
-                                                                                    MenuProps={MenuProps}
-                                                                                    placeholder="Dimensions"
-                                                                                >
+                                                                                                &nbsp;
+                                                                                                <BootstrapTooltip title="Accepts strings" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
+                                                                                                    {/* <Text style={{ height: '27px' }} /> */}
+                                                                                                    <span style={{ fontWeight: '700', fontSize: '11px' }}>ABC</span>
+                                                                                                </BootstrapTooltip>
+                                                                                                &nbsp;
+                                                                                                <span style={{ fontWeight: '900', fontSize: '11px' }}>*</span>
+                                                                                            </Fragment>
+                                                                                        </InputLabel>
+                                                                                        <Select
+                                                                                            labelId="demo-multiple-checkbox-label"
+                                                                                            id="demo-multiple-checkbox"
+                                                                                            multiple
+                                                                                            value={state.SunBurstX_Axis === undefined ? [] : state.SunBurstX_Axis}
+                                                                                            name='SunBurstX_Axis'
+                                                                                            onChange={handleMultiselect}
+                                                                                            input={<OutlinedInput label="Tag" />}
+                                                                                            renderValue={(selected) => selected.join(', ')}
+                                                                                            MenuProps={MenuProps}
+                                                                                            placeholder="Dimensions"
 
-                                                                                    {state.XAxis_.map((name) => (
-                                                                                        <MenuItem key={name} value={name}>
-                                                                                            <Checkbox checked={state.SunBurstX_Axis === undefined ? false : state.SunBurstX_Axis.indexOf(name) > -1} />
-                                                                                            <ListItemText key={name} primary={name} />
-                                                                                        </MenuItem>
-                                                                                    ))}
-                                                                                </Select>
-                                                                            </FormControl>
-                                                                        </div>
+                                                                                        >
+
+                                                                                            {state.XAxis_.map((name) => (
+                                                                                                <MenuItem key={name} value={name}>
+                                                                                                    <Checkbox checked={state.SunBurstX_Axis === undefined ? false : state.SunBurstX_Axis.indexOf(name) > -1} />
+                                                                                                    <ListItemText key={name} primary={name} />
+                                                                                                </MenuItem>
+                                                                                            ))}
+                                                                                        </Select>
+                                                                                    </FormControl>
+                                                                                </div>
+
+
+                                                                            </div>
+                                                                            {/* Selected  X-axis for ordering */}
+                                                                            {(state.SunBurstX_Axis !== undefined && state.SunBurstX_Axis.length > 1) ?
+                                                                                <div className="row-parent">
+                                                                                    <div className="row width-xlg">
+                                                                                        <div className="" style={{padding:'0px'}}>
+                                                                                            <DragDropContext onDragEnd={handleDrop}>
+                                                                                                <Droppable droppableId="list-container">
+                                                                                                    {(provided) => (
+                                                                                                        <div
+                                                                                                            className="drag-condiner"
+                                                                                                            {...provided.droppableProps}
+                                                                                                            ref={provided.innerRef}
+                                                                                                        >
+                                                                                                            {state.OrderedList.map((item, index) => (
+                                                                                                                <Draggable key={item} draggableId={item} index={index}>
+                                                                                                                    {(provided) => (
+                                                                                                                        <div
+                                                                                                                            className="drag-child"
+                                                                                                                            ref={provided.innerRef}
+                                                                                                                            {...provided.dragHandleProps}
+                                                                                                                            {...provided.draggableProps}
+                                                                                                                        >
+                                                                                                                            <span className="spn-drag-child ">:::</span>{item}
+                                                                                                                        </div>
+                                                                                                                    )}
+                                                                                                                </Draggable>
+                                                                                                            ))}
+                                                                                                            {provided.placeholder}
+                                                                                                        </div>
+                                                                                                    )}
+                                                                                                </Droppable>
+                                                                                            </DragDropContext>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                :''
+                                                                            }
+                                                                        </>
                                                                     }
                                                                     <p className="row col-lg-12 subTitle">Y-Axis</p>
                                                                     <div className="row-parent">
@@ -2221,7 +2294,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                     <div className="col-lg-12">
                                                                         <p className="row col-lg-12 subTitle">X-Axis</p>
                                                                         <div className="row-parent">
-                                                                            <div className="row width-lg">
+                                                                            <div className="row width-mlg">
                                                                                 <TextField
                                                                                     error={formValues.XAxisCopy.error}
                                                                                     helperText={formValues.XAxisCopy.error && formValues.XAxisCopy.errorMessage}
@@ -2270,7 +2343,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                                     ))}
                                                                                 </TextField>
                                                                             </div>
-                                                                            <div className="width-lg" style={{ marginLeft: '10px' }}>
+                                                                            <div className="width-mid-md" style={{ marginLeft: '10px' }}>
                                                                                 <TextField
                                                                                     //error={formValues.YAxisPadding.error}
                                                                                     //helperText={formValues.YAxisPadding.error && formValues.YAxisPadding.errorMessage}
@@ -2455,7 +2528,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                     </div>
                                                                     {state.Chart === 'Composite Chart' || state.Chart === 'Series Chart' ?
                                                                         <div className="row-parent">
-                                                                            <div className="row width-lg">
+                                                                            <div className="row width-xlg">
                                                                                 <TextField
                                                                                     error={formValues.GroupByCopy.error}
                                                                                     helperText={formValues.GroupByCopy.error && formValues.GroupByCopy.errorMessage}
@@ -2502,7 +2575,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                             <div className="col-lg-12">
                                                                                 <p className="row col-lg-12 subTitle">Right Y-Axis</p>
                                                                                 <div className="row-parent">
-                                                                                    <div className="row width-lg">
+                                                                                    <div className="row width-xlg">
                                                                                         <TextField
                                                                                             error={formValues.GroupByCopy.error}
                                                                                             helperText={formValues.GroupByCopy.error && formValues.GroupByCopy.errorMessage}
@@ -2621,10 +2694,10 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                         </div>
                                                                     </div>
                                                                     {state.Axesswatch_ &&
-                                                                        <div style={{ margin: "10px" }}>
+                                                                        <div style={{ margin: "10px 0px 10px 10px" }}>
                                                                             <p className="row col-lg-12 subTitle">X-Axis</p>
                                                                             <div className="row-parent">
-                                                                                <div className="row width-lg">
+                                                                                <div className="row width-xlg">
                                                                                     <TextField id="XAxisLabel" className='input-field' name='XAxisLabel' label="X-AxisLabel" variant="outlined"
                                                                                         value={state.XAxisLabel}
                                                                                         onChange={handleChange} />
@@ -2841,10 +2914,10 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                     </div>
                                                                 </div>
                                                                 {state.Titleswatch_ &&
-                                                                    <div style={{ margin: "10px" }}>
+                                                                    <div style={{ margin: "10px 0px 10px 10px" }}>
                                                                         {/* <p className="row col-lg-12">Title</p> */}
                                                                         <div className="row-parent" >
-                                                                            <div className="row width-lg">
+                                                                            <div className="row width-xlg">
                                                                                 <TextField
                                                                                     error={formValues.Title.error}
                                                                                     helperText={formValues.Title.error && formValues.Title.errorMessage}
@@ -2940,9 +3013,9 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                         </div>
                                                                     </div>
                                                                     {state.Legendswatch_ &&
-                                                                        <div style={{ margin: "10px" }}>
+                                                                        <div style={{ margin: "10px 0px 10px 10px" }}>
                                                                             <div className="row-parent" >
-                                                                                <div className="row width-lg">
+                                                                                <div className="row width-xlg">
                                                                                     <TextField
                                                                                         // error={formValues.InputType.error}
                                                                                         // helperText={formValues.InputType.error && formValues.InputType.errorMessage}
@@ -3047,9 +3120,9 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                     </div>
                                                                 </div>
                                                                 {state.Tooltipswatch_ &&
-                                                                    <div style={{ margin: "10px" }}>
+                                                                    <div style={{ margin: "10px 0px 10px 10px" }}>
                                                                         <div className="row-parent">
-                                                                            <div className="row width-lg">
+                                                                            <div className="row width-xlg">
                                                                                 <TextField
                                                                                     //error={formValues.GroupBy.error}
                                                                                     // helperText={formValues.GroupBy.error && formValues.GroupBy.errorMessage}
@@ -3187,9 +3260,9 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                                     </div>
                                                                 </div>
                                                                 {state.Labelsswatch_ &&
-                                                                    <div style={{ margin: "10px" }}>
+                                                                    <div style={{ margin: "10px 0px 10px 10px" }}>
                                                                         <div className="row-parent">
-                                                                            <div className="row width-lg">
+                                                                            <div className="row width-xlg">
                                                                                 <TextField
                                                                                     id="TContent"
                                                                                     select
@@ -3280,7 +3353,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                             <AccordionDetails>
                                                 <Typography>
                                                     <div className="col-lg-12">
-                                                        <div style={{ marginLeft: '10px' }}>
+                                                        <div style={{ marginLeft: '10px 0px 10px 10px' }}>
                                                             <div className="row-parent">
                                                                 <div className="row width-lg">
                                                                     <TextField
@@ -3386,7 +3459,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
 
                                                         </div>
                                                         {state.Pieswatch_ &&
-                                                            <div style={{ margin: "10px" }}>
+                                                            <div style={{ margin: "10px 0px 10px 10px" }}>
                                                                 <p className="row col-lg-12 subTitle">Background</p>
                                                                 <div className="row-parent">
                                                                     <div className="row" style={{ width: '20%' }}>
@@ -3433,7 +3506,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                             </div>
                                                         </div>
                                                         {state.Barswatch_ &&
-                                                            <div style={{ margin: "10px" }}>
+                                                            <div style={{ margin: "10px 0px 10px 10px" }}>
                                                                 <p className="row col-lg-12 subTitle">Padding</p>
                                                                 <div className="row-parent">
                                                                     <div className="row" style={{ width: '24%' }}>
@@ -3523,7 +3596,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                             </div>
                                                         </div>
                                                         {state.Scatterswatch_ &&
-                                                            <div style={{ margin: "10px" }}>
+                                                            <div style={{ margin: "10px 0px 10px 10px" }}>
                                                                 <p className="row col-lg-12 subTitle">Padding</p>
                                                                 <div className="row-parent">
                                                                     <div className="row" style={{ width: '24%' }}>
@@ -3601,7 +3674,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
 
                                                         </div>
                                                         {state.Lineswatch_ &&
-                                                            <div style={{ margin: "10px" }}>
+                                                            <div style={{ margin: "10px 0px 10px 10px" }}>
                                                                 <p className="row col-lg-12 subTitle">Padding</p>
                                                                 <div className="row-parent">
                                                                     <div className="row" style={{ width: '24%' }}>
@@ -3680,7 +3753,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                             </div>
                                                         </div>
                                                         {state.Seriesswatch_ &&
-                                                            <div style={{ margin: "10px" }}>
+                                                            <div style={{ margin: "10px 0px 10px 10px" }}>
                                                                 <p className="row col-lg-12 subTitle">Padding</p>
                                                                 <div className="row-parent">
                                                                     <div className="row" style={{ width: '24%' }}>
@@ -3745,7 +3818,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
 
                                             <AccordionDetails>
                                                 <Typography>
-                                                    <div className=" col-lg-12">
+                                                    <div className="col-lg-12">
                                                         <div className="row-parent inputfield" style={{ justifyContent: 'space-between' }}>
                                                             <div>
                                                                 Composite
@@ -3759,7 +3832,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
 
                                                         </div>
                                                         {state.Compositeswatch_ &&
-                                                            <div style={{ margin: "10px" }}>
+                                                            <div style={{ margin: "10px 0px 10px 10px" }}>
                                                                 <p className="row col-lg-12" style={{ marginTop: '10px' }}>Padding</p>
                                                                 <div className="row-parent">
                                                                     <div className="row" style={{ width: '24%' }}>
@@ -3831,7 +3904,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                                             </div>
                                                         </div>
                                                         {state.BarLineswatch_ &&
-                                                            <div style={{ margin: "10px" }}>
+                                                            <div style={{ margin: "10px 0px 10px 10px" }}>
                                                                 <p className="row col-lg-12" style={{ marginTop: '10px' }}>Padding</p>
 
                                                                 <div className="row-parent">
@@ -4612,7 +4685,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                         onBlur={(e) => { handleValidation(e) }}
                                     />
                                 </div>
-                                <div className="row width-mid-md" style={{ display: 'flex',margin:'0px' }}>
+                                <div className="row width-mid-md" style={{ display: 'flex', margin: '0px' }}>
                                     <Button variant="contained" margin="normal" className='input-field button' style={{ float: 'left', marginTop: '10px' }} onClick={(e) => { handleFeedback() }}>
                                         Report
                                     </Button>
@@ -4649,7 +4722,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                     </Typography>
                                     <Typography id="transition-modal-description" sx={{ mt: 5 }} style={{ marginTop: '5%' }}>
                                         <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12" >
-                                            <Button variant="contained" margin="normal" className='input-field button' style={{marginRight: '10px' }} onClick={(e) => { handleTemplate(open.tempName, 'Delete') }}>
+                                            <Button variant="contained" margin="normal" className='input-field button' style={{ marginRight: '10px' }} onClick={(e) => { handleTemplate(open.tempName, 'Delete') }}>
                                                 Proceed
                                             </Button>
                                             <Button variant="contained" margin="normal" className='input-field button btn-transparant' onClick={(e) => { setOpen({ ...open, 'Template': false }) }}>
@@ -4681,7 +4754,7 @@ const InputArea = ({ ChildtoParentHandshake, ExpandData, dataTable, demoVideo, s
                                     </Typography>
                                     <Typography id="transition-modal-description" sx={{ mt: 5 }} style={{ marginTop: '5%' }}>
                                         <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12" >
-                                            <Button variant="contained" margin="normal" className='input-field button' style={{marginRight: '10px' }} onClick={(e) => { saveTemplate('save') }}>
+                                            <Button variant="contained" margin="normal" className='input-field button' style={{ marginRight: '10px' }} onClick={(e) => { saveTemplate('save') }}>
                                                 Save
                                             </Button>
                                             <Button variant="contained" margin="normal" className='input-field button btn-transparant' onClick={(e) => { setOpen({ ...open, 'Template': false }) }}>

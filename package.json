@@ -37,6 +37,7 @@
     "node-windows": "^1.0.0-beta.8",
     "papaparse": "^5.3.2",
     "react": "^18.2.0",
+    "react-beautiful-dnd": "^13.1.1",
     "react-bootstrap": "file:node_modules/react-bootstrap",
     "react-color": "^2.19.3",
     "react-dom": "^18.2.0",

@@ -201,13 +201,22 @@
     border-radius: 4px !important;
   }
 
-  .MuiCheckbox-root.Mui-checked{
+  .MuiCheckbox-root.Mui-checked {
     color: white !important;
   }
 
   /* lg:large */
   .width-lg {
     width: 49%;
+  }
+
+  /* lg:large */
+  .width-xlg {
+    width: 100%;
+  }
+
+  .width-mlg {
+    width: 69%;
   }
 
   /* mid : middle, md:medium*/
@@ -224,8 +233,10 @@
 
   .subTitle {
     margin: 10px 0px 10px 0px;
+    /* font-weight: 500; */
   }
-  .row-parent{
+
+  .row-parent {
     margin-top: 10px;
     display: flex;
     padding: 0;

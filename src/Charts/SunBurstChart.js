@@ -18,7 +18,7 @@ const SunBurstChart = ({ params }) => {
             .style("background-color", params.TooltipBGColor)
             .style("border", params.TooltipThickness + 'px ' + params.TooltipTickColor + ' solid')
         var experiments = params.Uploaded_file
-        let XAxis = params.SunBurstX_Axis.map((e) => { return e.split(' ').slice(1, 20).join(' ') })
+        let XAxis = params.OrderedList.map((e) => { return e.split(' ').slice(1, 20).join(' ') })
         var ndx = crossfilter(experiments),
             runDimension = ndx.dimension(function (d) {
                 if (XAxis.length === 3)
