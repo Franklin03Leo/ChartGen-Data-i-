@@ -34,6 +34,8 @@ import Dashboard from "./Charts/Dashboard";
 import Feedback from "./Components/Feedback";
 import Header from "./Components/Header";
 
+import EmptyPage from '../src/Images/EmptyPage.png'
+
 const HomePage = () => {
     const DataTypes = ['#', 'Da', 'Aa']
 
@@ -48,7 +50,7 @@ const HomePage = () => {
     const [changeType, setChangeType] = React.useState({ 'enableChange': false, 'Dimensions_': 'Select', 'DataTypes': '#' })
     const [error, setError] = React.useState({});
     const [feedback, setFeedback] = React.useState({ 'Issues': undefined });
-   // const [anchorEl, setAnchorEl] = React.useState(null);
+    // const [anchorEl, setAnchorEl] = React.useState(null);
     const [project, setProject] = React.useState({});
     const [open, setOpen] = React.useState({ 'SessionExpiry': false, 'StayConnected': false });
     //onst [seconds, setSeconds] = React.useState();
@@ -228,7 +230,7 @@ const HomePage = () => {
                 <div className="loader"></div>
                 <ToastContainer />
                 <Header />
-                <div className="row" style={{ background:'#F4F4F8', marginRight: '0px', height: 'calc(94vh -14px)', paddingTop: '6vh' }}>
+                <div className="row" style={{ background: '#F4F4F8', marginRight: '0px', height: 'calc(94vh -14px)', paddingTop: '6vh' }}>
                     <InputBlock ChildtoParentHandshake={data} ExpandData={expand} dataTable={DataTable} demoVideo={video} showDashboard={showDashboard} feedback_={handleFeedback} project_={handleProject} />
                     {/* <div className="" style={{ backgroundColor: '#e9ecef', height: '87vh', width: navwidth.ChartArea }}> */}
                     <div className="" style={{ backgroundColor: '#F4F4F8 ', width: `${navwidth.ChartArea === '63%' ? 'calc(72% - 90px)' : 'calc(100% - 90px)'}`, height: 'calc(94vh)' }}>
@@ -351,7 +353,9 @@ const HomePage = () => {
                         }
                         {(state === undefined || Object.keys(state).length === 0) && feedback.Issues === undefined && !show.isShow && !play.isPlay ?
                             <>
-                                
+                                <div className="emptyPage">
+                                    <img alt="Loading..." src={EmptyPage}></img>
+                                </div>
                             </>
                             : ''
                         }

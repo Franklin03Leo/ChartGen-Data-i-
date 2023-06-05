@@ -40,6 +40,7 @@
     "react-beautiful-dnd": "^13.1.1",
     "react-bootstrap": "file:node_modules/react-bootstrap",
     "react-color": "^2.19.3",
+    "react-dc": "^1.0.6",
     "react-dom": "^18.2.0",
     "react-fontawesome": "^1.7.1",
     "react-router-dom": "^6.7.0",
