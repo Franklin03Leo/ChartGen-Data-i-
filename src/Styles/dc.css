@@ -1039,16 +1039,16 @@ input:checked+.slider:before {
     flex-direction: row-reverse
 }
 
-.Dash-icon:hover {
+/* .Dash-icon:hover {
     padding: 6px;
     background: #bbcff7;
     border-radius: 5px;
     margin-left: 5px;
     cursor: pointer;
-}
+} */
 
 .Dash-icon {
-    padding: 6px;
+    padding: 10px 13px 10px 13px;
     background: #e2e2e2;
     border-radius: 5px;
     margin-left: 5px;

@@ -573,8 +573,9 @@ const Dashboard = ({ params }) => {
     return (
       <>
         {(() => {
+          let count = params.Custom === undefined ? 0 : params.Custom.CardRows;
           let Item = [];
-          for (let i = 0; i < params.Custom.CardRows; i++) {
+          for (let i = 0; i < count; i++) {
             Item.push(
               <div
                 className="div-card"
@@ -636,11 +637,11 @@ const Dashboard = ({ params }) => {
   const Tabs = () => {
     return (
       <>
-        <div className="row Dashboardtab">
+        <div className="Dashboardtab">
           {params.isBublished || !other.Build || params.action === "Preview" ? (
             <>
               <div
-                className="col-lg-1 Dash-icon"
+                className=" Dash-icon"
                 id="data"
                 onClick={(e) => {
                   handleTabChange("Data");
@@ -652,7 +653,7 @@ const Dashboard = ({ params }) => {
                 <DatasetIcon fontSize="large" />
               </div>
               <div
-                className=" col-lg-1 Dash-icon"
+                className=" Dash-icon"
                 id="dashboard"
                 onClick={(e) => {
                   handleTabChange("Dashboard");
@@ -664,7 +665,7 @@ const Dashboard = ({ params }) => {
                 <DashboardIcon fontSize="large" />
               </div>
               {other.showFilter ? (
-                <div className="col-lg-1">
+                <div style={{ marginTop: "15px" }}>
                   <label style={{ margin: "0px 5px" }}>Filter</label>
                   <label className="switch">
                     <input

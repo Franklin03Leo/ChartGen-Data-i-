@@ -1759,13 +1759,13 @@ const InputArea = ({
       target: { value },
     } = event;
     if (event.target.name === "SunBurstX_Axis") {
-      // setState({
-      //   ...state,
-      //   [event.target.name]:
-      //     typeof value === "string" ? value.split(",") : value,
-      //   OrderedList: typeof value === "string" ? value.split(",") : value,
-      // });
-      // setItemOrderList(typeof value === "string" ? value.split(",") : value);
+      setState({
+        ...state,
+        [event.target.name]:
+          typeof value === "string" ? value.split(",") : value,
+        OrderedList: typeof value === "string" ? value.split(",") : value,
+      });
+      setItemOrderList(typeof value === "string" ? value.split(",") : value);
     } else
       setfilteringProps({
         ...filteringProps,
@@ -3072,7 +3072,7 @@ const InputArea = ({
                                               MenuProps={MenuProps}
                                               placeholder="Dimensions"
                                             >
-                                              {state.XAxis_.map((name) => (
+                                              {state.XAxis_?.map((name) => (
                                                 <MenuItem
                                                   key={name}
                                                   value={name}
