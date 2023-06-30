@@ -644,7 +644,8 @@ const SeriesChart = ({ params }) => {
     else PadLeft = params.PadLeft;
     chart
       .width(params.Width_)
-      .height(params.Heigth_)
+      //.height(params.Heigth_)
+      .height(null)
       .margins({
         top: parseInt(10) + parseInt(PadTop),
         right: parseInt(30) + parseInt(PadRight),

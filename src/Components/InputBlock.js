@@ -75,9 +75,9 @@ import layout11 from "../../src/Images/layout11.svg";
 import Data from "../../src/Images/Input-Data.png";
 import Project from "../../src/Images/Project.png";
 import Dashboard from "../../src/Images/Dashboard.png";
-import Template from "../../src/Images/Template.png";
-import Demo from "../../src/Images/Demo.png";
-import Feedback from "../../src/Images/Feedback.png";
+import Template from "../../src/Images/Template.svg";
+import Demo from "../../src/Images/Demo.svg";
+import Feedback from "../../src/Images/Feedback.svg";
 import Edit from "../../src/Images/Edit.svg";
 import Remove from "../../src/Images/Remove.png";
 import Publish from "../../src/Images/Publish.svg";
@@ -1968,12 +1968,13 @@ const InputArea = ({
       setprojectDetails({
         DashboardDescription: project[e.currentTarget.id].DashboardDescription,
       });
+      //setFilter(data.filter);
       setfilteringProps({
         ...filteringProps,
         customFilter: data.selectedFilterDimensions,
         Dimensions: data.AvailableDimensions,
       });
-      //setFilter({ ...filter, 'filterSwatch': data.filter.filterSwatch, 'data': dashboard[Object.values(data.charts)[0]].Uploaded_file })
+      setFilter({ ...filter, filterSwatch: data.filter.filterSwatch });
     } else if (action === "Update") {
       const filterProps = handleFilter("Dashboard Insert");
       let obj = {};
@@ -2087,6 +2088,7 @@ const InputArea = ({
         };
         obj.FilterProps = data.filterProps;
         obj.action = action;
+        setFilter(obj.Filter);
         setpostProject(obj);
         setPlay({ isPlay: undefined });
         setIssues(undefined);
@@ -2391,18 +2393,10 @@ const InputArea = ({
                     GetTemplate("Dashboard");
                   }}
                 ></img>
-
-                {/* <Project className="Icon_" fontSize="large" color={navbar.bar === 'Project' ? 'primary' : '#979A9B'} onClick={(e) => { handleNavbarChange(e); GetDashboard(); GetTemplate('Dashboard') }} /> */}
               </BootstrapTooltip>
             </div>
           </div>
-          {/* 
 
-                    <div className="Icon">
-                        <BootstrapTooltip title="Template Collections" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
-                            <Collections className="Icon_" fontSize="large" color={navbar.bar === 'Collections' ? 'primary' : '#979A9B'} onClick={(e) => { handleNavbarChange(e); GetPreDefinedTemplates('Fetch', e) }} />
-                        </BootstrapTooltip>
-                    </div>*/}
           <div className="Nav-divider">{"   "}────</div>
           <div className="Icon">
             <div className={navbar.bar === "Demo" ? "NavBar-active" : "NavBar"}>
@@ -7064,8 +7058,8 @@ const InputArea = ({
                           setFilter({
                             ...filter,
                             filterSwatch: e.target.checked,
-                            data: dashboard[Object.keys(dashboard)[0]]
-                              .Uploaded_file,
+                            // data: dashboard[Object.keys(dashboard)[0]]
+                            //   .Uploaded_file,
                           });
                           setfilteringProps({
                             ...filteringProps,

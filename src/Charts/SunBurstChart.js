@@ -51,7 +51,7 @@ const SunBurstChart = ({ params }) => {
       datatabel = new dc.dataTable(div1.current, "Table");
     }
     SunBurst.width(params.Width_)
-      .height(params.Heigth_)
+      .height(null)
       .innerRadius(params.Innerradius)
       .dimension(runDimension)
       .group(speedSumGroup)
@@ -95,7 +95,6 @@ const SunBurstChart = ({ params }) => {
     d3.select("body").on("mouseover", function () {
       d3.selectAll("g.pie-slice")
         .on("mouseover", function (d) {
-          debugger;
           div2
             .transition()
             .duration(500)
@@ -245,7 +244,12 @@ const SunBurstChart = ({ params }) => {
             backgroundColor: params.Pieswatch === "show" ? params.BGColor : "",
           }}
         >
-          <div id="Charts" ref={div} className="boxcenter"></div>
+          <div
+            id="Charts"
+            // style={{ height: "50vh" }}
+            ref={div}
+            className="boxcenter"
+          ></div>
         </div>
       </Grid>
       <Grid

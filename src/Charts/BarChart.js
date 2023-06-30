@@ -188,7 +188,8 @@ const BarChart = ({ params }) => {
         left: 40 + parseInt(PadLeft),
       })
       .width(params.Width_ === null ? null : params.Width_)
-      .height(params.Heigth_);
+      //.height(params.Heigth_)
+      .height(null);
     //.useViewBoxResizing(true)
     if (isString === true) {
       chart

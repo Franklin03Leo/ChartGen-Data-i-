@@ -592,9 +592,8 @@ const Dashboard = ({ params }) => {
   };
   const PreviewModal = () => {
     return (
-      <Fragment>
+      <div>
         <Modal
-          keepMounted
           open={open.Chart}
           onClose={(e) => {
             setOpen({ Chart: false });
@@ -602,7 +601,7 @@ const Dashboard = ({ params }) => {
           aria-labelledby="keep-mounted-modal-title"
           aria-describedby="keep-mounted-modal-description"
         >
-          <Box sx={style}>
+          <Box sx={style} style={{ minWidth: "90%" }}>
             <Typography
               id="keep-mounted-modal-title"
               variant="h6"
@@ -622,6 +621,7 @@ const Dashboard = ({ params }) => {
                 </div>
               </div>
             </Typography>
+
             <div className="row col-lg-12">
               {chartsID["chart" + index.i] !== undefined ? (
                 <Chart state={template[chartsID["chart" + index.i]]} />
@@ -631,7 +631,7 @@ const Dashboard = ({ params }) => {
             </div>
           </Box>
         </Modal>
-      </Fragment>
+      </div>
     );
   };
   const Tabs = () => {
@@ -850,7 +850,49 @@ const Dashboard = ({ params }) => {
           )}
         </div>
         {/* } */}
-        <PreviewModal />
+        {/* <PreviewModal /> */}
+        <div>
+          <Modal
+            open={open.Chart}
+            onClose={(e) => {
+              setOpen({ Chart: false });
+            }}
+            aria-labelledby="keep-mounted-modal-title"
+            aria-describedby="keep-mounted-modal-description"
+          >
+            <Box sx={style} style={{ minWidth: "90%" }}>
+              <Typography
+                id="keep-mounted-modal-title"
+                variant="h6"
+                component="h2"
+              >
+                <div className="row col-lg-12">
+                  <div className="col-lg-11">Preview</div>
+                  <div
+                    className="col-lg-1"
+                    style={{ float: "right", cursor: "pointer" }}
+                  >
+                    <ZoomIn
+                      onClick={(e) => {
+                        handleClose();
+                      }}
+                    />
+                  </div>
+                </div>
+              </Typography>
+
+              <div className="row col-lg-12">
+                <Chart state={template[chartsID["chart" + index.i]]} />
+
+                {/* {chartsID["chart" + index.i] !== undefined ? (
+                  <Chart state={template[chartsID["chart" + index.i]]} />
+                ) : (
+                  ""
+                )} */}
+              </div>
+            </Box>
+          </Modal>
+        </div>
       </div>
     </>
   );

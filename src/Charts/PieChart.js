@@ -139,7 +139,8 @@ const PieChart = ({ params }) => {
     }
     fileChart
       .width(params.Width_)
-      .height(params.Heigth_)
+      //.height(params.Heigth_)
+      .height(null)
       .slicesCap(params.SlicesCap)
       .innerRadius(params.Innerradius)
       //.radius(130)

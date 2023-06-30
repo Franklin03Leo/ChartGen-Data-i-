@@ -129,7 +129,8 @@ const Scatter = ({ params }) => {
         if (params.PadLeft === undefined || params.PadLeft === '') PadLeft = 0; else PadLeft = params.PadLeft
         chart
             .width(params.Width_)
-            .height(params.Heigth_)
+            //.height(params.Heigth_)
+            .height(null)
             .margins({ top: parseInt(10) + parseInt(PadTop), right: parseInt(30) + parseInt(PadRight), bottom: parseInt(50) + parseInt(PadBottom), left: parseInt(30) + parseInt(PadLeft) })
 
             .x(d3.scaleLinear().domain([Math.min(...Max), Math.max(...Max) + Math.min(...Max)]))
