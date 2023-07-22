@@ -1046,6 +1046,7 @@ const InputArea = ({
               errorMessage: `Please select ${CheckType_}`,
             },
           });
+
           return;
         } else {
           setFormValues({
@@ -1092,21 +1093,30 @@ const InputArea = ({
       state.Chart === "Composite Chart" ||
       state.Chart === "Line Chart"
     ) {
-      if (CheckTypeXAxis === "Da") {
+      if (CheckTypeXAxis === "Da" || CheckTypeXAxis === "Select") {
         CheckType_ = "Date";
         setFormValues({
           ...formValues,
           XAxisCopy: {
             ...formValues["XAxisCopy"],
             error: true,
-            errorMessage: `Please select other than ${CheckType_}`,
+            errorMessage:
+              CheckTypeXAxis === "Select"
+                ? `Please select the XAxis`
+                : `Please select other than ${CheckType_}`,
           },
         });
-        setError({
-          mandatoryFields: `Please select other than ${CheckType_} in the XAxis`,
-        });
+        if (CheckTypeXAxis === "Da") {
+          setError({
+            mandatoryFields: `Please select other than ${CheckType_} in the XAxis`,
+          });
+        }
         return;
-      } else if (CheckTypeYAxis !== "#" && CheckTypeYAxis !== "") {
+      } else if (
+        CheckTypeYAxis !== "#" &&
+        CheckTypeYAxis !== "" &&
+        CheckTypeYAxis !== "Select"
+      ) {
         CheckType_ = "Integer";
         setFormValues({
           ...formValues,
@@ -2149,7 +2159,8 @@ const InputArea = ({
         GetTemplate();
         // if (Object.keys(project).length !== 0) {
         setTimeout(() => {
-          document.querySelector(".loader").style.display = "none";
+          if (document.querySelector(".loader"))
+            document.querySelector(".loader").style.display = "none";
         }, 100);
         // }
       });
@@ -2248,7 +2259,18 @@ const InputArea = ({
     setState({ ...state, OrderedList: updatedList });
     setItemOrderList(updatedList);
   };
+  const fnGettingUniqueCount = (key) => {
+    const countMap = new Map();
 
+    state.Uploaded_file.forEach((obj) => {
+      if (obj.hasOwnProperty(key)) {
+        const value = obj[key];
+        countMap.set(value, (countMap.get(value) || 0) + 1);
+      }
+    });
+    console.log("Size", countMap.size);
+    return countMap.size;
+  };
   // btn.addEventListener('click', addNewItem);
 
   //Components
@@ -2590,7 +2612,7 @@ const InputArea = ({
         className="nav-bar col-xs-1  col-sm-1 col-md-1 col-lg-1"
         style={{
           width: navwidth.navArea,
-          borderRight: navopen ? "1px solid rgb(0 0 0 / 13%)" : "",
+          // borderRight: navopen ? "1px solid rgb(0 0 0 / 13%)" : "",
           backgroundColor: "#f7f5f526",
         }}
       >
@@ -6487,7 +6509,7 @@ const InputArea = ({
             >
               <div className="col-sm-12 col-md-4 col-lg-4"></div>
               <div className="row1-container">
-                <div className="box box-down cyan">
+                <div className="box box-down cyan" style={{ width: "unset" }}>
                   <h2>SpectraIQ</h2>
                   <p>Join us on a project tour!</p>
                   <Button
@@ -6827,7 +6849,10 @@ const InputArea = ({
                           value={others.CardRows}
                           onChange={(e) => {
                             handleValidation(e);
-                            setOthers({ ...others, CardRows: e.target.value });
+                            setOthers({
+                              ...others,
+                              CardRows: e.target.value,
+                            });
                           }}
                         />
                         <div className="warning-msg">
@@ -6896,6 +6921,10 @@ const InputArea = ({
                                             Card: {
                                               ...others["Card"],
                                               [e.target.name]: e.target.value,
+                                              [e.target.name + "-Count"]:
+                                                fnGettingUniqueCount(
+                                                  e.target.value
+                                                ),
                                             },
                                           });
                                         }}
@@ -6916,7 +6945,8 @@ const InputArea = ({
 
                                       {/* <div className="warning-msg" style={{ display: i === parseInt(others.Rows) ? 'block' : 'none' }}>3 Cards per Row allowed</div> */}
                                     </div>
-                                    <div className="row col-sm-4 col-md-4 col-lg-4 inputfield">
+                                    {/* This is for having sum, count, avg and total */}
+                                    {/* <div className="row col-sm-4 col-md-4 col-lg-4 inputfield">
                                       <TextField
                                         id="GroupBy"
                                         select
@@ -6938,7 +6968,7 @@ const InputArea = ({
                                           </MenuItem>
                                         ))}
                                       </TextField>
-                                    </div>
+                                    </div> */}
                                   </div>
                                 );
                               }

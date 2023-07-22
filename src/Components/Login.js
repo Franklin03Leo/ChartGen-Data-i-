@@ -9,6 +9,7 @@ import {
   FormControl,
   InputLabel,
   FormHelperText,
+  Alert,
 } from "@mui/material";
 //Icons
 import User from "@mui/icons-material/Person";
@@ -41,6 +42,10 @@ const Login = () => {
       error: false,
       errorMessage: "Please enter",
     },
+    Name: {
+      error: false,
+      errorMessage: "Please enter",
+    },
     password: {
       error: false,
       errorMessage: "Please enter",
@@ -63,6 +68,9 @@ const Login = () => {
   const [forgotuser, setForgotUser] = React.useState({});
   const [path, setPath] = React.useState({
     Location: window.location.hostname,
+  });
+  const [error, setError] = React.useState({
+    Restiction: "",
   });
   const navigate = useNavigate();
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -90,7 +98,7 @@ const Login = () => {
   const handleDetails = (e, page) => {
     if (page === "Sign Up") {
       if (e.target.name === "Confirmpassword") {
-        if (userDetails.password !== e.target.value)
+        if (userDetails.password !== e.target.value) {
           setvalidation({
             ...validation,
             Confirmpassword: {
@@ -99,7 +107,8 @@ const Login = () => {
               errorMessage: "Password did not match",
             },
           });
-        else {
+          setError({ ...error, Disable: true });
+        } else {
           setvalidation({
             ...validation,
             Confirmpassword: {
@@ -108,6 +117,7 @@ const Login = () => {
               errorMessage: "Incorrect Password",
             },
           });
+          setError({ ...error, Disable: false });
         }
       } else {
         if (e.target.value !== undefined) {
@@ -121,9 +131,9 @@ const Login = () => {
           });
         }
       }
-      if (e.target.name !== "Confirmpassword") {
-        setUserDetails({ ...userDetails, [e.target.name]: e.target.value });
-      }
+      //   if (e.target.name !== "Confirmpassword") {
+      setUserDetails({ ...userDetails, [e.target.name]: e.target.value });
+      //}
     } else if (page === "Login") {
       if (e.target.value !== undefined) {
         setvalidation({
@@ -164,6 +174,17 @@ const Login = () => {
   };
   const handlePost = (page) => {
     if (page === "Sign Up") {
+      if (
+        !userDetails["Name"] ||
+        !userDetails["userID"] ||
+        !userDetails["password"] ||
+        !userDetails["Confirmpassword"]
+      ) {
+        setError({ ...error, Disable: true });
+        return;
+      } else {
+        setError({ ...error, Disable: false });
+      }
       axios
         .post(`http://${path.Location}:8000/SignupUser`, userDetails)
         .then((response) => {
@@ -172,8 +193,11 @@ const Login = () => {
             hideProgressBar: true,
             autoClose: 2000,
           });
-          setPage("Login");
-          //navigate('/home')
+          setPage("Welcome");
+
+          setTimeout(() => {
+            setPage("Login");
+          }, 10000);
         })
         .catch((error) => {
           console.log(error);
@@ -203,11 +227,26 @@ const Login = () => {
         .post(`http://${path.Location}:8000/SigninUser`, user)
         .then((res) => {
           if (res.status === 200) {
-            sessionStorage.setItem("UserName", [
-              res.data.Name,
-              res.data.userID,
-            ]);
-            navigate("/home");
+            const { Name, userID, Role, Status } = res.data;
+            sessionStorage.setItem("UserName", [Name, userID]);
+            if (Role === "Admin") {
+              navigate("/admin");
+            } else {
+              if (Status === "Active") {
+                navigate("/home");
+              } else if (Status === "Registered") {
+                setError({
+                  Restiction: "Access denied. Admin approval needed for login",
+                });
+                setTimeout(() => {
+                  setError({ Restiction: "" });
+                }, 4000);
+              } else {
+                setError({
+                  Restiction: "Login restricted. Awaiting admin approval.",
+                });
+              }
+            }
           }
         })
         .catch((error) => {
@@ -525,9 +564,10 @@ const Login = () => {
                 <p className="page-title">Create Account</p>
                 <div className="row col-lg-12">
                   <TextField
-                    //error={validation.Heigth_.error}
-                    //helperText={validation.Heigth_.error && validation.Heigth_.errorMessage}
-
+                    error={validation.Name.error}
+                    helperText={
+                      validation.Name.error && validation.Name.errorMessage
+                    }
                     id="Name"
                     className="input-field"
                     name="Name"
@@ -637,6 +677,7 @@ const Login = () => {
                     onClick={(e) => {
                       handlePost("Sign Up");
                     }}
+                    disabled={error["Disable"]}
                   >
                     Sign Up
                   </Button>
@@ -665,6 +706,22 @@ const Login = () => {
                     </span>
                   </div>
                 </div>
+              </div>
+            )}
+            {page === "Welcome" && (
+              <div className="container-page">
+                <p className="page-title">Thank You!!!</p>
+                <div className="div-welcome">
+                  Thank you for signing up! Your registration is complete. Your
+                  login access awaits admin approval to ensure a secure and
+                  efficient user experience. Upon approval, a confirmation email
+                  will be sent to you
+                </div>
+              </div>
+            )}
+            {error["Restiction"] && (
+              <div className="row" style={{ margin: "15px 0px 0px 0px" }}>
+                <Alert severity="error">{error["Restiction"]}</Alert>
               </div>
             )}
           </div>

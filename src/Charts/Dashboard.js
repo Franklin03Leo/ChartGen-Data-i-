@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { useRef } from "react";
 import { useEffect } from "react";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
@@ -22,6 +22,7 @@ import BarLineChart from "../Charts/BarLineChart";
 import SunBurstChart from "../Charts/SunBurstChart";
 import DashboardFilter from "../Components/DashboardFilter";
 import DatasetTable from "../Components/DatasetTable";
+import CardLineChart from "./CardLineChart";
 //NPM's
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -50,6 +51,8 @@ const Dashboard = ({ params }) => {
   });
   const [other, setOther] = React.useState({});
   const [cardValue, setCardValue] = React.useState({});
+
+  const divRef = useRef(null);
 
   useEffect(() => {
     if (params.dashboard !== undefined) {
@@ -577,12 +580,12 @@ const Dashboard = ({ params }) => {
           let Item = [];
           for (let i = 0; i < count; i++) {
             Item.push(
-              <div
-                className="div-card"
-                onClick={(e) => {
-                  fnGettingUniqueCount(params.Custom.Card["Card" + i + 1]);
-                }}
-              ></div>
+              <div className="div-card">
+                <h6>{params.Custom.Card["Card" + parseInt(i + 1)]}</h6>
+                <h2>
+                  {params.Custom.Card["Card" + parseInt(i + 1) + "-Count"]}
+                </h2>
+              </div>
             );
           }
           return Item;
@@ -775,19 +778,7 @@ const Dashboard = ({ params }) => {
       });
     }
   };
-  const fnGettingUniqueCount = (key) => {
-    const countMap = new Map();
 
-    params.dashboard[Object.keys(params.dashboard)[0]].Uploaded_file.forEach(
-      (obj) => {
-        if (obj.hasOwnProperty(key)) {
-          const value = obj[key];
-          countMap.set(value, (countMap.get(value) || 0) + 1);
-        }
-      }
-    );
-    return countMap.size;
-  };
   const DashboardArea = React.useMemo(() => {
     const dashboard = CreatingUploadArea();
     return dashboard;
