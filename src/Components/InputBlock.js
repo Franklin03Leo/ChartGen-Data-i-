@@ -7302,13 +7302,10 @@ const InputArea = ({
             </>
           )}
           {navbar.bar === "Project" ? (
-            <div
-              className="row col-sm-12 col-md-12 col-lg-12"
-              style={{ margin: "0px" }}
-            >
+            <div className="row div-project">
               <span
                 className="txtOrdinary"
-                style={{ display: "flex" }}
+                style={{ display: "flex", marginLeft: "10px" }}
               >{`Available Projects (${Object.keys(project).length})`}</span>
               <>
                 {(() => {
@@ -7317,14 +7314,18 @@ const InputArea = ({
                     if (project[a] !== undefined) {
                       Item.push(
                         <div
-                          className="col-lg-12 container-template"
+                          className="container-template"
                           id={a}
                           onClick={(e) => {
                             handleDashboard("Preview", e);
                           }}
+                          style={{ marginLeft: "6px", width: "100%" }}
                         >
-                          <div className="row col-lg-12 container-title">
-                            <div className="col-sm-1 col-md-1 col-lg-1">
+                          <div
+                            className="container-title"
+                            style={{ display: "flex", flexDirection: "row" }}
+                          >
+                            <div className="">
                               <img
                                 src={Project}
                                 name="Data"
@@ -7332,7 +7333,10 @@ const InputArea = ({
                                 alt="Logo"
                               ></img>
                             </div>
-                            <div className="row col-sm-8 col-md-8 col-lg-8">
+                            <div
+                              className=""
+                              style={{ width: "71%", display: "flex" }}
+                            >
                               {a}
                             </div>
                             {/* 
@@ -7341,7 +7345,7 @@ const InputArea = ({
                                                                 <RemoveRedEyeIcon id={a} className='temp-icon' onClick={(e) => { handleDashboard('Preview', e) }} />
                                                             </BootstrapTooltip>
                                                         </div> */}
-                            <div className="col-sm-1 col-md-1 col-lg-1 TemplateIcon">
+                            <div className=" TemplateIcon">
                               <BootstrapTooltip
                                 title="Edit"
                                 TransitionComponent={Fade}
@@ -7360,7 +7364,7 @@ const InputArea = ({
                                 {/* <EditIcon id={a} className='temp-icon' onClick={(e) => { handleDashboard('Edit', e) }} /> */}
                               </BootstrapTooltip>
                             </div>
-                            <div className="col-sm-1 col-md-1 col-lg-1 TemplateIcon">
+                            <div className=" TemplateIcon">
                               <BootstrapTooltip
                                 title="Delete"
                                 TransitionComponent={Fade}
