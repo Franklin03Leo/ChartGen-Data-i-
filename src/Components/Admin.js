@@ -138,22 +138,6 @@ const AdminView = () => {
                 </select>
               )}
             </>
-
-            // <select
-            //   className="select-dpd"
-            //   value={
-            //     selectedValues[tableMeta.rowIndex] !== undefined
-            //       ? selectedValues[tableMeta.rowIndex]["Role"]
-            //       : data["RowData"][rowIndex][columnIndex] || "User"
-            //   }
-            //   onChange={(e) => handleChange(e, tableMeta)}
-            // >
-            //   {options.map((option) => (
-            //     <option key={option} value={option}>
-            //       {option}
-            //     </option>
-            //   ))}
-            // </select>
           );
         },
       },
@@ -173,11 +157,27 @@ const AdminView = () => {
             "Deleted",
           ];
           const { rowIndex, columnIndex } = tableMeta;
+          const status_ =
+            selectedValues[tableMeta.rowIndex] &&
+            selectedValues[tableMeta.rowIndex]["Status"]
+              ? selectedValues[tableMeta.rowIndex]["Status"]
+              : data["RowData"][rowIndex][columnIndex] || "Registered";
           return (
             <>
               {data["EditedRow"] === undefined ||
               !data["EditedRow"][rowIndex] ? (
-                <div>
+                <div
+                  style={{
+                    color:
+                      status_ === "Active"
+                        ? "green"
+                        : status_ === "Inactive"
+                        ? "red"
+                        : status_ === "Registered"
+                        ? "#fda162"
+                        : "",
+                  }}
+                >
                   {selectedValues[tableMeta.rowIndex] &&
                   selectedValues[tableMeta.rowIndex]["Status"]
                     ? selectedValues[tableMeta.rowIndex]["Status"]
@@ -201,22 +201,6 @@ const AdminView = () => {
                 </select>
               )}
             </>
-
-            // <select
-            //   className="select-dpd"
-            //   value={
-            //     selectedValues[tableMeta.rowIndex] !== undefined
-            //       ? selectedValues[tableMeta.rowIndex]["Status"]
-            //       : data["RowData"][rowIndex][columnIndex] || "Registered"
-            //   }
-            //   onChange={(e) => handleChange(e, tableMeta)}
-            // >
-            //   {options.map((option) => (
-            //     <option className="select-dpd-opt" key={option} value={option}>
-            //       {option}
-            //     </option>
-            //   ))}
-            // </select>
           );
         },
       },
@@ -397,8 +381,7 @@ const AdminView = () => {
   return (
     <div className="col-lg-12" style={{ width: "100%" }}>
       <ToastContainer />
-      <Header />
-      <div style={{ marginTop: "70px" }}>
+      <div style={{ marginTop: "50px" }}>
         <MUIDataTable
           title=""
           data={data["RowData"]}

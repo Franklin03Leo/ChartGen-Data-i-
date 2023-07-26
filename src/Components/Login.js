@@ -229,25 +229,27 @@ const Login = () => {
           if (res.status === 200) {
             const { Name, userID, Role, Status } = res.data;
             sessionStorage.setItem("UserName", [Name, userID]);
-            if (Role === "Admin") {
-              navigate("/admin");
-            } else {
+            sessionStorage.setItem("Role", Role);
+            // if (Role === "Admin") {
+            //   navigate("/admin");
+            // } else {
               if (Status === "Active") {
                 navigate("/home");
               } else if (Status === "Registered") {
                 setError({
                   Restiction: "Access denied. Admin approval needed for login",
                 });
-                setTimeout(() => {
-                  setError({ Restiction: "" });
-                }, 4000);
+                
               } else {
                 setError({
                   Restiction: "Login restricted. Awaiting admin approval.",
                 });
               }
+              setTimeout(() => {
+                setError({ Restiction: "" });
+              }, 4000);
             }
-          }
+          //}
         })
         .catch((error) => {
           if (error.response.status === 404) {
@@ -719,7 +721,7 @@ const Login = () => {
                 </div>
               </div>
             )}
-            {error["Restiction"] && (
+            {error["Restiction"] && page === "Login" && (
               <div className="row" style={{ margin: "15px 0px 0px 0px" }}>
                 <Alert severity="error">{error["Restiction"]}</Alert>
               </div>

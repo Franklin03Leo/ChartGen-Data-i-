@@ -21,9 +21,7 @@ import { Button } from "@mui/material";
 
 
 const ChartBlock = ({ enable, state }) => {
-    console.log('chart block is rendering....');
-
-
+if(!state) state = [{}]
     const BootstrapTooltip = styled(({ className, ...props }) => (
         <Tooltip {...props} arrow classes={{ popper: className }} />
     ))(({ theme }) => ({

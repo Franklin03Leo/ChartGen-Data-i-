@@ -33,8 +33,10 @@ import Demo from "./Components/Demo";
 import Dashboard from "./Charts/Dashboard";
 import Feedback from "./Components/Feedback";
 import Header from "./Components/Header";
+import AdminView from "./Components/Admin";
 
 import EmptyPage from "../src/Images/EmptyPage.png";
+import { union } from "d3";
 
 const HomePage = () => {
   const DataTypes = ["#", "Da", "Aa"];
@@ -44,7 +46,7 @@ const HomePage = () => {
   const [filedata, setData] = React.useState({});
   const [play, setPlay] = React.useState({});
   const [show, Isshow] = React.useState({ NOCharts: 0, isRendered: false });
-  //const [navbar, setNavbar] = React.useState({ 'bar': 'Data' });
+  const [navbar, setNavbar] = React.useState();
   const [navwidth, setNavWidth] = React.useState({
     navArea: "7%",
     inuptArea: "28%",
@@ -255,6 +257,10 @@ const HomePage = () => {
       setData({ data: undefined });
     }
   };
+  const handlePage = (params) => {
+    console.log("Current page", params);
+    setNavbar(params);
+  };
   const navigate = useNavigate();
 
   // const Dashboard_ = React.useMemo(()=>)
@@ -281,6 +287,7 @@ const HomePage = () => {
             showDashboard={showDashboard}
             feedback_={handleFeedback}
             project_={handleProject}
+            currentPage={handlePage}
           />
           <div
             className=""
@@ -294,185 +301,188 @@ const HomePage = () => {
               height: "calc(94vh)",
             }}
           >
-            {filedata.data === undefined &&
+            {/* {
+            filedata.data === undefined 
             play.isPlay !== true &&
             show.isShow !== true &&
-            feedback.Issues === undefined ? (
-              <>
-                {state !== undefined && (
-                  <ChartBlock enable={enable} state={state} />
-                )}
-              </>
-            ) : (
-              <>
-                {filedata.data !== undefined && show.isShow !== true ? (
-                  <Box sx={{ width: "100%", typography: "body1" }}>
-                    <TabContext value={value}>
-                      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-                        <TabList
-                          onChange={handleChange}
-                          aria-label="lab API tabs example"
-                        >
-                          <Tab label="Dataset" value="1" />
-                          <Tab label="Statistics" value="2" />
-                          <Tab label="Data Dictionary" value="3" />
-                        </TabList>
-                      </Box>
-                      <TabPanel value="1">
-                        <DatasetTable params={filedata.data} />
-                      </TabPanel>
-                      <TabPanel value="2">
-                        <Statistics params={filedata.data} />
-                      </TabPanel>
-                      <TabPanel value="3">
-                        <div
-                          className="row col-lg-6 borderdivstyle"
-                          style={{ margin: "25px 0px 0px 0px" }}
-                        >
-                          <div className="row col-lg-12">
-                            <div className=" col-lg-12 borderstyle">
-                              Change Type
-                            </div>
+           feedback.Issues === undefined 
+            ? ( */}
+            <>
+              {(navbar === "Charts" || navbar === "Templates") && (
+                <ChartBlock enable={enable} state={state} />
+              )}
+            </>
+            {/* ) : ( */}
+            <>
+              {navbar === "Data" && filedata.data !== undefined ? (
+                <Box sx={{ width: "100%", typography: "body1" }}>
+                  <TabContext value={value}>
+                    <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                      <TabList
+                        onChange={handleChange}
+                        aria-label="lab API tabs example"
+                      >
+                        <Tab label="Dataset" value="1" />
+                        <Tab label="Statistics" value="2" />
+                        <Tab label="Data Dictionary" value="3" />
+                      </TabList>
+                    </Box>
+                    <TabPanel value="1">
+                      <DatasetTable params={filedata.data} />
+                    </TabPanel>
+                    <TabPanel value="2">
+                      <Statistics params={filedata.data} />
+                    </TabPanel>
+                    <TabPanel value="3">
+                      <div
+                        className="row col-lg-6 borderdivstyle"
+                        style={{ margin: "25px 0px 0px 0px" }}
+                      >
+                        <div className="row col-lg-12">
+                          <div className=" col-lg-12 borderstyle">
+                            Change Type
                           </div>
-                          <div className="row col-sm-4 col-md-4 col-lg-5">
-                            <TextField
-                              id="Dimensions_"
-                              select
-                              name="Dimensions_"
-                              label="Dimensions"
-                              className="input-field "
-                              onChange={(e) => {
-                                handleChangeDatatype(e);
-                              }}
-                              //defaultValue={'Select'}
-                              value={changeType.Dimensions_}
-                            >
-                              <MenuItem key={-1} value={"Select"}>
-                                {"Select"}
-                              </MenuItem>
-                              {changeType.Dimensions.map((option, index) => (
-                                <MenuItem key={index} value={option}>
-                                  {option}
-                                </MenuItem>
-                              ))}
-                            </TextField>
-                          </div>
-                          {changeType.enableChange === false ? (
-                            <div className="row col-sm-4 col-md-4 col-lg-6">
-                              <Button
-                                variant="contained"
-                                className="input-field button"
-                                style={{
-                                  backgroundColor: "#6282b3",
-                                  float: "right",
-                                }}
-                                onClick={(e) => {
-                                  setChangeType({
-                                    ...changeType,
-                                    enableChange: true,
-                                  });
-                                }}
-                              >
-                                Change Type
-                              </Button>
-                            </div>
-                          ) : (
-                            <>
-                              <div className="row col-sm-4 col-md-4 col-lg-3">
-                                <TextField
-                                  id="XAxis"
-                                  select
-                                  name="DataTypes"
-                                  label="DataTypes"
-                                  className="input-field "
-                                  onChange={(e) => {
-                                    handleChangeDatatype(e);
-                                  }}
-                                  // onBlur={(e) => { handleValidation(e) }}
-                                  value={changeType.DataTypes}
-                                >
-                                  {DataTypes.map((option, index) => (
-                                    <MenuItem key={option} value={option}>
-                                      {option}
-                                    </MenuItem>
-                                  ))}
-                                </TextField>
-                              </div>
-                              <div className="row col-sm-2 col-md-2 col-lg-2">
-                                <BootstrapTooltip
-                                  title="Change"
-                                  TransitionComponent={Fade}
-                                  TransitionProps={{ timeout: 600 }}
-                                  placement="bottom"
-                                >
-                                  <Check
-                                    className="Datatypeicon"
-                                    style={{ color: "green" }}
-                                    fontSize="small"
-                                    onClick={(e) => {
-                                      handleChangeDatatype(e, 1);
-                                    }}
-                                  />
-                                </BootstrapTooltip>
-                              </div>
-                              <div className="row col-sm-2 col-md-2 col-lg-2">
-                                <BootstrapTooltip
-                                  title="Cancel"
-                                  TransitionComponent={Fade}
-                                  TransitionProps={{ timeout: 600 }}
-                                  placement="bottom"
-                                >
-                                  <Clear
-                                    className="Datatypeicon"
-                                    style={{ color: "red" }}
-                                    fontSize="small"
-                                    onClick={(e) => {
-                                      setChangeType({
-                                        ...changeType,
-                                        enableChange: false,
-                                      });
-                                      setError({ mandatoryFields: undefined });
-                                    }}
-                                  />
-                                </BootstrapTooltip>
-                              </div>
-                            </>
-                          )}
-                          {error.mandatoryFields !== undefined ? (
-                            <div
-                              className="col-xs-3 col-sm-10 col-md-10 col-lg-10"
-                              style={{
-                                margin: "15px 0px 15px  0px",
-                                padding: 0,
-                              }}
-                            >
-                              <Alert severity="error">
-                                {error.mandatoryFields}
-                              </Alert>
-                            </div>
-                          ) : (
-                            ""
-                          )}
                         </div>
-                      </TabPanel>
-                    </TabContext>
-                  </Box>
-                ) : (
-                  ""
-                )}
-              </>
-            )}
-            {play.isPlay && filedata.data === undefined ? <Demo /> : ""}
-            {show.isShow ? (
+                        <div className="row col-sm-4 col-md-4 col-lg-5">
+                          <TextField
+                            id="Dimensions_"
+                            select
+                            name="Dimensions_"
+                            label="Dimensions"
+                            className="input-field "
+                            onChange={(e) => {
+                              handleChangeDatatype(e);
+                            }}
+                            //defaultValue={'Select'}
+                            value={changeType.Dimensions_}
+                          >
+                            <MenuItem key={-1} value={"Select"}>
+                              {"Select"}
+                            </MenuItem>
+                            {changeType.Dimensions?.map((option, index) => (
+                              <MenuItem key={index} value={option}>
+                                {option}
+                              </MenuItem>
+                            ))}
+                          </TextField>
+                        </div>
+                        {changeType.enableChange === false ? (
+                          <div className="row col-sm-4 col-md-4 col-lg-6">
+                            <Button
+                              variant="contained"
+                              className="input-field button"
+                              style={{
+                                backgroundColor: "#6282b3",
+                                float: "right",
+                              }}
+                              onClick={(e) => {
+                                setChangeType({
+                                  ...changeType,
+                                  enableChange: true,
+                                });
+                              }}
+                            >
+                              Change Type
+                            </Button>
+                          </div>
+                        ) : (
+                          <>
+                            <div className="row col-sm-4 col-md-4 col-lg-3">
+                              <TextField
+                                id="XAxis"
+                                select
+                                name="DataTypes"
+                                label="DataTypes"
+                                className="input-field "
+                                onChange={(e) => {
+                                  handleChangeDatatype(e);
+                                }}
+                                // onBlur={(e) => { handleValidation(e) }}
+                                value={changeType.DataTypes}
+                              >
+                                {DataTypes.map((option, index) => (
+                                  <MenuItem key={option} value={option}>
+                                    {option}
+                                  </MenuItem>
+                                ))}
+                              </TextField>
+                            </div>
+                            <div className="row col-sm-2 col-md-2 col-lg-2">
+                              <BootstrapTooltip
+                                title="Change"
+                                TransitionComponent={Fade}
+                                TransitionProps={{ timeout: 600 }}
+                                placement="bottom"
+                              >
+                                <Check
+                                  className="Datatypeicon"
+                                  style={{ color: "green" }}
+                                  fontSize="small"
+                                  onClick={(e) => {
+                                    handleChangeDatatype(e, 1);
+                                  }}
+                                />
+                              </BootstrapTooltip>
+                            </div>
+                            <div className="row col-sm-2 col-md-2 col-lg-2">
+                              <BootstrapTooltip
+                                title="Cancel"
+                                TransitionComponent={Fade}
+                                TransitionProps={{ timeout: 600 }}
+                                placement="bottom"
+                              >
+                                <Clear
+                                  className="Datatypeicon"
+                                  style={{ color: "red" }}
+                                  fontSize="small"
+                                  onClick={(e) => {
+                                    setChangeType({
+                                      ...changeType,
+                                      enableChange: false,
+                                    });
+                                    setError({ mandatoryFields: undefined });
+                                  }}
+                                />
+                              </BootstrapTooltip>
+                            </div>
+                          </>
+                        )}
+                        {error.mandatoryFields !== undefined ? (
+                          <div
+                            className="col-xs-3 col-sm-10 col-md-10 col-lg-10"
+                            style={{
+                              margin: "15px 0px 15px  0px",
+                              padding: 0,
+                            }}
+                          >
+                            <Alert severity="error">
+                              {error.mandatoryFields}
+                            </Alert>
+                          </div>
+                        ) : (
+                          ""
+                        )}
+                      </div>
+                    </TabPanel>
+                  </TabContext>
+                </Box>
+              ) : (
+                ""
+              )}
+            </>
+            {/* )} */}
+
+            {navbar === "Demo" ? <Demo /> : ""}
+            {(navbar === "Project" || navbar === "Dashboard") &&
+            show.isShow !== undefined ? (
               <Dashboard params={show.PreviewProject ? project : show} />
             ) : (
               ""
             )}
-            {feedback.Issues !== undefined ? (
-              <Feedback params={feedback.Issues} />
-            ) : (
-              ""
-            )}
+            {navbar === "Feedback" ? <Feedback params={feedback.Issues} /> : ""}
+            {navbar === "Admin" ? <AdminView /> : ""}
+
+
             {(state === undefined || Object.keys(state).length === 0) &&
             feedback.Issues === undefined &&
             !show.isShow &&

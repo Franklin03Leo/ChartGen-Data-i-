@@ -91,6 +91,7 @@ import Bar_outlined from "../../src/Images/Bar-chart-outlined.svg";
 import Pie from "../../src/Images/Pie-chart.svg";
 import Line from "../../src/Images/LineIcon.svg";
 import Scatter from "../../src/Images/Scatter-chart.svg";
+
 //Components
 import LoadingSpinner from "../Components/LoadingSpinner";
 
@@ -102,6 +103,7 @@ const InputArea = ({
   showDashboard,
   feedback_,
   project_,
+  currentPage,
 }) => {
   // Global variables declaration
   const ChartType = [
@@ -349,7 +351,9 @@ const InputArea = ({
   // })
   //useEffects for re-rendering the component
   React.useEffect(() => {
-    // GenerateChart();
+    currentPage(navbar["bar"]);
+  }, [navbar]);
+  React.useEffect(() => {
     ExpandData(navwidth);
   }, [navwidth]);
   React.useEffect(() => {
@@ -1438,32 +1442,39 @@ const InputArea = ({
   // Sidebar navigation
   const handleNavbarChange = (event) => {
     var data = event.target.name;
-    if (data !== "FeedbackIcon") resetScreen();
-    var bar = "";
-    if (data === "DatasetIcon") {
-      bar = "Data";
-    } else if (data === "SignalCellularAltIcon") {
-      bar = "Charts";
-    } else if (data === "Grid3x3Icon") bar = "Dimensions";
-    else if (data === "LineAxisIcon") bar = "Axes";
-    else if (data === "ArticleIcon") bar = "Templates";
-    else if (data === "YouTubeIcon") bar = "Demo";
-    else if (data === "DashboardIcon") bar = "Dashboard";
-    else if (data === "FeedbackIcon") bar = "Feedback";
-    else if (data === "AutoAwesomeMotionIcon") bar = "Project";
-    else if (data === "CollectionsIcon") bar = "Collections";
-
+    // if (data !== "FeedbackIcon") resetScreen();
+    // var bar = "";
+    // if (data === "DatasetIcon") {
+    //   bar = "Data";
+    // } else if (data === "SignalCellularAltIcon") {
+    //   bar = "Charts";
+    // } else if (data === "Grid3x3Icon") bar = "Dimensions";
+    // else if (data === "LineAxisIcon") bar = "Axes";
+    // else if (data === "ArticleIcon") bar = "Templates";
+    // else if (data === "YouTubeIcon") bar = "Demo";
+    // else if (data === "DashboardIcon") bar = "Dashboard";
+    // else if (data === "FeedbackIcon") bar = "Feedback";
+    // else if (data === "AutoAwesomeMotionIcon") bar = "Project";
+    // else if (data === "CollectionsIcon") bar = "Collections";
+    resetScreen();
+    if (data === "Admin") {
+      setNavOpen(false);
+      setNavWidth({ navArea: "70px", inuptArea: "0%", ChartArea: "94%" });
+    } else {
+      setNavOpen(true);
+      setNavWidth({ navArea: "70px", inuptArea: "28%", ChartArea: "63%" });
+    }
     setNavbar({ bar: data });
-    setEnable({
-      ...enable,
-      Piechart: false,
-      Barchart: false,
-      Scatter: false,
-      Linechart: false,
-      Compositechart: false,
-      Serieschart: false,
-      Barlinechart: false,
-    });
+    // setEnable({
+    //   ...enable,
+    //   Piechart: false,
+    //   Barchart: false,
+    //   Scatter: false,
+    //   Linechart: false,
+    //   Compositechart: false,
+    //   Serieschart: false,
+    //   Barlinechart: false,
+    // });
   };
   //property enabling for the swatch
   const handleShowProps = (e) => {
@@ -2465,6 +2476,30 @@ const InputArea = ({
               </BootstrapTooltip>
             </div>
           </div>
+          { sessionStorage.getItem("Role") === 'Admin' &&
+          <div className="Icon">
+            <div
+              className={navbar.bar === "Admin" ? "NavBar-active" : "NavBar"}
+            >
+              <BootstrapTooltip
+                title="Admin"
+                TransitionComponent={Fade}
+                TransitionProps={{ timeout: 600 }}
+                placement="right"
+              >
+                <img
+                  src={Feedback}
+                  name="Admin"
+                  color="white"
+                  alt="Logo"
+                  onClick={(e) => {
+                    handleNavbarChange(e);
+                  }}
+                ></img>
+              </BootstrapTooltip>
+            </div>
+          </div>
+  }
         </div>
       </>
     );
