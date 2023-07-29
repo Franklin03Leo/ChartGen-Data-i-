@@ -14,6 +14,9 @@ const AdminView = () => {
   const [path, setPath] = React.useState({
     Location: window.location.hostname,
   });
+  const [user, setUser] = React.useState({
+    userID: sessionStorage.getItem("UserName").split(",")[0],
+  });
   const [selectedValues, setSelectedValues] = useState([]);
   const [data, setData] = React.useState([]);
   useEffect(() => {
@@ -210,6 +213,14 @@ const AdminView = () => {
       options: {
         filter: true,
         sort: false,
+        customBodyRender: (value, tableMeta) => {
+          let date = new Date(value).toLocaleDateString("en-GB");
+          let time = new Date(value).toLocaleTimeString("en-US", {
+            timeStyle: "medium",
+          });
+          if (date === "Invalid Date") return "";
+          else return `${date} ${time}`;
+        },
       },
     },
     {
@@ -224,6 +235,14 @@ const AdminView = () => {
       options: {
         filter: true,
         sort: false,
+        customBodyRender: (value, tableMeta) => {
+          let date = new Date(value).toLocaleDateString("en-GB");
+          let time = new Date(value).toLocaleTimeString("en-US", {
+            timeStyle: "medium",
+          });
+          if (date === "Invalid Date") return "";
+          else return `${date} ${time}`;
+        },
       },
     },
     {
@@ -328,9 +347,9 @@ const AdminView = () => {
             "Group",
             "Role",
             "Status",
-            "created_date",
-            "approved_by",
-            "approved_date",
+            "createdDate",
+            "approvedBy",
+            "approvedDate",
           ];
           const Data = getUsersDataByKeys(res.data, keys);
           setData({ ...data, RowData: Data });
@@ -354,7 +373,9 @@ const AdminView = () => {
     });
   };
   const handleSave = (index) => {
-    const obj = selectedValues[index];
+    let obj = selectedValues[index];
+    obj["approvedDate"] = new Date();
+    obj["approvedBy"] = user["userID"];
     axios
       .post(`http://${path.Location}:8000/SaveUsers`, obj)
       .then((res) => {
@@ -365,6 +386,13 @@ const AdminView = () => {
             autoClose: 2000,
           });
           handleEditRow(index, false);
+          setData((prevState) => {
+            let newRowData = [...prevState.RowData];
+              newRowData[index][8] = new Date().toString()
+              newRowData[index][7] = user["userID"]
+            
+            return { ...prevState, RowData: newRowData };
+          });
         }
       })
       .catch((error) => {});

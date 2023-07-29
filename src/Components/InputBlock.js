@@ -56,6 +56,8 @@ import Scatterplot from "@mui/icons-material/ScatterPlot";
 import Barlinechart from "@mui/icons-material/StackedLineChart";
 import Serieschart from "@mui/icons-material/MultilineChart";
 import FeedbackIcon from "@mui/icons-material/Feedback";
+
+import PeopleIcon from "@mui/icons-material/PeopleOutlineOutlined";
 // import Project from '@mui/icons-material/AutoAwesomeMotion';
 import Collections from "@mui/icons-material/Collections";
 import layout1 from "../../src/Images/layout1.svg";
@@ -92,9 +94,6 @@ import Pie from "../../src/Images/Pie-chart.svg";
 import Line from "../../src/Images/LineIcon.svg";
 import Scatter from "../../src/Images/Scatter-chart.svg";
 
-//Components
-import LoadingSpinner from "../Components/LoadingSpinner";
-
 const InputArea = ({
   ChildtoParentHandshake,
   ExpandData,
@@ -127,6 +126,7 @@ const InputArea = ({
     "Garamond",
     "Courier",
   ];
+  const Group = ["Sales", "Finance", "Marketing", "External"];
   const TooltipContent = ["All", "X", "Y"];
   const LablesContent = ["X", "Y", "Title"];
   const GroupByCol = ["Sum", "Count", "Minimum", "Maximum", "Average"];
@@ -213,7 +213,9 @@ const InputArea = ({
     },
   });
   const [user, setUser] = React.useState({
+    userName: sessionStorage.getItem("UserName").split(",")[0],
     userID: sessionStorage.getItem("UserName").split(",")[1],
+    Role: sessionStorage.getItem("Role"),
   });
   const [disable, isDisable] = React.useState(true);
   const [error, setError] = React.useState({});
@@ -236,17 +238,25 @@ const InputArea = ({
   });
   const [enable, setEnable] = React.useState({});
   const [colors, setColors] = React.useState([]);
-  const [navbar, setNavbar] = React.useState({ bar: "Project" });
+  const [navbar, setNavbar] = React.useState({
+    bar: sessionStorage.getItem("Role") === "Admin" ? "Admin" : "Project",
+  });
   const [template, setTemplate] = React.useState({});
   const [dashboard, setDashboard] = React.useState({});
   const [enabletemplate, setEnableTemplate] = React.useState(false);
   const [flag, setFlag] = React.useState(false);
-  const [navopen, setNavOpen] = React.useState(true);
-  const [navwidth, setNavWidth] = React.useState({
-    navArea: "70px",
-    inuptArea: "28%",
-    ChartArea: "63%",
-  });
+  const [navopen, setNavOpen] = React.useState(
+    sessionStorage.getItem("Role") === "Admin" ? false : true
+  );
+  const [navwidth, setNavWidth] = React.useState(
+    sessionStorage.getItem("Role") === "Admin"
+      ? { navArea: "70px", inuptArea: "0%", ChartArea: "94%" }
+      : {
+          navArea: "70px",
+          inuptArea: "28%",
+          ChartArea: "63%",
+        }
+  );
   const [isMobile, setIsMobile] = React.useState(false);
   const [open, setOpen] = React.useState({
     Template: false,
@@ -300,6 +310,7 @@ const InputArea = ({
     Location: window.location.hostname,
   }); //49.204.124.69/
   const [Dataset, setDataset] = React.useState({});
+  const [projectAssigning, setProjectAssigning] = React.useState({});
 
   // React state to track order of items
   const [ItemOrderList, setItemOrderList] = React.useState([]);
@@ -384,6 +395,7 @@ const InputArea = ({
     //GetTemplate('Dashboard')
     GetDashboard();
     getDataSet();
+    handleGetUsers();
     const handleResize = () => {
       if (window.innerWidth < 1010) {
         setNavOpen(false);
@@ -1777,22 +1789,26 @@ const InputArea = ({
   };
   const handleMultiselect = (event) => {
     const {
-      target: { value },
+      target: { value, name },
     } = event;
-    if (event.target.name === "SunBurstX_Axis") {
+    if (name === "SunBurstX_Axis") {
       setState({
         ...state,
-        [event.target.name]:
-          typeof value === "string" ? value.split(",") : value,
+        [name]: typeof value === "string" ? value.split(",") : value,
         OrderedList: typeof value === "string" ? value.split(",") : value,
       });
       setItemOrderList(typeof value === "string" ? value.split(",") : value);
-    } else
+    } else if (name === "Users" || name === "Groups") {
+      setProjectAssigning({
+        ...projectAssigning,
+        [name]: typeof value === "string" ? value.split(",") : value,
+      });
+    } else {
       setfilteringProps({
         ...filteringProps,
-        [event.target.name]:
-          typeof value === "string" ? value.split(",") : value,
+        [name]: typeof value === "string" ? value.split(",") : value,
       });
+    }
   };
   //Expand/Collapse
   const ExpandCollapse = (action) => {
@@ -2021,6 +2037,8 @@ const InputArea = ({
       obj.FilterProps = filterProps;
       obj.selectedFilterDimensions = filteringProps.customFilter;
       obj.AvailableDimensions = filteringProps.Dimensions;
+      obj.Users = projectAssigning.Users;
+      obj.Groups = projectAssigning.Groups;
       obj.action = "Update";
       setpostProject(obj);
       document.querySelector(".loader").style.display = "block";
@@ -2114,6 +2132,10 @@ const InputArea = ({
         setPlay({ isPlay: undefined });
         setIssues(undefined);
         setIsshow({ ...show, isShow: true, Build: false });
+        setProjectAssigning({
+          Users: !data.Users ? [] : data.Users,
+          Groups: !data.Groups ? [] : data.Groups,
+        });
       }
     }
   };
@@ -2159,14 +2181,23 @@ const InputArea = ({
         userID: user.userID,
       })
       .then((response) => {
-        // console.log('project data', response.data);
+        // console.log("project data", response.data);
         let data = response.data;
         let obj = {};
+       // let Project = [];
         for (let i = 0; i < data.length; i++) {
           obj[data[i].DashboardName] = data[i];
+         // let Users = data[i].Users
+          // if (Users !== undefined && Users.toString().indexOf(user["userName"]) > 0) {
+          //   project.push(data[i].DashboardName);
+          // }
         }
+
+        console.log("project ===>", obj);
+        console.log("needed project ===>", Project);
         setProject(obj);
-        setNavbar({ bar: "Project" });
+        // setProjectAssigning({ Users: data[0].Users, Groups: data[0].Groups });
+        //setNavbar({ bar: "Project" });
         GetTemplate();
         // if (Object.keys(project).length !== 0) {
         setTimeout(() => {
@@ -2257,6 +2288,17 @@ const InputArea = ({
       setData({ data: Dataset[id] });
     }
   };
+  const handleGetUsers = () => {
+    axios
+      .post(`http://${path.Location}:8000/GetUsers`)
+      .then((res) => {
+        if (res.status === 200) {
+          console.log("Users==>", res.data);
+          setUser({ ...user, Users: res.data });
+        }
+      })
+      .catch((error) => {});
+  };
 
   const handleDrop = (droppedItem) => {
     // Ignore drop outside droppable container
@@ -2288,7 +2330,13 @@ const InputArea = ({
   const NavIcons = () => {
     return (
       <>
-        <div style={{ visibility: `${!navopen ? "visible" : "hidden"}` }}>
+        <div
+          style={{
+            visibility: `${
+              !navopen && navbar["bar"] !== "Admin" ? "visible" : "hidden"
+            }`,
+          }}
+        >
           {/* {!navopen && */}
           <BootstrapTooltip
             title="Expand"
@@ -2307,7 +2355,10 @@ const InputArea = ({
           {/* } */}
         </div>
         <div className="NavBar-parent">
-          <div className="Icon">
+          <div
+            className="Icon"
+            style={{ display: user["Role"] === "User" && "None" }}
+          >
             <div className={navbar.bar === "Data" ? "NavBar-active" : "NavBar"}>
               <BootstrapTooltip
                 title="Data"
@@ -2326,7 +2377,7 @@ const InputArea = ({
               </BootstrapTooltip>
             </div>
           </div>
-          {state.Uploaded_file !== undefined && (
+          {state.Uploaded_file !== undefined && user["Role"] !== "User" && (
             <div className="Icon">
               <div
                 className={navbar.bar === "Charts" ? "NavBar-active" : "NavBar"}
@@ -2350,7 +2401,10 @@ const InputArea = ({
               </div>
             </div>
           )}
-          <div className="Icon">
+          <div
+            className="Icon"
+            style={{ display: user["Role"] === "User" && "None" }}
+          >
             <div
               className={
                 navbar.bar === "Templates" ? "NavBar-active" : "NavBar"
@@ -2377,7 +2431,10 @@ const InputArea = ({
               </BootstrapTooltip>
             </div>
           </div>
-          <div className="Icon">
+          <div
+            className="Icon"
+            style={{ display: user["Role"] === "User" && "None" }}
+          >
             <div
               className={
                 navbar.bar === "Dashboard" ? "NavBar-active" : "NavBar"
@@ -2476,30 +2533,30 @@ const InputArea = ({
               </BootstrapTooltip>
             </div>
           </div>
-          { sessionStorage.getItem("Role") === 'Admin' &&
-          <div className="Icon">
-            <div
-              className={navbar.bar === "Admin" ? "NavBar-active" : "NavBar"}
-            >
-              <BootstrapTooltip
-                title="Admin"
-                TransitionComponent={Fade}
-                TransitionProps={{ timeout: 600 }}
-                placement="right"
+          {user["Role"] === "Admin" && (
+            <div className="Icon">
+              <div
+                className={navbar.bar === "Admin" ? "NavBar-active" : "NavBar"}
               >
-                <img
-                  src={Feedback}
-                  name="Admin"
-                  color="white"
-                  alt="Logo"
-                  onClick={(e) => {
-                    handleNavbarChange(e);
-                  }}
-                ></img>
-              </BootstrapTooltip>
+                <BootstrapTooltip
+                  title="Admin"
+                  TransitionComponent={Fade}
+                  TransitionProps={{ timeout: 600 }}
+                  placement="right"
+                >
+                  <img
+                    src={Feedback}
+                    name="Admin"
+                    color="white"
+                    alt="Logo"
+                    onClick={(e) => {
+                      handleNavbarChange(e);
+                    }}
+                  ></img>
+                </BootstrapTooltip>
+              </div>
             </div>
-          </div>
-  }
+          )}
         </div>
       </>
     );
@@ -2559,7 +2616,7 @@ const InputArea = ({
         <span style={{ float: "left", fontWeight: "bold", margin: "15px" }}>
           {param}
         </span>
-        {param === "Project" && (
+        {param === "Project" && user["Role"] !== "User" && (
           <div className="" style={{ float: "right" }}>
             <Button
               variant="contained"
@@ -6304,6 +6361,7 @@ const InputArea = ({
                         >
                           <Typography className="acdTitle">
                             <img
+                              alt="Saved Template"
                               src={Saved_Templates}
                               style={{ marginRight: "10px" }}
                             ></img>
@@ -7052,11 +7110,6 @@ const InputArea = ({
                     >
                       <span>My Saved Templates</span>
                     </div>
-                    {/* <div className="col-lg-1" style={{ cursor: 'pointer' }}>
-                                            <BootstrapTooltip title="Refresh" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="right">
-                                                <Reload onClick={e => { setIsshow({ ...show, 'isShow': true, dashboard, 'NOCharts': others.NOCharts }) }} />
-                                            </BootstrapTooltip>
-                                        </div> */}
                   </div>
                   {(() => {
                     let Item = [];
@@ -7211,41 +7264,119 @@ const InputArea = ({
                   )}
                 </div>
                 {others.EditDashboard && (
-                  <div
-                    className="row col-xs-12 col-sm-12 col-md-12 col-lg-12"
-                    style={{ marginTop: "10px" }}
-                  >
-                    <TextField
-                      id="TempDescription"
-                      className="Description"
-                      label="Description"
-                      name="DashboardDescription"
-                      fullWidth
-                      margin="dense"
-                      multiline
-                      maxRows={4}
-                      value={projectDetails.DashboardDescription}
-                      onChange={(e) => {
-                        setprojectDetails({
-                          ...projectDetails,
-                          [e.target.name]: e.target.value,
-                        });
-                      }}
-                    />
-                  </div>
+                  <>
+                    <div className="col-lg-12 borderstyle">
+                      <div
+                        className="col-lg-8 semi-bold"
+                        style={{ display: "contents" }}
+                      >
+                        <span>Project Assigning</span>
+                      </div>
+                    </div>
+
+                    <div
+                      className="row col-lg-12 borderdivstyle"
+                      style={{ margin: "0px" }}
+                    >
+                      <div className="row col-lg-6" style={{ padding: "0px" }}>
+                        <FormControl sx={{ m: 1, paddingRight: 2, width: 300 }}>
+                          <InputLabel id="filter">Users</InputLabel>
+                          <Select
+                            labelId="Users"
+                            id="Users"
+                            multiple
+                            value={
+                              projectAssigning.Users === undefined
+                                ? []
+                                : projectAssigning.Users
+                            }
+                            name="Users"
+                            onChange={handleMultiselect}
+                            input={<OutlinedInput label="Tag" />}
+                            renderValue={(selected) => selected.join(", ")}
+                            MenuProps={MenuProps}
+                          >
+                            {user.Users.map((name) => (
+                              <MenuItem key={name["Name"]} value={name["Name"]}>
+                                <Checkbox
+                                  checked={
+                                    projectAssigning.Users === undefined
+                                      ? false
+                                      : projectAssigning.Users.indexOf(
+                                          name["Name"]
+                                        ) > -1
+                                  }
+                                />
+                                <ListItemText
+                                  key={name["Name"]}
+                                  primary={name["Name"]}
+                                />
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      </div>
+                      <div className="row col-lg-6" style={{ padding: "0px" }}>
+                        <FormControl sx={{ m: 1, paddingRight: 2, width: 300 }}>
+                          <InputLabel id="filter">Group</InputLabel>
+                          <Select
+                            labelId="Users"
+                            id="Users"
+                            multiple
+                            value={
+                              projectAssigning.Groups === undefined
+                                ? []
+                                : projectAssigning.Groups
+                            }
+                            name="Groups"
+                            onChange={handleMultiselect}
+                            input={<OutlinedInput label="Tag" />}
+                            renderValue={(selected) => selected.join(", ")}
+                            MenuProps={MenuProps}
+                          >
+                            {Group.map((name) => (
+                              <MenuItem key={name} value={name}>
+                                <Checkbox
+                                  checked={
+                                    projectAssigning.Groups === undefined
+                                      ? false
+                                      : projectAssigning.Groups.indexOf(name) >
+                                        -1
+                                  }
+                                />
+                                <ListItemText key={name} primary={name} />
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      </div>
+                    </div>
+                    {/* Description */}
+                    <div
+                      className="row col-xs-12 col-sm-12 col-md-12 col-lg-12"
+                      style={{ marginTop: "10px" }}
+                    >
+                      <TextField
+                        id="TempDescription"
+                        className="Description"
+                        label="Description"
+                        name="DashboardDescription"
+                        fullWidth
+                        margin="dense"
+                        multiline
+                        maxRows={4}
+                        value={projectDetails.DashboardDescription}
+                        onChange={(e) => {
+                          setprojectDetails({
+                            ...projectDetails,
+                            [e.target.name]: e.target.value,
+                          });
+                        }}
+                      />
+                    </div>
+                  </>
                 )}
-                {/* <div className="row col-sm-4 col-md-12 col-lg-5" style={{ marginTop: '10px' }}>
-                                    <Button id="saveTemp" variant="contained" className='input-field button' style={{ backgroundColor: '#6282b3', lineHeight: '1rem' }}
-                                        onClick={e => {
-                                            setIsshow({
-                                                ...show, 'isShow': true, dashboard, 'Custom': others, 'CustomLayouts': others.CustomLayouts
-                                                , 'StaticLayouts': others.StaticLayouts, 'selectedLayout': others.selectedLayout
-                                            });
-                                            setPlay({ 'isPlay': undefined }); setIssues(undefined)
-                                        }}>
-                                        Build Dashboard
-                                    </Button>
-                                </div> */}
+
                 {!others.EditDashboard === true ? (
                   <>
                     <div
@@ -7280,6 +7411,7 @@ const InputArea = ({
                         <span style={{ display: "flex" }}>
                           Publish Dashboard{" "}
                           <img
+                            alt="Publish"
                             src={Publish}
                             style={{
                               width: "16px",
@@ -7370,17 +7502,92 @@ const InputArea = ({
                             </div>
                             <div
                               className=""
-                              style={{ width: "71%", display: "flex" }}
+                              style={{ width: "65%", display: "flex" }}
                             >
                               {a}
                             </div>
-                            {/* 
-                                                        <div className="col-sm-1 col-md-1 col-lg-1 TemplateIcon">
-                                                            <BootstrapTooltip title="Preview" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom">
-                                                                <RemoveRedEyeIcon id={a} className='temp-icon' onClick={(e) => { handleDashboard('Preview', e) }} />
-                                                            </BootstrapTooltip>
-                                                        </div> */}
-                            <div className=" TemplateIcon">
+
+                            <div
+                              className=" TemplateIcon"
+                              style={{
+                                display: user["Role"] === "User" && "None",
+                              }}
+                            >
+                              <BootstrapTooltip
+                                title={[
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      flexDirection: "row",
+                                    }}
+                                  >
+                                    {!project[a]["Users"] &&
+                                    !project[a]["Groups"] ? (
+                                      <div style={{ margin: "10px" }}>
+                                        {" "}
+                                        Not Assigned
+                                      </div>
+                                    ) : (
+                                      <>
+                                        <div style={{ margin: "10px" }}>
+                                          <h6
+                                            style={{
+                                              padding: "5px 0px 0px 0px",
+                                            }}
+                                          >
+                                            Users
+                                          </h6>
+                                          {project[a]["Users"]?.map((e) => (
+                                            <div
+                                              style={{
+                                                padding: "5px 0px 5px 0px",
+                                              }}
+                                            >
+                                              {e}
+                                            </div>
+                                          ))}
+                                        </div>
+                                        <div style={{ margin: "10px" }}>
+                                          <h6
+                                            style={{
+                                              padding: "5px 0px 0px 0px",
+                                            }}
+                                          >
+                                            Groups
+                                          </h6>
+                                          {project[a]["Groups"]?.map((e) => (
+                                            <div
+                                              style={{
+                                                padding: "5px 0px 5px 0px",
+                                              }}
+                                            >
+                                              {e}
+                                            </div>
+                                          ))}
+                                        </div>
+                                      </>
+                                    )}
+                                  </div>,
+                                ]}
+                                TransitionComponent={Fade}
+                                TransitionProps={{ timeout: 600 }}
+                                placement="right"
+                              >
+                                <PeopleIcon
+                                  id={a}
+                                  className="temp-icon"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                  }}
+                                />
+                              </BootstrapTooltip>
+                            </div>
+                            <div
+                              className=" TemplateIcon"
+                              style={{
+                                display: user["Role"] === "User" && "None",
+                              }}
+                            >
                               <BootstrapTooltip
                                 title="Edit"
                                 TransitionComponent={Fade}
@@ -7396,10 +7603,14 @@ const InputArea = ({
                                     handleDashboard("Edit", e);
                                   }}
                                 ></img>
-                                {/* <EditIcon id={a} className='temp-icon' onClick={(e) => { handleDashboard('Edit', e) }} /> */}
                               </BootstrapTooltip>
                             </div>
-                            <div className=" TemplateIcon">
+                            <div
+                              className=" TemplateIcon"
+                              style={{
+                                display: user["Role"] === "User" && "None",
+                              }}
+                            >
                               <BootstrapTooltip
                                 title="Delete"
                                 TransitionComponent={Fade}

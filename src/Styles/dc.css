@@ -818,7 +818,8 @@ input:checked + .slider:before {
 
 .container-title > div > img {
   filter: brightness(0.1);
-  height: 16px;
+  height: 14px;
+  /* height: 16px; */
 }
 
 .container-template .container-title > div {
@@ -850,7 +851,7 @@ input:checked + .slider:before {
   letter-spacing: 0px;
   color: #1c252d !important;
   font-size: 12px !important;
-  margin-left: 15%;
+  margin-left: 30px;
   opacity: 0.7;
   max-width: 98%;
 }

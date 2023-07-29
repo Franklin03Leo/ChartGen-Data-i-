@@ -291,6 +291,9 @@ app.post("/InsertDashboard", (req, res) => {
       ); // Failure
     });
 });
+//db.getCollection('Dashboards').find({ 'DashboardName': { $in: ["45", "All the charts"] } })
+//db.getCollection('Dashboards').find({ 'Users': { $in: ["Naveen"] }})
+
 app.post("/GetDashboard/", (req, res) => {
   connect();
   db.collection("Dashboards")
@@ -324,6 +327,8 @@ app.post("/UpdateDashboard", (req, res) => {
           filterProps: data.FilterProps,
           filter: data.Filter,
           selectedFilterDimensions: data.selectedFilterDimensions,
+          Users: data.Users,
+          Groups: data.Groups,
         },
       }
     )
