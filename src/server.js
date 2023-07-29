@@ -44,9 +44,9 @@ async function connect() {
 }
 connect();
 
-app.listen(8000, () => {
+app.listen(3012, () => {
   // console.log(`Server started on PORT: ${process.env.PORT} in ${process.env.NODE_ENV}`)
-  console.log(`Server started on PORT 8000`);
+  console.log(`Server started on PORT 3012`);
 });
 //==================== PREDEFINED TEMPALTES============
 app.post("/GetPreDefinedTemplate", (req, res) => {

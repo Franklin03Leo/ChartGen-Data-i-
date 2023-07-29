@@ -1601,7 +1601,7 @@ const InputArea = ({
       });
 
       axios
-        .post(`http://${path.Location}:8000/DeleteTemplate`, {
+        .post(`http://${path.Location}:3012/DeleteTemplate`, {
           TempName: name,
           userID: user.userID,
         })
@@ -1850,13 +1850,13 @@ const InputArea = ({
     try {
       if (action === "Update") {
         axios
-          .post(`http://${path.Location}:8000/DeleteTemplate`, {
+          .post(`http://${path.Location}:3012/DeleteTemplate`, {
             TempName: state.TempName,
             userID: user.userID,
           })
           .then((response) => {
             axios
-              .post(`http://${path.Location}:8000/InsertTemplate`, state)
+              .post(`http://${path.Location}:3012/InsertTemplate`, state)
               .then((response) => {
                 console.log("data", response.data);
                 GetTemplate();
@@ -1869,7 +1869,7 @@ const InputArea = ({
         const Result = state;
         delete Result._id;
         axios
-          .post(`http://${path.Location}:8000/InsertTemplate`, Result)
+          .post(`http://${path.Location}:3012/InsertTemplate`, Result)
           .then((response) => {
             console.log("data", response.data);
             GetTemplate();
@@ -1893,7 +1893,7 @@ const InputArea = ({
     )
       document.querySelector(".loader").style.display = "block";
     axios
-      .post(`http://${path.Location}:8000/GetTemplate`, {
+      .post(`http://${path.Location}:3012/GetTemplate`, {
         userID: user.userID,
         Flag: { action: "All" },
       })
@@ -1940,11 +1940,11 @@ const InputArea = ({
         return;
       }
       axios
-        .post(`http://${path.Location}:8000/InsertFeedback`, feedback)
+        .post(`http://${path.Location}:3012/InsertFeedback`, feedback)
         .then((response) => {
           console.log("data", response.data);
           axios
-            .get(`http://${path.Location}:8000/GetFeedback`)
+            .get(`http://${path.Location}:3012/GetFeedback`)
             .then((response) => {
               let data = response.data;
               setPlay({ isPlay: undefined });
@@ -1956,7 +1956,7 @@ const InputArea = ({
         });
     } else {
       axios
-        .get(`http://${path.Location}:8000/GetFeedback/`)
+        .get(`http://${path.Location}:3012/GetFeedback/`)
         .then((response) => {
           // debugger
           let data = response.data;
@@ -2043,7 +2043,7 @@ const InputArea = ({
       setpostProject(obj);
       document.querySelector(".loader").style.display = "block";
       axios
-        .post(`http://${path.Location}:8000/UpdateDashboard`, obj)
+        .post(`http://${path.Location}:3012/UpdateDashboard`, obj)
         .then((response) => {
           toast.success("Your Project has been Updated.", {
             position: toast.POSITION.BOTTOM_RIGHT,
@@ -2055,7 +2055,7 @@ const InputArea = ({
     } else if (action === "Delete") {
       document.querySelector(".loader").style.display = "block";
       axios
-        .post(`http://${path.Location}:8000/DeleteDashboard`, {
+        .post(`http://${path.Location}:3012/DeleteDashboard`, {
           userID: user.userID,
           DashboardName: e.currentTarget.id,
         })
@@ -2077,7 +2077,7 @@ const InputArea = ({
       if (Object.keys(dashboard).length === 0) {
         GetTemplate("Dashboard");
         axios
-          .post(`http://${path.Location}:8000/GetTemplate`, {
+          .post(`http://${path.Location}:3012/GetTemplate`, {
             userID: user.userID,
             Flag: { action: "Specific", charts: Object.values(data.charts) },
           })
@@ -2168,7 +2168,7 @@ const InputArea = ({
       obj.AvailableDimensions = filteringProps.Dimensions;
     }
     axios
-      .post(`http://${path.Location}:8000/InsertDashboard`, obj)
+      .post(`http://${path.Location}:3012/InsertDashboard`, obj)
       .then((response) => {
         GetDashboard();
       });
@@ -2177,7 +2177,7 @@ const InputArea = ({
     if (Object.keys(project).length === 0)
       document.querySelector(".loader").style.display = "block";
     axios
-      .post(`http://${path.Location}:8000/GetDashboard`, {
+      .post(`http://${path.Location}:3012/GetDashboard`, {
         userID: user.userID,
       })
       .then((response) => {
@@ -2212,7 +2212,7 @@ const InputArea = ({
       if (Object.keys(TemplatesCollections).length === 0) {
         document.querySelector(".loader").style.display = "block";
         axios
-          .post(`http://${path.Location}:8000/GetPreDefinedTemplate`)
+          .post(`http://${path.Location}:3012/GetPreDefinedTemplate`)
           .then((response) => {
             let data = response.data;
             let obj = {};
@@ -2256,14 +2256,14 @@ const InputArea = ({
     obj.filename = name;
     obj.data = data;
     axios
-      .post(`http://${path.Location}:8000/InsertDataSet`, obj)
+      .post(`http://${path.Location}:3012/InsertDataSet`, obj)
       .then((response) => {
         getDataSet();
       });
   };
   const getDataSet = () => {
     axios
-      .post(`http://${path.Location}:8000/GetDataSet`, { userID: user.userID })
+      .post(`http://${path.Location}:3012/GetDataSet`, { userID: user.userID })
       .then((response) => {
         let data = response.data;
         let obj = {};
@@ -2276,7 +2276,7 @@ const InputArea = ({
   const handleDataSet = (action, id) => {
     if (action === "Delete") {
       axios
-        .post(`http://${path.Location}:8000/DeleteDataSet`, {
+        .post(`http://${path.Location}:3012/DeleteDataSet`, {
           userID: user.userID,
           id: id,
         })
@@ -2290,7 +2290,7 @@ const InputArea = ({
   };
   const handleGetUsers = () => {
     axios
-      .post(`http://${path.Location}:8000/GetUsers`)
+      .post(`http://${path.Location}:3012/GetUsers`)
       .then((res) => {
         if (res.status === 200) {
           console.log("Users==>", res.data);

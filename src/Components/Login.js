@@ -186,7 +186,7 @@ const Login = () => {
         setError({ ...error, Disable: false });
       }
       axios
-        .post(`http://${path.Location}:8000/SignupUser`, userDetails)
+        .post(`http://${path.Location}:3012/SignupUser`, userDetails)
         .then((response) => {
           toast.success("Registered successfully.", {
             position: toast.POSITION.BOTTOM_RIGHT,
@@ -224,7 +224,7 @@ const Login = () => {
         });
       }
       axios
-        .post(`http://${path.Location}:8000/SigninUser`, user)
+        .post(`http://${path.Location}:3012/SigninUser`, user)
         .then((res) => {
           if (res.status === 200) {
             const { Name, userID, Role, Status } = res.data;
@@ -265,7 +265,7 @@ const Login = () => {
         });
     } else if (page === "Forgot") {
       axios
-        .post(`http://${path.Location}:8000/ForgotUser`, forgotuser)
+        .post(`http://${path.Location}:3012/ForgotUser`, forgotuser)
         .then((res) => {
           if (res.status === 200) {
             toast.success("Your password has been updated", {
@@ -285,7 +285,7 @@ const Login = () => {
   };
   const CheckUser = () => {
     axios
-      .post(`http://${path.Location}:8000/CheckSignupUser`, {
+      .post(`http://${path.Location}:3012/CheckSignupUser`, {
         userID: userDetails.userID,
       })
       .then((res) => {

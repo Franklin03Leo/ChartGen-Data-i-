@@ -337,7 +337,7 @@ const AdminView = () => {
 
   const handleGetUsers = () => {
     axios
-      .post(`http://${path.Location}:8000/GetUsers`)
+      .post(`http://${path.Location}:3012/GetUsers`)
       .then((res) => {
         if (res.status === 200) {
           const keys = [
@@ -377,7 +377,7 @@ const AdminView = () => {
     obj["approvedDate"] = new Date();
     obj["approvedBy"] = user["userID"];
     axios
-      .post(`http://${path.Location}:8000/SaveUsers`, obj)
+      .post(`http://${path.Location}:3012/SaveUsers`, obj)
       .then((res) => {
         if (res.status === 200) {
           toast.success("User detail is updated.", {
