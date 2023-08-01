@@ -436,7 +436,13 @@ app.post("/SaveUsers/", (req, res) => {
     .updateOne(
       { _id: data["_id"] },
       {
-        $set: data,
+       $set: data,
+      //  Role: data.Role,
+      //      Status: data.Status,
+          // charts: data.charts,
+          // DashboardDescription: data.DashboardDescription,
+          // filterProps: data.FilterProps,
+          // filter: data.Filter,
       }
     )
     .then(function () {

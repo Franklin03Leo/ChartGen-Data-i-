@@ -333,6 +333,7 @@ const AdminView = () => {
   };
 
   const handleGetUsers = () => {
+    debugger
     axios
       .post(`http://${path.Location}:8000/GetUsers`)
       .then((res) => {

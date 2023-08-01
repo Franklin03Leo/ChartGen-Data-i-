@@ -218,8 +218,12 @@ li.MuiMenuItem-root > span {
   border-radius: 4px !important;
 }
 
-.MuiCheckbox-root.Mui-checked {
+/* .MuiCheckbox-root.Mui-checked {
   color: white !important;
+} */     
+
+.MuiCheckbox-root.Mui-checked {
+  color: #1976d2 !important;
 }
 
 /* lg:large */

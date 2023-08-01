@@ -91,6 +91,7 @@ import Bar_outlined from "../../src/Images/Bar-chart-outlined.svg";
 import Pie from "../../src/Images/Pie-chart.svg";
 import Line from "../../src/Images/LineIcon.svg";
 import Scatter from "../../src/Images/Scatter-chart.svg";
+import Signup from "../../src/Images/location.svg";
 //Components
 import LoadingSpinner from "../Components/LoadingSpinner";
 
@@ -102,6 +103,7 @@ const InputArea = ({
   showDashboard,
   feedback_,
   project_,
+  approvalDetails_
 }) => {
   // Global variables declaration
   const ChartType = [
@@ -288,7 +290,7 @@ const InputArea = ({
     "Dashboard",
     "User Guide",
   ]);
-  const [feedbackIssue, setIssues] = React.useState(undefined);
+  const [approvalDetails, setapprovalDetails] = React.useState();
   const [dashboardCharts, setdashboardCharts] = React.useState();
   const [projectDetails, setprojectDetails] = React.useState({});
   const [project, setProject] = React.useState({});
@@ -298,6 +300,7 @@ const InputArea = ({
     Location: window.location.hostname,
   }); //49.204.124.69/
   const [Dataset, setDataset] = React.useState({});
+  const [feedbackIssue, setIssues] = React.useState(undefined);
 
   // React state to track order of items
   const [ItemOrderList, setItemOrderList] = React.useState([]);
@@ -368,6 +371,11 @@ const InputArea = ({
   React.useEffect(() => {
     feedback_(feedbackIssue);
   }, [feedbackIssue]);
+
+  React.useEffect(() => {
+    approvalDetails_(approvalDetails);
+  }, [approvalDetails]);
+
   React.useEffect(() => {
     project_(postProject);
   }, [postProject]);
@@ -1464,6 +1472,8 @@ const InputArea = ({
       Serieschart: false,
       Barlinechart: false,
     });
+    
+    
   };
   //property enabling for the swatch
   const handleShowProps = (e) => {
@@ -1814,6 +1824,7 @@ const InputArea = ({
     setIssues(undefined);
     setPlay({ isPlay: undefined });
     ChildtoParentHandshake(undefined);
+    setapprovalDetails({'Data':undefined})
   };
   // const handleClose = () => {
   //     setAnchorEl(null);
@@ -1901,6 +1912,7 @@ const InputArea = ({
         }
       });
   };
+
   const handleFeedback = (action) => {
     if (action !== "Fetch") {
       if (
@@ -1925,22 +1937,43 @@ const InputArea = ({
               setData({ data: undefined });
               setIssues(data);
               setFeedback({ ...feedback, Issue: "" });
+              setapprovalDetails({ data: undefined });
             });
         });
     } else {
       axios
         .get(`http://${path.Location}:8000/GetFeedback/`)
         .then((response) => {
-          // debugger
           let data = response.data;
           setPlay({ isPlay: undefined });
           setIsshow({ isShow: undefined });
           setData({ data: undefined });
           setIssues(data);
+          setapprovalDetails({ data: undefined });
         });
     }
     setError({ mandatoryFields: undefined });
   };
+//
+  const handleSignUpDetails = () =>{
+    axios
+      .post(`http://${path.Location}:8000/GetUsers`)
+      .then((res) => {
+        if (res.status === 200) {
+          const Data = (res.data);
+          setapprovalDetails({ Data });
+        }
+        setNavOpen(false); // to close the nav
+        setNavWidth({ navArea: "70px", inuptArea: "0%", ChartArea: "94%" }); //  have the block width
+        // Need to modify this function
+        setPlay({ isPlay: undefined });
+        setIsshow({ isShow: undefined });
+        setData({ data: undefined });
+        setIssues(undefined);
+      })
+      .catch((error) => {});
+  }
+
   const handleDashboard = (action, e) => {
     if (action === "Save") {
       setOpen({ Dashboard: false });
@@ -2103,6 +2136,7 @@ const InputArea = ({
         setPlay({ isPlay: undefined });
         setIssues(undefined);
         setIsshow({ ...show, isShow: true, Build: false });
+        setapprovalDetails({ data: undefined });
       }
     }
   };
@@ -2202,6 +2236,7 @@ const InputArea = ({
       setEnableTemplate(!enabletemplate);
       setState(TemplatesCollections[e.currentTarget.id]);
       setFlag(false);
+      setapprovalDetails({ data: undefined });
     }
   };
   const postDataSet = (name, data) => {
@@ -2462,6 +2497,31 @@ const InputArea = ({
                 ></img>
 
                 {/* <FeedbackIcon className="Icon_" fontSize="large" color={navbar.bar === 'Feedback' ? 'primary' : '#979A9B'} onClick={(e) => { handleNavbarChange(e); handleFeedback('Fetch') }} /> */}
+              </BootstrapTooltip>
+            </div>
+          </div>
+
+          <div className="Icon">
+            <div
+              className={navbar.bar === "Signup" ? "NavBar-active" : "NavBar"}
+            >
+              <BootstrapTooltip
+                title="Approval"
+                TransitionComponent={Fade}
+                TransitionProps={{ timeout: 600 }}
+                placement="right"
+              >
+                <img
+                  src={Signup}
+                  name="Signup"
+                  color="white"
+                  alt="Logo"
+                  onClick={(e) => {
+                    handleNavbarChange(e);
+                    handleSignUpDetails();
+                  }}
+                ></img>
+
               </BootstrapTooltip>
             </div>
           </div>
@@ -7508,6 +7568,7 @@ const InputArea = ({
                 ) : (
                   ""
                 )}
+                
                 <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12">
                   <TextField
                     id="TempDescription"

@@ -33,7 +33,7 @@ import Demo from "./Components/Demo";
 import Dashboard from "./Charts/Dashboard";
 import Feedback from "./Components/Feedback";
 import Header from "./Components/Header";
-
+import  ApprovalDetails from "./Components/ApprovalDetails";
 import EmptyPage from "../src/Images/EmptyPage.png";
 
 const HomePage = () => {
@@ -58,6 +58,7 @@ const HomePage = () => {
   });
   const [error, setError] = React.useState({});
   const [feedback, setFeedback] = React.useState({ Issues: undefined });
+  const [approvalDetails, setApprovalDetails] = React.useState({});
   // const [anchorEl, setAnchorEl] = React.useState(null);
   const [project, setProject] = React.useState({});
   const [open, setOpen] = React.useState({
@@ -150,10 +151,14 @@ const HomePage = () => {
   };
   const showDashboard = (param) => {
     Isshow({ ...param, isRendered: !show.isRendered });
-    //setFeedback(undefined)
   };
   const handleFeedback = (params) => {
     setFeedback({ Issues: params });
+  };
+
+  const handleSignUpDetails = (data) => {
+    console.log( 'Homepage handleSignUpdata', data)
+    setApprovalDetails(data||{});
   };
   //Tab change
   const handleChange = (event, newValue) => {
@@ -280,6 +285,7 @@ const HomePage = () => {
             demoVideo={video}
             showDashboard={showDashboard}
             feedback_={handleFeedback}
+            approvalDetails_={handleSignUpDetails}
             project_={handleProject}
           />
           <div
@@ -297,7 +303,8 @@ const HomePage = () => {
             {filedata.data === undefined &&
             play.isPlay !== true &&
             show.isShow !== true &&
-            feedback.Issues === undefined ? (
+            feedback.Issues === undefined &&
+            approvalDetails['Data'] !== undefined? (
               <>
                 {state !== undefined && (
                   <ChartBlock enable={enable} state={state} />
@@ -462,7 +469,10 @@ const HomePage = () => {
                 )}
               </>
             )}
+
+            {/* Demo page details display  */}
             {play.isPlay && filedata.data === undefined ? <Demo /> : ""}
+
             {show.isShow ? (
               <Dashboard params={show.PreviewProject ? project : show} />
             ) : (
@@ -473,11 +483,13 @@ const HomePage = () => {
             ) : (
               ""
             )}
+
             {(state === undefined || Object.keys(state).length === 0) &&
             feedback.Issues === undefined &&
             !show.isShow &&
             !play.isPlay &&
-            filedata.data === undefined ? (
+            filedata.data === undefined &&
+            approvalDetails['Data'] === undefined ? (
               <>
                 <div className="emptyPage">
                   <img alt="Loading..." src={EmptyPage}></img>
@@ -486,6 +498,12 @@ const HomePage = () => {
             ) : (
               ""
             )}
+
+            {/* Signup page details display  */}
+            {approvalDetails['Data'] !== undefined ? (
+              <ApprovalDetails />
+            ) : null}
+
           </div>
         </div>
       </div>

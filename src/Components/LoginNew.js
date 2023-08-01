@@ -26,7 +26,7 @@ import "../Styles/Login.css";
 
 import ABlogo from "../../src/Analytic_Brains_Logo.png";
 import SpectraIQlogo from "../../src/Spectra_logo.png";
-const Login = () => {
+const LoginNew = () => {
   const buttonRef = React.useRef(null);
 
   const [validation, setvalidation] = React.useState({
@@ -95,7 +95,9 @@ const Login = () => {
     // };
   }, []);
 
+  // update details based on page value
   const handleDetails = (e, page) => {
+    debugger
     if (page === "Sign Up") {
       if (e.target.name === "Confirmpassword") {
         if (userDetails.password !== e.target.value) {
@@ -173,7 +175,6 @@ const Login = () => {
     }
   };
   const handlePost = (page) => {
-    console.log('Save initiated...')
     if (page === "Sign Up") {
       if (
         !userDetails["Name"] ||
@@ -562,7 +563,7 @@ const Login = () => {
             )}
             {page === "Sign Up" && (
               <div className="container-page">
-                <p className="page-title">Create Account</p>
+                <p className="page-title">Create User Account</p>
                 <div className="row col-lg-12">
                   <TextField
                     error={validation.Name.error}
@@ -749,4 +750,4 @@ const Login = () => {
     </>
   );
 };
-export default React.memo(Login);
+export default React.memo(LoginNew);
