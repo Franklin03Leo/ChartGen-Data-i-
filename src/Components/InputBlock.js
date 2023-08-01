@@ -2074,7 +2074,7 @@ const InputArea = ({
     if (action === "Preview" || action === "Edit") {
       document.querySelector(".loader").style.display = "block";
       let data = project[e.currentTarget.id]; //others.EditingDashboardID
-      if (Object.keys(dashboard).length === 0) {
+      if (user["Role"] !== "Admin" || Object.keys(dashboard).length === 0) {
         GetTemplate("Dashboard");
         axios
           .post(`http://${path.Location}:3012/GetTemplate`, {
@@ -2178,16 +2178,17 @@ const InputArea = ({
       document.querySelector(".loader").style.display = "block";
     axios
       .post(`http://${path.Location}:3012/GetDashboard`, {
-        userID: user.userID,
+        userID: user["Role"] === "User" ? user["userName"] : user["userID"],
+        flag: user["Role"] === "User" ? 1 : 0,
       })
       .then((response) => {
         // console.log("project data", response.data);
         let data = response.data;
         let obj = {};
-       // let Project = [];
+        // let Project = [];
         for (let i = 0; i < data.length; i++) {
           obj[data[i].DashboardName] = data[i];
-         // let Users = data[i].Users
+          // let Users = data[i].Users
           // if (Users !== undefined && Users.toString().indexOf(user["userName"]) > 0) {
           //   project.push(data[i].DashboardName);
           // }

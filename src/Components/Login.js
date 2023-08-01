@@ -229,7 +229,7 @@ const Login = () => {
           if (res.status === 200) {
             const { Name, userID, Role, Status } = res.data;
             sessionStorage.setItem("UserName", [Name, userID]);
-            sessionStorage.setItem("Role", Role);
+            sessionStorage.setItem("Role", Role || 'User');
             // if (Role === "Admin") {
             //   navigate("/admin");
             // } else {

@@ -88,7 +88,8 @@ app.post("/GetTemplate/", (req, res) => {
       });
   } else {
     db.collection("charts")
-      .find({ userID: data.userID, TempName: { $in: data.Flag.charts } })
+      //.find({ userID: data.userID, TempName: { $in: data.Flag.charts } })
+      .find({TempName: { $in: data.Flag.charts } })
       .toArray(function (err, result) {
         if (err) {
           res.status(400).send("Error fetching listings!");
@@ -295,9 +296,15 @@ app.post("/InsertDashboard", (req, res) => {
 //db.getCollection('Dashboards').find({ 'Users': { $in: ["Naveen"] }})
 
 app.post("/GetDashboard/", (req, res) => {
+  let {userID,flag} = req.body
+  let obj = {}
+  if(flag === 0)
+    obj = { userID: userID }
+  else
+    obj = { Users: { $in: [userID] } }
   connect();
   db.collection("Dashboards")
-    .find({ userID: req.body.userID })
+    .find(obj)
     .toArray(function (err, result) {
       if (err) {
         res
