@@ -66,6 +66,7 @@ const Login = () => {
   const [userDetails, setUserDetails] = React.useState({});
   const [user, setUser] = React.useState({});
   const [forgotuser, setForgotUser] = React.useState({});
+  const [confpassval, setconfpassval] = React.useState({});
   const [path, setPath] = React.useState({
     Location: window.location.hostname,
   });
@@ -76,6 +77,25 @@ const Login = () => {
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
+  };
+  //handleKeyDown is for to restrict the special characters.
+  const handleKeyDown = (e) => {    
+    if (e.key === ' ') {
+      e.preventDefault(); // Prevent default behavior (space insertion)
+    }
+    // List of special characters you want to restrict
+    if (e.target.name === 'Name') {
+      const restrictedCharacters_Name = ['!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '=', '+', '{', '}', '[', ']', '|', ';', ':', '"', "'", '<', '>', '?', '/', ',', '.','_','~'];
+      if (restrictedCharacters_Name.includes(e.key)) {
+        e.preventDefault(); // Prevent default behavior (character insertion)
+      }
+     }
+    if (e.target.name === 'userID') {
+      const restrictedCharacters_Email = ['!', '#', '$', '%', '^', '&', '*', '(', ')', '-', '=', '+', '{', '}', '[', ']', '|', ';', ':', '"', "'", '<', '>', '?', '/', ',','_','~'];    
+      if (restrictedCharacters_Email.includes(e.key)) {
+        e.preventDefault(); // Prevent default behavior (character insertion)
+      }
+    }
   };
   React.useEffect(() => {
     sessionStorage.setItem("UserName", [","]);
@@ -121,6 +141,8 @@ const Login = () => {
   const handleDetails = (e, page) => {
     if (page === "Sign Up") {
       if (e.target.name === "Confirmpassword") {
+        confpassval[e.target.name] = e.target.value
+        setconfpassval({...confpassval, [e.target.name]: e.target.value });
         if (userDetails.password !== e.target.value) {
           setvalidation({
             ...validation,
@@ -255,17 +277,56 @@ const Login = () => {
 
   const handlePost = (page) => {
     if (page === "Sign Up") {
-      if (
-        !userDetails["Name"] ||
-        !userDetails["userID"] ||
-        !userDetails["password"] ||
-        !userDetails["Confirmpassword"]
-      ) {
-        setError({ ...error, Disable: true });
+      //Popping the toast when required fields is not filled up..
+      if (Object.getOwnPropertyNames(userDetails).length === 0) {
+        toast.error('Please fill in all required fields.', {
+          position: toast.POSITION.BOTTOM_RIGHT,
+              hideProgressBar: true,
+              autoClose: 2000,
+        });
         return;
-      } else {
-        setError({ ...error, Disable: false });
       }
+      if (!Object.keys(userDetails).includes('Name')) {
+        toast.error('Name field cannot be empty.', {
+          position: toast.POSITION.BOTTOM_RIGHT,
+              hideProgressBar: true,
+              autoClose: 2000,
+        });
+        return;
+      } 
+      if (!Object.keys(userDetails).includes('userID')) {
+        toast.error('Email address field cannot be empty.', {
+          position: toast.POSITION.BOTTOM_RIGHT,
+              hideProgressBar: true,
+              autoClose: 2000,
+        });
+        return;
+      } 
+      if (!Object.keys(userDetails).includes('password')) {
+        toast.error('Password field cannot be empty.', {
+          position: toast.POSITION.BOTTOM_RIGHT,
+              hideProgressBar: true,
+              autoClose: 2000,
+        });
+        return;
+      } 
+      if (!Object.keys(userDetails).includes('password')) {
+        toast.error('Password field cannot be empty.', {
+          position: toast.POSITION.BOTTOM_RIGHT,
+              hideProgressBar: true,
+              autoClose: 2000,
+        });
+        return;
+      } 
+      if (confpassval.Confirmpassword === undefined || confpassval.Confirmpassword === ''|| confpassval.Confirmpassword === null) {
+        toast.error('Confirm Password field cannot be empty.', {
+          position: toast.POSITION.BOTTOM_RIGHT,
+              hideProgressBar: true,
+              autoClose: 2000,
+        });
+        return;
+      } 
+      
       axios
         .post(`http://${path.Location}:3012/SignupUser`, userDetails)
         .then((response) => {
@@ -278,6 +339,7 @@ const Login = () => {
 
           setTimeout(() => {
             setPage("Login");
+            userDetails = {};
           }, 10000);
         })
         .catch((error) => {
@@ -486,7 +548,7 @@ const Login = () => {
                             onMouseDown={handleMouseDownPassword}
                             edge="end"
                           >
-                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                            {showPassword ? <Visibility/> : <VisibilityOff />}
                           </IconButton>
                         </InputAdornment>
                       }
@@ -596,7 +658,7 @@ const Login = () => {
                             onMouseDown={handleMouseDownPassword}
                             edge="end"
                           >
-                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                            {showPassword ? <Visibility /> : <VisibilityOff />}
                           </IconButton>
                         </InputAdornment>
                       }
@@ -634,7 +696,7 @@ const Login = () => {
                             onMouseDown={handleMouseDownPassword}
                             edge="end"
                           >
-                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                            {showPassword ? <Visibility /> : <VisibilityOff />}
                           </IconButton>
                         </InputAdornment>
                       }
@@ -701,6 +763,7 @@ const Login = () => {
                     onChange={(e) => {
                       handleDetails(e, "Sign Up");
                     }}
+                    onKeyDown={handleKeyDown}                    
                     //onBlur={(e) => { handleValidation(e) }}
                   />
                 </div>
@@ -720,6 +783,7 @@ const Login = () => {
                     onChange={(e) => {
                       handleDetails(e, "Sign Up");
                     }}
+                    onKeyDown={handleKeyDown} 
                     onBlur={(e) => {
                       CheckUser();
                     }}
@@ -742,7 +806,7 @@ const Login = () => {
                             onMouseDown={handleMouseDownPassword}
                             edge="end"
                           >
-                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                            {showPassword ? <Visibility /> : <VisibilityOff />}
                           </IconButton>
                         </InputAdornment>
                       }
@@ -751,6 +815,7 @@ const Login = () => {
                       onChange={(e) => {
                         handleDetails(e, "Sign Up");
                       }}
+                      onKeyDown={handleKeyDown} 
                     />
                   </FormControl>
                 </div>
@@ -772,7 +837,7 @@ const Login = () => {
                             onMouseDown={handleMouseDownPassword}
                             edge="end"
                           >
-                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                            {showPassword ? <Visibility /> : <VisibilityOff />}
                           </IconButton>
                         </InputAdornment>
                       }
@@ -781,6 +846,7 @@ const Login = () => {
                       onChange={(e) => {
                         handleDetails(e, "Sign Up");
                       }}
+                      onKeyDown={handleKeyDown} 
                     />
                     {validation.Confirmpassword.error && (
                       <FormHelperText error id="username-error">

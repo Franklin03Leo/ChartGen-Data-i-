@@ -80,6 +80,7 @@ import Dashboard from "../../src/Images/Dashboard.png";
 import Template from "../../src/Images/Template.svg";
 import Demo from "../../src/Images/Demo.svg";
 import Feedback from "../../src/Images/Feedback.svg";
+import AdminSettings from "../../src/Images/icon-admin.svg";
 import Edit from "../../src/Images/Edit.svg";
 import Remove from "../../src/Images/Remove.png";
 import Publish from "../../src/Images/Publish.svg";
@@ -2551,7 +2552,7 @@ const InputArea = ({
                   placement="right"
                 >
                   <img
-                    src={Feedback}
+                    src={AdminSettings}
                     name="Admin"
                     color="white"
                     alt="Logo"
@@ -2850,7 +2851,7 @@ const InputArea = ({
                         <div className="col-lg-5 dataset-name">{a}</div>
                         <div className="row col-lg-5 dataset-icon">
                           <div
-                            className="col-lg-5 dataset-icon_"
+                            className="col-lg-5 dataset-icon_ buttonwid"
                             onClick={(e) => {
                               handleDataSet("Use", a);
                             }}
@@ -2858,7 +2859,7 @@ const InputArea = ({
                             Use
                           </div>
                           <div
-                            className="col-lg-5 dataset-icon_"
+                            className="col-lg-5 dataset-icon_ buttonwid"
                             onClick={(e) => {
                               handleDataSet("Delete", a);
                             }}
