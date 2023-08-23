@@ -125,18 +125,22 @@ const HomePage = () => {
   // })
   // These functions which are used to get the data from the other components
   const data = (state, enable, navbar, file) => {
-    // debugger
-    setState(state);
-    if (state !== undefined) {
-      setEnable(enable);
-      //setNavbar(navbar)
-      setChangeType({
-        ...changeType,
-        Dimensions: file.newArray,
-        file: file.Uploaded_file,
-      });
+    try {
+      setState(state);
+      if (state !== undefined) {
+        setEnable(enable);
+        //setNavbar(navbar)
+        setChangeType({
+          ...changeType,
+          Dimensions: file.newArray,
+          file: file.Uploaded_file,
+        });
+      }
+    } catch (error) {
+      console.log("Error  ==>1", error);
     }
   };
+
   const expand = useCallback(
     (navwidth) => {
       setNavWidth(navwidth);
@@ -145,7 +149,7 @@ const HomePage = () => {
   );
 
   const DataTable = (data) => {
-    setData({ data: data.data });
+    setData({ data: data?.data });
   };
   const video = (play) => {
     setPlay({ isPlay: play.isPlay });
@@ -481,7 +485,6 @@ const HomePage = () => {
             )}
             {navbar === "Feedback" ? <Feedback params={feedback.Issues} /> : ""}
             {navbar === "Admin" ? <AdminView /> : ""}
-
 
             {(state === undefined || Object.keys(state).length === 0) &&
             feedback.Issues === undefined &&

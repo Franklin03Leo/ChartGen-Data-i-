@@ -23,7 +23,9 @@ const Compose = ({ params }) => {
         return d[params.XAxis];
       });
 
-    var value = params.GroupByValues;
+    var value = [params.GroupBy];
+    //   var value2 = params.GroupByValues;
+    console.log("GroupBy", value);
 
     var YKey = function (d) {
       return +d[params.YAxis];
@@ -57,9 +59,9 @@ const Compose = ({ params }) => {
     }
     //Dynamic Group Creation
     for (let i = 0; i < value.length; i++) {
-      if (params.GroupByCol === "Sum") {
+      if (params?.GroupByCol === "Sum") {
         window["grps" + i] = runDimension.group().reduceSum(function (d) {
-          return d[params.GroupBy] == value[i] ? +d[params.YAxis] : 0;
+          return d[params.GroupBy] == d[value[i]] ? +d[params.YAxis] : 0;
         });
       }
       // else if (params.GroupByCol === 'Count') {
@@ -112,22 +114,17 @@ const Compose = ({ params }) => {
       ) {
         window["grps" + i] = runDimension.group().reduce(
           function (p, v) {
-            if (v[params.GroupBy] == value[i]) {
-              ++p.count;
-              p.total += parseInt(v[params.YAxis]);
-              if (p.count == 0) {
-                p.average = 0;
-              } else {
-                p.average = p.total / p.count;
-              }
-            } else {
-              p.total = 0;
+            if (v[params.GroupBy] === v[value[i]]) {
+              //v[value[i]]
+              p.count++;
+              p.total += parseFloat(v[params.YAxis]);
+              p.average = p.total / p.count;
             }
             return p;
           },
           // remove
           function (p, v) {
-            if (v[params.GroupBy] == value[i]) {
+            if (v[params.GroupBy] == v[value[i]]) {
               --p.count;
               p.total -= parseInt(v[params.YAxis]);
               if (p.count == 0) {
@@ -268,7 +265,6 @@ const Compose = ({ params }) => {
         window["Chart" + i].valueAccessor(maxSpeed);
       }
       // .addFilterHandler(function (filters, filter) {
-      //     debugger
       //     return [filter, 'South'];
       // })
 
@@ -344,13 +340,16 @@ const Compose = ({ params }) => {
           .selectAll("g.x g.tick text")
           .attr(
             "dx",
-            params.Rotate === undefined || params.Rotate === "" ? "" : "-10"
+            params?.Rotate === undefined || params?.Rotate === "" ? "" : "-10"
           )
           .attr(
             "text-anchor",
-            params.Rotate === undefined || params.Rotate === "" ? "" : "end"
+            params?.Rotate === undefined || params?.Rotate === "" ? "" : "end"
           )
-          .attr("transform", `rotate(${params.Rotate})`)
+          .attr(
+            "transform",
+            `rotate(${params?.Rotate !== undefined ? params.Rotate : 0})`
+          )
           .style("font-family", params.xFont)
           .style("color", params.xColor)
           .style("font-size", params.xSize + "px");
@@ -590,7 +589,6 @@ const Compose = ({ params }) => {
 
       // d3.selectAll('rect.bar')
       // .on('click',function(d){
-      //     debugger
       //     return d.currentTarget.__data__.layer+
       // })
     }

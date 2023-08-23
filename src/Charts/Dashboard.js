@@ -28,7 +28,6 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Dashboard = ({ params }) => {
-  
   console.log("Dashboard Rendering.... => ", params);
   const [details, SetDetails] = React.useState({
     ProjectName: "Dashboard",

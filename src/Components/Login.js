@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import TextField from "@mui/material/TextField";
 import IconButton from "@mui/material/IconButton";
 import { InputAdornment } from "@material-ui/core";
@@ -95,6 +95,29 @@ const Login = () => {
     // };
   }, []);
 
+  useEffect(() => {}, [forgotuser]);
+
+  const forgotValidation = (name, message) => {
+    if (!forgotuser[name]) {
+      setvalidation({
+        ...validation,
+        name: {
+          ...validation[name],
+          error: true,
+          errorMessage: message,
+        },
+      });
+    } else {
+      setvalidation({
+        ...validation,
+        name: {
+          ...validation[name],
+          error: false,
+        },
+      });
+    }
+  };
+
   const handleDetails = (e, page) => {
     if (page === "Sign Up") {
       if (e.target.name === "Confirmpassword") {
@@ -131,7 +154,33 @@ const Login = () => {
           });
         }
       }
-      //   if (e.target.name !== "Confirmpassword") {
+
+      if (e.target.name === "userID") {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(e.target.value)) {
+          setvalidation({
+            ...validation,
+            RuserID: {
+              ...validation.RuserID,
+              error: true,
+              errorMessage: "Invalid email address",
+            },
+          });
+          setError({ ...error, Disable: true });
+        } else {
+          setvalidation({
+            ...validation,
+            RuserID: {
+              ...validation.RuserID,
+              error: false,
+              errorMessage: "",
+            },
+          });
+
+          setError({ ...error, Disable: false });
+        }
+      }
+
       setUserDetails({ ...userDetails, [e.target.name]: e.target.value });
       //}
     } else if (page === "Login") {
@@ -147,8 +196,36 @@ const Login = () => {
       }
       setUser({ ...user, [e.target.name]: e.target.value });
     } else if (page === "Forgot") {
+      if (e.target.name === "FuserID") {
+        forgotValidation(e.target.name, "Please Enter the User");
+      }
+
+      if (e.target.name === "password") {
+        if (
+          forgotuser.FConfirmpassword !== undefined &&
+          forgotuser.FConfirmpassword?.trim("") !== "" &&
+          forgotuser.FConfirmpassword !== e.target.value
+        ) {
+          setvalidation({
+            ...validation,
+            password: {
+              ...validation.password,
+              error: true,
+              errorMessage: "password did not match",
+            },
+          });
+        } else {
+          setvalidation({
+            ...validation,
+            password: {
+              ...validation.password,
+              error: false,
+            },
+          });
+        }
+      }
       if (e.target.name === "FConfirmpassword") {
-        if (forgotuser.password !== e.target.value)
+        if (forgotuser.password !== e.target.value) {
           setvalidation({
             ...validation,
             FConfirmpassword: {
@@ -157,7 +234,9 @@ const Login = () => {
               errorMessage: "Password did not match",
             },
           });
-        else {
+          setError({ ...error, Disable: true });
+          // return;
+        } else {
           setvalidation({
             ...validation,
             FConfirmpassword: {
@@ -167,11 +246,13 @@ const Login = () => {
             },
           });
         }
-      } else {
-        setForgotUser({ ...forgotuser, [e.target.name]: e.target.value });
       }
+
+      setForgotUser({ ...forgotuser, [e.target.name]: e.target.value });
+      setError({ ...error, Disable: false });
     }
   };
+
   const handlePost = (page) => {
     if (page === "Sign Up") {
       if (
@@ -229,26 +310,25 @@ const Login = () => {
           if (res.status === 200) {
             const { Name, userID, Role, Status } = res.data;
             sessionStorage.setItem("UserName", [Name, userID]);
-            sessionStorage.setItem("Role", Role || 'User');
+            sessionStorage.setItem("Role", Role || "User");
             // if (Role === "Admin") {
             //   navigate("/admin");
             // } else {
-              if (Status === "Active") {
-                navigate("/home");
-              } else if (Status === "Registered") {
-                setError({
-                  Restiction: "Access denied. Admin approval needed for login",
-                });
-                
-              } else {
-                setError({
-                  Restiction: "Login restricted. Awaiting admin approval.",
-                });
-              }
-              setTimeout(() => {
-                setError({ Restiction: "" });
-              }, 4000);
+            if (Status === "Active") {
+              navigate("/home");
+            } else if (Status === "Registered") {
+              setError({
+                Restiction: "Access denied. Admin approval needed for login",
+              });
+            } else {
+              setError({
+                Restiction: "Login restricted. Awaiting admin approval.",
+              });
             }
+            setTimeout(() => {
+              setError({ Restiction: "" });
+            }, 4000);
+          }
           //}
         })
         .catch((error) => {
@@ -264,6 +344,35 @@ const Login = () => {
           }
         });
     } else if (page === "Forgot") {
+      if (!forgotuser?.["FuserID"]) {
+        setvalidation({
+          ...validation,
+          FuserID: {
+            ...validation.FuserID,
+            error: true,
+            errorMessage: "Please Enter the UserId",
+          },
+        });
+      } else {
+        setvalidation({
+          ...validation,
+          FuserID: {
+            ...validation.FuserID,
+            error: false,
+            errorMessage: "Please enter",
+          },
+        });
+      }
+      if (
+        !forgotuser?.["FuserID"] ||
+        !forgotuser?.["password"] ||
+        !forgotuser?.["FConfirmpassword"]
+      ) {
+        setError({ ...error, Disable: true });
+        return;
+      } else {
+        setError({ ...error, Disable: false });
+      }
       axios
         .post(`http://${path.Location}:3012/ForgotUser`, forgotuser)
         .then((res) => {
@@ -283,6 +392,7 @@ const Login = () => {
         });
     }
   };
+
   const CheckUser = () => {
     axios
       .post(`http://${path.Location}:3012/CheckSignupUser`, {
@@ -304,18 +414,20 @@ const Login = () => {
         }
       })
       .catch((error) => {
-        if (error.response.status === 404) {
-          setvalidation({
-            ...validation,
-            RuserID: {
-              ...validation.RuserID,
-              error: false,
-              errorMessage: "Already exist",
-            },
-          });
-        }
+        console.log("Error in CheckUser Function", error);
+        // if (error.response.status === 404) {
+        //   setvalidation({
+        //     ...validation,
+        //     RuserID: {
+        //       ...validation.RuserID,
+        //       error: false,
+        //       errorMessage: "Already exist",
+        //     },
+        //   });
+        // }
       });
   };
+
   return (
     <>
       <ToastContainer />
@@ -436,6 +548,7 @@ const Login = () => {
                 </div>
               </div>
             )}
+
             {page === "Forgot" && (
               <div className="container-page">
                 <h5 className="page-title">Forgot password</h5>
@@ -493,6 +606,11 @@ const Login = () => {
                         handleDetails(e, "Forgot");
                       }}
                     />
+                    {validation.password.error && (
+                      <FormHelperText error id="username-error">
+                        {validation.password.errorMessage}
+                      </FormHelperText>
+                    )}
                   </FormControl>
                 </div>
                 <div
@@ -533,6 +651,7 @@ const Login = () => {
                     )}
                   </FormControl>
                 </div>
+
                 <div className="row col-lg-12 login-btn">
                   <Button
                     id="saveTemp"
@@ -540,6 +659,7 @@ const Login = () => {
                     disableRipple
                     className="input-field button"
                     style={{ backgroundColor: "#6282b3" }}
+                    disabled={error["Disable"]}
                     onClick={(e) => {
                       handlePost("Forgot");
                     }}
@@ -561,6 +681,7 @@ const Login = () => {
                 </div>
               </div>
             )}
+
             {page === "Sign Up" && (
               <div className="container-page">
                 <p className="page-title">Create Account</p>
@@ -595,7 +716,6 @@ const Login = () => {
                     name="userID"
                     label="Email Address"
                     variant="outlined"
-                    //value={state.Heigth_}
                     margin="dense"
                     onChange={(e) => {
                       handleDetails(e, "Sign Up");
@@ -710,6 +830,7 @@ const Login = () => {
                 </div>
               </div>
             )}
+
             {page === "Welcome" && (
               <div className="container-page">
                 <p className="page-title">Thank You!!!</p>
@@ -721,6 +842,7 @@ const Login = () => {
                 </div>
               </div>
             )}
+
             {error["Restiction"] && page === "Login" && (
               <div className="row" style={{ margin: "15px 0px 0px 0px" }}>
                 <Alert severity="error">{error["Restiction"]}</Alert>
@@ -728,6 +850,7 @@ const Login = () => {
             )}
           </div>
         </div>
+
         <div className="footer">
           <div
             className="footer-copy forgot"

@@ -331,6 +331,7 @@ const InputArea = ({
       backgroundColor: "black",
     },
   }));
+
   const style = {
     position: "absolute",
     top: "35%",
@@ -344,6 +345,7 @@ const InputArea = ({
     borderRadius: "8px",
     boxShadow: "0px 6px 20px #0000001A",
   };
+
   const ITEM_HEIGHT = 48;
   const ITEM_PADDING_TOP = 8;
   const MenuProps = {
@@ -355,7 +357,6 @@ const InputArea = ({
     },
   };
   // React.useEffect(() => {
-  //     debugger
   //     console.log('path',process.env.LOCAL_PATH);
   //     if (window.location.hostname === 'localhost') setEnv(process.env.LOCAL_PATH)
   //     else if(window.location.hostname === '49.204.124.69') setEnv(process.env.HOSTED_PATH)
@@ -430,6 +431,7 @@ const InputArea = ({
           XAxis_: "",
           YAxis_: "",
         });
+        document.querySelector(".loader").style.display = "none";
       } else {
         if (event.target.files[0].type === "text/csv") {
           Papa.parse(event.target.files[0], {
@@ -681,6 +683,7 @@ const InputArea = ({
       showValidAxis(event.target.value);
     }
   };
+
   //Validations
   const handleValidation = (event) => {
     const numberValues = [
@@ -1569,6 +1572,8 @@ const InputArea = ({
         hideProgressBar: true,
         autoClose: 2000,
       });
+      setNavbar({ bar: "Templates" });
+      ChildtoParentHandshake(undefined);
     }
   };
   //Template Edit/Delete
@@ -1882,6 +1887,7 @@ const InputArea = ({
       console.log("error", error.message);
     }
   };
+
   const GetTemplate = (Tab) => {
     if (user.userID == "") {
       navigate("/");
@@ -1958,7 +1964,6 @@ const InputArea = ({
       axios
         .get(`http://${path.Location}:3012/GetFeedback/`)
         .then((response) => {
-          // debugger
           let data = response.data;
           setPlay({ isPlay: undefined });
           setIsshow({ isShow: undefined });
@@ -2805,6 +2810,7 @@ const InputArea = ({
               <Alert severity="error">{error.invalidInputs}</Alert>
             </div>
           )}
+
           {state.InputType === "Enter Inputs" && navbar.bar === "Data" ? (
             <div>
               <div className=" col-lg-12" style={{ margin: "15px" }}>
@@ -6505,7 +6511,7 @@ const InputArea = ({
                                           className="box box-down cyan"
                                           style={{
                                             cursor: "pointer",
-                                            padding: "20px 0px 20px 20px;",
+                                            padding: "20px 0px 20px 20px",
                                           }}
                                           id={a}
                                           onClick={(e) => {
