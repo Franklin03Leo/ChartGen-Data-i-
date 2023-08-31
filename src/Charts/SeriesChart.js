@@ -517,6 +517,15 @@ const SeriesChart = ({ params }) => {
       };
     }
 
+    let sizing = (chart) => {
+      let divChart = document.querySelectorAll(".boxcenter");
+      divChart = divChart[divChart.length - 1];
+      let offsetHeight = divChart.offsetHeight,
+        offsetWidth = divChart.offsetWidth;
+      chart.width(offsetWidth).height(offsetHeight).redraw();
+    };
+    let resizing = (chart) => (window.onresize = () => sizing(chart));
+
     function groupArrayRemove(keyfn) {
       var bisect = d3.bisector(keyfn);
       return function (elements, item) {
@@ -644,8 +653,8 @@ const SeriesChart = ({ params }) => {
     else PadLeft = params.PadLeft;
     chart
       .width(params.Width_)
-      //.height(params.Heigth_)
-      .height(null)
+      .height(params.Height_)
+      // .height(null)
       .margins({
         top: parseInt(10) + parseInt(PadTop),
         right: parseInt(30) + parseInt(PadRight),
@@ -679,7 +688,9 @@ const SeriesChart = ({ params }) => {
       .valueAccessor(function (d) {
         return +d.value;
       })
-      .colors(d3.scaleOrdinal(getRandomColor(params.GroupByValues.length)))
+      // .colors(d3.scaleOrdinal(getRandomColor(params.GroupByValues.length)))
+      .colors(d3.scaleOrdinal(getRandomColor([params.GroupBy].length)))
+
       .renderLabel(true)
       .label(function (d) {
         if (params.LabelsContent === "X") return d.x;
@@ -966,6 +977,7 @@ const SeriesChart = ({ params }) => {
     //     update_offset();
     //     datatabel.redraw();
     // }
+    resizing(chart);
   });
   const Chartheader = () => {
     return (

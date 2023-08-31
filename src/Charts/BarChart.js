@@ -27,7 +27,7 @@ const BarChart = ({ params }) => {
   React.useEffect(() => {
     console.time("bar");
     var div2 = d3
-      .select("#Charts")
+      .selectAll(".boxcenter")
       .append("div")
       .attr("class", "tooltip")
       .style("opacity", 0)
@@ -42,7 +42,13 @@ const BarChart = ({ params }) => {
 
     IsString_(params.Uploaded_file[0]);
     var ndx, datatabel, chart;
-    var experiments = params.Uploaded_file;
+    // var experiments = params.Uploaded_file;
+    var experiments = {};
+    if (params?.filteApply === "FilterApply") {
+      experiments = params.Uploaded_fileTemp;
+    } else {
+      experiments = params.Uploaded_file;
+    }
 
     if (params.Width_ !== null) {
       datatabel = new dc.dataTable(div1.current);
@@ -68,9 +74,15 @@ const BarChart = ({ params }) => {
     var YKey = function (d) {
       return +d[params.YAxis];
     };
-    var offsetHeight = document.getElementById("Charts").offsetHeight;
-    var offsetWidth = document.getElementById("Charts").offsetWidth;
+    // var offsetHeight = document.getElementById("Charts").offsetHeight;
+    // var offsetWidth = document.getElementById("Charts").offsetWidth;
     let sizing = (chart) => {
+      let divChart = document.querySelectorAll(".boxcenter");
+      divChart = divChart[divChart.length - 1];
+
+      let offsetHeight = divChart.offsetHeight,
+        offsetWidth = divChart.offsetWidth;
+      chart.width(offsetWidth).height(offsetHeight).redraw();
       chart.width(offsetWidth).height(offsetHeight).redraw();
     };
     let resizing = (chart) => (window.onresize = () => sizing(chart));
@@ -188,8 +200,8 @@ const BarChart = ({ params }) => {
         left: 40 + parseInt(PadLeft),
       })
       .width(params.Width_ === null ? null : params.Width_)
-      //.height(params.Heigth_)
-      .height(null);
+      .height(params.Height_);
+    // .height(null);
     //.useViewBoxResizing(true)
     if (isString === true) {
       chart
@@ -475,6 +487,7 @@ const BarChart = ({ params }) => {
 
     // last();
     // next()
+    resizing(chart);
     console.timeEnd("bar");
   }, [params]);
 
@@ -509,7 +522,7 @@ const BarChart = ({ params }) => {
             backgroundColor: params.Barswatch === "show" ? params.BGColor : "",
           }}
         >
-          <div id="Charts" ref={div} className="boxcenter"></div>
+          <div ref={div} className="boxcenter"></div>
         </div>
       </Grid>
 

@@ -11,7 +11,7 @@ const SunBurstChart = ({ params }) => {
   const div1 = React.useRef(null);
   React.useEffect(() => {
     var div2 = d3
-      .select("#Charts")
+      .selectAll(".boxcenter")
       .append("div")
       .attr("class", "tooltip")
       .style("opacity", 0)
@@ -23,7 +23,13 @@ const SunBurstChart = ({ params }) => {
         "border",
         params.TooltipThickness + "px " + params.TooltipTickColor + " solid"
       );
-    var experiments = params.Uploaded_file;
+    // var experiments = params.Uploaded_file;
+    var experiments = {};
+    if (params?.filteApply === "FilterApply") {
+      experiments = params.Uploaded_fileTemp;
+    } else {
+      experiments = params.Uploaded_file;
+    }
     let XAxis = params.OrderedList.map((e) => {
       return e.split(" ").slice(1, 20).join(" ");
     });
@@ -51,7 +57,7 @@ const SunBurstChart = ({ params }) => {
       datatabel = new dc.dataTable(div1.current, "Table");
     }
     SunBurst.width(params.Width_)
-      .height(null)
+      .height(params.Height_)
       .innerRadius(params.Innerradius)
       .dimension(runDimension)
       .group(speedSumGroup)
@@ -167,6 +173,17 @@ const SunBurstChart = ({ params }) => {
         });
     });
 
+    let sizing = (chart) => {
+      let divChart = document.querySelectorAll(".boxcenter");
+      divChart = divChart[divChart.length - 1];
+
+      let offsetHeight = divChart.offsetHeight,
+        offsetWidth = divChart.offsetWidth;
+      chart.width(offsetWidth).height(offsetHeight).redraw();
+      chart.width(offsetWidth).height(offsetHeight).redraw();
+    };
+    let resizing = (chart) => (window.onresize = () => sizing(chart));
+
     var ofs = 0,
       pag = 100;
     function update_offset() {
@@ -211,6 +228,8 @@ const SunBurstChart = ({ params }) => {
       update_offset();
       datatabel.redraw();
     }
+
+    resizing(SunBurst);
   });
 
   const Chartheader = () => {
@@ -245,7 +264,6 @@ const SunBurstChart = ({ params }) => {
           }}
         >
           <div
-            id="Charts"
             // style={{ height: "50vh" }}
             ref={div}
             className="boxcenter"

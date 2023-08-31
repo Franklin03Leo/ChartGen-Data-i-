@@ -13,7 +13,7 @@ const PieChart = ({ params }) => {
     console.time("Pie");
 
     var div2 = d3
-      .select("#Charts")
+      .selectAll(".boxcenter")
       .append("div")
       .attr("class", "tooltip")
       .style("opacity", 0)
@@ -25,7 +25,14 @@ const PieChart = ({ params }) => {
         "border",
         params.TooltipThickness + "px " + params.TooltipTickColor + " solid"
       );
-    var experiments = params.Uploaded_file;
+    // var experiments = params.Uploaded_file;
+    var experiments = {};
+    if (params?.filteApply === "FilterApply") {
+      experiments = params.Uploaded_fileTemp;
+    } else {
+      experiments = params.Uploaded_file;
+    }
+
     var ndx = crossfilter(experiments),
       runDimension = ndx.dimension(function (d) {
         return d[params.XAxis];
@@ -35,6 +42,17 @@ const PieChart = ({ params }) => {
     //   speedSumGroup = runDimension.group().reduceSum(function (d) { return d[params.YAxis] });
     // else
     //   speedSumGroup = runDimension.group().reduceCount(function (d) { return d[params.XAxis] });
+
+    let sizing = (chart) => {
+      let divChart = document.querySelectorAll(".boxcenter");
+      divChart = divChart[divChart.length - 1];
+
+      let offsetHeight = divChart.offsetHeight,
+        offsetWidth = divChart.offsetWidth;
+      chart.width(offsetWidth).height(offsetHeight).redraw();
+      chart.width(offsetWidth).height(offsetHeight).redraw();
+    };
+    let resizing = (chart) => (window.onresize = () => sizing(chart));
 
     var YKey = function (d) {
       return +d[params.YAxis];
@@ -139,8 +157,8 @@ const PieChart = ({ params }) => {
     }
     fileChart
       .width(params.Width_)
-      //.height(params.Heigth_)
-      .height(null)
+      .height(params.Height_)
+      // .height(null)
       .slicesCap(params.SlicesCap)
       .innerRadius(params.Innerradius)
       //.radius(130)
@@ -348,6 +366,8 @@ const PieChart = ({ params }) => {
 
     // last();
     // next()
+    resizing(fileChart);
+
     console.timeEnd("Pie");
   });
 
@@ -382,7 +402,8 @@ const PieChart = ({ params }) => {
             backgroundColor: params.Pieswatch === "show" ? params.BGColor : "",
           }}
         >
-          <div id="Charts" ref={div} className="boxcenter"></div>
+          <div ref={div} className="boxcenter"></div>
+          {/* id="Charts" */}
         </div>
       </Grid>
       <Grid

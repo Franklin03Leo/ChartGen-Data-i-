@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import TextField from "@mui/material/TextField";
 import IconButton from "@mui/material/IconButton";
 import { InputAdornment } from "@material-ui/core";
@@ -79,19 +79,79 @@ const Login = () => {
     event.preventDefault();
   };
   //handleKeyDown is for to restrict the special characters.
-  const handleKeyDown = (e) => {    
-    if (e.key === ' ') {
+  const handleKeyDown = (e) => {
+    if (e.key === " ") {
       e.preventDefault(); // Prevent default behavior (space insertion)
     }
     // List of special characters you want to restrict
-    if (e.target.name === 'Name') {
-      const restrictedCharacters_Name = ['!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '=', '+', '{', '}', '[', ']', '|', ';', ':', '"', "'", '<', '>', '?', '/', ',', '.','_','~'];
+    if (e.target.name === "Name") {
+      const restrictedCharacters_Name = [
+        "!",
+        "@",
+        "#",
+        "$",
+        "%",
+        "^",
+        "&",
+        "*",
+        "(",
+        ")",
+        "-",
+        "=",
+        "+",
+        "{",
+        "}",
+        "[",
+        "]",
+        "|",
+        ";",
+        ":",
+        '"',
+        "'",
+        "<",
+        ">",
+        "?",
+        "/",
+        ",",
+        ".",
+        "_",
+        "~",
+      ];
       if (restrictedCharacters_Name.includes(e.key)) {
         e.preventDefault(); // Prevent default behavior (character insertion)
       }
-     }
-    if (e.target.name === 'userID') {
-      const restrictedCharacters_Email = ['!', '#', '$', '%', '^', '&', '*', '(', ')', '-', '=', '+', '{', '}', '[', ']', '|', ';', ':', '"', "'", '<', '>', '?', '/', ',','_','~'];    
+    }
+    if (e.target.name === "userID") {
+      const restrictedCharacters_Email = [
+        "!",
+        "#",
+        "$",
+        "%",
+        "^",
+        "&",
+        "*",
+        "(",
+        ")",
+        "-",
+        "=",
+        "+",
+        "{",
+        "}",
+        "[",
+        "]",
+        "|",
+        ";",
+        ":",
+        '"',
+        "'",
+        "<",
+        ">",
+        "?",
+        "/",
+        ",",
+        "_",
+        "~",
+      ];
       if (restrictedCharacters_Email.includes(e.key)) {
         e.preventDefault(); // Prevent default behavior (character insertion)
       }
@@ -117,32 +177,32 @@ const Login = () => {
 
   useEffect(() => {}, [forgotuser]);
 
-  const forgotValidation = (name, message) => {
-    if (!forgotuser[name]) {
-      setvalidation({
-        ...validation,
-        name: {
-          ...validation[name],
-          error: true,
-          errorMessage: message,
-        },
-      });
-    } else {
-      setvalidation({
-        ...validation,
-        name: {
-          ...validation[name],
-          error: false,
-        },
-      });
-    }
-  };
+  // const forgotValidation = (name, message) => {
+  //   if (!forgotuser[name]) {
+  //     setvalidation({
+  //       ...validation,
+  //       name: {
+  //         ...validation[name],
+  //         error: true,
+  //         errorMessage: message,
+  //       },
+  //     });
+  //   } else {
+  //     setvalidation({
+  //       ...validation,
+  //       name: {
+  //         ...validation[name],
+  //         error: false,
+  //       },
+  //     });
+  //   }
+  // };
 
   const handleDetails = (e, page) => {
     if (page === "Sign Up") {
       if (e.target.name === "Confirmpassword") {
-        confpassval[e.target.name] = e.target.value
-        setconfpassval({...confpassval, [e.target.name]: e.target.value });
+        confpassval[e.target.name] = e.target.value;
+        setconfpassval({ ...confpassval, [e.target.name]: e.target.value });
         if (userDetails.password !== e.target.value) {
           setvalidation({
             ...validation,
@@ -219,7 +279,26 @@ const Login = () => {
       setUser({ ...user, [e.target.name]: e.target.value });
     } else if (page === "Forgot") {
       if (e.target.name === "FuserID") {
-        forgotValidation(e.target.name, "Please Enter the User");
+        //forgotValidation(e.target.name, "Please Enter the User");
+        if (!forgotuser?.["FuserID"]) {
+          setvalidation({
+            ...validation,
+            FuserID: {
+              ...validation.FuserID,
+              error: true,
+              errorMessage: "Please Enter the UserId",
+            },
+          });
+        } else {
+          setvalidation({
+            ...validation,
+            FuserID: {
+              ...validation.FuserID,
+              error: false,
+              errorMessage: "Please enter",
+            },
+          });
+        }
       }
 
       if (e.target.name === "password") {
@@ -279,54 +358,58 @@ const Login = () => {
     if (page === "Sign Up") {
       //Popping the toast when required fields is not filled up..
       if (Object.getOwnPropertyNames(userDetails).length === 0) {
-        toast.error('Please fill in all required fields.', {
+        toast.error("Please fill in all required fields.", {
           position: toast.POSITION.BOTTOM_RIGHT,
-              hideProgressBar: true,
-              autoClose: 2000,
+          hideProgressBar: true,
+          autoClose: 2000,
         });
         return;
       }
-      if (!Object.keys(userDetails).includes('Name')) {
-        toast.error('Name field cannot be empty.', {
+      if (!Object.keys(userDetails).includes("Name")) {
+        toast.error("Name field cannot be empty.", {
           position: toast.POSITION.BOTTOM_RIGHT,
-              hideProgressBar: true,
-              autoClose: 2000,
+          hideProgressBar: true,
+          autoClose: 2000,
         });
         return;
-      } 
-      if (!Object.keys(userDetails).includes('userID')) {
-        toast.error('Email address field cannot be empty.', {
+      }
+      if (!Object.keys(userDetails).includes("userID")) {
+        toast.error("Email address field cannot be empty.", {
           position: toast.POSITION.BOTTOM_RIGHT,
-              hideProgressBar: true,
-              autoClose: 2000,
+          hideProgressBar: true,
+          autoClose: 2000,
         });
         return;
-      } 
-      if (!Object.keys(userDetails).includes('password')) {
-        toast.error('Password field cannot be empty.', {
+      }
+      if (!Object.keys(userDetails).includes("password")) {
+        toast.error("Password field cannot be empty.", {
           position: toast.POSITION.BOTTOM_RIGHT,
-              hideProgressBar: true,
-              autoClose: 2000,
+          hideProgressBar: true,
+          autoClose: 2000,
         });
         return;
-      } 
-      if (!Object.keys(userDetails).includes('password')) {
-        toast.error('Password field cannot be empty.', {
+      }
+      if (!Object.keys(userDetails).includes("password")) {
+        toast.error("Password field cannot be empty.", {
           position: toast.POSITION.BOTTOM_RIGHT,
-              hideProgressBar: true,
-              autoClose: 2000,
+          hideProgressBar: true,
+          autoClose: 2000,
         });
         return;
-      } 
-      if (confpassval.Confirmpassword === undefined || confpassval.Confirmpassword === ''|| confpassval.Confirmpassword === null) {
-        toast.error('Confirm Password field cannot be empty.', {
+      }
+      if (
+        confpassval.Confirmpassword === undefined ||
+        confpassval.Confirmpassword === "" ||
+        confpassval.Confirmpassword === null
+      ) {
+        toast.error("Confirm Password field cannot be empty.", {
           position: toast.POSITION.BOTTOM_RIGHT,
-              hideProgressBar: true,
-              autoClose: 2000,
+          hideProgressBar: true,
+          autoClose: 2000,
         });
         return;
-      } 
-      
+      }
+
       axios
         .post(`http://${path.Location}:3012/SignupUser`, userDetails)
         .then((response) => {
@@ -339,7 +422,8 @@ const Login = () => {
 
           setTimeout(() => {
             setPage("Login");
-            userDetails = {};
+            setUserDetails({});
+            // userDetails = {};// Commented by Franklin due to invalid assignment for cont variable.
           }, 10000);
         })
         .catch((error) => {
@@ -548,7 +632,7 @@ const Login = () => {
                             onMouseDown={handleMouseDownPassword}
                             edge="end"
                           >
-                            {showPassword ? <Visibility/> : <VisibilityOff />}
+                            {showPassword ? <Visibility /> : <VisibilityOff />}
                           </IconButton>
                         </InputAdornment>
                       }
@@ -763,7 +847,7 @@ const Login = () => {
                     onChange={(e) => {
                       handleDetails(e, "Sign Up");
                     }}
-                    onKeyDown={handleKeyDown}                    
+                    onKeyDown={handleKeyDown}
                     //onBlur={(e) => { handleValidation(e) }}
                   />
                 </div>
@@ -783,7 +867,7 @@ const Login = () => {
                     onChange={(e) => {
                       handleDetails(e, "Sign Up");
                     }}
-                    onKeyDown={handleKeyDown} 
+                    onKeyDown={handleKeyDown}
                     onBlur={(e) => {
                       CheckUser();
                     }}
@@ -815,7 +899,7 @@ const Login = () => {
                       onChange={(e) => {
                         handleDetails(e, "Sign Up");
                       }}
-                      onKeyDown={handleKeyDown} 
+                      onKeyDown={handleKeyDown}
                     />
                   </FormControl>
                 </div>
@@ -846,7 +930,7 @@ const Login = () => {
                       onChange={(e) => {
                         handleDetails(e, "Sign Up");
                       }}
-                      onKeyDown={handleKeyDown} 
+                      onKeyDown={handleKeyDown}
                     />
                     {validation.Confirmpassword.error && (
                       <FormHelperText error id="username-error">

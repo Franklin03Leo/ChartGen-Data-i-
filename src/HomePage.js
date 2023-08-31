@@ -39,6 +39,7 @@ import EmptyPage from "../src/Images/EmptyPage.png";
 import { union } from "d3";
 
 const HomePage = () => {
+  console.log("HomePage Component is rendering ..............");
   const DataTypes = ["#", "Da", "Aa"];
 
   const [state, setState] = React.useState({});

@@ -1,8 +1,18 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { useEffect } from "react";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+
+//filter model
+import OutlinedInput from "@mui/material/OutlinedInput";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import ListItemText from "@mui/material/ListItemText";
+import Select from "@mui/material/Select";
+import Checkbox from "@mui/material/Checkbox";
 
 //Icons
 import ZoomOut from "@mui/icons-material/ZoomOutMap";
@@ -10,6 +20,8 @@ import ZoomIn from "@mui/icons-material/ZoomInMap";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DashboardIcon from "@mui/icons-material/InsertChart";
 import DatasetIcon from "@mui/icons-material/Dataset";
+import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
+import RefreshIcon from "@mui/icons-material/Refresh";
 
 //Components
 import BarChart from "../Charts/BarChart";
@@ -27,7 +39,25 @@ import CardLineChart from "./CardLineChart";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+//tool tip
+import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
+import styled from "@emotion/styled";
+import { Fade } from "@material-ui/core";
+
 const Dashboard = ({ params }) => {
+  //Add a Bootstrap Tooltip style
+  const BootstrapTooltip = styled(({ className, ...props }) => (
+    <Tooltip {...props} arrow classes={{ popper: className }} />
+  ))(({ theme }) => ({
+    [`& .${tooltipClasses.arrow}`]: {
+      color: "black",
+      top: 10,
+    },
+    [`& .${tooltipClasses.tooltip}`]: {
+      backgroundColor: "black",
+    },
+  }));
+
   console.log("Dashboard Rendering.... => ", params);
   const [details, SetDetails] = React.useState({
     ProjectName: "Dashboard",
@@ -48,22 +78,45 @@ const Dashboard = ({ params }) => {
     Chart: false,
     Dashboard: false,
     Loader: true,
+    DataSet: false, // to open dataset model
+    filterMenu: false, // to open Filter Menu Model
   });
   const [other, setOther] = React.useState({});
   const [cardValue, setCardValue] = React.useState({});
+  const [dashFilterData, setDashFilterData] = useState([]);
+  const [filterHeaderData, setFilterHeaderData] = useState([]);
+  const [filterDetailedData, setFilterDetailedData] = useState([]);
+  const [selectedFilters, setSelectedFilters] = useState({});
+  const [menuName, setMenuName] = React.useState({});
 
-  const divRef = useRef(null);
+  const [individualFilter, setIndividualFilter] = useState([]);
+  const [projectTemplate, setprojectTemplate] = useState([]);
+  const [storeFilterData, setstoreFilterData] = useState([]);
 
   useEffect(() => {
+    if (params?.charts !== undefined) {
+      setprojectTemplate(
+        Object.values(params.charts).map((val, i) => {
+          let temp = "chart" + i;
+          let result = {};
+          result[temp] = params.dashboard[val];
+          return result;
+        })
+      );
+    }
     if (params.dashboard !== undefined) {
       SetTemplate(params.dashboard);
-      if (params.dashboard != template) Setfilteredtemplate(params.dashboard);
+      if (params.dashboard !== template) Setfilteredtemplate(params.dashboard);
       //if (params.action === 'Edit')
       SetDetails({ ProjectName: params.DashboardName });
     }
     if (params.Filter !== undefined) {
       setFilter(params.Filter);
       setOther({ showFilter: params.Filter.filterSwatch });
+    }
+    // to get an individual filter dropdown values
+    if (params.IndividualFilter !== undefined) {
+      setIndividualFilter(params.IndividualFilter);
     }
     if (params.FilteringProps !== undefined) {
       setfilteringProps(params.FilteringProps);
@@ -121,7 +174,7 @@ const Dashboard = ({ params }) => {
   //Custom
   const style = {
     position: "absolute",
-    top: "50%",
+    top: "53%",
     left: "50%",
     transform: "translate(-50%, -50%)",
     width: 400,
@@ -135,6 +188,12 @@ const Dashboard = ({ params }) => {
   //Components
   const Chart = ({ state }) => {
     //const chart = React.useMemo(() => {
+    // to set an chart height when click the preview model
+    if (open.Chart === true) {
+      state.Height_ = 600;
+    } else {
+      state.Height_ = 250;
+    }
     return (
       <>
         <div>
@@ -152,6 +211,70 @@ const Dashboard = ({ params }) => {
     //   }, [state])
     // return chart
   };
+
+  // to open a Dataset
+  const handleDataSet = (index) => {
+    setOpen({ DataSet: true });
+    Setindex({ i: index });
+  };
+
+  // To open the filter Model and funcnalities of filter model
+  const filterModelOpen = (index, pageName) => {
+    setMenuName(pageName);
+    setOpen({ filterMenu: true });
+    Setindex({ i: index });
+    let tempfilterArray = [];
+    // check wheather the dashboard is bublished
+    if (pageName === "Dashboard Menu" || isBublished) {
+      let temp = template[chartsID["chart" + index]]?.["Uploaded_file"];
+      // to get the table header values for select a filter fields
+      setFilterHeaderData(Object.keys(temp[0]));
+      if (
+        sessionStorage.getItem("chart" + index) !== undefined &&
+        sessionStorage.getItem("chart" + index) !== null
+      ) {
+        setDashFilterData(sessionStorage.getItem("chart" + index).split(","));
+        // if(storeFilterData.length !== 0)
+        // setDashFilterData(storeFilterData["chart" + index])
+        tempfilterArray = sessionStorage.getItem("chart" + index).split(",");
+      }
+    } else {
+      individualFilter.map((value, i) => {
+        if (i === index && value["chart" + index] !== null) {
+          tempfilterArray = value["chart" + index].split(",");
+          setDashFilterData(tempfilterArray);
+        }
+      });
+    }
+    // do the Mapping for get an individual filter fields
+    let data = tempfilterArray.map((propertyName) => {
+      return template[chartsID["chart" + index]]?.["Uploaded_file"].map(
+        (item) => ({
+          [propertyName]: item[propertyName],
+        })
+      );
+    });
+    const groupedData = {};
+    data.forEach((sublist) => {
+      sublist.forEach((item) => {
+        const key = Object.keys(item)[0];
+        const value = item[key];
+        if (!groupedData[key]) {
+          // Set to store unique values
+          groupedData[key] = new Set();
+        }
+        groupedData[key].add(value);
+      });
+    });
+
+    // Convert Sets to arrays in the groupedData object
+    for (const key in groupedData) {
+      groupedData[key] = Array.from(groupedData[key]);
+    }
+    setFilterDetailedData(groupedData);
+  };
+
+  //chart drop layout
   const CreatingUploadArea = () => {
     try {
       console.log("charts re-rendered");
@@ -202,18 +325,130 @@ const Dashboard = ({ params }) => {
                             params.action === "Edit") ||
                           (params.action !== undefined &&
                             params.action === "Update") ? (
-                            <DeleteIcon
-                              style={{
-                                float: "right",
-                                cursor: "pointer",
-                                paddingTop: "6px",
-                              }}
-                              onClick={(e) => {
-                                RemoveChart(i);
-                              }}
-                            />
+                            <>
+                              <DeleteIcon
+                                style={{
+                                  float: "right",
+                                  cursor: "pointer",
+                                  paddingTop: "6px",
+                                }}
+                                onClick={(e) => {
+                                  RemoveChart(i);
+                                }}
+                              />
+                              <BootstrapTooltip
+                                title="Dataset"
+                                TransitionComponent={Fade}
+                                TransitionProps={{ timeout: 600 }}
+                                placement="bottom"
+                              >
+                                <DatasetIcon
+                                  style={{
+                                    float: "right",
+                                    cursor: "pointer",
+                                    paddingTop: "6px",
+                                  }}
+                                  onClick={(e) => {
+                                    handleDataSet(i);
+                                  }}
+                                />
+                              </BootstrapTooltip>
+
+                              <BootstrapTooltip
+                                title="Filter"
+                                TransitionComponent={Fade}
+                                TransitionProps={{ timeout: 600 }}
+                                placement="bottom"
+                              >
+                                <FilterAltOutlinedIcon
+                                  style={{
+                                    float: "right",
+                                    cursor: "pointer",
+                                    paddingTop: "6px",
+                                  }}
+                                  onClick={(e) => {
+                                    debugger;
+                                    filterModelOpen(i, "Dashboard Menu");
+                                  }}
+                                />
+                              </BootstrapTooltip>
+                              {/* <BootstrapTooltip
+                                title="Refresh"
+                                TransitionComponent={Fade}
+                                TransitionProps={{ timeout: 600 }}
+                                placement="bottom"
+                              >
+                                <RefreshIcon
+                                  style={{
+                                    float: "right",
+                                    cursor: "pointer",
+                                    paddingTop: "6px",
+                                  }}
+                                  onClick={(e) => {
+                                    ResetFilter();
+                                  }}
+                                />
+                              </BootstrapTooltip> */}
+                            </>
                           ) : (
-                            ""
+                            // project menu
+                            <div>
+                              <BootstrapTooltip
+                                title="Dataset"
+                                TransitionComponent={Fade}
+                                TransitionProps={{ timeout: 600 }}
+                                placement="bottom"
+                              >
+                                <DatasetIcon
+                                  style={{
+                                    float: "right",
+                                    cursor: "pointer",
+                                    paddingTop: "6px",
+                                  }}
+                                  onClick={(e) => {
+                                    handleDataSet(i);
+                                  }}
+                                />
+                              </BootstrapTooltip>
+                              <BootstrapTooltip
+                                title="Filter"
+                                TransitionComponent={Fade}
+                                TransitionProps={{ timeout: 600 }}
+                                placement="bottom"
+                              >
+                                <FilterAltOutlinedIcon
+                                  style={{
+                                    float: "right",
+                                    cursor: "pointer",
+                                    paddingTop: "6px",
+                                  }}
+                                  onClick={(e) => {
+                                    debugger;
+                                    filterModelOpen(i, "Project Menu");
+                                  }}
+                                />
+                              </BootstrapTooltip>
+                              {isBublished ||
+                                (menuName === "Project Menu" && (
+                                  <BootstrapTooltip
+                                    title="Refresh"
+                                    TransitionComponent={Fade}
+                                    TransitionProps={{ timeout: 600 }}
+                                    placement="bottom"
+                                  >
+                                    <RefreshIcon
+                                      style={{
+                                        float: "right",
+                                        cursor: "pointer",
+                                        paddingTop: "6px",
+                                      }}
+                                      onClick={(e) => {
+                                        ResetFilter();
+                                      }}
+                                    />
+                                  </BootstrapTooltip>
+                                ))}
+                            </div>
                           )}
                           {filter.filterSwatch ? (
                             <Chart
@@ -275,12 +510,8 @@ const Dashboard = ({ params }) => {
                       : "col-lg-4"
                   }
                   id={"chart" + i}
-                  onDrop={(event) => {
-                    drop(event);
-                  }}
-                  onDragOver={(event) => {
-                    allowDrop(event);
-                  }}
+                  onDrop={drop}
+                  onDragOver={allowDrop}
                 >
                   {chartsID["chart" + i] !== undefined ? (
                     <div style={{ marginTop: "10px" }}>
@@ -301,18 +532,124 @@ const Dashboard = ({ params }) => {
                             params.action === "Edit") ||
                           (params.action !== undefined &&
                             params.action === "Update") ? (
-                            <DeleteIcon
-                              style={{
-                                float: "right",
-                                cursor: "pointer",
-                                paddingTop: "6px",
-                              }}
-                              onClick={(e) => {
-                                RemoveChart(i);
-                              }}
-                            />
+                            <>
+                              <DeleteIcon
+                                style={{
+                                  float: "right",
+                                  cursor: "pointer",
+                                  paddingTop: "6px",
+                                }}
+                                onClick={(e) => {
+                                  RemoveChart(i);
+                                }}
+                              />
+                              <BootstrapTooltip
+                                title="Dataset"
+                                TransitionComponent={Fade}
+                                TransitionProps={{ timeout: 600 }}
+                                placement="bottom"
+                              >
+                                <DatasetIcon
+                                  style={{
+                                    float: "right",
+                                    cursor: "pointer",
+                                    paddingTop: "6px",
+                                  }}
+                                  onClick={(e) => {
+                                    handleDataSet(i);
+                                  }}
+                                />
+                              </BootstrapTooltip>
+                              <BootstrapTooltip
+                                title="Filter"
+                                TransitionComponent={Fade}
+                                TransitionProps={{ timeout: 600 }}
+                                placement="bottom"
+                              >
+                                <FilterAltOutlinedIcon
+                                  style={{
+                                    float: "right",
+                                    cursor: "pointer",
+                                    paddingTop: "6px",
+                                  }}
+                                  onClick={(e) => {
+                                    filterModelOpen(i, "Dashboard Menu");
+                                  }}
+                                />
+                              </BootstrapTooltip>
+                              {/* <BootstrapTooltip
+                                title="Refresh"
+                                TransitionComponent={Fade}
+                                TransitionProps={{ timeout: 600 }}
+                                placement="bottom"
+                              >
+                                <RefreshIcon
+                                  style={{
+                                    float: "right",
+                                    cursor: "pointer",
+                                    paddingTop: "6px",
+                                  }}
+                                  onClick={(e) => {
+                                    ResetFilter();
+                                  }}
+                                />
+                              </BootstrapTooltip> */}
+                            </>
                           ) : (
-                            ""
+                            // project menu
+                            <div>
+                              <BootstrapTooltip
+                                title="Dataset"
+                                TransitionComponent={Fade}
+                                TransitionProps={{ timeout: 600 }}
+                                placement="bottom"
+                              >
+                                <DatasetIcon
+                                  style={{
+                                    float: "right",
+                                    cursor: "pointer",
+                                    paddingTop: "6px",
+                                  }}
+                                  onClick={(e) => {
+                                    handleDataSet(i);
+                                  }}
+                                />
+                              </BootstrapTooltip>
+                              <BootstrapTooltip
+                                title="Filter"
+                                TransitionComponent={Fade}
+                                TransitionProps={{ timeout: 600 }}
+                                placement="bottom"
+                              >
+                                <FilterAltOutlinedIcon
+                                  style={{
+                                    float: "right",
+                                    cursor: "pointer",
+                                    paddingTop: "6px",
+                                  }}
+                                  onClick={(e) => {
+                                    filterModelOpen(i, "Project Menu");
+                                  }}
+                                />
+                              </BootstrapTooltip>
+                              {/* <BootstrapTooltip
+                                title="Refresh"
+                                TransitionComponent={Fade}
+                                TransitionProps={{ timeout: 600 }}
+                                placement="bottom"
+                              >
+                                <RefreshIcon
+                                  style={{
+                                    float: "right",
+                                    cursor: "pointer",
+                                    paddingTop: "6px",
+                                  }}
+                                  onClick={(e) => {
+                                    ResetFilter();
+                                  }}
+                                />
+                              </BootstrapTooltip> */}
+                            </div>
                           )}
                           {filter.filterSwatch ? (
                             <Chart
@@ -572,6 +909,267 @@ const Dashboard = ({ params }) => {
       console.log("Error while creating dragging area");
     }
   };
+
+  // close the filter model
+  const handleFilterClose = () => {
+    setOpen({ filterMenu: false });
+    // setFilterHeaderData([]);
+    setDashFilterData([]);
+  };
+
+  // get the selected dropdown fields in a array
+  const handleChange = (event, index) => {
+    const {
+      target: { value },
+    } = event;
+    setDashFilterData(typeof value === "string" ? value.split(",") : value);
+  };
+
+  // handle the filter submit and reset action in preview model
+  const ApplyFilterDropdown = (action) => {
+    if (action !== "reset") {
+      setstoreFilterData({
+        ...storeFilterData,
+        [`chart${index["i"]}`]: dashFilterData,
+      });
+      sessionStorage.setItem("chart" + index["i"], dashFilterData);
+      handleFilterClose();
+    } else {
+      setDashFilterData([]);
+      sessionStorage.removeItem("chart" + index["i"]);
+    }
+  };
+
+  const handleFilteredData = (event, selectedName) => {
+    const selectedValues = event.target.value;
+    setSelectedFilters((prevFilters) => ({
+      ...prevFilters,
+      [selectedName]: selectedValues,
+    }));
+  };
+
+  const ApplyFilter = () => {
+    let temp = {};
+    temp = template[chartsID["chart" + index["i"]]];
+    temp.filter = selectedFilters;
+    let filteredData = [];
+    filteredData = template[chartsID["chart" + index["i"]]]["Uploaded_file"];
+
+    for (const filterKey in selectedFilters) {
+      if (selectedFilters.hasOwnProperty(filterKey)) {
+        const filterValues = selectedFilters[filterKey];
+
+        filteredData = filteredData.filter((item) =>
+          filterValues.includes(item[filterKey])
+        );
+      }
+    }
+    temp.data = filteredData;
+    temp.filteApply = "FilterApply";
+    handleFilter(temp);
+    handleFilterClose();
+
+    // <Chart state={template[chartsID["chart" + i]]} />
+  };
+
+  // reset the chart and refresh action
+  const ResetFilter = () => {
+    filteredtemplate[template[chartsID["chart" + index["i"]]].TempName][
+      "Uploaded_fileTemp"
+    ] = template[chartsID["chart" + index["i"]]]["Uploaded_file"];
+    setSelectedFilters({});
+    Setfilteredtemplate({
+      ...filteredtemplate,
+      Render: !filteredtemplate.Render,
+    });
+    return "Executed";
+  };
+
+  // Filter preview Model
+  const FilterModel = () => {
+    return (
+      <>
+        <Modal
+          open={open.filterMenu}
+          onClose={(e) => {
+            setOpen({ filterMenu: false });
+          }}
+          aria-labelledby="keep-mounted-modal-title"
+          aria-describedby="keep-mounted-modal-description"
+        >
+          <Box
+            sx={style}
+            style={{ minHeight: "90%", height: "110px", overflow: "scroll" }}
+          >
+            <Typography
+              id="keep-mounted-modal-title"
+              variant="h6"
+              component="h2"
+            >
+              <div className="row col-lg-12" style={{ marginBottom: "10px" }}>
+                <div className="col-lg-11">
+                  <h5>Filter</h5>
+                </div>
+                <div
+                  className="col-lg-1"
+                  style={{ float: "right", cursor: "pointer" }}
+                >
+                  <ZoomIn
+                    onClick={(e) => {
+                      handleFilterClose();
+                    }}
+                  />
+                </div>
+              </div>
+            </Typography>
+            {menuName === "Dashboard Menu" && !isBublished && (
+              <div>
+                <div style={{ width: "80%" }}>
+                  <FormControl sx={{ m: 1, width: 300 }}>
+                    <InputLabel id="demo-multiple-checkbox-label">
+                      Select Filter Data
+                    </InputLabel>
+                    <Select
+                      labelId="demo-multiple-checkbox-label"
+                      id="demo-multiple-checkbox"
+                      multiple
+                      value={dashFilterData}
+                      onChange={(event, index) => handleChange(event, index)}
+                      input={<OutlinedInput label="Select Filter Data" />}
+                      renderValue={(selected) => selected.join(", ")}
+                      style={{
+                        maxHeight: 48 * 4.5 + 0,
+                        width: 250,
+                      }}
+                    >
+                      {filterHeaderData.map((name) => (
+                        <MenuItem key={name} value={name}>
+                          <Checkbox
+                            checked={dashFilterData.indexOf(name) > -1}
+                          />
+                          <ListItemText primary={name} />
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row-reverse",
+                    justifyContent: "space-between",
+                    width: "80%",
+                  }}
+                >
+                  <div style={{ margin: "8px" }}>
+                    <Button
+                      id="saveTemp"
+                      variant="contained"
+                      className="input-field button"
+                      style={{ backgroundColor: "#6282b3" }}
+                      onClick={() => ApplyFilterDropdown("submit")}
+                    >
+                      Submit
+                    </Button>
+                  </div>
+                  <div style={{ margin: "8px" }}>
+                    <Button
+                      id="saveTemp"
+                      variant="contained"
+                      className="input-field button"
+                      style={{ backgroundColor: "#6282b3" }}
+                      onClick={() => ApplyFilterDropdown("reset")}
+                    >
+                      Reset
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {
+              (menuName === "Project Menu" || isBublished) &&
+                // filterDetailedData ?
+                Object.keys(filterDetailedData)?.map((selectedName) => (
+                  <div key={selectedName}>
+                    <FormControl sx={{ m: 1, width: 300 }}>
+                      <InputLabel
+                        id={`demo-multiple-checkbox-label-${selectedName}`}
+                      >
+                        {selectedName}
+                      </InputLabel>
+                      <Select
+                        labelId={`demo-multiple-checkbox-label-${selectedName}`}
+                        id={`demo-multiple-checkbox-${selectedName}`}
+                        multiple
+                        value={selectedFilters[selectedName] || []}
+                        onChange={(event) =>
+                          handleFilteredData(event, selectedName)
+                        }
+                        input={<OutlinedInput label="Tag" />}
+                        renderValue={(selected) => selected.join(", ")}
+                        style={{
+                          maxHeight: 48 * 4.5 + 0,
+                          width: 250,
+                        }}
+                      >
+                        {filterDetailedData[selectedName]?.map((item) => (
+                          <MenuItem key={item} value={item}>
+                            <Checkbox
+                              checked={
+                                selectedFilters[selectedName]?.includes(item) ||
+                                false
+                              }
+                            />
+                            <ListItemText primary={item} />
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </div>
+                ))
+              // : (menuName !== "Dashboard Menu" || isBublished) &&
+              // "No data to filter"
+            }
+
+            {(menuName === "Project Menu" || isBublished) &&
+            Object.keys(filterDetailedData)?.length !== 0 ? (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row-reverse",
+                  marginTop: "10px",
+                }}
+              >
+                <Button
+                  id="saveTemp"
+                  variant="contained"
+                  className="input-field button"
+                  style={{ backgroundColor: "#6282b3", float: "right" }}
+                  onClick={ApplyFilter}
+                >
+                  Apply Filter
+                </Button>
+
+                <Button
+                  id="saveTemp"
+                  variant="contained"
+                  className="input-field button"
+                  style={{ backgroundColor: "#6282b3", marginRight: "60px" }}
+                  onClick={ResetFilter}
+                >
+                  Reset
+                </Button>
+              </div>
+            ) : (
+              ""
+            )}
+          </Box>
+        </Modal>
+      </>
+    );
+  };
+
   const Cards = () => {
     return (
       <>
@@ -593,6 +1191,28 @@ const Dashboard = ({ params }) => {
       </>
     );
   };
+
+  const PreviewDataSet = () => {
+    let tempDataSet = {};
+    if (
+      template[chartsID["chart" + index["i"]]]?.["filteApply"] === "FilterApply"
+    ) {
+      tempDataSet =
+        filteredtemplate[template[chartsID["chart" + index["i"]]].TempName][
+          "Uploaded_fileTemp"
+        ];
+    } else {
+      tempDataSet = template[chartsID["chart" + index["i"]]]["Uploaded_file"];
+    }
+
+    return template[chartsID["chart" + index["i"]]]["Uploaded_file"] !==
+      undefined ? (
+      <DatasetTable params={tempDataSet} filter={false} />
+    ) : (
+      "franklin"
+    );
+  };
+  //preview model for charts
   const PreviewModal = () => {
     return (
       <div>
@@ -604,7 +1224,7 @@ const Dashboard = ({ params }) => {
           aria-labelledby="keep-mounted-modal-title"
           aria-describedby="keep-mounted-modal-description"
         >
-          <Box sx={style} style={{ minWidth: "90%" }}>
+          <Box sx={style} style={{ minWidth: "98%", minHeight: "90%" }}>
             <Typography
               id="keep-mounted-modal-title"
               variant="h6"
@@ -624,19 +1244,58 @@ const Dashboard = ({ params }) => {
                 </div>
               </div>
             </Typography>
+            <Typography
+              id="keep-mounted-modal-title"
+              variant="h6"
+              component="h2"
+            >
+              <div className="row col-lg-12" style={{ minHeight: "100%" }}>
+                {chartsID["chart" + index.i] !== undefined ? (
+                  <Chart
+                    state={template[chartsID["chart" + index.i]]}
+                    style={{ minHeight: "100%" }}
+                  />
+                ) : (
+                  ""
+                )}
+              </div>
+            </Typography>
+          </Box>
+        </Modal>
 
-            <div className="row col-lg-12">
-              {chartsID["chart" + index.i] !== undefined ? (
-                <Chart state={template[chartsID["chart" + index.i]]} />
-              ) : (
-                ""
-              )}
-            </div>
+        <Modal
+          open={open.DataSet}
+          onClose={(e) => {
+            setOpen({ Chart: false });
+          }}
+          aria-labelledby="keep-mounted-modal-title"
+          aria-describedby="keep-mounted-modal-description"
+        >
+          <Box sx={style} style={{ minWidth: "98%", minHeight: "90%" }}>
+            <Typography
+              id="keep-mounted-modal-title"
+              variant="h6"
+              component="h2"
+            >
+              <div
+                className="col-lg-1"
+                style={{ float: "right", cursor: "pointer" }}
+              >
+                <ZoomIn
+                  onClick={(e) => {
+                    handleClose();
+                  }}
+                />
+              </div>
+            </Typography>
+            <div className="row col-lg-12">{PreviewDataSet()}</div>
           </Box>
         </Modal>
       </div>
     );
   };
+
+  // Layout tabs
   const Tabs = () => {
     return (
       <>
@@ -724,38 +1383,41 @@ const Dashboard = ({ params }) => {
         ...chartsID,
         [event.currentTarget.id]: event.dataTransfer.getData("text"),
       });
-      if (Tab.data === undefined)
+      if (Tab.data === undefined) {
         setTab({
           ...Tab,
           data: template[event.dataTransfer.getData("text")].Uploaded_file,
         });
+      }
     } catch (error) {
       console.log("Error while dragging on");
     }
   };
+
   const allowDrop = (event) => {
-    try {
-      event.preventDefault();
-    } catch (error) {
-      console.log("Error while allowingDrop");
-    }
+    sessionStorage.removeItem(event.currentTarget.id);
+    event.preventDefault();
   };
+
   const handleOpen = (index) => {
     setOpen({ Chart: true });
     Setindex({ i: index });
   };
   const handleClose = () => setOpen({ Chart: false });
-  const handleFilter = async (params) => {
+  const handleFilter = async (Obj) => {
     document.querySelector(".loader").style.display = "block";
-    for (let i = 0; i < Object.keys(filteredtemplate).length; i++) {
-      if (Object.keys(filteredtemplate)[i] !== "Render")
-        filteredtemplate[Object.keys(filteredtemplate)[i]].Uploaded_file =
-          params.data;
-    }
+    filteredtemplate[Obj.TempName]["Uploaded_fileTemp"] = Obj.data;
+    // for (let i = 0; i < Object.keys(filteredtemplate).length; i++) {
+    //   if (Object.keys(filteredtemplate)[i] !== "Render")
+    //     // filteredtemplate[Object.keys(filteredtemplate)[i]].Uploaded_file =
+    //
+    //   // template[Obj.TempName].Uploaded_file = Obj.data;
+    // }
     Setfilteredtemplate({
       ...filteredtemplate,
       Render: !filteredtemplate.Render,
     });
+
     return "Executed";
   };
   const RemoveChart = (e) => {
@@ -783,7 +1445,13 @@ const Dashboard = ({ params }) => {
     const dashboard = CreatingUploadArea();
     return dashboard;
   }, [template, filteredtemplate, chartsID, layouts]);
-  const NavTabs = React.useMemo(() => Tabs(), [Tab, filter]);
+
+  const NavTabs = React.useMemo(() => Tabs(), [filter]);
+  const getTable = () => {
+    setTimeout(() => {
+      return <DatasetTable params={Tab.data} filter={false} />;
+    }, 0);
+  };
   return (
     <>
       <div className="row col-lg-12">
@@ -829,7 +1497,7 @@ const Dashboard = ({ params }) => {
           className="row col-lg-12"
           style={{ display: !Tab.Dashboard ? "block" : "none" }}
         >
-          {Tab.data !== undefined ? (
+          {/* {Tab.data !== undefined ? (
             <DatasetTable params={Tab.data} filter={false} />
           ) : (
             <div
@@ -838,52 +1506,12 @@ const Dashboard = ({ params }) => {
             >
               No rows found.
             </div>
-          )}
+          )} */}
         </div>
-        {/* } */}
-        {/* <PreviewModal /> */}
-        <div>
-          <Modal
-            open={open.Chart}
-            onClose={(e) => {
-              setOpen({ Chart: false });
-            }}
-            aria-labelledby="keep-mounted-modal-title"
-            aria-describedby="keep-mounted-modal-description"
-          >
-            <Box sx={style} style={{ minWidth: "90%" }}>
-              <Typography
-                id="keep-mounted-modal-title"
-                variant="h6"
-                component="h2"
-              >
-                <div className="row col-lg-12">
-                  <div className="col-lg-11">Preview</div>
-                  <div
-                    className="col-lg-1"
-                    style={{ float: "right", cursor: "pointer" }}
-                  >
-                    <ZoomIn
-                      onClick={(e) => {
-                        handleClose();
-                      }}
-                    />
-                  </div>
-                </div>
-              </Typography>
+        {(open.DataSet || open.Chart) && <PreviewModal />}
 
-              <div className="row col-lg-12">
-                <Chart state={template[chartsID["chart" + index.i]]} />
-
-                {/* {chartsID["chart" + index.i] !== undefined ? (
-                  <Chart state={template[chartsID["chart" + index.i]]} />
-                ) : (
-                  ""
-                )} */}
-              </div>
-            </Box>
-          </Modal>
-        </div>
+        {open.filterMenu === true ? FilterModel() : ""}
+        {/* <Chart state={template[chartsID["chart" + index.i]]} /> */}
       </div>
     </>
   );

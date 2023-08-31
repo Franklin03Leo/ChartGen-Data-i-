@@ -23,7 +23,8 @@ const DatasetTable = ({ params, filter }) => {
   };
   return (
     <>
-      <div style={{ height: "calc(100vh - 165px)" }}>
+      {/* change height 165 to 140 for preview model  */}
+      <div style={{ height: "calc(100vh - 140px)" }}>
         <MUIDataTable
           id="dataset"
           title={"Dataset"}

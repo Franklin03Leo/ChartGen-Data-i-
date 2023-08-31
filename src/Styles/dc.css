@@ -909,7 +909,7 @@ input:checked + .slider:before {
 .chartbox {
   /* box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px !important;
     padding: 7px 12px 0px 12px !important; */
-  max-height: 43.5vh;
+  /* max-height: 43.5vh; */
   /* height: 43.5vh; */
 
   background: #ffffff 0% 0% no-repeat padding-box;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React from "react";
 import * as dc from "dc";
 import * as d3 from "d3";
 import * as crossfilter from "crossfilter2/crossfilter";
@@ -11,7 +11,7 @@ const LineChart = ({ params }) => {
 
   React.useEffect(() => {
     var div2 = d3
-      .select("#Charts")
+      .selectAll(".boxcenter")
       .append("div")
       .attr("class", "tooltip")
       .style("opacity", 0)
@@ -24,7 +24,13 @@ const LineChart = ({ params }) => {
         params.TooltipThickness + "px " + params.TooltipTickColor + " solid"
       );
 
-    var experiments = params.Uploaded_file;
+    // var experiments = params.Uploaded_file;
+    var experiments = {};
+    if (params?.filteApply === "FilterApply") {
+      experiments = params.Uploaded_fileTemp;
+    } else {
+      experiments = params.Uploaded_file;
+    }
 
     var ndx = crossfilter(experiments),
       runDimension = ndx.dimension(function (d) {
@@ -41,6 +47,17 @@ const LineChart = ({ params }) => {
         return elements;
       };
     }
+
+    let sizing = (chart) => {
+      let divChart = document.querySelectorAll(".boxcenter");
+      divChart = divChart[divChart.length - 1];
+
+      let offsetHeight = divChart.offsetHeight,
+        offsetWidth = divChart.offsetWidth;
+      chart.width(offsetWidth).height(offsetHeight).redraw();
+      chart.width(offsetWidth).height(offsetHeight).redraw();
+    };
+    let resizing = (chart) => (window.onresize = () => sizing(chart));
 
     function groupArrayRemove(keyfn) {
       var bisect = d3.bisector(keyfn);
@@ -149,8 +166,8 @@ const LineChart = ({ params }) => {
     else PadLeft = params.PadLeft;
     chart
       .width(params.Width_)
-      //.height(params.Heigth_)
-      .height(null)
+      .height(params.Height_)
+      // .height(null)
 
       .margins({
         top: parseInt(10) + parseInt(PadTop),
@@ -402,6 +419,8 @@ const LineChart = ({ params }) => {
       update_offset();
       datatabel.redraw();
     }
+
+    resizing(chart);
   });
 
   const Chartheader = () => {
@@ -443,7 +462,8 @@ const LineChart = ({ params }) => {
             backgroundColor: params.Lineswatch === "show" ? params.BGColor : "",
           }}
         >
-          <div id="Charts" ref={div} className="boxcenter"></div>
+          <div ref={div} className="boxcenter"></div>
+          {/* id="Charts" */}
         </div>
       </Grid>
       <Grid

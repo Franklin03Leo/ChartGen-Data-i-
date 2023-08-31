@@ -16,7 +16,12 @@ const Compose = ({ params }) => {
   const div1 = React.useRef(null);
   // let compositeChart = null
   React.useEffect(() => {
-    var experiments = params.Uploaded_file;
+    var experiments = {};
+    if (params?.filteApply === "FilterApply") {
+      experiments = params.Uploaded_fileTemp;
+    } else {
+      experiments = params.Uploaded_file;
+    }
     var Groups = [];
     var ndx = crossfilter(experiments),
       runDimension = ndx.dimension(function (d) {
@@ -172,9 +177,13 @@ const Compose = ({ params }) => {
     const BAR_PADDING = 0.1;
     const RANGE_BAND_PADDING = 0;
     const OUTER_RANGE_BAND_PADDING = 0;
-    var offsetHeight = document.getElementById("Charts").offsetHeight;
-    var offsetWidth = document.getElementById("Charts").offsetWidth;
+
     let sizing = (chart) => {
+      let divChart = document.querySelectorAll(".boxcenter");
+      divChart = divChart[divChart.length - 1];
+      debugger;
+      let offsetHeight = divChart.offsetHeight,
+        offsetWidth = divChart.offsetWidth;
       chart.width(offsetWidth).height(offsetHeight).redraw();
     };
     let resizing = (chart) => (window.onresize = () => sizing(chart));
@@ -217,7 +226,7 @@ const Compose = ({ params }) => {
       });
     };
     var div2 = d3
-      .select("#Charts")
+      .selectAll(".boxcenter")
       .append("div")
       .attr("class", "tooltip")
       .style("opacity", 0)
@@ -298,9 +307,10 @@ const Compose = ({ params }) => {
         left: parseInt(30) + parseInt(PadLeft),
       })
 
-      .width(params.Width_)
-      .height(null)
-      //.height(params.Heigth_);
+      // .width(params.Width_)
+      // .height(null)
+      .height(params.Height_)
+
       .elasticY(true)
       .shareTitle(false)
       .dimension(runDimension)
@@ -629,8 +639,16 @@ const Compose = ({ params }) => {
   };
 
   return (
-    <Grid item xs={12} sm={12} md={12} xl={12} lg={12}>
-      <Grid item className="cardbox chartbox">
+    <Grid
+      item
+      xs={12}
+      sm={12}
+      md={12}
+      xl={12}
+      lg={12}
+      style={{ height: "100%" }}
+    >
+      <Grid item className="cardbox chartbox" style={{ height: "100%" }}>
         <Chartheader />
         <div
           style={{
@@ -638,7 +656,8 @@ const Compose = ({ params }) => {
               params.Compositeswatch === "show" ? params.BGColor : "",
           }}
         >
-          <div ref={div} id="Charts" className="boxcenter"></div>
+          <div ref={div} className="boxcenter"></div>
+          {/* id="Charts" */}
         </div>
       </Grid>
       <Grid

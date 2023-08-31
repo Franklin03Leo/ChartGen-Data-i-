@@ -105,6 +105,7 @@ const InputArea = ({
   project_,
   currentPage,
 }) => {
+  console.log("Inputblock Component is rendering ..............");
   // Global variables declaration
   const ChartType = [
     "Select",
@@ -363,9 +364,11 @@ const InputArea = ({
   //     else if(window.location.hostname === '49.204.124.69') setEnv(process.env.HOSTED_PATH)
   // })
   //useEffects for re-rendering the component
+
   React.useEffect(() => {
     currentPage(navbar["bar"]);
   }, [navbar]);
+
   React.useEffect(() => {
     ExpandData(navwidth);
   }, [navwidth]);
@@ -1669,6 +1672,7 @@ const InputArea = ({
     });
     event.dataTransfer.setData("text", event.target.id);
   };
+
   //Show valid axis
   const showValidAxis = (chart) => {
     var Notvalid = [];
@@ -2039,6 +2043,16 @@ const InputArea = ({
       obj.DashboardName = project[others.EditingDashboardID].DashboardName;
       obj.DashboardDescription = projectDetails.DashboardDescription;
 
+      let indivialFilter_ = [];
+      Object.keys(JSON.parse(sessionStorage.getItem("IDs"))).forEach(
+        (value) => {
+          let temp = sessionStorage.getItem(value);
+          indivialFilter_.push({ [value]: temp });
+          // Clear the session storage current key
+          sessionStorage.removeItem(value);
+        }
+      );
+      obj.IndividualFilter = indivialFilter_;
       obj.Filter = filter;
       obj.FilterProps = filterProps;
       obj.selectedFilterDimensions = filteringProps.customFilter;
@@ -2105,6 +2119,7 @@ const InputArea = ({
             obj.DashboardName = data.DashboardName;
             obj.DashboardDescription = data.DashboardDescription;
             obj.dashboard = dashboard_;
+            obj.IndividualFilter = data.IndividualFilter;
             obj.Filter = {
               filterSwatch: data.filter.filterSwatch,
               data: Uploaded_file !== undefined ? Uploaded_file : "",
@@ -2131,6 +2146,7 @@ const InputArea = ({
           filterSwatch: data.filter.filterSwatch,
           data: Uploaded_file !== undefined ? Uploaded_file : "",
         };
+        obj.IndividualFilter = data.IndividualFilter;
         obj.FilterProps = data.filterProps;
         obj.action = action;
         setFilter(obj.Filter);
@@ -2172,6 +2188,17 @@ const InputArea = ({
       obj.filterProps = filterProps;
       obj.selectedFilterDimensions = filteringProps.customFilter;
       obj.AvailableDimensions = filteringProps.Dimensions;
+
+      let indivialFilter_ = [];
+      Object.keys(JSON.parse(sessionStorage.getItem("IDs"))).forEach(
+        (value) => {
+          let temp = sessionStorage.getItem(value);
+          indivialFilter_.push({ [value]: temp });
+          // Clear the session storage current key
+          sessionStorage.removeItem(value);
+        }
+      );
+      obj.IndividualFilter = indivialFilter_;
     }
     axios
       .post(`http://${path.Location}:3012/InsertDashboard`, obj)

@@ -15,7 +15,7 @@ const BarLineChart = ({ params }) => {
   };
   React.useEffect(() => {
     var div2 = d3
-      .select("#Charts")
+      .selectAll(".boxcenter")
       .append("div")
       .attr("class", "tooltip")
       .style("opacity", 0)
@@ -31,7 +31,13 @@ const BarLineChart = ({ params }) => {
     var ndx;
     var datatabel = new dc.dataTable(div1.current);
 
-    var experiments = params.Uploaded_file;
+    // var experiments = params.Uploaded_file;
+    var experiments = {};
+    if (params?.filteApply === "FilterApply") {
+      experiments = params.Uploaded_fileTemp;
+    } else {
+      experiments = params.Uploaded_file;
+    }
     var barwidth = 10;
 
     if (experiments.length < 100) {
@@ -67,6 +73,15 @@ const BarLineChart = ({ params }) => {
     var YKey = function (d) {
       return +d[params.YAxis];
     };
+
+    let sizing = (chart) => {
+      let divChart = document.querySelectorAll(".boxcenter");
+      divChart = divChart[divChart.length - 1];
+      let offsetHeight = divChart.offsetHeight,
+        offsetWidth = divChart.offsetWidth;
+      chart.width(offsetWidth).height(offsetHeight).redraw();
+    };
+    let resizing = (chart) => (window.onresize = () => sizing(chart));
 
     function groupArrayAdd(keyfn) {
       var bisect = d3.bisector(keyfn);
@@ -213,8 +228,8 @@ const BarLineChart = ({ params }) => {
       });
     compositeChart
       .width(params.Width_)
-      .height(null)
-      //.height(params.Heigth_)
+      // .height(null)
+      .height(params.Height_)
 
       .margins({
         top: parseInt(10) + parseInt(PadTop),
@@ -594,6 +609,8 @@ const BarLineChart = ({ params }) => {
 
     // last();
     // next()
+
+    resizing(linechart);
   });
   const Chartheader = () => {
     return (
@@ -626,7 +643,7 @@ const BarLineChart = ({ params }) => {
             backgroundColor: params.Barswatch === "show" ? params.BGColor : "",
           }}
         >
-          <div id="Charts" ref={div} className="boxcenter"></div>
+          <div ref={div} className="boxcenter"></div>
         </div>
       </Grid>
 
