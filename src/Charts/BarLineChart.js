@@ -284,7 +284,8 @@ const BarLineChart = ({ params }) => {
             "text-anchor",
             params.Rotate === undefined || params.Rotate === "" ? "" : "end"
           )
-          .attr("transform", `rotate(${params.Rotate})`)
+         // .attr("transform", `rotate(${params.Rotate})`)
+          .attr("transform",  params.Rotate === undefined || params.Rotate === "" ? "" : `rotate(${params.Rotate})`)
           .style("font-family", params.xFont)
           .style("color", params.xColor)
           .style("font-size", params.xSize + "px");
