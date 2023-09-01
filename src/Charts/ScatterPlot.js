@@ -211,6 +211,7 @@ const Scatter = ({ params }) => {
             })
             .yAxisLabel(params.YAxisLabel)
             .xAxisLabel(params.XAxisLabel)
+            .xAxis().tickFormat(function (d) { return d; }) //X-axis starts from 0
         if (params.GroupByCol === 'Average') {
             chart.valueAccessor(function (d) {
                 return d.value.average;
