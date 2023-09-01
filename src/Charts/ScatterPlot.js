@@ -164,117 +164,118 @@ const Scatter = ({ params }) => {
     else PadBottom = params.PadBottom;
     if (params.PadLeft === undefined || params.PadLeft === "") PadLeft = 0;
     else PadLeft = params.PadLeft;
-    chart
-      .width(params.Width_)
-      .height(params.Height_)
-      // .height(null)
-      .margins({
-        top: parseInt(10) + parseInt(PadTop),
-        right: parseInt(30) + parseInt(PadRight),
-        bottom: parseInt(50) + parseInt(PadBottom),
-        left: parseInt(30) + parseInt(PadLeft),
-      })
+      chart
+          .width(params.Width_)
+          .height(params.Height_)
+          // .height(null)
+          .margins({
+              top: parseInt(10) + parseInt(PadTop),
+              right: parseInt(30) + parseInt(PadRight),
+              bottom: parseInt(50) + parseInt(PadBottom),
+              left: parseInt(30) + parseInt(PadLeft),
+          })
 
-      .x(
-        d3
-          .scaleLinear()
-          .domain([Math.min(...Max), Math.max(...Max) + Math.min(...Max)])
-      )
-      .brushOn(false)
-      .symbolSize(params.SymbolSize)
-      .clipPadding(10)
-      .dimension(runDimension, params.YAxis)
-      .group(speedSumGroup, params.YAxis)
-      .title(function (y) {
-        var tooltip =
-          params.XAxis +
-          ": " +
-          y.key[0] +
-          "\n" +
-          params.YAxis +
-          ": " +
-          y.key[1];
-
-        return "";
-      })
-      .elasticY(true)
-      .renderLabel(true)
-      .label(function (d) {
-        if (params.LabelsContent === "X") return d.x;
-        else if (params.LabelsContent === "Y") return d.y.toFixed(2);
-        else if (params.LabelsContent === "Title") return params.YAxis;
-      })
-      .renderlet(function (chart) {
-        chart.selectAll("path.symbol").attr("fill", function (d) {
-          if (d != undefined) {
-            if (d.key[1] >= 0) {
-              return params.Scatterswatch === "show" ? params.Color : "#6282b3";
-            } else {
-              return "Red";
-            }
-          }
-        });
-
-        //X-Axis
-        chart
-          .selectAll("g.x g.tick text")
-          .attr(
-            "dx",
-            params.Rotate === undefined || params.Rotate === "" ? "" : "-10"
+          .x(
+              d3
+                  .scaleLinear()
+                  .domain([Math.min(...Max), Math.max(...Max) + Math.min(...Max)])
           )
-          .attr(
-            "text-anchor",
-            params.Rotate === undefined || params.Rotate === "" ? "" : "end"
-          )
-          .attr("transform", `rotate(${params.Rotate})`)
-          .style("font-family", params.xFont)
-          .style("color", params.xColor)
-          .style("font-size", params.xSize + "px");
+          .brushOn(false)
+          .symbolSize(params.SymbolSize)
+          .clipPadding(10)
+          .dimension(runDimension, params.YAxis)
+          .group(speedSumGroup, params.YAxis)
+          .title(function (y) {
+              var tooltip =
+                  params.XAxis +
+                  ": " +
+                  y.key[0] +
+                  "\n" +
+                  params.YAxis +
+                  ": " +
+                  y.key[1];
 
-        //y-Axis
-        chart
-          .selectAll("g.y g.tick text")
-          .attr("dx", "-10")
-          .attr("text-anchor", "end")
-          // .attr('transform', `rotate(${params.Rotate})`)
-          .style("font-family", params.yFont)
-          .style("color", params.yColor)
-          .style("font-size", params.ySize + "px");
+              return "";
+          })
+          .elasticY(true)
+          .renderLabel(true)
+          .label(function (d) {
+              if (params.LabelsContent === "X") return d.x;
+              else if (params.LabelsContent === "Y") return d.y.toFixed(2);
+              else if (params.LabelsContent === "Title") return params.YAxis;
+          })
+          .renderlet(function (chart) {
+              chart.selectAll("path.symbol").attr("fill", function (d) {
+                  if (d != undefined) {
+                      if (d.key[1] >= 0) {
+                          return params.Scatterswatch === "show" ? params.Color : "#6282b3";
+                      } else {
+                          return "Red";
+                      }
+                  }
+              });
 
-        //X-Axis Label
-        chart
-          .selectAll(".x-axis-label")
-          .style("font-family", params.xlFont)
-          .style("fill", params.xlColor)
-          .style("font-size", params.xlSize + "px")
-          .style(
-            "display",
-            params.Axesswatch === undefined ? "none" : params.Axesswatch
-          );
+              //X-Axis
+              chart
+                  .selectAll("g.x g.tick text")
+                  .attr(
+                      "dx",
+                      params.Rotate === undefined || params.Rotate === "" ? "" : "-10"
+                  )
+                  .attr(
+                      "text-anchor",
+                      params.Rotate === undefined || params.Rotate === "" ? "" : "end"
+                  )
+                  .attr("transform", `rotate(${params.Rotate})`)
+                  .style("font-family", params.xFont)
+                  .style("color", params.xColor)
+                  .style("font-size", params.xSize + "px");
 
-        //Y-Axis Label
-        chart
-          .selectAll(".y-axis-label")
-          .style("font-family", params.ylFont)
-          .style("fill", params.ylColor)
-          .style("font-size", params.ylSize + "px")
-          .style(
-            "display",
-            params.Axesswatch === undefined ? "none" : params.Axesswatch
-          );
+              //y-Axis
+              chart
+                  .selectAll("g.y g.tick text")
+                  .attr("dx", "-10")
+                  .attr("text-anchor", "end")
+                  // .attr('transform', `rotate(${params.Rotate})`)
+                  .style("font-family", params.yFont)
+                  .style("color", params.yColor)
+                  .style("font-size", params.ySize + "px");
 
-        chart
-          .selectAll(".barLabel")
-          .style("font-family", params.LabelsFont)
-          .style("fill", params.LabelsColor)
-          .style("font-size", params.Labelsize + "px")
-          .style(
-            "display",
-            params.Labelsswatch !== undefined ? params.Labelsswatch : "none"
-          );
-      })
-      .yAxisLabel(params.YAxisLabel)
-      .xAxisLabel(params.XAxisLabel);
+              //X-Axis Label
+              chart
+                  .selectAll(".x-axis-label")
+                  .style("font-family", params.xlFont)
+                  .style("fill", params.xlColor)
+                  .style("font-size", params.xlSize + "px")
+                  .style(
+                      "display",
+                      params.Axesswatch === undefined ? "none" : params.Axesswatch
+                  );
+
+              //Y-Axis Label
+              chart
+                  .selectAll(".y-axis-label")
+                  .style("font-family", params.ylFont)
+                  .style("fill", params.ylColor)
+                  .style("font-size", params.ylSize + "px")
+                  .style(
+                      "display",
+                      params.Axesswatch === undefined ? "none" : params.Axesswatch
+                  );
+
+              chart
+                  .selectAll(".barLabel")
+                  .style("font-family", params.LabelsFont)
+                  .style("fill", params.LabelsColor)
+                  .style("font-size", params.Labelsize + "px")
+                  .style(
+                      "display",
+                      params.Labelsswatch !== undefined ? params.Labelsswatch : "none"
+                  );
+          })
+          .yAxisLabel(params.YAxisLabel)
+          .xAxisLabel(params.XAxisLabel)
+          .xAxis().tickFormat(function (d) { return d; });
     if (params.GroupByCol === "Average") {
       chart.valueAccessor(function (d) {
         return d.value.average;
