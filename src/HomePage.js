@@ -28,6 +28,7 @@ import { useNavigate } from "react-router-dom";
 import InputBlock from "./Components/InputBlock";
 import ChartBlock from "./Components/ChartBlock";
 import Statistics from "./Charts/Statistics";
+import Dictionary from "./Charts/Dictionary";
 import DatasetTable from "./Components/DatasetTable";
 import Demo from "./Components/Demo";
 import Dashboard from "./Charts/Dashboard";
@@ -170,8 +171,9 @@ const HomePage = () => {
   };
   //Changing data type for the columns
   const handleChangeDatatype = (event, flag) => {
-    if (flag !== 1)
+    if (flag !== 1){
       setChangeType({ ...changeType, [event.target.name]: event.target.value });
+    }
     else {
       let SelectedDimension = changeType.Dimensions_;
       let TypeChanged =
@@ -348,6 +350,9 @@ const HomePage = () => {
                       <Statistics params={filedata.data} />
                     </TabPanel>
                     <TabPanel value="3">
+                     <Dictionary  params={filedata.data}/>
+                    </TabPanel>                    
+                    {/* <TabPanel value="3">
                       <div
                         className="row col-lg-6 borderdivstyle"
                         style={{ margin: "25px 0px 0px 0px" }}
@@ -477,7 +482,7 @@ const HomePage = () => {
                           ""
                         )}
                       </div>
-                    </TabPanel>
+                    </TabPanel> */}
                   </TabContext>
                 </Box>
               ) : (
