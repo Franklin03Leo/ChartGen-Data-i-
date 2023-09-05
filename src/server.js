@@ -89,7 +89,7 @@ app.post("/GetTemplate/", (req, res) => {
   } else {
     db.collection("charts")
       //.find({ userID: data.userID, TempName: { $in: data.Flag.charts } })
-      .find({TempName: { $in: data.Flag.charts } })
+      .find({ TempName: { $in: data.Flag.charts } })
       .toArray(function (err, result) {
         if (err) {
           res.status(400).send("Error fetching listings!");
@@ -296,12 +296,10 @@ app.post("/InsertDashboard", (req, res) => {
 //db.getCollection('Dashboards').find({ 'Users': { $in: ["Naveen"] }})
 
 app.post("/GetDashboard/", (req, res) => {
-  let {userID,flag} = req.body
-  let obj = {}
-  if(flag === 0)
-    obj = { userID: userID }
-  else
-    obj = { Users: { $in: [userID] } }
+  let { userID, flag } = req.body;
+  let obj = {};
+  if (flag === 0) obj = { userID: userID };
+  else obj = { Users: { $in: [userID] } };
   connect();
   db.collection("Dashboards")
     .find(obj)
@@ -440,6 +438,71 @@ app.post("/GetUsers/", (req, res) => {
       }
     });
 });
+
+// get the Assigned User details for project assigned details
+app.post("/GetAssignedUsers/", (req, res) => {
+  let data = req.body;
+  connect();
+  db.collection("Dashboards")
+    .aggregate([
+      { $match: { DashboardName: data.DashboardName, userID: data.userID } },
+      {
+        $lookup: {
+          from: "UserDetails",
+          localField: "Users",
+          foreignField: "userID",
+          as: "UserDetails",
+        },
+      },
+      {
+        $project: {
+          UserName: "$UserDetails.Name",
+          UserGroup: "$UserDetails.Group",
+          userID: "$UserDetails.userID",
+          AssignedGroups: "$Groups",
+          AssignedUsers: "$Users",
+        },
+      },
+    ])
+    .toArray(function (err, result) {
+      if (err) {
+        res
+          .status(400)
+          .send(
+            `${err} ===> Error fethcing projects on ` +
+              new Date().toLocaleString()
+          );
+      } else {
+        res.json(result);
+      }
+    });
+});
+
+// update the assigned user details
+app.post("/AssignUsers/", (req, res) => {
+  let data = req.body;
+  connect();
+  db.collection("Dashboards")
+    .updateOne(
+      { DashboardName: data.DashboardName, userID: data.userID },
+      {
+        $set: {
+          Users: data.Users,
+          Groups: data.Groups,
+        },
+      }
+    )
+    .then(function () {
+      res.status(200).send("Success");
+    })
+    .catch(function (error) {
+      console.log(
+        `${error} ===> Error while Assigning User on ` +
+          new Date().toLocaleString()
+      );
+    });
+});
+
 app.post("/SaveUsers/", (req, res) => {
   let data = req.body;
   console.log(data);

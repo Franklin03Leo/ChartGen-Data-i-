@@ -34,12 +34,12 @@ import Dashboard from "./Charts/Dashboard";
 import Feedback from "./Components/Feedback";
 import Header from "./Components/Header";
 import AdminView from "./Components/Admin";
+import AssignProject from "./Components/AssignProject";
 
 import EmptyPage from "../src/Images/EmptyPage.png";
 import { union } from "d3";
 
 const HomePage = () => {
-  console.log("HomePage Component is rendering ..............");
   const DataTypes = ["#", "Da", "Aa"];
 
   const [state, setState] = React.useState({});
@@ -63,10 +63,12 @@ const HomePage = () => {
   const [feedback, setFeedback] = React.useState({ Issues: undefined });
   // const [anchorEl, setAnchorEl] = React.useState(null);
   const [project, setProject] = React.useState({});
+
   const [open, setOpen] = React.useState({
     SessionExpiry: false,
     StayConnected: false,
   });
+  const [assignUser, setAssignUser] = React.useState({});
   //onst [seconds, setSeconds] = React.useState();
   // Custom styles
   const BootstrapTooltip = styled(({ className, ...props }) => (
@@ -257,14 +259,21 @@ const HomePage = () => {
   //Get the project details for preview
   const handleProject = (params) => {
     setProject(params);
-    if (params.userID !== undefined) {
-      Isshow({ ...show, isShow: true, PreviewProject: true });
+    if (params.action === "AssignUser") {
+      setAssignUser(params);
+      Isshow({});
       setData({ data: undefined });
+    } else {
+      if (params.userID !== undefined) {
+        Isshow({ ...show, isShow: true, PreviewProject: true });
+        setData({ data: undefined });
+      }
     }
   };
   const handlePage = (params) => {
     console.log("Current page", params);
     setNavbar(params);
+    setAssignUser({});
   };
   const navigate = useNavigate();
 
@@ -478,12 +487,17 @@ const HomePage = () => {
             {/* )} */}
 
             {navbar === "Demo" ? <Demo /> : ""}
+
             {(navbar === "Project" || navbar === "Dashboard") &&
-            show.isShow !== undefined ? (
-              <Dashboard params={show.PreviewProject ? project : show} />
-            ) : (
-              ""
+              show.isShow !== undefined && (
+                // assignUser?.action !== "AssignUser" ? (
+                <Dashboard params={show.PreviewProject ? project : show} />
+              )}
+            {/* ) : ( */}
+            {assignUser?.action === "AssignUser" && navbar === "Project" && (
+              <AssignProject params={assignUser} />
             )}
+            {/* )} */}
             {navbar === "Feedback" ? <Feedback params={feedback.Issues} /> : ""}
             {navbar === "Admin" ? <AdminView /> : ""}
 
@@ -491,6 +505,7 @@ const HomePage = () => {
             feedback.Issues === undefined &&
             !show.isShow &&
             !play.isPlay &&
+            assignUser?.action !== "AssignUser" &&
             filedata.data === undefined ? (
               <>
                 <div className="emptyPage">

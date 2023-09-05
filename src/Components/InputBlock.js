@@ -105,7 +105,6 @@ const InputArea = ({
   project_,
   currentPage,
 }) => {
-  console.log("Inputblock Component is rendering ..............");
   // Global variables declaration
   const ChartType = [
     "Select",
@@ -312,7 +311,7 @@ const InputArea = ({
     Location: window.location.hostname,
   }); //49.204.124.69/
   const [Dataset, setDataset] = React.useState({});
-  const [projectAssigning, setProjectAssigning] = React.useState({});
+  // const [projectAssigning, setProjectAssigning] = React.useState({});
 
   // React state to track order of items
   const [ItemOrderList, setItemOrderList] = React.useState([]);
@@ -1808,12 +1807,14 @@ const InputArea = ({
         OrderedList: typeof value === "string" ? value.split(",") : value,
       });
       setItemOrderList(typeof value === "string" ? value.split(",") : value);
-    } else if (name === "Users" || name === "Groups") {
-      setProjectAssigning({
-        ...projectAssigning,
-        [name]: typeof value === "string" ? value.split(",") : value,
-      });
-    } else {
+    }
+    // else if (name === "Users" || name === "Groups") {
+    //   setProjectAssigning({
+    //     ...projectAssigning,
+    //     [name]: typeof value === "string" ? value.split(",") : value,
+    //   });
+    // }
+    else {
       setfilteringProps({
         ...filteringProps,
         [name]: typeof value === "string" ? value.split(",") : value,
@@ -1835,7 +1836,8 @@ const InputArea = ({
       setNavOpen(!navopen);
       if (action === "publish")
         setIsshow({ ...show, isBublished: !show.isBublished, Build: false });
-      else setIsshow({ ...show, isBublished: !show.isBublished });
+
+      //else setIsshow({ ...show, isBublished: !show.isBublished });
     }, 100);
     //ExpandData(navwidth)
   };
@@ -1939,6 +1941,7 @@ const InputArea = ({
         }
       });
   };
+
   const handleFeedback = (action) => {
     if (action !== "Fetch") {
       if (
@@ -2057,8 +2060,8 @@ const InputArea = ({
       obj.FilterProps = filterProps;
       obj.selectedFilterDimensions = filteringProps.customFilter;
       obj.AvailableDimensions = filteringProps.Dimensions;
-      obj.Users = projectAssigning.Users;
-      obj.Groups = projectAssigning.Groups;
+      // obj.Users = projectAssigning.Users;
+      // obj.Groups = projectAssigning.Groups;
       obj.action = "Update";
       setpostProject(obj);
       document.querySelector(".loader").style.display = "block";
@@ -2154,11 +2157,33 @@ const InputArea = ({
         setPlay({ isPlay: undefined });
         setIssues(undefined);
         setIsshow({ ...show, isShow: true, Build: false });
-        setProjectAssigning({
-          Users: !data.Users ? [] : data.Users,
-          Groups: !data.Groups ? [] : data.Groups,
-        });
+        // setProjectAssigning({
+        //   Users: !data.Users ? [] : data.Users,
+        //   Groups: !data.Groups ? [] : data.Groups,
+        // });
       }
+    }
+
+    if (action === "AssignUser") {
+      e.stopPropagation();
+      let obj = {};
+      obj.action = action;
+      obj.userID = user.userID;
+      obj.DashboardName = e.currentTarget.id;
+      setpostProject(obj);
+      let targetClassName =
+        e.currentTarget.parentElement.parentElement.parentElement.className;
+      document
+        .querySelectorAll("." + targetClassName)
+        .forEach((element) => (element.style.backgroundColor = "white"));
+
+      let element = e.currentTarget.parentElement.parentElement.parentElement;
+      // Change the background color
+      element.style.backgroundColor = "rgb(234 234 243)";
+
+      setPlay({ isPlay: undefined });
+      setIssues(undefined);
+      setIsshow({ ...show, isShow: true, Build: false });
     }
   };
   const PostDashboard = (action) => {
@@ -2227,8 +2252,6 @@ const InputArea = ({
           // }
         }
 
-        console.log("project ===>", obj);
-        console.log("needed project ===>", Project);
         setProject(obj);
         // setProjectAssigning({ Users: data[0].Users, Groups: data[0].Groups });
         //setNavbar({ bar: "Project" });
@@ -7300,7 +7323,7 @@ const InputArea = ({
                 </div>
                 {others.EditDashboard && (
                   <>
-                    <div className="col-lg-12 borderstyle">
+                    {/* <div className="col-lg-12 borderstyle">
                       <div
                         className="col-lg-8 semi-bold"
                         style={{ display: "contents" }}
@@ -7385,16 +7408,16 @@ const InputArea = ({
                           </Select>
                         </FormControl>
                       </div>
-                    </div>
+                    </div> */}
                     {/* Description */}
                     <div
-                      className="row col-xs-12 col-sm-12 col-md-12 col-lg-12"
+                      className="row col-xs-12 col-sm-12 col-md-12 col-lg-12 borderstyle"
                       style={{ marginTop: "10px" }}
                     >
                       <TextField
                         id="TempDescription"
                         className="Description"
-                        label="Description"
+                        label="Dashboard description"
                         name="DashboardDescription"
                         fullWidth
                         margin="dense"
@@ -7549,70 +7572,71 @@ const InputArea = ({
                               }}
                             >
                               <BootstrapTooltip
-                                title={[
-                                  <div
-                                    style={{
-                                      display: "flex",
-                                      flexDirection: "row",
-                                    }}
-                                  >
-                                    {!project[a]["Users"] &&
-                                    !project[a]["Groups"] ? (
-                                      <div style={{ margin: "10px" }}>
-                                        {" "}
-                                        Not Assigned
-                                      </div>
-                                    ) : (
-                                      <>
-                                        <div style={{ margin: "10px" }}>
-                                          <h6
-                                            style={{
-                                              padding: "5px 0px 0px 0px",
-                                            }}
-                                          >
-                                            Users
-                                          </h6>
-                                          {project[a]["Users"]?.map((e) => (
-                                            <div
-                                              style={{
-                                                padding: "5px 0px 5px 0px",
-                                              }}
-                                            >
-                                              {e}
-                                            </div>
-                                          ))}
-                                        </div>
-                                        <div style={{ margin: "10px" }}>
-                                          <h6
-                                            style={{
-                                              padding: "5px 0px 0px 0px",
-                                            }}
-                                          >
-                                            Groups
-                                          </h6>
-                                          {project[a]["Groups"]?.map((e) => (
-                                            <div
-                                              style={{
-                                                padding: "5px 0px 5px 0px",
-                                              }}
-                                            >
-                                              {e}
-                                            </div>
-                                          ))}
-                                        </div>
-                                      </>
-                                    )}
-                                  </div>,
-                                ]}
+                                // title={[
+                                //   <div
+                                //     style={{
+                                //       display: "flex",
+                                //       flexDirection: "row",
+                                //     }}
+                                //   >
+                                //     {!project[a]["Users"] &&
+                                //     !project[a]["Groups"] ? (
+                                //       <div style={{ margin: "10px" }}>
+                                //         {" "}
+                                //         Not Assigned
+                                //       </div>
+                                //     ) : (
+                                //       <>
+                                //         <div style={{ margin: "10px" }}>
+                                //           <h6
+                                //             style={{
+                                //               padding: "5px 0px 0px 0px",
+                                //             }}
+                                //           >
+                                //             Users
+                                //           </h6>
+                                //           {project[a]["Users"]?.map((e) => (
+                                //             <div
+                                //               style={{
+                                //                 padding: "5px 0px 5px 0px",
+                                //               }}
+                                //             >
+                                //               {e}
+                                //             </div>
+                                //           ))}
+                                //         </div>
+                                //         <div style={{ margin: "10px" }}>
+                                //           <h6
+                                //             style={{
+                                //               padding: "5px 0px 0px 0px",
+                                //             }}
+                                //           >
+                                //             Groups
+                                //           </h6>
+                                //           {project[a]["Groups"]?.map((e) => (
+                                //             <div
+                                //               style={{
+                                //                 padding: "5px 0px 5px 0px",
+                                //               }}
+                                //             >
+                                //               {e}
+                                //             </div>
+                                //           ))}
+                                //         </div>
+                                //       </>
+                                //     )}
+                                //   </div>,
+                                // ]}
+                                title="Assign User"
                                 TransitionComponent={Fade}
                                 TransitionProps={{ timeout: 600 }}
-                                placement="right"
+                                placement="bottom"
                               >
                                 <PeopleIcon
                                   id={a}
                                   className="temp-icon"
                                   onClick={(e) => {
-                                    e.stopPropagation();
+                                    handleDashboard("AssignUser", e);
                                   }}
                                 />
                               </BootstrapTooltip>

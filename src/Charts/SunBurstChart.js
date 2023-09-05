@@ -73,7 +73,6 @@ const SunBurstChart = ({ params }) => {
           .gap(5)
           .horizontal(params.LengendPosition)
           .legendText(function (d, i) {
-            debugger;
             return d.name[0];
           })
       );
