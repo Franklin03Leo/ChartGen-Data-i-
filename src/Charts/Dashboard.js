@@ -90,20 +90,9 @@ const Dashboard = ({ params }) => {
   const [menuName, setMenuName] = React.useState({});
 
   const [individualFilter, setIndividualFilter] = useState([]);
-  const [projectTemplate, setprojectTemplate] = useState([]);
   const [storeFilterData, setstoreFilterData] = useState([]);
 
   useEffect(() => {
-    if (params?.charts !== undefined) {
-      setprojectTemplate(
-        Object.values(params.charts).map((val, i) => {
-          let temp = "chart" + i;
-          let result = {};
-          result[temp] = params.dashboard[val];
-          return result;
-        })
-      );
-    }
     if (params.dashboard !== undefined) {
       SetTemplate(params.dashboard);
       if (params.dashboard !== template) Setfilteredtemplate(params.dashboard);
@@ -163,7 +152,7 @@ const Dashboard = ({ params }) => {
         layout = params.layouts.split("X");
         setLayouts(layout);
       } else {
-        setLayouts(params.layouts[1]);
+        if (params?.layouts !== undefined) setLayouts(params?.layouts[1] || []);
       }
     }
   }, [params]);
@@ -367,7 +356,6 @@ const Dashboard = ({ params }) => {
                                     paddingTop: "6px",
                                   }}
                                   onClick={(e) => {
-                                    debugger;
                                     filterModelOpen(i, "Dashboard Menu");
                                   }}
                                 />
@@ -423,7 +411,6 @@ const Dashboard = ({ params }) => {
                                     paddingTop: "6px",
                                   }}
                                   onClick={(e) => {
-                                    debugger;
                                     filterModelOpen(i, "Project Menu");
                                   }}
                                 />

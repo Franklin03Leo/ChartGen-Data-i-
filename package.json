@@ -39,7 +39,6 @@
     "papaparse": "^5.3.2",
     "react": "^18.2.0",
     "react-beautiful-dnd": "^13.1.1",
-    "react-bootstrap": "file:node_modules/react-bootstrap",
     "react-color": "^2.19.3",
     "react-dc": "^1.0.6",
     "react-dom": "^18.2.0",
@@ -47,7 +46,6 @@
     "react-router-dom": "^6.7.0",
     "react-scripts": "^5.0.1",
     "react-toastify": "^9.1.1",
-    "reactcss": "file:node_modules/reactcss",
     "simple-statistics": "^7.8.0",
     "web-vitals": "^2.1.4",
     "xlsx": "^0.18.5"

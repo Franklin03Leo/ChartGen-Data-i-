@@ -388,9 +388,9 @@ const AdminView = () => {
           handleEditRow(index, false);
           setData((prevState) => {
             let newRowData = [...prevState.RowData];
-              newRowData[index][8] = new Date().toString()
-              newRowData[index][7] = user["userID"]
-            
+            newRowData[index][8] = new Date().toString();
+            newRowData[index][7] = user["userID"];
+
             return { ...prevState, RowData: newRowData };
           });
         }

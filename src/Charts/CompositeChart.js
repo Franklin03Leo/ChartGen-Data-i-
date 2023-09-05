@@ -30,7 +30,6 @@ const Compose = ({ params }) => {
 
     var value = [params.GroupBy];
     //   var value2 = params.GroupByValues;
-    console.log("GroupBy", value);
 
     var YKey = function (d) {
       return +d[params.YAxis];
@@ -181,7 +180,6 @@ const Compose = ({ params }) => {
     let sizing = (chart) => {
       let divChart = document.querySelectorAll(".boxcenter");
       divChart = divChart[divChart.length - 1];
-      debugger;
       let offsetHeight = divChart.offsetHeight,
         offsetWidth = divChart.offsetWidth;
       chart.width(offsetWidth).height(offsetHeight).redraw();

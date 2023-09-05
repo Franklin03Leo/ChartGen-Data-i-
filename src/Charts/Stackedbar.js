@@ -443,7 +443,6 @@ const StackrowChart = ({ dataParentToChild }) => {
     function barlabelpostion() {
       var list = document.getElementsByClassName("barLabel");
       for (var i = 0; i < list.length; i++) {
-        debugger;
         var value = list[i].attributes.x.value;
         //console.log(list[i].innerHTML);
         //if(i % 2 == 0) {
