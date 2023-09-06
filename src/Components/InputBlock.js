@@ -611,6 +611,7 @@ const InputArea = ({
       setState({
         ...state,
         GroupBy: value,
+        GroupByValues: unique,
         [event.target.name]: event.target.value,
       });
     } else if (event.target.name === "InputType") {
@@ -1414,6 +1415,7 @@ const InputArea = ({
       document.querySelector(".loader").style.display = "none";
     }, 100);
   };
+
   //Import input process
   const importInputs = (event) => {
     // if (event.target.files[0] === undefined) {
@@ -1981,7 +1983,12 @@ const InputArea = ({
     }
     setError({ mandatoryFields: undefined });
   };
+
   const handleDashboard = (action, e) => {
+    document
+      .querySelectorAll(".container-template")
+      .forEach((element) => (element.style.backgroundColor = "white"));
+
     if (action === "Save") {
       setOpen({ Dashboard: false });
       PostDashboard("Insert");
@@ -2171,11 +2178,11 @@ const InputArea = ({
       obj.userID = user.userID;
       obj.DashboardName = e.currentTarget.id;
       setpostProject(obj);
-      let targetClassName =
-        e.currentTarget.parentElement.parentElement.parentElement.className;
-      document
-        .querySelectorAll("." + targetClassName)
-        .forEach((element) => (element.style.backgroundColor = "white"));
+      // let targetClassName =
+      //   e.currentTarget.parentElement.parentElement.parentElement.className;
+      // document
+      //   .querySelectorAll("." + targetClassName)
+      //   .forEach((element) => (element.style.backgroundColor = "white"));
 
       let element = e.currentTarget.parentElement.parentElement.parentElement;
       // Change the background color

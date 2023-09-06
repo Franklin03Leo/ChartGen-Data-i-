@@ -28,8 +28,7 @@ const Compose = ({ params }) => {
         return d[params.XAxis];
       });
 
-    var value = [params.GroupBy];
-    //   var value2 = params.GroupByValues;
+    var value = params.GroupByValues;
 
     var YKey = function (d) {
       return +d[params.YAxis];
@@ -62,10 +61,10 @@ const Compose = ({ params }) => {
       return d3.max(kv.value, YKey);
     }
     //Dynamic Group Creation
-    for (let i = 0; i < value.length; i++) {
-      if (params?.GroupByCol === "Sum") {
+    for (let i = 0; i < value?.length; i++) {
+      if (params.GroupByCol === "Sum") {
         window["grps" + i] = runDimension.group().reduceSum(function (d) {
-          return d[params.GroupBy] == d[value[i]] ? +d[params.YAxis] : 0;
+          return d[params.GroupBy] == value[i] ? +d[params.YAxis] : 0;
         });
       }
       // else if (params.GroupByCol === 'Count') {
@@ -118,17 +117,22 @@ const Compose = ({ params }) => {
       ) {
         window["grps" + i] = runDimension.group().reduce(
           function (p, v) {
-            if (v[params.GroupBy] === v[value[i]]) {
-              //v[value[i]]
-              p.count++;
-              p.total += parseFloat(v[params.YAxis]);
-              p.average = p.total / p.count;
+            if (v[params.GroupBy] == value[i]) {
+              ++p.count;
+              p.total += parseInt(v[params.YAxis]);
+              if (p.count == 0) {
+                p.average = 0;
+              } else {
+                p.average = p.total / p.count;
+              }
+            } else {
+              p.total = 0;
             }
             return p;
           },
           // remove
           function (p, v) {
-            if (v[params.GroupBy] == v[value[i]]) {
+            if (v[params.GroupBy] == value[i]) {
               --p.count;
               p.total -= parseInt(v[params.YAxis]);
               if (p.count == 0) {
@@ -654,7 +658,7 @@ const Compose = ({ params }) => {
               params.Compositeswatch === "show" ? params.BGColor : "",
           }}
         >
-          <div ref={div} className="boxcenter"></div>
+          <div ref={div} id="Charts" className="boxcenter"></div>
           {/* id="Charts" */}
         </div>
       </Grid>
