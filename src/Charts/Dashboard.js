@@ -179,7 +179,7 @@ const Dashboard = ({ params }) => {
     //const chart = React.useMemo(() => {
     // to set an chart height when click the preview model
     if (open.Chart === true) {
-      state.Height_ = 600;
+      state.Height_ = window.innerHeight - 200;
     } else {
       state.Height_ = 250;
     }

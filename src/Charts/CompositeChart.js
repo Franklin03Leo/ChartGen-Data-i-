@@ -658,7 +658,7 @@ const Compose = ({ params }) => {
               params.Compositeswatch === "show" ? params.BGColor : "",
           }}
         >
-          <div ref={div} id="Charts" className="boxcenter"></div>
+          <div ref={div} className="boxcenter"></div>
           {/* id="Charts" */}
         </div>
       </Grid>
