@@ -27,8 +27,7 @@ const Compose = ({ params }) => {
       runDimension = ndx.dimension(function (d) {
         return d[params.XAxis];
       });
-
-    var value = params.GroupByValues;
+    var value = params.GroupByValues || [""];
 
     var YKey = function (d) {
       return +d[params.YAxis];
