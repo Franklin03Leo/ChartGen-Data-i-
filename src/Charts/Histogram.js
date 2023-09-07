@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
- import Chart from 'react-google-charts'
 import * as dc from 'dc';
 import { Tooltip,BarChart, Bar, XAxis, YAxis, Legend } from 'recharts';
-import { binomialDistribution } from 'simple-statistics';
 // import Tooltip from "@mui/material/Tooltip";
 // import BarChart from "../Charts/BarChart";
 
