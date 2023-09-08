@@ -41,12 +41,7 @@ const AdminView = () => {
     selectableRows: false,
     useDisplayedRowsOnly: true,
     selectableRowsHeader: false,
-    selectableRowsHideCheckboxes: true,
-    sortOrder: {
-      name: "Users",
-      direction: 'desc'
-    },
-  };
+    selectableRowsHideCheckboxes: true   };
 
   let columns = [
     {
@@ -356,6 +351,7 @@ const AdminView = () => {
             "approvedBy",
             "approvedDate",
           ];
+          res.data.sort((a, b) => b._id - a._id);
           const Data = getUsersDataByKeys(res.data, keys);
           setData({ ...data, RowData: Data });
           //   console.log(res.data);
