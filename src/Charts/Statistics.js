@@ -85,23 +85,18 @@ const Statistics = ({ params }) => {
     const emptyCount = data.filter(valueCount => valueCount === '' || valueCount === null).length;
     const undefinedCount = data.filter(valueCount => valueCount === undefined).length;
     const missCount = nanCount + emptyCount + undefinedCount;
-    value.missingCount = formatFixedRate(missCount);    
+    value.missingCount = missCount;
     tabledata.push(value);
-    // //tabledata = NaNremove(tabledata);
-     
-    // tabledata.map(item => {
-    //   debugger;
-    // //   tabledata = { ...item };
-    //    for (const key in item) {
-    //     if (item.hasOwnProperty(key) && item[key] === 'NaN') {
-    //       item[key] = '-';
-    //     }
-    //    }
-    //    return item;
-    //  });
+    tabledata.map(item => {
+       for (const key in item) {
+        if (item.hasOwnProperty(key) && isNaN(item[key])) {
+          item[key] = '-';
+        }
+      }
+      return item;
+    });
+    value = {};
   });
-  //console.log('data_', data_)
-
   return (
     <>
       <div
