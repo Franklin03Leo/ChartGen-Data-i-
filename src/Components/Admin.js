@@ -10,6 +10,7 @@ import EditIcon from "@mui/icons-material/ModeRounded";
 import { tooltipClasses } from "@mui/material";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import "../App.css"
 const AdminView = () => {
   const [path, setPath] = React.useState({
     Location: window.location.hostname,
@@ -41,6 +42,10 @@ const AdminView = () => {
     useDisplayedRowsOnly: true,
     selectableRowsHeader: false,
     selectableRowsHideCheckboxes: true,
+    sortOrder: {
+      name: "Users",
+      direction: 'desc'
+    },
   };
 
   let columns = [
@@ -48,28 +53,28 @@ const AdminView = () => {
       name: "Users",
       options: {
         filter: true,
-        sort: false,
+        sort: true,
       },
     },
     {
       name: "Name",
       options: {
         filter: true,
-        sort: false,
+        sort: true,
       },
     },
     {
       name: "Email",
       options: {
         filter: true,
-        sort: false,
+        sort: true,
       },
     },
     {
       name: "Group",
       options: {
         filter: true,
-        sort: false,
+        sort: true,
         customBodyRender: (value, tableMeta) => {
           const { rowIndex, columnIndex } = tableMeta;
           const options = ["Sales", "Finance", "Marketing", "External"];
@@ -109,7 +114,7 @@ const AdminView = () => {
       name: "Role",
       options: {
         filter: true,
-        sort: false,
+        sort: true,
         customBodyRender: (value, tableMeta) => {
           const options = ["Admin", "Creator", "User"];
           const { rowIndex, columnIndex } = tableMeta;
@@ -149,7 +154,7 @@ const AdminView = () => {
       name: "Status",
       options: {
         filter: true,
-        sort: false,
+        sort: true,
         customBodyRender: (value, tableMeta) => {
           const options = [
             "Registered",
@@ -212,7 +217,7 @@ const AdminView = () => {
       name: "Create Date",
       options: {
         filter: true,
-        sort: false,
+        sort: true,
         customBodyRender: (value, tableMeta) => {
           let date = new Date(value).toLocaleDateString("en-GB");
           let time = new Date(value).toLocaleTimeString("en-US", {
@@ -227,14 +232,14 @@ const AdminView = () => {
       name: "Approved By",
       options: {
         filter: true,
-        sort: false,
+        sort: true,
       },
     },
     {
       name: "Approved Date",
       options: {
         filter: true,
-        sort: false,
+        sort: true,
         customBodyRender: (value, tableMeta) => {
           let date = new Date(value).toLocaleDateString("en-GB");
           let time = new Date(value).toLocaleTimeString("en-US", {

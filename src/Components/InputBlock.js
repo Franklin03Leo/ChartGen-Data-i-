@@ -2832,9 +2832,10 @@ const InputArea = ({
                   }}
                   value={state.InputType}
                 >
-                  <MenuItem key={1} value={"Import Inputs"}>
+                  {/* Import Inputs-Removed that option for Now. */}
+                  {/* <MenuItem key={1} value={"Import Inputs"}>
                     Import Inputs
-                  </MenuItem>
+                  </MenuItem> */}
                   <MenuItem key={2} value={"Enter Inputs"}>
                     Enter Inputs
                   </MenuItem>
