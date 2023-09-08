@@ -23,6 +23,8 @@ const Statistics = ({ params }) => {
     "Median",
     "Mode",
     "Standard Deviation",
+    "Use Count",
+    "Missing Count"
   ];
   const DataTypes = ["All", "Integers", "Strings"];
   let cols = [];
@@ -33,9 +35,15 @@ const Statistics = ({ params }) => {
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
-
+  const formatFixedRate = (fixeddata) => {    
+    const stringData = fixeddata.toString();
+    if (stringData.includes('.')) {
+      return fixeddata.toFixed(2);  // Format price to two decimal places
+    }
+    return fixeddata;   
+  };
   Object.entries(params[0]).forEach(([key, value]) => {
-    if (isNaN(value - 10) && new Date(value) != "Invalid Date") {
+    if (isNaN(value - 10) && new Date(value) !== "Invalid Date") {
       //Do nothing
     } else if (datatype.type === "All") {
       // if (!isNaN(value - 10)) {
@@ -51,20 +59,46 @@ const Statistics = ({ params }) => {
       }
     }
   });
+  // const NaNremove = (item) => {
+  //   debugger
+  //   for (const key in item) {
+  //     if (item.hasOwnProperty(key) && item[key] === 'NaN') {
+  //       item[key] = '-';
+  //     }
+  //     return item;
+  //   };
+  // }    
   //console.log('statis', params);
   let value = {};
   var tabledata = [];
   cols.forEach((event) => {
     let data = params.map((e) => parseInt(e[event]));
-    value.min = statis.min(data);
-    value.max = statis.max(data);
-    value.uniqueCountSorted = statis.uniqueCountSorted(data);
-    value.mean = statis.mean(data);
-    value.median = statis.median(data);
-    value.mode = statis.mode(data);
-    value.standardDeviation = statis.standardDeviation(data);
+    value.min = formatFixedRate(statis.min(data));
+    value.max = formatFixedRate(statis.max(data));
+    value.uniqueCountSorted = formatFixedRate(statis.uniqueCountSorted(data));
+    value.mean = formatFixedRate(statis.mean(data));
+    value.median = formatFixedRate(statis.median(data));
+    value.mode = formatFixedRate(statis.mode(data));
+    value.standardDeviation = formatFixedRate(statis.standardDeviation(data));
+    value.useCount = formatFixedRate(data.length);
+    const nanCount = data.filter(valueCount => isNaN(valueCount)).length;
+    const emptyCount = data.filter(valueCount => valueCount === '' || valueCount === null).length;
+    const undefinedCount = data.filter(valueCount => valueCount === undefined).length;
+    const missCount = nanCount + emptyCount + undefinedCount;
+    value.missingCount = formatFixedRate(missCount);    
     tabledata.push(value);
-    value = {};
+    // //tabledata = NaNremove(tabledata);
+     
+    // tabledata.map(item => {
+    //   debugger;
+    // //   tabledata = { ...item };
+    //    for (const key in item) {
+    //     if (item.hasOwnProperty(key) && item[key] === 'NaN') {
+    //       item[key] = '-';
+    //     }
+    //    }
+    //    return item;
+    //  });
   });
   //console.log('data_', data_)
 
@@ -129,6 +163,8 @@ const Statistics = ({ params }) => {
                   <TableCell>{row.median}</TableCell>
                   <TableCell>{row.mode}</TableCell>
                   <TableCell>{row.standardDeviation}</TableCell>
+                  <TableCell>{row.useCount}</TableCell>
+                  <TableCell>{row.missingCount}</TableCell>
                 </TableRow>
               ))}
           </TableBody>

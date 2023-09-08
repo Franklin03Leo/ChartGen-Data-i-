@@ -3,6 +3,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const nodemailer = require("nodemailer");
 const app = express();
+const bcrypt = require('bcrypt');
+const saltRounds = 10; // Number of salt rounds
 // const { Charts } = require('./Config/Models');
 mongoose.set("strictQuery", true);
 const cors = require("cors");
@@ -21,7 +23,7 @@ app.use(
 );
 app.use(bodyParser.json({ limit: `50mb` }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
-const url = "mongodb://localhost:27017/Data(i)";
+const url = "mongodb://localhost:27017/Spectra";
 var transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -184,6 +186,16 @@ function fnGetNextCount() {
 app.post("/SignupUser/", (req, res) => {
   let data = req.body;
   delete data["Confirmpassword"];
+  bcrypt.hash(data["password"], saltRounds, function(err, hash) {
+  if (err) {
+    console.log(
+      `${error} ===> Error while User Details insertion on ` +
+        new Date().toLocaleString()
+    );
+    res.send("Error"); // Failure
+  } else {
+    // Store 'hash' in your database along with other user data   
+    const encrypted = hash;    
   connect();
   fnGetNextCount() // Assuming "userId" is the field you want to auto-increment
     .then((nextId) => {
@@ -192,6 +204,7 @@ app.post("/SignupUser/", (req, res) => {
       data.approvedBy = "";
       data.approvedDate = "";
       data.Status = "Registered";
+      data.password = encrypted;     
       db.collection("UserDetails")
         .insertOne(data)
         .then(function () {
@@ -206,12 +219,19 @@ app.post("/SignupUser/", (req, res) => {
           res.send("Error"); // Failure
         });
     });
+  }
+  });
+    
 });
 app.post("/SigninUser/", (req, res) => {
   let data = req.body;
+  const storedHash = 'hashed_password_from_database'; // Retrieve from your database
+
+
   connect();
   db.collection("UserDetails").findOne(
-    { userID: data.userID, password: data.password },
+    //{ userID: data.userID, password: data.password },
+    { userID: data.userID },
     function (err, result) {
       if (err) {
         res.status(400).send("Error fetching listings!");
@@ -220,10 +240,23 @@ app.post("/SigninUser/", (req, res) => {
         );
       } else {
         if (result) {
+          bcrypt.compare(data.password, result.password, function(err, Authresult) {
+            if (err) {
+              // Handle error
+            } else if (Authresult === true) {
+              // Authentication successful
           res.status(200).send(result);
           console.log(
             `${result.Name} Signed in on ` + new Date().toLocaleString()
           );
+            } else {
+              // Authentication failed
+              res.status(400).send("Error fetching listings!");
+        console.log(
+          `${err} ===> Error while signin on ` + new Date().toLocaleString()
+        );
+            }
+          });          
         } else {
           res.status(404).send("User not found");
           console.log("Sign in attempt on " + new Date().toLocaleString());
