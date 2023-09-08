@@ -1460,6 +1460,11 @@ input:checked + .slider:before {
   min-height: 38vh;
   max-height: 38vh;
 }
+/* set the chart minsize for chart menu */
+.boxcenter > svg {
+  min-height: 38vh;
+  /* width: 100%; */
+}
 .select-dpd {
   border: 1px #a3a3a3 solid;
   border-radius: 4px;
