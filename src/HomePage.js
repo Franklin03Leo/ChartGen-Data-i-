@@ -338,7 +338,7 @@ const HomePage = () => {
                         onChange={handleChange}
                         aria-label="lab API tabs example"
                       >
-                        <Tab label="Dataset" value="1" />
+                        <Tab label="Data" value="1" />
                         <Tab label="Statistics" value="2" />
                         <Tab label="Data Dictionary" value="3" />
                       </TabList>

@@ -1,5 +1,8 @@
 import MUIDataTable from "mui-datatables";
+import * as React from "react";
 const DatasetTable = ({ params, filter }) => {
+  const [uploadfilename, setuploadfilename] = React.useState({ name: sessionStorage.getItem("uploadfilename") });
+  
   setTimeout(() => {
     document.querySelector(".loader").style.display = "none";
   }, 100);
@@ -27,7 +30,7 @@ const DatasetTable = ({ params, filter }) => {
       <div style={{ height: "calc(100vh - 140px)" }}>
         <MUIDataTable
           id="dataset"
-          title={"Dataset"}
+          title={<div className="custom-title"><b>Source: {uploadfilename.name} </b></div>}
           data={params}
           columns={cols}
           options={options}

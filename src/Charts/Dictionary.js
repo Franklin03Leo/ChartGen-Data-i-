@@ -88,6 +88,7 @@ const Dictionary = ({ params }) => {
   const [countdata, setcountdata] = React.useState([]);
   const [Index, setIndex] = React.useState({});
   const [newtabledata, setnewtabledata] = React.useState([]);
+  const [uploadfilename, setuploadfilename] = React.useState({ name: sessionStorage.getItem("uploadfilename") });
   const [changeDisplay, setDisplay] = React.useState({
     enableDisplay: true,
     displayname: '',
@@ -398,7 +399,8 @@ const Dictionary = ({ params }) => {
              </MenuItem>
            ))}
          </TextField>
-       </div>
+        </div>
+        <div className="custom-title"><b>Source: {uploadfilename.name} </b></div>
        <TableContainer component={Paper}>
          <Table
            stickyHeader

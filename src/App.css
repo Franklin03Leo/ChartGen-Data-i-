@@ -267,9 +267,13 @@ li.MuiMenuItem-root > span {
   background-color: rgb(0 0 0 / 12%) !important;
   border: none;
 }
-.tss-bd2lw8-MUIDataTableHeadCell-sortActive{
+.tss-bd2lw8-MUIDataTableHeadCell-sortActive,
+.css-dx096b.Mui-active .MuiTableSortLabel-icon{
   color: white !important;
 }
 .css-1qgma8u-MuiButtonBase-root-MuiTableSortLabel-root.Mui-active .MuiTableSortLabel-icon{
   color: white !important;
+}
+.custom-title{
+  text-align: initial;
 }

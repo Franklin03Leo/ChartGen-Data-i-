@@ -15,6 +15,7 @@ const Statistics = ({ params }) => {
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [page, setPage] = React.useState(0);
   const [datatype, setDataType] = React.useState({ type: "All" });
+  const [uploadfilename, setuploadfilename] = React.useState({ name: sessionStorage.getItem("uploadfilename") });
   const methods = [
     "Min",
     "Max",
@@ -115,6 +116,7 @@ const Statistics = ({ params }) => {
           ))}
         </TextField>
       </div>
+      <div className="custom-title"><b>Source: {uploadfilename.name} </b></div>
       <TableContainer component={Paper}>
         <Table
           stickyHeader

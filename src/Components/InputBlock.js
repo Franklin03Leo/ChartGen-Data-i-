@@ -423,7 +423,9 @@ const InputArea = ({
   const navigate = useNavigate();
 
   //Every fields onChange for store the inputs
-  const handleChange = (event) => {
+  const handleChange = (event) => {   
+    sessionStorage.setItem("uploadfilename", '');
+    sessionStorage.setItem("uploadfilename", event.target.files[0].name);
     if (event.target.name === "file") {
       document.querySelector(".loader").style.display = "block";
 
@@ -544,7 +546,7 @@ const InputArea = ({
             const sheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[sheetName];
             const json = xlsx.utils.sheet_to_json(worksheet);
-
+            debugger;
             var Type = [];
             var Key_ = [];
             Object.values(json[0]).map((value) => {
@@ -2952,7 +2954,7 @@ const InputArea = ({
                 className="row col-sm-6 col-md-3 col-lg-5"
                 style={{ margin: "15px" }}
               >
-                <Button
+                {/* <Button
                   variant="contained"
                   className="input-field button"
                   style={{ backgroundColor: "#6282b3", float: "right" }}
@@ -2963,7 +2965,7 @@ const InputArea = ({
                   }}
                 >
                   Show Data
-                </Button>
+                </Button> */}
               </div>
             </>
           ) : (
