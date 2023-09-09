@@ -23,7 +23,7 @@ const Statistics = ({ params }) => {
     "Median",
     "Mode",
     "Standard Deviation",
-    "Use Count",
+    "Count",
     "Missing Count"
   ];
   const DataTypes = ["All", "Integers", "Strings"];
@@ -43,9 +43,7 @@ const Statistics = ({ params }) => {
     return fixeddata;   
   };
   Object.entries(params[0]).forEach(([key, value]) => {
-    if (isNaN(value - 10) && new Date(value) !== "Invalid Date") {
-      //Do nothing
-    } else if (datatype.type === "All") {
+    if (datatype.type === "All") {
       // if (!isNaN(value - 10)) {
       cols.push(key);
       // }
@@ -57,18 +55,11 @@ const Statistics = ({ params }) => {
       if (isNaN(value - 10)) {
         cols.push(key);
       }
+      else if (isNaN(value - 10) && new Date(value) !== "Invalid Date") {
+        //Do nothing
+      }  
     }
-  });
-  // const NaNremove = (item) => {
-  //   debugger
-  //   for (const key in item) {
-  //     if (item.hasOwnProperty(key) && item[key] === 'NaN') {
-  //       item[key] = '-';
-  //     }
-  //     return item;
-  //   };
-  // }    
-  //console.log('statis', params);
+  });  
   let value = {};
   var tabledata = [];
   cols.forEach((event) => {
