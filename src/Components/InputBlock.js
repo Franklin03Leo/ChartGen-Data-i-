@@ -107,7 +107,7 @@ const InputArea = ({
 }) => {
   // Global variables declaration
   const ChartType = [
-    "Select",
+    // "Select",
     "Pie Chart",
     "Bar Chart",
     "ScatterPlot",
@@ -221,6 +221,20 @@ const InputArea = ({
   const [disable, isDisable] = React.useState(true);
   const [error, setError] = React.useState({});
   const [state, setState] = React.useState({
+    Chart: "Select",
+    XAxisCopy: "Select",
+    xFont: null,
+    xSize: null,
+    yFont: null,
+    ySize: null,
+    YAxisCopy: "Select",
+
+    TooltipFont: "Arial",
+    TooltipSize : "14", 
+
+    LabelsFont : "Arial",
+    LabelsSize : "14", 
+
     InputType: "Enter Inputs",
     Heigth_: 280,
     Width_: 600,
@@ -2761,6 +2775,105 @@ const InputArea = ({
     );
   };
 
+  // reset the chart details when click the cancel button
+  const chartReset = () => { // franklin
+    setState((prevState) => ({
+      ...prevState,
+      Heigth_: 280,
+      Width_: 600,
+      Chart: "Select", // Reset the value to the default value
+      XAxisCopy: "Select",
+        YAxisCopy: "Select",
+        GroupByCol: "Sum",
+        Rotate: "",
+        xFont: null,
+        xSize: null,
+        yFont: null,
+        ySize: null,
+        xColor: "#000000",
+        YAxisPadding: "10",
+        yColor: "#000000",
+
+      //axes lable
+        Axesswatch_ : false,
+        XAxisLabel: "",
+        xlFont : 'Arial',
+        xlSize : "14",
+        xlColor : "#000000",
+        YAxisLabel : "",
+        ylFont : 'Arial',
+        ylSize : "14",
+        ylColor : "#000000",
+
+        // Title toggle 
+        Titleswatch_ : false,
+        Title : "",
+        TitleFont : 'Arial',
+        TitleSize : "14",
+        TitleColor : "#000000",
+
+        //Lagend
+        Legendswatch_ : false,
+        LengendPosition : false,
+        LegendFont : 'Arial',
+        LegendSize : "14",
+        LegendColor : "#000000",
+
+        // Tooltip
+        Tooltipswatch_ : false,
+        TooltipContent : "All",
+        TooltipFont: "Arial",
+        TooltipSize : "14", 
+        TooltipColor : "#ffffff",
+        TooltipBGColor : "#6282b3",
+        TooltipThickness : 0,
+        TooltipTickColor : "#000000",
+
+        //Data Label
+        Labelsswatch_ : false,
+        LabelsContent : "X",
+        LabelsFont : "Arial",
+        LabelsSize : "14",
+        LabelsColor : "#000000",
+
+        //pie
+        Innerradius : 10,
+        SlicesCap : 10,
+        ExternalRadiusPadding : 60,
+        Pieswatch_ : false,
+        BGColor : "#ffffff",
+
+        // bar
+        Barswatch_ : false,
+        PadTop : "",
+        PadBottom : "",
+        PadRight : "",
+        PadLeft : "",
+        Color : "#8495e6",
+
+        //scater
+        SymbolSize : 7,
+        Scatterswatch_ : false,
+        Seriesswatch_ : false,
+        Compositeswatch_ : false,
+        BarLineswatch_ : false,
+        LineColor : "#FF0000",
+
+        // barline
+        GroupByCopy: "Select",
+        ryFont: null,
+        ryColor: "#000000",
+        rySize: null,
+
+        //sunbuster
+        SunBurstX_Axis: [],
+        pFont : null,
+        pSize : null,
+        pColor : "#000000",
+    }));
+    ChildtoParentHandshake(undefined);
+  };
+
   return (
     <>
       {/* {progress.loader &&
@@ -3009,15 +3122,20 @@ const InputArea = ({
                             handleChange(e);
                             setFlag(false);
                           }}
+                          defaultValue={"Select"}
                         >
+                          <MenuItem key={-1} value={"Select"}>
+                                          {"Select"}
+                                        </MenuItem>
                           {ChartType.map((option, index) => (
-                            <MenuItem key={option} value={option}>
+                            <MenuItem key={option} value={option} style={{maxHeight:" 250px !important"}}>
                               {option}
                             </MenuItem>
                           ))}
                         </TextField>
                       </div>
-                      {/* </div> */}
+
+                      {/* Chart width, height block*/}
                       <div className="row-parent">
                         <div className="row width-lg">
                           <TextField
@@ -3167,7 +3285,7 @@ const InputArea = ({
                                         <MenuItem key={-1} value={"Select"}>
                                           {"Select"}
                                         </MenuItem>
-                                        {state.XAxis_.map((option, index) => (
+                                        {state.XAxis_?.map((option, index) => (
                                           <MenuItem key={option} value={option}>
                                             {option}
                                           </MenuItem>
@@ -3545,14 +3663,16 @@ const InputArea = ({
                                           <MenuItem key={-1} value={"Select"}>
                                             {"Select"}
                                           </MenuItem>
-                                          {state.XAxis_.map((option, index) => (
-                                            <MenuItem
-                                              key={option}
-                                              value={option}
-                                            >
-                                              {option}
-                                            </MenuItem>
-                                          ))}
+                                          {state.XAxis_?.map(
+                                            (option, index) => (
+                                              <MenuItem
+                                                key={option}
+                                                value={option}
+                                              >
+                                                {option}
+                                              </MenuItem>
+                                            )
+                                          )}
                                         </TextField>
                                       </div>
                                       <div
@@ -3709,14 +3829,16 @@ const InputArea = ({
                                           <MenuItem key={-1} value={"Select"}>
                                             {"Select"}
                                           </MenuItem>
-                                          {state.YAxis_.map((option, index) => (
-                                            <MenuItem
-                                              key={option}
-                                              value={option}
-                                            >
-                                              {option}
-                                            </MenuItem>
-                                          ))}
+                                          {state.YAxis_?.map(
+                                            (option, index) => (
+                                              <MenuItem
+                                                key={option}
+                                                value={option}
+                                              >
+                                                {option}
+                                              </MenuItem>
+                                            )
+                                          )}
                                         </TextField>
                                       </div>
                                       <div className="row width-lg removeGutter">
@@ -3924,7 +4046,7 @@ const InputArea = ({
                                           <MenuItem key={-1} value={"Select"}>
                                             {"Select"}
                                           </MenuItem>
-                                          {state.GroupByCopy_.map(
+                                          {state.GroupByCopy_?.map(
                                             (option, index) => (
                                               <MenuItem
                                                 key={option}
@@ -5105,7 +5227,7 @@ const InputArea = ({
                                         <TextField
                                           id="Font"
                                           select
-                                          name="Labelsize"
+                                          name="LabelsSize"
                                           label="Size"
                                           className="input-field "
                                           onChange={(e) => {
@@ -6330,7 +6452,7 @@ const InputArea = ({
                       flag === false ? (
                         <div
                           className="row width-lg"
-                          style={{ marginLeft: "10px" }}
+                          style={{ marginLeft: "3px" }}
                         >
                           <Button
                             id="saveTemp"
@@ -6353,24 +6475,42 @@ const InputArea = ({
                       {navbar.bar === "Charts" &&
                       state.Uploaded_file !== undefined &&
                       flag !== true ? (
-                        <div
-                          className="row width-lg"
-                          style={{ marginLeft: "10px" }}
-                        >
-                          <Button
-                            disabled={disable}
-                            variant="contained"
-                            id="ChartGen"
-                            className="input-field button btn-transparant"
-                            style={{ backgroundColor: "#6282b3" }}
-                            onClick={(e) => {
-                              setProgress({ loader: true });
-                              GenerateChart();
-                            }}
+                        <>
+                          <div
+                            className="row width-lg"
+                            style={{ marginLeft: "10px" }}
                           >
-                            Generate Chart
-                          </Button>
-                        </div>
+                            <Button
+                              disabled={disable}
+                              variant="contained"
+                              id="ChartGen"
+                              className="input-field button btn-transparant"
+                              style={{ backgroundColor: "#6282b3" }}
+                              onClick={(e) => {
+                                setProgress({ loader: true });
+                                GenerateChart();
+                              }}
+                            >
+                              Generate Chart
+                            </Button>
+                          </div>
+                          <div
+                            className="row width-lg"
+                            style={{ marginLeft: "10px" }}
+                          >
+                            <Button
+                              disabled={disable}
+                              variant="contained"
+                              id="CancelChartGen"
+                              className="input-field button btn-transparant"
+                              size="small"
+                              style={{ backgroundColor: "#6282b3" }}
+                              onClick={(e) => chartReset()}
+                            >
+                              Cancel
+                            </Button>
+                          </div>
+                        </>
                       ) : (
                         ""
                       )}

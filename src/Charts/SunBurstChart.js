@@ -35,9 +35,16 @@ const SunBurstChart = ({ params }) => {
     });
     var ndx = crossfilter(experiments),
       runDimension = ndx.dimension(function (d) {
-        if (XAxis.length === 3) return [d[XAxis[0]], d[XAxis[1]], d[XAxis[2]]];
-        else if (XAxis.length === 2) return [d[XAxis[0]], d[XAxis[1]]];
-        else if (XAxis.length === 1) return [d[XAxis[0]]];
+        // if (XAxis.length === 4) return [d[XAxis[0]], d[XAxis[1]], d[XAxis[2]], d[XAxis[3]]];
+        // else if (XAxis.length === 3) return [d[XAxis[0]], d[XAxis[1]], d[XAxis[2]]];
+        // else if (XAxis.length === 2) return [d[XAxis[0]], d[XAxis[1]]];
+        // else if (XAxis.length === 1) return [d[XAxis[0]]];
+        
+        var dimensionArray = [];
+        for (var i = 0; i < XAxis.length; i++) {
+          dimensionArray.push(d[XAxis[i]]);
+        }
+        return dimensionArray;
       });
 
     var speedSumGroup = runDimension.group().reduceSum(function (d) {

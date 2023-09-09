@@ -386,7 +386,7 @@ const BarLineChart = ({ params }) => {
               "<div><div><b>" +
                 params.XAxis +
                 "</b> : " +
-                d.target.__data__.x.toFixed(2) +
+                d?.target?.__data__?.x?.toFixed(2) +
                 "</div><div>"
             );
           } else if (params.TooltipContent === "Y") {
@@ -423,7 +423,7 @@ const BarLineChart = ({ params }) => {
                 "<div><div><b>" +
                   params.XAxis +
                   "</b> : " +
-                  d.target.__data__.x.toFixed(2) +
+                  d.target?.__data__?.x?.toFixed(2) +
                   "</div><div><b>" +
                   params.YAxis +
                   "</b> : " +

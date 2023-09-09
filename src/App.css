@@ -205,7 +205,7 @@ li.MuiMenuItem-root > span {
 
 .MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded
   > ul.MuiList-root.MuiList-padding.MuiMenu-list {
-  max-height: 200px !important;
+  max-height: 250px !important;
   box-shadow: 0px 4px 15px #00000029 !important;
   border: 1px solid #d1d1d1 !important;
   overflow: inherit !important;
