@@ -232,65 +232,79 @@ const ChartBlock = ({ enable, state }) => {
               height: "5vh",
               display: "flex",
               width: "100%",
-              flexDirection: "row-reverse",
               marginBottom: "10px",
             }}
           >
             <div
-              className="Dash-icon"
-              onClick={() => handleTapChange("DataSet")}
+              className="custom-title"
               style={{
-                width: "10%",
-                cursor: "pointer",
-                background: `${Tab.DataSet ? "#6282b3" : "#e2e2e2"}`,
+                width: "70%",
+                display: "flex",
+                alignContent: "space-around",
+                flexWrap: "wrap",
+                paddingLeft: "16px",
               }}
             >
-              <BootstrapTooltip
-                title="DataSet"
-                TransitionComponent={Fade}
-                TransitionProps={{ timeout: 600 }}
-                placement="bottom"
-              >
-                <DatasetIcon fontSize="large" />
-              </BootstrapTooltip>
-            </div>
-            <div
-              className="Dash-icon"
-              onClick={() => handleTapChange("Chart")}
-              style={{
-                width: "10%",
-                cursor: "pointer",
-                background: `${Tab.Chart ? "#6282b3" : "#e2e2e2"}`,
-              }}
-            >
-              <BootstrapTooltip
-                title="Chart"
-                TransitionComponent={Fade}
-                TransitionProps={{ timeout: 600 }}
-                placement="bottom"
-              >
-                <DashboardIcon fontSize="large" />
-              </BootstrapTooltip>
+              {state.TempName && <b>Template Name : {state.TempName} </b>}
             </div>
 
             <div
-              className="Dash-icon"
-              style={{ width: "10%", cursor: "pointer" }}
+              style={{
+                width: "30%",
+                display: "flex",
+                flexDirection: "row-reverse",
+              }}
             >
-              <BootstrapTooltip
-                title="Download"
-                TransitionComponent={Fade}
-                TransitionProps={{ timeout: 600 }}
-                placement="bottom"
+              <div
+                className="Dash-icon"
+                onClick={() => handleTapChange("DataSet")}
+                style={{
+                  cursor: "pointer",
+                  background: `${Tab.DataSet ? "#6282b3" : "#e2e2e2"}`,
+                }}
               >
-                <DownloadIcon
-                  // style={{ float: "right", cursor: "pointer" }}
-                  onClick={saveChart}
-                  className="Icon_"
-                />
-              </BootstrapTooltip>
-            </div>
-            <div
+                <BootstrapTooltip
+                  title="DataSet"
+                  TransitionComponent={Fade}
+                  TransitionProps={{ timeout: 600 }}
+                  placement="bottom"
+                >
+                  <DatasetIcon fontSize="large" />
+                </BootstrapTooltip>
+              </div>
+              <div
+                className="Dash-icon"
+                onClick={() => handleTapChange("Chart")}
+                style={{
+                  cursor: "pointer",
+                  background: `${Tab.Chart ? "#6282b3" : "#e2e2e2"}`,
+                }}
+              >
+                <BootstrapTooltip
+                  title="Chart"
+                  TransitionComponent={Fade}
+                  TransitionProps={{ timeout: 600 }}
+                  placement="bottom"
+                >
+                  <DashboardIcon fontSize="large" />
+                </BootstrapTooltip>
+              </div>
+
+              <div className="Dash-icon" style={{ cursor: "pointer" }}>
+                <BootstrapTooltip
+                  title="Download"
+                  TransitionComponent={Fade}
+                  TransitionProps={{ timeout: 600 }}
+                  placement="bottom"
+                >
+                  <DownloadIcon
+                    // style={{ float: "right", cursor: "pointer" }}
+                    onClick={saveChart}
+                    className="Icon_"
+                  />
+                </BootstrapTooltip>
+              </div>
+              {/* <div
               className="Dash-icon"
               style={{ width: "10%", cursor: "pointer" }}
               onClick={exportInputs}
@@ -301,16 +315,10 @@ const ChartBlock = ({ enable, state }) => {
                 TransitionProps={{ timeout: 600 }}
                 placement="bottom"
               >
-                {/* <Button
-                  variant="contained"
-                  // className="exptbutton"
-                  style={{ backgroundColor: "#6282b3" }}
-                  onClick={exportInputs}
-                >
-                  Export
-                </Button> */}
+                
                 <ExitToAppIcon fontSize="large" />
               </BootstrapTooltip>
+            </div> */}
             </div>
           </div>
         ) : (

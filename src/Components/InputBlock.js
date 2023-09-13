@@ -2729,7 +2729,8 @@ const InputArea = ({
         )}
         {param === "Templates" && (
           <div className="" style={{ float: "right" }}>
-            <Button
+            {/*  Commented by Franklin - for phase-1 release */}
+            {/* <Button
               variant="contained"
               margin="normal"
               className="input-field button"
@@ -2746,7 +2747,7 @@ const InputArea = ({
               }}
             >
               New Template
-            </Button>
+            </Button> */}
           </div>
         )}
       </div>
@@ -6547,8 +6548,18 @@ const InputArea = ({
                       state.Chart !== undefined &&
                       navbar.bar === "Charts" &&
                       flag === true ? (
-                        <>
-                          <div className="row width-mid-md">
+                        <div
+                          style={{
+                            display: "flex",
+                            marginTop: "10px",
+                            flexWrap: "wrap",
+                            width: "100%",
+                          }}
+                        >
+                          <div
+                            className="row width-mid-md"
+                            style={{ width: "22%" }}
+                          >
                             <Button
                               id="saveTemp"
                               variant="contained"
@@ -6564,7 +6575,10 @@ const InputArea = ({
                               Update
                             </Button>
                           </div>
-                          <div className="row width-mid-md">
+                          <div
+                            className="row width-mid-md"
+                            style={{ width: "22%" }}
+                          >
                             <Button
                               id="saveTemp"
                               variant="contained"
@@ -6582,7 +6596,7 @@ const InputArea = ({
                           </div>
                           <div
                             className="row width-lg"
-                            style={{ marginLeft: "10px" }}
+                            style={{ marginLeft: "10px", width: "22%" }}
                           >
                             <Button
                               disabled={disable}
@@ -6598,7 +6612,7 @@ const InputArea = ({
                           </div>
                           <div
                             className="row width-lg"
-                            style={{ marginLeft: "10px" }}
+                            style={{ marginLeft: "10px", width: "22%" }}
                           >
                             <Button
                               disabled={disable}
@@ -6612,7 +6626,7 @@ const InputArea = ({
                               Preview
                             </Button>
                           </div>
-                        </>
+                        </div>
                       ) : (
                         ""
                       )}

@@ -40,7 +40,7 @@ const DatasetTable = ({ params, filter }) => {
           id="dataset"
           title={
             <div className="custom-title">
-              <b>Source: {uploadfilename.name} </b>
+              {filter === undefined && <b>Source: {uploadfilename.name} </b>}
             </div>
           }
           data={params}

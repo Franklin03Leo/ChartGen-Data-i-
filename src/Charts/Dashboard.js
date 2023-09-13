@@ -1343,7 +1343,7 @@ const Dashboard = ({ params }) => {
         <div className="Dashboardtab">
           {params.isBublished || !other.Build || params.action === "Preview" ? (
             <>
-              <div
+              {/* <div
                 className=" Dash-icon"
                 id="data"
                 onClick={(e) => {
@@ -1366,7 +1366,8 @@ const Dashboard = ({ params }) => {
                 }}
               >
                 <DashboardIcon fontSize="large" />
-              </div>
+              </div> */}
+
               {other.showFilter ? (
                 <div style={{ marginTop: "15px" }}>
                   <label style={{ margin: "0px 5px" }}>Filter</label>
