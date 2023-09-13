@@ -390,8 +390,8 @@ app.post("/UpdateDashboard", (req, res) => {
           filterProps: data.FilterProps,
           filter: data.Filter,
           selectedFilterDimensions: data.selectedFilterDimensions,
-          Users: data.Users,
-          Groups: data.Groups,
+          // Users: data.Users,
+          // Groups: data.Groups,
         },
       }
     )
