@@ -38,6 +38,7 @@ const AssignProject = (params) => {
   const [projectAssigning, setProjectAssigning] = useState({});
   const [path, setPath] = React.useState({
     Location: window.location.hostname,
+    Port: process.env.REACT_APP_PORT,
   });
   const [user, setUser] = React.useState({});
   const [assignedusers, setAssignedusers] = React.useState({});
@@ -97,7 +98,7 @@ const AssignProject = (params) => {
   const handleGetUsers = () => {
     // get user details form user collection
     axios
-      .post(`http://${path.Location}:3012/GetUsers`)
+      .post(`http://${path.Location}:${path.Port}/GetUsers`)
       .then((res) => {
         if (res.status === 200) {
           let temp = [];
@@ -116,7 +117,7 @@ const AssignProject = (params) => {
     obj.userID = params["params"]?.userID;
     obj.DashboardName = params["params"]?.DashboardName;
     axios
-      .post(`http://${path.Location}:3012/GetAssignedUsers`, obj)
+      .post(`http://${path.Location}:${path.Port}/GetAssignedUsers`, obj)
       .then((res) => {
         if (res.status === 200) {
           let temp = res.data;
@@ -164,7 +165,7 @@ const AssignProject = (params) => {
       obj.DashboardName = params["params"].DashboardName;
       obj.userID = params["params"].userID;
       axios
-        .post(`http://${path.Location}:3012/AssignUsers`, obj)
+        .post(`http://${path.Location}:${path.Port}/AssignUsers`, obj)
         .then((res) => {
           if (res.status === 200) {
             console.log("AssignUsers ==>", res.data);
