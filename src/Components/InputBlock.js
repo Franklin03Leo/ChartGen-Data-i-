@@ -321,9 +321,9 @@ const InputArea = ({
   const [TemplatesCollections, setTemplatesCollections] = React.useState({});
   const [path, setPath] = React.useState({
     Location: window.location.hostname,
-  }); //49.204.124.69/
+    Port: process.env.REACT_APP_PORT,
+  });
   const [Dataset, setDataset] = React.useState({});
-  // const [projectAssigning, setProjectAssigning] = React.useState({});
 
   // React state to track order of items
   const [ItemOrderList, setItemOrderList] = React.useState([]);
@@ -1646,7 +1646,7 @@ const InputArea = ({
       });
 
       axios
-        .post(`http://${path.Location}:3012/DeleteTemplate`, {
+        .post(`http://${path.Location}:${path.Port}/DeleteTemplate`, {
           TempName: name,
           userID: user.userID,
         })
@@ -1899,13 +1899,16 @@ const InputArea = ({
     try {
       if (action === "Update") {
         axios
-          .post(`http://${path.Location}:3012/DeleteTemplate`, {
+          .post(`http://${path.Location}:${path.Port}/DeleteTemplate`, {
             TempName: state.TempName,
             userID: user.userID,
           })
           .then((response) => {
             axios
-              .post(`http://${path.Location}:3012/InsertTemplate`, state)
+              .post(
+                `http://${path.Location}:${path.Port}/InsertTemplate`,
+                state
+              )
               .then((response) => {
                 console.log("data", response.data);
                 GetTemplate();
@@ -1918,7 +1921,7 @@ const InputArea = ({
         const Result = state;
         delete Result._id;
         axios
-          .post(`http://${path.Location}:3012/InsertTemplate`, Result)
+          .post(`http://${path.Location}:${path.Port}/InsertTemplate`, Result)
           .then((response) => {
             console.log("data", response.data);
             GetTemplate();
@@ -1943,7 +1946,7 @@ const InputArea = ({
     )
       document.querySelector(".loader").style.display = "block";
     axios
-      .post(`http://${path.Location}:3012/GetTemplate`, {
+      .post(`http://${path.Location}:${path.Port}/GetTemplate`, {
         userID: user.userID,
         Flag: { action: "All" },
       })
@@ -1991,11 +1994,11 @@ const InputArea = ({
         return;
       }
       axios
-        .post(`http://${path.Location}:3012/InsertFeedback`, feedback)
+        .post(`http://${path.Location}:${path.Port}/InsertFeedback`, feedback)
         .then((response) => {
           console.log("data", response.data);
           axios
-            .get(`http://${path.Location}:3012/GetFeedback`)
+            .get(`http://${path.Location}:${path.Port}/GetFeedback`)
             .then((response) => {
               let data = response.data;
               setPlay({ isPlay: undefined });
@@ -2007,7 +2010,7 @@ const InputArea = ({
         });
     } else {
       axios
-        .get(`http://${path.Location}:3012/GetFeedback/`)
+        .get(`http://${path.Location}:${path.Port}/GetFeedback/`)
         .then((response) => {
           let data = response.data;
           setPlay({ isPlay: undefined });
@@ -2104,7 +2107,7 @@ const InputArea = ({
       setpostProject(obj);
       document.querySelector(".loader").style.display = "block";
       axios
-        .post(`http://${path.Location}:3012/UpdateDashboard`, obj)
+        .post(`http://${path.Location}:${path.Port}/UpdateDashboard`, obj)
         .then((response) => {
           toast.success("Your Project has been Updated.", {
             position: toast.POSITION.BOTTOM_RIGHT,
@@ -2116,7 +2119,7 @@ const InputArea = ({
     } else if (action === "Delete") {
       document.querySelector(".loader").style.display = "block";
       axios
-        .post(`http://${path.Location}:3012/DeleteDashboard`, {
+        .post(`http://${path.Location}:${path.Port}/DeleteDashboard`, {
           userID: user.userID,
           DashboardName: e.currentTarget.id,
         })
@@ -2138,7 +2141,7 @@ const InputArea = ({
       if (user["Role"] !== "Admin" || Object.keys(dashboard).length === 0) {
         GetTemplate("Dashboard");
         axios
-          .post(`http://${path.Location}:3012/GetTemplate`, {
+          .post(`http://${path.Location}:${path.Port}/GetTemplate`, {
             userID: user.userID,
             Flag: { action: "Specific", charts: Object.values(data.charts) },
           })
@@ -2254,7 +2257,7 @@ const InputArea = ({
       obj.IndividualFilter = indivialFilter_;
     }
     axios
-      .post(`http://${path.Location}:3012/InsertDashboard`, obj)
+      .post(`http://${path.Location}:${path.Port}/InsertDashboard`, obj)
       .then((response) => {
         GetDashboard();
       });
@@ -2263,7 +2266,7 @@ const InputArea = ({
     if (Object.keys(project).length === 0)
       document.querySelector(".loader").style.display = "block";
     axios
-      .post(`http://${path.Location}:3012/GetDashboard`, {
+      .post(`http://${path.Location}:${path.Port}/GetDashboard`, {
         userID: user["Role"] === "User" ? user["userName"] : user["userID"],
         flag: user["Role"] === "User" ? 1 : 0,
       })
@@ -2297,7 +2300,7 @@ const InputArea = ({
       if (Object.keys(TemplatesCollections).length === 0) {
         document.querySelector(".loader").style.display = "block";
         axios
-          .post(`http://${path.Location}:3012/GetPreDefinedTemplate`)
+          .post(`http://${path.Location}:${path.Port}/GetPreDefinedTemplate`)
           .then((response) => {
             let data = response.data;
             let obj = {};
@@ -2341,14 +2344,16 @@ const InputArea = ({
     obj.filename = name;
     obj.data = data;
     axios
-      .post(`http://${path.Location}:3012/InsertDataSet`, obj)
+      .post(`http://${path.Location}:${path.Port}/InsertDataSet`, obj)
       .then((response) => {
         getDataSet();
       });
   };
   const getDataSet = () => {
     axios
-      .post(`http://${path.Location}:3012/GetDataSet`, { userID: user.userID })
+      .post(`http://${path.Location}:${path.Port}/GetDataSet`, {
+        userID: user.userID,
+      })
       .then((response) => {
         let data = response.data;
         let obj = {};
@@ -2361,7 +2366,7 @@ const InputArea = ({
   const handleDataSet = (action, id) => {
     if (action === "Delete") {
       axios
-        .post(`http://${path.Location}:3012/DeleteDataSet`, {
+        .post(`http://${path.Location}:${path.Port}/DeleteDataSet`, {
           userID: user.userID,
           id: id,
         })
@@ -2375,7 +2380,7 @@ const InputArea = ({
   };
   const handleGetUsers = () => {
     axios
-      .post(`http://${path.Location}:3012/GetUsers`)
+      .post(`http://${path.Location}:${path.Port}/GetUsers`)
       .then((res) => {
         if (res.status === 200) {
           console.log("Users==>", res.data);
@@ -2881,7 +2886,7 @@ const InputArea = ({
     } else {
       // get the details from database based on id
       axios
-        .post(`http://${path.Location}:3012/GetSingleTemplate`, {
+        .post(`http://${path.Location}:${path.Port}/GetSingleTemplate`, {
           id: state._id,
         })
         .then((res) => {
