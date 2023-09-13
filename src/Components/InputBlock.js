@@ -230,14 +230,12 @@ const InputArea = ({
     YAxisCopy: "Select",
 
     TooltipFont: "Arial",
-    TooltipSize : "14", 
-
-    LabelsFont : "Arial",
-    LabelsSize : "14", 
-
+    TooltipSize: "14",
+    LabelsFont: "Arial",
+    LabelsSize: "14",
     InputType: "Enter Inputs",
     Heigth_: 280,
-    Width_: 600,
+    Width_: 850,
     YAxisPadding: "10",
     SlicesCap: 10,
     Innerradius: 10,
@@ -334,6 +332,8 @@ const InputArea = ({
   const [filedata, setData] = React.useState({});
   const [play, setPlay] = React.useState({});
   const [show, setIsshow] = React.useState({});
+  // to displays the background color based on click
+  const [clickedIndex, setClickedIndex] = React.useState(null);
   // custom styles
   const BootstrapTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -437,9 +437,7 @@ const InputArea = ({
   const navigate = useNavigate();
 
   //Every fields onChange for store the inputs
-  const handleChange = (event) => {   
-    sessionStorage.setItem("uploadfilename", '');
-    sessionStorage.setItem("uploadfilename", event.target.files[0].name);
+  const handleChange = (event) => {
     if (event.target.name === "file") {
       document.querySelector(".loader").style.display = "block";
 
@@ -452,6 +450,8 @@ const InputArea = ({
         });
         document.querySelector(".loader").style.display = "none";
       } else {
+        sessionStorage.setItem("uploadfilename", "");
+        sessionStorage.setItem("uploadfilename", event.target.files[0].name);
         if (event.target.files[0].type === "text/csv") {
           Papa.parse(event.target.files[0], {
             header: true,
@@ -702,6 +702,11 @@ const InputArea = ({
     if (event.target.name === "Chart") {
       showValidAxis(event.target.value);
     }
+  };
+
+  // to change the background color based on user click
+  const handleBackgroundChange = (index) => {
+    setClickedIndex(index);
   };
 
   //Validations
@@ -1434,14 +1439,6 @@ const InputArea = ({
 
   //Import input process
   const importInputs = (event) => {
-    // if (event.target.files[0] === undefined) {
-    //     setState({
-    //         ...state, 'Uploaded_file': undefined,
-    //         'XAxis_': '',
-    //         'YAxis_': ''
-    //     })
-    // }
-    // else {
     const reader = new FileReader();
     reader.onload = (e) => {
       var data = JSON.parse(e.target.result);
@@ -1558,6 +1555,7 @@ const InputArea = ({
   };
   //Template Save/Cancel
   const saveTemplate = (action) => {
+    debugger;
     if (action !== "cancel") {
       setTemplate({ ...template, [state.TempName]: state });
       setDashboard({
@@ -1573,6 +1571,13 @@ const InputArea = ({
           hideProgressBar: true,
           autoClose: 2000,
         });
+        ChildtoParentHandshake(undefined);
+        setNavbar({ bar: "Templates" });
+        chartReset("Chart_Reset");
+        setState((previous) => ({
+          ...previous,
+          Uploaded_file: undefined,
+        }));
       } else {
         if (formValues.TempName === true || state.TempName === undefined) {
           // Enable validation
@@ -1593,10 +1598,24 @@ const InputArea = ({
         hideProgressBar: true,
         autoClose: 2000,
       });
-      setNavbar({ bar: "Templates" });
       ChildtoParentHandshake(undefined);
+      chartReset("Chart_Reset");
+      setState((previous) => ({
+        ...previous,
+        Uploaded_file: undefined,
+      }));
+      setNavbar({ bar: "Templates" });
     }
   };
+
+  // const handlechageColor = (e) => {
+  //   document
+  //     .querySelectorAll(".dashboard-layout")
+  //     .forEach((element) => (element.style.backgroundColor = "white"));
+  //   let elementid = document.getElementById(e);
+  //   elementid.style.backgroundColor = "rgb(234 234 243)";
+  // };
+
   //Template Edit/Delete
   const handleTemplate = (name, action) => {
     if (action === "Edit") {
@@ -2001,10 +2020,6 @@ const InputArea = ({
   };
 
   const handleDashboard = (action, e) => {
-    document
-      .querySelectorAll(".container-template")
-      .forEach((element) => (element.style.backgroundColor = "white"));
-
     if (action === "Save") {
       setOpen({ Dashboard: false });
       PostDashboard("Insert");
@@ -2194,16 +2209,6 @@ const InputArea = ({
       obj.userID = user.userID;
       obj.DashboardName = e.currentTarget.id;
       setpostProject(obj);
-      // let targetClassName =
-      //   e.currentTarget.parentElement.parentElement.parentElement.className;
-      // document
-      //   .querySelectorAll("." + targetClassName)
-      //   .forEach((element) => (element.style.backgroundColor = "white"));
-
-      let element = e.currentTarget.parentElement.parentElement.parentElement;
-      // Change the background color
-      element.style.backgroundColor = "rgb(234 234 243)";
-
       setPlay({ isPlay: undefined });
       setIssues(undefined);
       setIsshow({ ...show, isShow: true, Build: false });
@@ -2776,13 +2781,14 @@ const InputArea = ({
   };
 
   // reset the chart details when click the cancel button
-  const chartReset = () => { // franklin
-    setState((prevState) => ({
-      ...prevState,
-      Heigth_: 280,
-      Width_: 600,
-      Chart: "Select", // Reset the value to the default value
-      XAxisCopy: "Select",
+  const chartReset = (action) => {
+    if (action === "Chart_Reset") {
+      setState((prevState) => ({
+        ...prevState,
+        Heigth_: 280,
+        Width_: 850,
+        Chart: "Select", // Reset the value to the default value
+        XAxisCopy: "Select",
         YAxisCopy: "Select",
         GroupByCol: "Sum",
         Rotate: "",
@@ -2794,70 +2800,70 @@ const InputArea = ({
         YAxisPadding: "10",
         yColor: "#000000",
 
-      //axes lable
-        Axesswatch_ : false,
+        //axes lable
+        Axesswatch_: false,
         XAxisLabel: "",
-        xlFont : 'Arial',
-        xlSize : "14",
-        xlColor : "#000000",
-        YAxisLabel : "",
-        ylFont : 'Arial',
-        ylSize : "14",
-        ylColor : "#000000",
+        xlFont: "Arial",
+        xlSize: "14",
+        xlColor: "#000000",
+        YAxisLabel: "",
+        ylFont: "Arial",
+        ylSize: "14",
+        ylColor: "#000000",
 
-        // Title toggle 
-        Titleswatch_ : false,
-        Title : "",
-        TitleFont : 'Arial',
-        TitleSize : "14",
-        TitleColor : "#000000",
+        // Title toggle
+        Titleswatch_: false,
+        Title: "",
+        TitleFont: "Arial",
+        TitleSize: "14",
+        TitleColor: "#000000",
 
         //Lagend
-        Legendswatch_ : false,
-        LengendPosition : false,
-        LegendFont : 'Arial',
-        LegendSize : "14",
-        LegendColor : "#000000",
+        Legendswatch_: false,
+        LengendPosition: false,
+        LegendFont: "Arial",
+        LegendSize: "14",
+        LegendColor: "#000000",
 
         // Tooltip
-        Tooltipswatch_ : false,
-        TooltipContent : "All",
+        Tooltipswatch_: false,
+        TooltipContent: "All",
         TooltipFont: "Arial",
-        TooltipSize : "14", 
-        TooltipColor : "#ffffff",
-        TooltipBGColor : "#6282b3",
-        TooltipThickness : 0,
-        TooltipTickColor : "#000000",
+        TooltipSize: "14",
+        TooltipColor: "#ffffff",
+        TooltipBGColor: "#6282b3",
+        TooltipThickness: 0,
+        TooltipTickColor: "#000000",
 
         //Data Label
-        Labelsswatch_ : false,
-        LabelsContent : "X",
-        LabelsFont : "Arial",
-        LabelsSize : "14",
-        LabelsColor : "#000000",
+        Labelsswatch_: false,
+        LabelsContent: "X",
+        LabelsFont: "Arial",
+        LabelsSize: "14",
+        LabelsColor: "#000000",
 
         //pie
-        Innerradius : 10,
-        SlicesCap : 10,
-        ExternalRadiusPadding : 60,
-        Pieswatch_ : false,
-        BGColor : "#ffffff",
+        Innerradius: 10,
+        SlicesCap: 10,
+        ExternalRadiusPadding: 60,
+        Pieswatch_: false,
+        BGColor: "#ffffff",
 
         // bar
-        Barswatch_ : false,
-        PadTop : "",
-        PadBottom : "",
-        PadRight : "",
-        PadLeft : "",
-        Color : "#8495e6",
+        Barswatch_: false,
+        PadTop: "",
+        PadBottom: "",
+        PadRight: "",
+        PadLeft: "",
+        Color: "#8495e6",
 
         //scater
-        SymbolSize : 7,
-        Scatterswatch_ : false,
-        Seriesswatch_ : false,
-        Compositeswatch_ : false,
-        BarLineswatch_ : false,
-        LineColor : "#FF0000",
+        SymbolSize: 7,
+        Scatterswatch_: false,
+        Seriesswatch_: false,
+        Compositeswatch_: false,
+        BarLineswatch_: false,
+        LineColor: "#FF0000",
 
         // barline
         GroupByCopy: "Select",
@@ -2867,11 +2873,24 @@ const InputArea = ({
 
         //sunbuster
         SunBurstX_Axis: [],
-        pFont : null,
-        pSize : null,
-        pColor : "#000000",
-    }));
-    ChildtoParentHandshake(undefined);
+        pFont: null,
+        pSize: null,
+        pColor: "#000000",
+      }));
+      ChildtoParentHandshake(undefined);
+    } else {
+      // get the details from database based on id
+      axios
+        .post(`http://${path.Location}:3012/GetSingleTemplate`, {
+          id: state._id,
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            setState(res.data);
+          }
+        })
+        .catch((error) => {});
+    }
   };
 
   return (
@@ -3123,12 +3142,17 @@ const InputArea = ({
                             setFlag(false);
                           }}
                           defaultValue={"Select"}
+                          disabled={flag === true ? true : false}
                         >
                           <MenuItem key={-1} value={"Select"}>
-                                          {"Select"}
-                                        </MenuItem>
+                            {"Select"}
+                          </MenuItem>
                           {ChartType.map((option, index) => (
-                            <MenuItem key={option} value={option} style={{maxHeight:" 250px !important"}}>
+                            <MenuItem
+                              key={option}
+                              value={option}
+                              style={{ maxHeight: " 250px !important" }}
+                            >
                               {option}
                             </MenuItem>
                           ))}
@@ -6505,9 +6529,9 @@ const InputArea = ({
                               className="input-field button btn-transparant"
                               size="small"
                               style={{ backgroundColor: "#6282b3" }}
-                              onClick={(e) => chartReset()}
+                              onClick={(e) => chartReset("Chart_Reset")}
                             >
-                              Cancel
+                              Reset
                             </Button>
                           </div>
                         </>
@@ -6551,6 +6575,38 @@ const InputArea = ({
                               Cancel
                             </Button>
                           </div>
+                          <div
+                            className="row width-lg"
+                            style={{ marginLeft: "10px" }}
+                          >
+                            <Button
+                              disabled={disable}
+                              variant="contained"
+                              id="CancelChartGen"
+                              className="input-field button btn-transparant"
+                              size="small"
+                              style={{ backgroundColor: "#6282b3" }}
+                              onClick={(e) => chartReset("TemplateReset")}
+                            >
+                              Reset
+                            </Button>
+                          </div>
+                          <div
+                            className="row width-lg"
+                            style={{ marginLeft: "10px" }}
+                          >
+                            <Button
+                              disabled={disable}
+                              variant="contained"
+                              id="CancelChartGen"
+                              className="input-field button btn-transparant"
+                              size="small"
+                              style={{ backgroundColor: "#6282b3" }}
+                              onClick={(e) => GenerateChart()}
+                            >
+                              Preview
+                            </Button>
+                          </div>
                         </>
                       ) : (
                         ""
@@ -6586,9 +6642,18 @@ const InputArea = ({
                               let Item = [],
                                 AllCharts = [];
                               for (let a in template) {
+                                console.log("template ==> ", a);
                                 if (template[a] !== undefined) {
                                   Item.push(
-                                    <div className="col-lg-12 dashboard-layout">
+                                    <div
+                                      // className="col-lg-12 dashboard-layout"
+                                      className={`col-lg-12 dashboard-layout ${
+                                        clickedIndex === a ? "clicked" : ""
+                                      }`}
+                                      id={a}
+                                      key={a}
+                                      onClick={(e) => handleBackgroundChange(a)}
+                                    >
                                       <div className="row col-lg-12 template-container-title">
                                         <div
                                           className="col-lg-2"
@@ -7689,10 +7754,14 @@ const InputArea = ({
                     if (project[a] !== undefined) {
                       Item.push(
                         <div
-                          className="container-template"
                           id={a}
+                          key={a}
+                          className={`container-template ${
+                            clickedIndex === a ? "clicked" : ""
+                          }`}
                           onClick={(e) => {
                             handleDashboard("Preview", e);
+                            handleBackgroundChange(a);
                           }}
                           style={{ marginLeft: "6px", width: "100%" }}
                         >
@@ -7787,6 +7856,7 @@ const InputArea = ({
                                   className="temp-icon"
                                   onClick={(e) => {
                                     handleDashboard("AssignUser", e);
+                                    handleBackgroundChange(a);
                                   }}
                                 />
                               </BootstrapTooltip>

@@ -1461,9 +1461,11 @@ input:checked + .slider:before {
   max-height: 38vh;
 }
 /* set the chart minsize for chart menu */
-.boxcenter > svg {
-  min-height: 38vh;
-  /* width: 100%; */
+ div.chart-container > div > div > div:nth-child(2) > div > svg{
+  min-height: 84vh;
+}
+.chart-boxcenter > svg {
+  min-height: 84vh;
 }
 .select-dpd {
   border: 1px #a3a3a3 solid;
@@ -1492,4 +1494,16 @@ input:checked + .slider:before {
   width: 60px !important;
   margin: 1px;
   }
+}
+
+.tss-1cdcmys-MUIDataTable-responsiveBase {
+  position: relative;
+    /* height: auto; */
+    overflow-y: scroll;
+    max-height: 38.5vh;
+    /* height: 305px; */
+}
+
+.clicked {
+  background-color: rgb(234 234 243);
 }

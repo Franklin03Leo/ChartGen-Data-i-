@@ -1,12 +1,20 @@
 import MUIDataTable from "mui-datatables";
 import * as React from "react";
+
 const DatasetTable = ({ params, filter }) => {
-  const [uploadfilename, setuploadfilename] = React.useState({ name: sessionStorage.getItem("uploadfilename") });
-  
+  const [uploadfilename, setuploadfilename] = React.useState({
+    name: sessionStorage.getItem("uploadfilename"),
+  });
+  const [cols, setCols] = React.useState([]);
+
   setTimeout(() => {
     document.querySelector(".loader").style.display = "none";
   }, 100);
-  const cols = Object.keys(params[0]).map((e) => ({ ["name"]: e }));
+
+  React.useEffect(() => {
+    setCols(Object.keys(params[0]).map((e) => ({ ["name"]: e })));
+  }, [params]);
+
   const options = {
     filter: `${filter === false ? false : true}`,
     filterType: "multiselect",
@@ -30,7 +38,11 @@ const DatasetTable = ({ params, filter }) => {
       <div style={{ height: "calc(100vh - 140px)" }}>
         <MUIDataTable
           id="dataset"
-          title={<div className="custom-title"><b>Source: {uploadfilename.name} </b></div>}
+          title={
+            <div className="custom-title">
+              <b>Source: {uploadfilename.name} </b>
+            </div>
+          }
           data={params}
           columns={cols}
           options={options}

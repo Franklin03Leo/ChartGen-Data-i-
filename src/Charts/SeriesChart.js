@@ -5,7 +5,7 @@ import * as crossfilter from "crossfilter2/crossfilter";
 import Grid from "@material-ui/core/Grid";
 const SeriesChart = ({ params }) => {
   const div = React.useRef(null);
-  const div1 = React.useRef(null);
+  // const div1 = React.useRef(null);
 
   React.useEffect(() => {
     var div2 = d3
@@ -27,82 +27,19 @@ const SeriesChart = ({ params }) => {
     } else {
       originalObject = params.Uploaded_file;
     }
-    // const originalObject = params.Uploaded_file;
-    // const originalObject = [
-    //   {
-    //     trend: "1",
-    //     yield: 10,
-    //     series: "Series 1",
-    //   },
-    //   {
-    //     trend: "2",
-    //     yield: 20,
-    //     series: "Series 1",
-    //   },
-    //   {
-    //     trend: "3",
-    //     yield: 15,
-    //     series: "Series 1",
-    //   },
-    //   {
-    //     trend: "1",
-    //     yield: 25,
-    //     series: "Series 2",
-    //   },
-    //   {
-    //     trend: "2",
-    //     yield: 18,
-    //     series: "Series 2",
-    //   },
-    //   {
-    //     trend: "3",
-    //     yield: 30,
-    //     series: "Series 2",
-    //   },
-    //   {
-    //     trend: "1",
-    //     yield: 12,
-    //     series: "Series 3",
-    //   },
-    //   {
-    //     trend: "2",
-    //     yield: 80,
-    //     series: "Series 3",
-    //   },
-    //   {
-    //     trend: "3",
-    //     yield: 16,
-    //     series: "Series 3",
-    //   },
-    //   {
-    //     trend: "1",
-    //     yield: 22,
-    //     series: "Series 4",
-    //   },
-    //   {
-    //     trend: "2",
-    //     yield: 28,
-    //     series: "Series 4",
-    //   },
-    //   {
-    //     trend: "3",
-    //     yield: 32,
-    //     series: "Series 4",
-    //   },
-    // ];
+
     var experiments = JSON.stringify(originalObject);
 
-    const timeFormat = d3.timeFormat("%Y-%m-%d");
+    // const timeFormat = d3.timeFormat("%Y-%m-%d");
     const timeFormat_ = d3.timeFormat("%m-%d-%Y");
-    // params.GroupBy = "Category"; //params["GroupByValues"];
-    // //"Furniture"; //"series";
-    // params.XAxis = "Order Date"; //"trend";
-    // params.YAxis = "Sales"; //"yield";
     experiments = JSON.parse(experiments);
     experiments.forEach(function (x) {
       if (new Date(x[params.XAxis]) == "Invalid Date")
+        // x[params.XAxis] = new Date(
+        //   x[params.XAxis].toString().split("-").reverse().join("/")
+        // );
         x[params.XAxis] = new Date(
-          x[params.XAxis].toString().split("-").reverse().join("/")
+          x[params.XAxis]?.toString().split("-").reverse().join("/") || ""
         );
       else x[params.XAxis] = new Date(x[params.XAxis]);
     });
@@ -240,19 +177,20 @@ const SeriesChart = ({ params }) => {
 
     var speedSumGroup_copy = static_copy_group(speedSumGroup_);
     var fmt = d3.format("02d");
-    var table_ = ndx.dimension(function (d) {
-      // set the changed date format
-      d[params.XAxis] = `${d[params.XAxis]
-        .getDate()
-        .toString()
-        .padStart(2, "0")}-${(d[params.XAxis].getMonth() + 1)
-        .toString()
-        .padStart(2, "0")}-${d[params.XAxis].getFullYear()}`;
-      return [fmt(+d[params.XAxis])]; // (Date.now() - new Date(d.DOB)) / 31557600000;
-      // return [fmt(+d[params.XAxis])];
-    });
+    // var table_ = ndx.dimension(function (d) {
+    //   // set the changed date format
+    //   d[params.XAxis] = `${d[params.XAxis]
+    //     .getDate()
+    //     .toString()
+    //     .padStart(2, "0")}-${(d[params.XAxis].getMonth() + 1)
+    //     .toString()
+    //     .padStart(2, "0")}-${d[params.XAxis].getFullYear()}`;
+    //   return [fmt(+d[params.XAxis])]; // (Date.now() - new Date(d.DOB)) / 31557600000;
+    //   // return [fmt(+d[params.XAxis])];
+    // });
+
     var chart = new dc.seriesChart(div.current);
-    var datatabel = new dc.dataTable(div1.current);
+    // var datatabel = new dc.dataTable(div1.current);
     //  const volumeChart = new dc.barChart(div3.current);
     let PadTop,
       PadRight,
@@ -429,27 +367,6 @@ const SeriesChart = ({ params }) => {
 
     // volumeChart.xAxis().tickFormat(function (v) { return timeFormat_(v); })
 
-    datatabel
-      .width(300)
-      .height(480)
-      .dimension(table_)
-      .size(Infinity)
-      .showSections(true)
-      .columns(params.CheckType.map((e) => e.split(" ").slice(1, 30).join(" ")))
-      .sortBy(function (d) {
-        // if (new Date(d["Order Date"]) != "Invalid Date") {
-        //   d["Order Date"] = `${d["Order Date"].getDate()}-${
-        //     d["Order Date"].getMonth() + 1
-        //   }-${d["Order Date"].getFullYear()}`;
-        // }
-        return [fmt(+d.Expt), fmt(+d.Run)];
-      })
-
-      // .order(d3.ascending)
-
-      .on("preRedraw", update_offset)
-      .on("pretransition", display);
-
     dc.renderAll();
     d3.selectAll("g.dc-legend-item text")
       .style("font-family", params.LegendFont)
@@ -552,52 +469,6 @@ const SeriesChart = ({ params }) => {
         ? Math.abs(Number(labelValue)) / 1.0e3 + "K"
         : Math.abs(Number(labelValue));
     }
-    var ofs = 0,
-      pag = 100;
-
-    function update_offset() {
-      var totFilteredRecs = ndx.groupAll().value();
-      pag = totFilteredRecs;
-      var end = ofs + pag > totFilteredRecs ? totFilteredRecs : ofs + pag;
-      if (ofs == undefined || pag == undefined) {
-        ofs = 0;
-        pag = totFilteredRecs;
-      }
-      ofs =
-        ofs >= totFilteredRecs
-          ? Math.floor((totFilteredRecs - 1) / pag) * pag
-          : ofs;
-      ofs = ofs < 0 ? 0 : ofs;
-      datatabel.beginSlice(ofs);
-      datatabel.endSlice(ofs + pag);
-    }
-    function display() {
-      var totFilteredRecs = ndx.groupAll().value();
-      var end = ofs + pag > totFilteredRecs ? totFilteredRecs : ofs + pag;
-      d3.select("#begin").text(end === 0 ? ofs : ofs + 1);
-      d3.select("#end").text(end);
-      d3.select("#last").attr("disabled", ofs - pag < 0 ? "true" : null);
-      d3.select("#next").attr(
-        "disabled",
-        ofs + pag >= totFilteredRecs ? "true" : null
-      );
-      d3.select("#size").text(totFilteredRecs);
-      if (totFilteredRecs != ndx.size()) {
-        d3.select("#totalsize").text("(filtered Total: " + ndx.size() + " )");
-      } else {
-        d3.select("#totalsize").text("");
-      }
-    }
-    function next() {
-      ofs += pag;
-      update_offset();
-      datatabel.redraw();
-    }
-    function last() {
-      ofs -= pag;
-      update_offset();
-      datatabel.redraw();
-    }
     resizing(chart);
   });
   const Chartheader = () => {
@@ -624,7 +495,7 @@ const SeriesChart = ({ params }) => {
 
   return (
     <Grid item>
-      <Grid item className="cardbox">
+      <Grid item className="cardbox chartbox">
         <Chartheader />
         <div
           style={{
@@ -634,22 +505,6 @@ const SeriesChart = ({ params }) => {
           id="Charts"
         >
           <div ref={div} className="boxcenter"></div>
-        </div>
-      </Grid>
-      <Grid
-        item
-        className="cardbox"
-        style={{ display: params.Width_ === null ? "none" : "block" }}
-      >
-        <div id="table-scroll" className="table-scroll">
-          <div className="table-wrap">
-            <table ref={div1} className="main-table"></table>
-          </div>
-          <div id="paging" style={{ float: "right" }}>
-            Showing <span id="begin"></span>-<span id="end"></span> of{" "}
-            <span id="size"></span>{" "}
-            <span id="totalsize" style={{ display: "none" }}></span>
-          </div>
         </div>
       </Grid>
     </Grid>

@@ -19,6 +19,14 @@ import styled from "@emotion/styled";
 import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
 import { Button } from "@mui/material";
 
+// imported mui icins
+import DashboardIcon from "@mui/icons-material/InsertChart";
+import DatasetIcon from "@mui/icons-material/Dataset";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+
+// imported datasetTable js for datatable
+import DatasetTable from "../Components/DatasetTable";
+
 const ChartBlock = ({ enable, state }) => {
   if (!state) state = [{}];
   const BootstrapTooltip = styled(({ className, ...props }) => (
@@ -32,6 +40,8 @@ const ChartBlock = ({ enable, state }) => {
       backgroundColor: "black",
     },
   }));
+
+  const [Tab, setTab] = React.useState({ Chart: true });
 
   const saveChart = () => {
     // domtoimage.toPng(
@@ -53,6 +63,7 @@ const ChartBlock = ({ enable, state }) => {
         console.error("oops, something went wrong!", error);
       });
   };
+
   const exportInputs = () => {
     var copystate = {};
     var PieChart = ["Innerradius", "SlicesCap", "ExternalRadiusPadding"];
@@ -170,55 +181,26 @@ const ChartBlock = ({ enable, state }) => {
     URL.revokeObjectURL(href);
   };
 
+  useEffect(() => {
+    handleTapChange("Chart");
+  }, [enable]);
+
+  const handleTapChange = (action) => {
+    if (action === "Chart") {
+      setTab({ Chart: true, DataSet: false });
+    } else {
+      setTab({ DataSet: true, Chart: false });
+    }
+  };
   const Chart = useCallback(
     ({ enable, state }) => {
       //console.log('Rendered')
       return (
         <>
-          <div className="row col-xs-12 col-sm-12 col-md-12 col-lg-12 container-Inputs">
-            <div className="row col-xs-1 col-sm-8 col-md-8 col-lg-8"></div>
-            {state.Chart !== undefined ? (
-              <div
-                className="row col-xs-12 col-sm-4 col-md-4 col-lg-4"
-                style={{ padding: "5px", height: "5vh" }}
-              >
-                <div className="col-xs-5 col-sm-8 col-md-8 col-lg-8">
-                  <BootstrapTooltip
-                    title="Download"
-                    TransitionComponent={Fade}
-                    TransitionProps={{ timeout: 600 }}
-                    placement="bottom"
-                  >
-                    <DownloadIcon
-                      style={{ float: "right", cursor: "pointer" }}
-                      onClick={saveChart}
-                      className="Icon_"
-                    />
-                  </BootstrapTooltip>
-                </div>
-                <div className="col-xs-1 col-sm-4 col-md-4 col-lg-4">
-                  <BootstrapTooltip
-                    title="Export Inputs"
-                    TransitionComponent={Fade}
-                    TransitionProps={{ timeout: 600 }}
-                    placement="bottom"
-                  >
-                    <Button
-                      variant="contained"
-                      className="exptbutton"
-                      style={{ backgroundColor: "#6282b3" }}
-                      onClick={exportInputs}
-                    >
-                      Export
-                    </Button>
-                  </BootstrapTooltip>
-                </div>
-              </div>
-            ) : (
-              ""
-            )}
-          </div>
-          <div style={{ backgroundColor: "#e9ecef" }}>
+          <div
+            className="chart-container"
+            style={{ backgroundColor: "#e9ecef" }}
+          >
             {state.Chart === "Bar Chart" && <BarChart params={state} />}
             {state.Chart === "Pie Chart" && <PieChart params={state} />}
             {state.Chart === "ScatterPlot" && <Scatter params={state} />}
@@ -240,7 +222,108 @@ const ChartBlock = ({ enable, state }) => {
 
   return (
     <>
-      <Chart enable={enable} state={state} />
+      <div className="">
+        <div className=""></div>
+        {state.Chart !== undefined ? (
+          <div
+            className="row col-xs-12 col-sm-4 col-md-4 col-lg-4"
+            style={{
+              padding: "5px",
+              height: "5vh",
+              display: "flex",
+              width: "100%",
+              flexDirection: "row-reverse",
+              marginBottom: "10px",
+            }}
+          >
+            <div
+              className="Dash-icon"
+              onClick={() => handleTapChange("DataSet")}
+              style={{
+                width: "10%",
+                cursor: "pointer",
+                background: `${Tab.DataSet ? "#6282b3" : "#e2e2e2"}`,
+              }}
+            >
+              <BootstrapTooltip
+                title="DataSet"
+                TransitionComponent={Fade}
+                TransitionProps={{ timeout: 600 }}
+                placement="bottom"
+              >
+                <DatasetIcon fontSize="large" />
+              </BootstrapTooltip>
+            </div>
+            <div
+              className="Dash-icon"
+              onClick={() => handleTapChange("Chart")}
+              style={{
+                width: "10%",
+                cursor: "pointer",
+                background: `${Tab.Chart ? "#6282b3" : "#e2e2e2"}`,
+              }}
+            >
+              <BootstrapTooltip
+                title="Chart"
+                TransitionComponent={Fade}
+                TransitionProps={{ timeout: 600 }}
+                placement="bottom"
+              >
+                <DashboardIcon fontSize="large" />
+              </BootstrapTooltip>
+            </div>
+
+            <div
+              className="Dash-icon"
+              style={{ width: "10%", cursor: "pointer" }}
+            >
+              <BootstrapTooltip
+                title="Download"
+                TransitionComponent={Fade}
+                TransitionProps={{ timeout: 600 }}
+                placement="bottom"
+              >
+                <DownloadIcon
+                  // style={{ float: "right", cursor: "pointer" }}
+                  onClick={saveChart}
+                  className="Icon_"
+                />
+              </BootstrapTooltip>
+            </div>
+            <div
+              className="Dash-icon"
+              style={{ width: "10%", cursor: "pointer" }}
+              onClick={exportInputs}
+            >
+              <BootstrapTooltip
+                title="Export Inputs"
+                TransitionComponent={Fade}
+                TransitionProps={{ timeout: 600 }}
+                placement="bottom"
+              >
+                {/* <Button
+                  variant="contained"
+                  // className="exptbutton"
+                  style={{ backgroundColor: "#6282b3" }}
+                  onClick={exportInputs}
+                >
+                  Export
+                </Button> */}
+                <ExitToAppIcon fontSize="large" />
+              </BootstrapTooltip>
+            </div>
+          </div>
+        ) : (
+          ""
+        )}
+      </div>
+
+      {Tab.Chart && <Chart enable={enable} state={state} />}
+      {state.Chart !== undefined && Tab.DataSet && (
+        <div>
+          <DatasetTable params={state.Uploaded_file} filter={false} />
+        </div>
+      )}
     </>
   );
 };
