@@ -8,7 +8,6 @@ import { legend } from "dc";
 const SunBurstChart = ({ params }) => {
   console.log("sunburst chart is rendering .....");
   const div = React.useRef(null);
-  const div1 = React.useRef(null);
   React.useEffect(() => {
     var div2 = d3
       .selectAll(".boxcenter")
@@ -39,7 +38,7 @@ const SunBurstChart = ({ params }) => {
         // else if (XAxis.length === 3) return [d[XAxis[0]], d[XAxis[1]], d[XAxis[2]]];
         // else if (XAxis.length === 2) return [d[XAxis[0]], d[XAxis[1]]];
         // else if (XAxis.length === 1) return [d[XAxis[0]]];
-        
+
         var dimensionArray = [];
         for (var i = 0; i < XAxis.length; i++) {
           dimensionArray.push(d[XAxis[i]]);
@@ -55,13 +54,13 @@ const SunBurstChart = ({ params }) => {
     var table_ = ndx.dimension(function (d) {
       return [fmt(+d[params.XAxis]), fmt(+d[params.YAxis])];
     });
-    var SunBurst, datatabel;
+    var SunBurst;
     if (params.Width_ !== null) {
       SunBurst = new dc.sunburstChart(div.current);
-      datatabel = new dc.dataTable(div1.current);
+      // datatabel = new dc.dataTable(div1.current);
     } else {
       SunBurst = new dc.sunburstChart(div.current, "Chart");
-      datatabel = new dc.dataTable(div1.current, "Table");
+      // datatabel = new dc.dataTable(div1.current, "Table");
     }
     SunBurst.width(params.Width_)
       .height(params.Height_)
@@ -84,21 +83,7 @@ const SunBurstChart = ({ params }) => {
           })
       );
     }
-    datatabel
-      .width(300)
-      .height(480)
-      .dimension(table_)
-      .size(Infinity)
-      .showSections(false)
-      .columns(
-        params.GroupByCopy_.map((e) => e.split(" ").slice(1, 30).join(" "))
-      )
-      //.sortBy(function (d) { return [fmt(+d.Expt), fmt(+d.Run)]; })
-      .order(d3.ascending)
 
-      .on("preRender", update_offset)
-      .on("preRedraw", update_offset)
-      .on("pretransition", display);
     if (params.Width_ !== null) dc.renderAll();
     else dc.renderAll("Chart");
 
@@ -190,51 +175,6 @@ const SunBurstChart = ({ params }) => {
     };
     let resizing = (chart) => (window.onresize = () => sizing(chart));
 
-    var ofs = 0,
-      pag = 100;
-    function update_offset() {
-      var totFilteredRecs = ndx.groupAll().value();
-      var end = ofs + pag > totFilteredRecs ? totFilteredRecs : ofs + pag;
-      if (ofs == undefined || pag == undefined) {
-        ofs = 0;
-        pag = totFilteredRecs;
-      }
-      ofs =
-        ofs >= totFilteredRecs
-          ? Math.floor((totFilteredRecs - 1) / pag) * pag
-          : ofs;
-      ofs = ofs < 0 ? 0 : ofs;
-      datatabel.beginSlice(ofs);
-      datatabel.endSlice(ofs + pag);
-    }
-    function display() {
-      var totFilteredRecs = ndx.groupAll().value();
-      var end = ofs + pag > totFilteredRecs ? totFilteredRecs : ofs + pag;
-      d3.select("#begin").text(end === 0 ? ofs : ofs + 1);
-      d3.select("#end").text(end);
-      d3.select("#last").attr("disabled", ofs - pag < 0 ? "true" : null);
-      d3.select("#next").attr(
-        "disabled",
-        ofs + pag >= totFilteredRecs ? "true" : null
-      );
-      d3.select("#size").text(totFilteredRecs);
-      if (totFilteredRecs != ndx.size()) {
-        d3.select("#totalsize").text("(filtered Total: " + ndx.size() + " )");
-      } else {
-        d3.select("#totalsize").text("");
-      }
-    }
-    function next() {
-      ofs += pag;
-      update_offset();
-      datatabel.redraw();
-    }
-    function last() {
-      ofs -= pag;
-      update_offset();
-      datatabel.redraw();
-    }
-
     resizing(SunBurst);
   });
 
@@ -268,28 +208,13 @@ const SunBurstChart = ({ params }) => {
           style={{
             backgroundColor: params.Pieswatch === "show" ? params.BGColor : "",
           }}
+          id="Charts"
         >
           <div
             // style={{ height: "50vh" }}
             ref={div}
             className="boxcenter"
           ></div>
-        </div>
-      </Grid>
-      <Grid
-        item
-        className="cardbox chartbox"
-        style={{ display: params.Width_ === null ? "none" : "block" }}
-      >
-        <div id="table-scroll" className="table-scroll">
-          <div className="table-wrap">
-            <table ref={div1} className="main-table"></table>
-          </div>
-          <div id="paging" style={{ float: "right" }}>
-            Showing <span id="begin"></span>-<span id="end"></span> of{" "}
-            <span id="size"></span>{" "}
-            <span id="totalsize" style={{ display: "none" }}></span>
-          </div>
         </div>
       </Grid>
     </Grid>

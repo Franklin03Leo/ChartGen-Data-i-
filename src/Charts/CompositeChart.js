@@ -13,7 +13,7 @@ const d3 = {
 
 const Compose = ({ params }) => {
   const div = React.useRef(null);
-  const div1 = React.useRef(null);
+  // const div1 = React.useRef(null);
   // let compositeChart = null
   React.useEffect(() => {
     var experiments = {};
@@ -173,7 +173,7 @@ const Compose = ({ params }) => {
     if (params.Width_ !== null)
       compositeChart = new dc.compositeChart(div.current);
     else compositeChart = new dc.compositeChart(div.current, "CompositeChart");
-    var datatabel = new dc.dataTable(div1.current);
+    // var datatabel = new dc.dataTable(div1.current);
     var max = Math.max(...experiments);
     let barPadding;
     const BAR_PADDING = 0.1;
@@ -414,30 +414,6 @@ const Compose = ({ params }) => {
         return BMK(v);
       });
 
-    datatabel
-      .width(300)
-      .height(480)
-      .dimension(table_)
-      //  .group(function (d) { return d.Region })
-      .size(Infinity)
-      .group(function (d) {
-        return "";
-      })
-      .showGroups(false)
-      .showSections(false)
-
-      .columns(
-        params.GroupByCopy_.map((e) => e.split(" ").slice(1, 30).join(" "))
-      )
-      .sortBy(function (d) {
-        return [fmt(+d.Region)];
-      })
-      .order(d3.ascending)
-
-      .on("preRender", update_offset)
-      .on("preRedraw", update_offset)
-      .on("pretransition", display);
-
     if (params.Width_ !== null) dc.renderAll();
     else dc.renderAll("CompositeChart");
     // dc.redrawAll();
@@ -542,13 +518,6 @@ const Compose = ({ params }) => {
         color += letters[Math.floor(Math.random() * letters.length)];
       }
       return color;
-
-      // var colorCode = "1234567890abcdef";
-      // var color = "#";
-      // for (var i = 0; i < 6; i++) {
-      //     color += colorCode.charAt(Math.floor(Math.random() * colorCode.length));
-      // }
-      // return color
     }
     function BMK(labelValue) {
       // Nine Zeroes for Billions
@@ -561,57 +530,6 @@ const Compose = ({ params }) => {
         Math.abs(Number(labelValue)) >= 1.0e3
         ? Math.abs(Number(labelValue)) / 1.0e3 + "K"
         : Math.abs(Number(labelValue));
-    }
-    var ofs = 0,
-      pag = 100;
-
-    function update_offset() {
-      var totFilteredRecs = ndx.groupAll().value();
-      pag = totFilteredRecs;
-      var end = ofs + pag > totFilteredRecs ? totFilteredRecs : ofs + pag;
-      if (ofs == undefined || pag == undefined) {
-        ofs = 0;
-        pag = totFilteredRecs;
-      }
-      ofs =
-        ofs >= totFilteredRecs
-          ? Math.floor((totFilteredRecs - 1) / pag) * pag
-          : ofs;
-      ofs = ofs < 0 ? 0 : ofs;
-      datatabel.beginSlice(ofs);
-      datatabel.endSlice(ofs + pag);
-    }
-    function display() {
-      var totFilteredRecs = ndx.groupAll().value();
-      var end = ofs + pag > totFilteredRecs ? totFilteredRecs : ofs + pag;
-      d3.select("#begin").text(end === 0 ? ofs : ofs + 1);
-      d3.select("#end").text(end);
-      d3.select("#last").attr("disabled", ofs - pag < 0 ? "true" : null);
-      d3.select("#next").attr(
-        "disabled",
-        ofs + pag >= totFilteredRecs ? "true" : null
-      );
-      d3.select("#size").text(totFilteredRecs);
-      if (totFilteredRecs != ndx.size()) {
-        d3.select("#totalsize").text("(filtered Total: " + ndx.size() + " )");
-      } else {
-        d3.select("#totalsize").text("");
-      }
-
-      // d3.selectAll('rect.bar')
-      // .on('click',function(d){
-      //     return d.currentTarget.__data__.layer+
-      // })
-    }
-    function next() {
-      ofs += pag;
-      update_offset();
-      datatabel.redraw();
-    }
-    function last() {
-      ofs -= pag;
-      update_offset();
-      datatabel.redraw();
     }
   });
   React.useEffect(() => {});
@@ -656,25 +574,10 @@ const Compose = ({ params }) => {
             backgroundColor:
               params.Compositeswatch === "show" ? params.BGColor : "",
           }}
+          id="Charts"
         >
           <div ref={div} className="boxcenter"></div>
           {/* id="Charts" */}
-        </div>
-      </Grid>
-      <Grid
-        item
-        className="cardbox chartbox"
-        style={{ display: params.Width_ === null ? "none" : "block" }}
-      >
-        <div id="table-scroll" className="table-scroll">
-          <div className="table-wrap">
-            <table ref={div1} className="main-table"></table>
-          </div>
-          <div id="paging" style={{ float: "right" }}>
-            Showing <span id="begin"></span>-<span id="end"></span> of{" "}
-            <span id="size"></span>{" "}
-            <span id="totalsize" style={{ display: "none" }}></span>
-          </div>
         </div>
       </Grid>
     </Grid>

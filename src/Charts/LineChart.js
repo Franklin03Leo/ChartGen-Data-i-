@@ -7,7 +7,6 @@ import { red } from "@material-ui/core/colors";
 
 const LineChart = ({ params }) => {
   const div = React.useRef(null);
-  const div1 = React.useRef(null);
 
   React.useEffect(() => {
     var div2 = d3
@@ -141,14 +140,14 @@ const LineChart = ({ params }) => {
       return [fmt(+d[params.XAxis]), fmt(+d[params.YAxis])];
     });
 
-    var chart, datatabel;
+    var chart; //, datatabel;
 
     if (params.Width_ !== null) {
-      datatabel = new dc.dataTable(div1.current);
+      // datatabel = new dc.dataTable(div1.current);
       chart = new dc.lineChart(div.current);
     } else {
       chart = new dc.lineChart(div.current, "LineChart");
-      datatabel = new dc.dataTable(div1.current);
+      // datatabel = new dc.dataTable(div1.current);
     }
 
     let PadTop,
@@ -272,22 +271,6 @@ const LineChart = ({ params }) => {
       return BMK(v);
     });
 
-    datatabel
-      .width(300)
-      .height(480)
-      .dimension(table_)
-      .size(Infinity)
-      .showSections(false)
-      .columns(
-        params.GroupByCopy_.map((e) => e.split(" ").slice(1, 30).join(" "))
-      )
-      //  .sortBy(function (d) { return [fmt(+d.Expt), fmt(+d.Run)]; })
-      .order(d3.ascending)
-
-      .on("preRender", update_offset)
-      .on("preRedraw", update_offset)
-      .on("pretransition", display);
-
     if (params.Width_ !== null) dc.renderAll();
     else dc.renderAll("LineChart");
     d3.select("body").on("mouseover", function () {
@@ -374,51 +357,6 @@ const LineChart = ({ params }) => {
         ? Math.abs(Number(labelValue)) / 1.0e3 + "K"
         : Math.abs(Number(labelValue));
     }
-    var ofs = 0,
-      pag = 100;
-
-    function update_offset() {
-      var totFilteredRecs = ndx.groupAll().value();
-      var end = ofs + pag > totFilteredRecs ? totFilteredRecs : ofs + pag;
-      if (ofs == undefined || pag == undefined) {
-        ofs = 0;
-        pag = totFilteredRecs;
-      }
-      ofs =
-        ofs >= totFilteredRecs
-          ? Math.floor((totFilteredRecs - 1) / pag) * pag
-          : ofs;
-      ofs = ofs < 0 ? 0 : ofs;
-      datatabel.beginSlice(ofs);
-      datatabel.endSlice(ofs + pag);
-    }
-    function display() {
-      var totFilteredRecs = ndx.groupAll().value();
-      var end = ofs + pag > totFilteredRecs ? totFilteredRecs : ofs + pag;
-      d3.select("#begin").text(end === 0 ? ofs : ofs + 1);
-      d3.select("#end").text(end);
-      d3.select("#last").attr("disabled", ofs - pag < 0 ? "true" : null);
-      d3.select("#next").attr(
-        "disabled",
-        ofs + pag >= totFilteredRecs ? "true" : null
-      );
-      d3.select("#size").text(totFilteredRecs);
-      if (totFilteredRecs != ndx.size()) {
-        d3.select("#totalsize").text("(filtered Total: " + ndx.size() + " )");
-      } else {
-        d3.select("#totalsize").text("");
-      }
-    }
-    function next() {
-      ofs += pag;
-      update_offset();
-      datatabel.redraw();
-    }
-    function last() {
-      ofs -= pag;
-      update_offset();
-      datatabel.redraw();
-    }
 
     resizing(chart);
   });
@@ -461,30 +399,10 @@ const LineChart = ({ params }) => {
           style={{
             backgroundColor: params.Lineswatch === "show" ? params.BGColor : "",
           }}
+          id="Charts"
         >
           <div ref={div} className="boxcenter"></div>
           {/* id="Charts" */}
-        </div>
-      </Grid>
-      <Grid
-        item
-        className="cardbox chartbox"
-        xs={12}
-        sm={12}
-        md={12}
-        xl={12}
-        lg={12}
-        style={{ display: params.Width_ === null ? "none" : "block" }}
-      >
-        <div id="table-scroll" className="table-scroll">
-          <div className="table-wrap">
-            <table ref={div1} className="main-table"></table>
-          </div>
-          <div id="paging" style={{ float: "right" }}>
-            Showing <span id="begin"></span>-<span id="end"></span> of{" "}
-            <span id="size"></span>{" "}
-            <span id="totalsize" style={{ display: "none" }}></span>
-          </div>
         </div>
       </Grid>
     </Grid>

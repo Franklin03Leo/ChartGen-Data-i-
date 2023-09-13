@@ -3,7 +3,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const nodemailer = require("nodemailer");
 const app = express();
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
+const ObjectId = require("mongodb").ObjectID;
 const saltRounds = 10; // Number of salt rounds
 // const { Charts } = require('./Config/Models');
 mongoose.set("strictQuery", true);
@@ -23,7 +24,7 @@ app.use(
 );
 app.use(bodyParser.json({ limit: `50mb` }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
-const url = "mongodb://localhost:27017/Spectra";
+const url = "mongodb://localhost:27017/Data(i)";
 var transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -106,6 +107,27 @@ app.post("/GetTemplate/", (req, res) => {
       });
   }
 });
+
+app.post("/GetSingleTemplate", (req, res) => {
+  let data = req.body;
+  console.log("result   ====> ", data);
+  connect();
+  db.collection("charts")
+    .findOne({ _id: ObjectId(data.id) })
+    .then((result) => {
+      if (result) {
+        res.status(200).send(result);
+      } else {
+        console.log("Template not found");
+        res.status(404).send("Not Found");
+      }
+    })
+    .catch((error) => {
+      console.error("Error while querying MongoDB:", error);
+      res.status(500).send("Internal Server Error");
+    });
+});
+
 app.post("/InsertTemplate", (req, res) => {
   let data = [];
   data.push(req.body);
@@ -186,47 +208,45 @@ function fnGetNextCount() {
 app.post("/SignupUser/", (req, res) => {
   let data = req.body;
   delete data["Confirmpassword"];
-  bcrypt.hash(data["password"], saltRounds, function(err, hash) {
-  if (err) {
-    console.log(
-      `${error} ===> Error while User Details insertion on ` +
-        new Date().toLocaleString()
-    );
-    res.send("Error"); // Failure
-  } else {
-    // Store 'hash' in your database along with other user data   
-    const encrypted = hash;    
-  connect();
-  fnGetNextCount() // Assuming "userId" is the field you want to auto-increment
-    .then((nextId) => {
-      data._id = nextId + 1;
-      data.createdDate = new Date();
-      data.approvedBy = "";
-      data.approvedDate = "";
-      data.Status = "Registered";
-      data.password = encrypted;     
-      db.collection("UserDetails")
-        .insertOne(data)
-        .then(function () {
-          console.log("User Details inserted"); // Success
-          res.send("Success");
-        })
-        .catch(function (error) {
-          console.log(
-            `${error} ===> Error while User Details insertion on ` +
-              new Date().toLocaleString()
-          );
-          res.send("Error"); // Failure
+  bcrypt.hash(data["password"], saltRounds, function (err, hash) {
+    if (err) {
+      console.log(
+        `${error} ===> Error while User Details insertion on ` +
+          new Date().toLocaleString()
+      );
+      res.send("Error"); // Failure
+    } else {
+      // Store 'hash' in your database along with other user data
+      const encrypted = hash;
+      connect();
+      fnGetNextCount() // Assuming "userId" is the field you want to auto-increment
+        .then((nextId) => {
+          data._id = nextId + 1;
+          data.createdDate = new Date();
+          data.approvedBy = "";
+          data.approvedDate = "";
+          data.Status = "Registered";
+          data.password = encrypted;
+          db.collection("UserDetails")
+            .insertOne(data)
+            .then(function () {
+              console.log("User Details inserted"); // Success
+              res.send("Success");
+            })
+            .catch(function (error) {
+              console.log(
+                `${error} ===> Error while User Details insertion on ` +
+                  new Date().toLocaleString()
+              );
+              res.send("Error"); // Failure
+            });
         });
-    });
-  }
+    }
   });
-    
 });
 app.post("/SigninUser/", (req, res) => {
   let data = req.body;
-  const storedHash = 'hashed_password_from_database'; // Retrieve from your database
-
+  const storedHash = "hashed_password_from_database"; // Retrieve from your database
 
   connect();
   db.collection("UserDetails").findOne(
@@ -240,23 +260,28 @@ app.post("/SigninUser/", (req, res) => {
         );
       } else {
         if (result) {
-          bcrypt.compare(data.password, result.password, function(err, Authresult) {
-            if (err) {
-              // Handle error
-            } else if (Authresult === true) {
-              // Authentication successful
-          res.status(200).send(result);
-          console.log(
-            `${result.Name} Signed in on ` + new Date().toLocaleString()
-          );
-            } else {
-              // Authentication failed
-              res.status(400).send("Error fetching listings!");
-        console.log(
-          `${err} ===> Error while signin on ` + new Date().toLocaleString()
-        );
+          bcrypt.compare(
+            data.password,
+            result.password,
+            function (err, Authresult) {
+              if (err) {
+                // Handle error
+              } else if (Authresult === true) {
+                // Authentication successful
+                res.status(200).send(result);
+                console.log(
+                  `${result.Name} Signed in on ` + new Date().toLocaleString()
+                );
+              } else {
+                // Authentication failed
+                res.status(400).send("Error fetching listings!");
+                console.log(
+                  `${err} ===> Error while signin on ` +
+                    new Date().toLocaleString()
+                );
+              }
             }
-          });          
+          );
         } else {
           res.status(404).send("User not found");
           console.log("Sign in attempt on " + new Date().toLocaleString());
@@ -365,8 +390,8 @@ app.post("/UpdateDashboard", (req, res) => {
           filterProps: data.FilterProps,
           filter: data.Filter,
           selectedFilterDimensions: data.selectedFilterDimensions,
-          Users: data.Users,
-          Groups: data.Groups,
+          // Users: data.Users,
+          // Groups: data.Groups,
         },
       }
     )
