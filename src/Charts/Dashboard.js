@@ -22,6 +22,7 @@ import DashboardIcon from "@mui/icons-material/InsertChart";
 import DatasetIcon from "@mui/icons-material/Dataset";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import CloseIcon from "@mui/icons-material/Close";
 
 //Components
 import BarChart from "../Charts/BarChart";
@@ -986,7 +987,13 @@ const Dashboard = ({ params }) => {
         >
           <Box
             sx={style}
-            style={{ minHeight: "90%", height: "110px", overflow: "scroll" }}
+            style={{
+              minHeight: "90%",
+              height: "110px",
+              overflow: "scroll",
+              paddingTop: "0px",
+              paddingRight: "0px",
+            }}
           >
             <Typography
               id="keep-mounted-modal-title"
@@ -995,13 +1002,17 @@ const Dashboard = ({ params }) => {
             >
               <div className="row col-lg-12" style={{ marginBottom: "10px" }}>
                 <div className="col-lg-11">
-                  <h5>Filter</h5>
+                  <h5 style={{ marginTop: "15px" }}>Filter</h5>
                 </div>
                 <div
                   className="col-lg-1"
-                  style={{ float: "right", cursor: "pointer" }}
+                  style={{
+                    float: "right",
+                    cursor: "pointer",
+                  }}
                 >
-                  <ZoomIn
+                  <CloseIcon
+                    style={{ marginRight: "10px", marginTop: "10px" }}
                     onClick={(e) => {
                       handleFilterClose();
                     }}
@@ -1211,19 +1222,33 @@ const Dashboard = ({ params }) => {
           aria-labelledby="keep-mounted-modal-title"
           aria-describedby="keep-mounted-modal-description"
         >
-          <Box sx={style} style={{ minWidth: "98%", minHeight: "90%" }}>
+          <Box
+            sx={style}
+            style={{
+              minWidth: "98%",
+              minHeight: "90%",
+              paddingTop: "0",
+              paddingRight: "0",
+            }}
+          >
             <Typography
               id="keep-mounted-modal-title"
               variant="h6"
               component="h2"
             >
-              <div className="row col-lg-12">
+              <div className="row col-lg-12" style={{ margin: "20px" }}>
                 <div className="col-lg-11">Preview</div>
                 <div
                   className="col-lg-1"
-                  style={{ float: "right", cursor: "pointer" }}
+                  style={{
+                    cursor: "pointer",
+                    position: "relative",
+                    right: "0px",
+                    bottom: "10px",
+                    textAlign: "center",
+                  }}
                 >
-                  <ZoomIn
+                  <CloseIcon
                     onClick={(e) => {
                       handleClose();
                     }}
@@ -1258,7 +1283,15 @@ const Dashboard = ({ params }) => {
           aria-labelledby="keep-mounted-modal-title"
           aria-describedby="keep-mounted-modal-description"
         >
-          <Box sx={style} style={{ minWidth: "98%", minHeight: "90%" }}>
+          <Box
+            sx={style}
+            style={{
+              minWidth: "98%",
+              minHeight: "90%",
+              paddingTop: "0px",
+              paddingRight: "0px",
+            }}
+          >
             <Typography
               id="keep-mounted-modal-title"
               variant="h6"
@@ -1266,16 +1299,37 @@ const Dashboard = ({ params }) => {
             >
               <div
                 className="col-lg-1"
-                style={{ float: "right", cursor: "pointer" }}
+                style={{
+                  float: "right",
+                  cursor: "pointer",
+                  marginBottom: "20px",
+                  width: "50px",
+                  textAlign: "center",
+                }}
               >
-                <ZoomIn
+                <CloseIcon
+                  style={{
+                    position: "relative",
+                    top: "10px",
+                    right: "0px",
+                    left: "8px",
+                  }}
                   onClick={(e) => {
                     handleClose();
                   }}
                 />
               </div>
             </Typography>
-            <div className="row col-lg-12">{PreviewDataSet()}</div>
+            <div
+              className="row col-lg-12"
+              style={{
+                position: "relative",
+                bottom: "30px",
+                left: "-20px",
+              }}
+            >
+              {PreviewDataSet()}
+            </div>
           </Box>
         </Modal>
       </div>
