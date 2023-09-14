@@ -205,7 +205,7 @@ li.MuiMenuItem-root > span {
 
 .MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded
   > ul.MuiList-root.MuiList-padding.MuiMenu-list {
-  max-height: 200px !important;
+  max-height: 250px !important;
   box-shadow: 0px 4px 15px #00000029 !important;
   border: 1px solid #d1d1d1 !important;
   overflow: inherit !important;
@@ -264,7 +264,7 @@ li.MuiMenuItem-root > span {
 .Mui-disabled {
   color: rgb(103 103 103) !important;
   box-shadow: none;
-  background-color: rgb(0 0 0 / 12%) !important;
+  /* background-color: rgb(0 0 0 / 12%) !important; */
   border: none;
 }
 .tss-bd2lw8-MUIDataTableHeadCell-sortActive,

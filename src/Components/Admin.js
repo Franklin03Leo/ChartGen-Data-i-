@@ -10,10 +10,11 @@ import EditIcon from "@mui/icons-material/ModeRounded";
 import { tooltipClasses } from "@mui/material";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import "../App.css"
+import "../App.css";
 const AdminView = () => {
   const [path, setPath] = React.useState({
     Location: window.location.hostname,
+    Port: process.env.REACT_APP_PORT,
   });
   const [user, setUser] = React.useState({
     userID: sessionStorage.getItem("UserName").split(",")[0],
@@ -41,7 +42,8 @@ const AdminView = () => {
     selectableRows: false,
     useDisplayedRowsOnly: true,
     selectableRowsHeader: false,
-    selectableRowsHideCheckboxes: true   };
+    selectableRowsHideCheckboxes: true,
+  };
 
   let columns = [
     {
@@ -337,7 +339,7 @@ const AdminView = () => {
 
   const handleGetUsers = () => {
     axios
-      .post(`http://${path.Location}:3012/GetUsers`)
+      .post(`http://${path.Location}:${path.Port}/GetUsers`)
       .then((res) => {
         if (res.status === 200) {
           const keys = [
@@ -378,7 +380,7 @@ const AdminView = () => {
     obj["approvedDate"] = new Date();
     obj["approvedBy"] = user["userID"];
     axios
-      .post(`http://${path.Location}:3012/SaveUsers`, obj)
+      .post(`http://${path.Location}:${path.Port}/SaveUsers`, obj)
       .then((res) => {
         if (res.status === 200) {
           toast.success("User detail is updated.", {

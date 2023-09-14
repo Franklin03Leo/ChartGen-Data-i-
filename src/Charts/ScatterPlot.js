@@ -7,7 +7,7 @@ import { legend } from "dc";
 
 const Scatter = ({ params }) => {
   const div = React.useRef(null);
-  const div1 = React.useRef(null);
+  // const div1 = React.useRef(null);
 
   React.useEffect(() => {
     var div2 = d3
@@ -146,10 +146,10 @@ const Scatter = ({ params }) => {
     var chart, datatabel;
     if (params.Width_ !== null) {
       chart = new dc.scatterPlot(div.current);
-      datatabel = new dc.dataTable(div1.current);
+      // datatabel = new dc.dataTable(div1.current);
     } else {
       chart = new dc.scatterPlot(div.current, "scatterPlot");
-      datatabel = new dc.dataTable(div1.current);
+      // datatabel = new dc.dataTable(div1.current);
     }
     let PadTop,
       PadRight,
@@ -164,118 +164,121 @@ const Scatter = ({ params }) => {
     else PadBottom = params.PadBottom;
     if (params.PadLeft === undefined || params.PadLeft === "") PadLeft = 0;
     else PadLeft = params.PadLeft;
-      chart
-          .width(params.Width_)
-          .height(params.Height_)
-          // .height(null)
-          .margins({
-              top: parseInt(10) + parseInt(PadTop),
-              right: parseInt(30) + parseInt(PadRight),
-              bottom: parseInt(50) + parseInt(PadBottom),
-              left: parseInt(30) + parseInt(PadLeft),
-          })
+    chart
+      .width(params.Width_)
+      .height(params.Height_)
+      // .height(null)
+      .margins({
+        top: parseInt(10) + parseInt(PadTop),
+        right: parseInt(30) + parseInt(PadRight),
+        bottom: parseInt(50) + parseInt(PadBottom),
+        left: parseInt(30) + parseInt(PadLeft),
+      })
 
-          .x(
-              d3
-                  .scaleLinear()
-                  .domain([Math.min(...Max), Math.max(...Max) + Math.min(...Max)])
+      .x(
+        d3
+          .scaleLinear()
+          .domain([Math.min(...Max), Math.max(...Max) + Math.min(...Max)])
+      )
+      .brushOn(false)
+      .symbolSize(params.SymbolSize)
+      .clipPadding(10)
+      .dimension(runDimension, params.YAxis)
+      .group(speedSumGroup, params.YAxis)
+      .title(function (y) {
+        var tooltip =
+          params.XAxis +
+          ": " +
+          y.key[0] +
+          "\n" +
+          params.YAxis +
+          ": " +
+          y.key[1];
+
+        return "";
+      })
+      .elasticY(true)
+      .renderLabel(true)
+      .label(function (d) {
+        if (params.LabelsContent === "X") return d.x;
+        else if (params.LabelsContent === "Y") return d.y.toFixed(2);
+        else if (params.LabelsContent === "Title") return params.YAxis;
+      })
+      .renderlet(function (chart) {
+        chart.selectAll("path.symbol").attr("fill", function (d) {
+          if (d != undefined) {
+            if (d.key[1] >= 0) {
+              return params.Scatterswatch === "show" ? params.Color : "#6282b3";
+            } else {
+              return "Red";
+            }
+          }
+        });
+
+        //X-Axis
+        chart
+          .selectAll("g.x g.tick text")
+          .attr(
+            "dx",
+            params.Rotate === undefined || params.Rotate === "" ? "" : "-10"
           )
-          .brushOn(false)
-          .symbolSize(params.SymbolSize)
-          .clipPadding(10)
-          .dimension(runDimension, params.YAxis)
-          .group(speedSumGroup, params.YAxis)
-          .title(function (y) {
-              var tooltip =
-                  params.XAxis +
-                  ": " +
-                  y.key[0] +
-                  "\n" +
-                  params.YAxis +
-                  ": " +
-                  y.key[1];
+          .attr(
+            "text-anchor",
+            params.Rotate === undefined || params.Rotate === "" ? "" : "end"
+          )
+          .attr("transform", `rotate(${params.Rotate})`)
+          .style("font-family", params.xFont)
+          .style("color", params.xColor)
+          .style("font-size", params.xSize + "px");
 
-              return "";
-          })
-          .elasticY(true)
-          .renderLabel(true)
-          .label(function (d) {
-              if (params.LabelsContent === "X") return d.x;
-              else if (params.LabelsContent === "Y") return d.y.toFixed(2);
-              else if (params.LabelsContent === "Title") return params.YAxis;
-          })
-          .renderlet(function (chart) {
-              chart.selectAll("path.symbol").attr("fill", function (d) {
-                  if (d != undefined) {
-                      if (d.key[1] >= 0) {
-                          return params.Scatterswatch === "show" ? params.Color : "#6282b3";
-                      } else {
-                          return "Red";
-                      }
-                  }
-              });
+        //y-Axis
+        chart
+          .selectAll("g.y g.tick text")
+          .attr("dx", "-10")
+          .attr("text-anchor", "end")
+          // .attr('transform', `rotate(${params.Rotate})`)
+          .style("font-family", params.yFont)
+          .style("color", params.yColor)
+          .style("font-size", params.ySize + "px");
 
-              //X-Axis
-              chart
-                  .selectAll("g.x g.tick text")
-                  .attr(
-                      "dx",
-                      params.Rotate === undefined || params.Rotate === "" ? "" : "-10"
-                  )
-                  .attr(
-                      "text-anchor",
-                      params.Rotate === undefined || params.Rotate === "" ? "" : "end"
-                  )
-                  .attr("transform", `rotate(${params.Rotate})`)
-                  .style("font-family", params.xFont)
-                  .style("color", params.xColor)
-                  .style("font-size", params.xSize + "px");
+        //X-Axis Label
+        chart
+          .selectAll(".x-axis-label")
+          .style("font-family", params.xlFont)
+          .style("fill", params.xlColor)
+          .style("font-size", params.xlSize + "px")
+          .style(
+            "display",
+            params.Axesswatch === undefined ? "none" : params.Axesswatch
+          );
 
-              //y-Axis
-              chart
-                  .selectAll("g.y g.tick text")
-                  .attr("dx", "-10")
-                  .attr("text-anchor", "end")
-                  // .attr('transform', `rotate(${params.Rotate})`)
-                  .style("font-family", params.yFont)
-                  .style("color", params.yColor)
-                  .style("font-size", params.ySize + "px");
+        //Y-Axis Label
+        chart
+          .selectAll(".y-axis-label")
+          .style("font-family", params.ylFont)
+          .style("fill", params.ylColor)
+          .style("font-size", params.ylSize + "px")
+          .style(
+            "display",
+            params.Axesswatch === undefined ? "none" : params.Axesswatch
+          );
 
-              //X-Axis Label
-              chart
-                  .selectAll(".x-axis-label")
-                  .style("font-family", params.xlFont)
-                  .style("fill", params.xlColor)
-                  .style("font-size", params.xlSize + "px")
-                  .style(
-                      "display",
-                      params.Axesswatch === undefined ? "none" : params.Axesswatch
-                  );
-
-              //Y-Axis Label
-              chart
-                  .selectAll(".y-axis-label")
-                  .style("font-family", params.ylFont)
-                  .style("fill", params.ylColor)
-                  .style("font-size", params.ylSize + "px")
-                  .style(
-                      "display",
-                      params.Axesswatch === undefined ? "none" : params.Axesswatch
-                  );
-
-              chart
-                  .selectAll(".barLabel")
-                  .style("font-family", params.LabelsFont)
-                  .style("fill", params.LabelsColor)
-                  .style("font-size", params.Labelsize + "px")
-                  .style(
-                      "display",
-                      params.Labelsswatch !== undefined ? params.Labelsswatch : "none"
-                  );
-          })
-          .yAxisLabel(params.YAxisLabel)
-          .xAxisLabel(params.XAxisLabel)
-          .xAxis().tickFormat(function (d) { return d; });
+        chart
+          .selectAll(".barLabel")
+          .style("font-family", params.LabelsFont)
+          .style("fill", params.LabelsColor)
+          .style("font-size", params.Labelsize + "px")
+          .style(
+            "display",
+            params.Labelsswatch !== undefined ? params.Labelsswatch : "none"
+          );
+      })
+      .yAxisLabel(params.YAxisLabel)
+      .xAxisLabel(params.XAxisLabel)
+      .xAxis()
+      .tickFormat(function (d) {
+        return d;
+      });
     if (params.GroupByCol === "Average") {
       chart.valueAccessor(function (d) {
         return d.value.average;
@@ -290,20 +293,20 @@ const Scatter = ({ params }) => {
     });
     // .legend(new legend().x(0).y(10).itemHeight(13).gap(5).horizontal(true))
 
-    datatabel
-      .width(300)
-      .height(480)
-      .dimension(table_)
-      .size(Infinity)
-      .showSections(false)
-      .columns(
-        params.GroupByCopy_.map((e) => e.split(" ").slice(1, 30).join(" "))
-      )
-      .order(d3.ascending)
+    // datatabel
+    //   .width(300)
+    //   .height(480)
+    //   .dimension(table_)
+    //   .size(Infinity)
+    //   .showSections(false)
+    //   .columns(
+    //     params.GroupByCopy_.map((e) => e.split(" ").slice(1, 30).join(" "))
+    //   )
+    //   .order(d3.ascending)
 
-      .on("preRender", update_offset)
-      .on("preRedraw", update_offset)
-      .on("pretransition", display);
+    //   .on("preRender", update_offset)
+    //   .on("preRedraw", update_offset)
+    //   .on("pretransition", display);
 
     if (params.Width_ !== null) dc.renderAll();
     else dc.renderAll("scatterPlot");
@@ -355,51 +358,6 @@ const Scatter = ({ params }) => {
           div2.transition().duration(500).style("opacity", 0);
         });
     });
-    var ofs = 0,
-      pag = 100;
-
-    function update_offset() {
-      var totFilteredRecs = ndx.groupAll().value();
-      var end = ofs + pag > totFilteredRecs ? totFilteredRecs : ofs + pag;
-      if (ofs == undefined || pag == undefined) {
-        ofs = 0;
-        pag = totFilteredRecs;
-      }
-      ofs =
-        ofs >= totFilteredRecs
-          ? Math.floor((totFilteredRecs - 1) / pag) * pag
-          : ofs;
-      ofs = ofs < 0 ? 0 : ofs;
-      datatabel.beginSlice(ofs);
-      datatabel.endSlice(ofs + pag);
-    }
-    function display() {
-      var totFilteredRecs = ndx.groupAll().value();
-      var end = ofs + pag > totFilteredRecs ? totFilteredRecs : ofs + pag;
-      d3.select("#begin").text(end === 0 ? ofs : ofs + 1);
-      d3.select("#end").text(end);
-      d3.select("#last").attr("disabled", ofs - pag < 0 ? "true" : null);
-      d3.select("#next").attr(
-        "disabled",
-        ofs + pag >= totFilteredRecs ? "true" : null
-      );
-      d3.select("#size").text(totFilteredRecs);
-      if (totFilteredRecs != ndx.size()) {
-        d3.select("#totalsize").text("(filtered Total: " + ndx.size() + " )");
-      } else {
-        d3.select("#totalsize").text("");
-      }
-    }
-    function next() {
-      ofs += pag;
-      update_offset();
-      datatabel.redraw();
-    }
-    function last() {
-      ofs -= pag;
-      update_offset();
-      datatabel.redraw();
-    }
 
     resizing(chart);
   });
@@ -448,25 +406,10 @@ const Scatter = ({ params }) => {
             backgroundColor:
               params.Scatterswatch === "show" ? params.BGColor : "",
           }}
+          id="Charts"
         >
           <div ref={div} className="boxcenter">
             {/* id="Charts" */}
-          </div>
-        </div>
-      </Grid>
-      <Grid
-        item
-        className="cardbox chartbox"
-        style={{ display: params.Width_ === null ? "none" : "block" }}
-      >
-        <div id="table-scroll" className="table-scroll">
-          <div className="table-wrap">
-            <table ref={div1} className="main-table"></table>
-          </div>
-          <div id="paging" style={{ float: "right" }}>
-            Showing <span id="begin"></span>-<span id="end"></span> of{" "}
-            <span id="size"></span>{" "}
-            <span id="totalsize" style={{ display: "none" }}></span>
           </div>
         </div>
       </Grid>

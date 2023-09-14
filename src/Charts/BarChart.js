@@ -11,10 +11,7 @@ const d3 = {
 
 const BarChart = ({ params }) => {
   const [isString, setString] = React.useState(false);
-  const [chartData, setchartData] = React.useState({});
-
   const div = React.useRef(null);
-  const div1 = React.useRef(null);
 
   const IsString_ = (obj) => {
     for (let x in obj) {
@@ -51,10 +48,10 @@ const BarChart = ({ params }) => {
     }
 
     if (params.Width_ !== null) {
-      datatabel = new dc.dataTable(div1.current);
+      // datatabel = new dc.dataTable(div1.current);
       chart = new dc.barChart(div.current);
     } else {
-      datatabel = new dc.dataTable(div1.current, "Table");
+      // datatabel = new dc.dataTable(div1.current, "Table");
       chart = new dc.barChart(div.current, "Barchart");
     }
     chart.title(function (y) {
@@ -201,6 +198,7 @@ const BarChart = ({ params }) => {
       })
       .width(params.Width_ === null ? null : params.Width_)
       .height(params.Height_);
+    // .width(null)
     // .height(null);
     //.useViewBoxResizing(true)
     if (isString === true) {
@@ -246,19 +244,19 @@ const BarChart = ({ params }) => {
     });
     // }
 
-    datatabel
-      .width(300)
-      .height(480)
-      .dimension(table_)
-      .size(Infinity)
-      .showSections(false)
-      .columns(
-        params.GroupByCopy_.map((e) => e.split(" ").slice(1, 20).join(" "))
-      )
-      .order(d3.ascending)
-      .on("preRender", update_offset)
-      .on("preRedraw", update_offset)
-      .on("pretransition", display);
+    // datatabel
+    //   .width(300)
+    //   .height(480)
+    //   .dimension(table_)
+    //   .size(Infinity)
+    //   .showSections(false)
+    //   .columns(
+    //     params.GroupByCopy_.map((e) => e.split(" ").slice(1, 20).join(" "))
+    //   )
+    //   .order(d3.ascending)
+    //   .on("preRender", update_offset)
+    //   .on("preRedraw", update_offset)
+    //   .on("pretransition", display);
 
     if (params.Width_ !== null) dc.renderAll();
     else dc.renderAll("Barchart");
@@ -441,39 +439,39 @@ const BarChart = ({ params }) => {
     var ofs = 0,
       pag = 100;
 
-    function update_offset() {
-      var totFilteredRecs = ndx.groupAll().value();
-      pag = totFilteredRecs;
-      var end = ofs + pag > totFilteredRecs ? totFilteredRecs : ofs + pag;
-      if (ofs == undefined || pag == undefined) {
-        ofs = 0;
-        pag = totFilteredRecs;
-      }
-      ofs =
-        ofs >= totFilteredRecs
-          ? Math.floor((totFilteredRecs - 1) / pag) * pag
-          : ofs;
-      ofs = ofs < 0 ? 0 : ofs;
-      datatabel.beginSlice(ofs);
-      datatabel.endSlice(ofs + pag);
-    }
-    function display() {
-      var totFilteredRecs = ndx.groupAll().value();
-      var end = ofs + pag > totFilteredRecs ? totFilteredRecs : ofs + pag;
-      d3.select("#begin").text(end === 0 ? ofs : ofs + 1);
-      d3.select("#end").text(end);
-      d3.select("#last").attr("disabled", ofs - pag < 0 ? "true" : null);
-      d3.select("#next").attr(
-        "disabled",
-        ofs + pag >= totFilteredRecs ? "true" : null
-      );
-      d3.select("#size").text(totFilteredRecs);
-      if (totFilteredRecs != ndx.size()) {
-        d3.select("#totalsize").text("(filtered Total: " + ndx.size() + " )");
-      } else {
-        d3.select("#totalsize").text("");
-      }
-    }
+    // function update_offset() {
+    //   var totFilteredRecs = ndx.groupAll().value();
+    //   pag = totFilteredRecs;
+    //   var end = ofs + pag > totFilteredRecs ? totFilteredRecs : ofs + pag;
+    //   if (ofs == undefined || pag == undefined) {
+    //     ofs = 0;
+    //     pag = totFilteredRecs;
+    //   }
+    //   ofs =
+    //     ofs >= totFilteredRecs
+    //       ? Math.floor((totFilteredRecs - 1) / pag) * pag
+    //       : ofs;
+    //   ofs = ofs < 0 ? 0 : ofs;
+    //   datatabel.beginSlice(ofs);
+    //   datatabel.endSlice(ofs + pag);
+    // }
+    // function display() {
+    //   var totFilteredRecs = ndx.groupAll().value();
+    //   var end = ofs + pag > totFilteredRecs ? totFilteredRecs : ofs + pag;
+    //   d3.select("#begin").text(end === 0 ? ofs : ofs + 1);
+    //   d3.select("#end").text(end);
+    //   d3.select("#last").attr("disabled", ofs - pag < 0 ? "true" : null);
+    //   d3.select("#next").attr(
+    //     "disabled",
+    //     ofs + pag >= totFilteredRecs ? "true" : null
+    //   );
+    //   d3.select("#size").text(totFilteredRecs);
+    //   if (totFilteredRecs != ndx.size()) {
+    //     d3.select("#totalsize").text("(filtered Total: " + ndx.size() + " )");
+    //   } else {
+    //     d3.select("#totalsize").text("");
+    //   }
+    // }
     // function next() {
     //   ofs += pag;
     //   update_offset();
@@ -515,36 +513,15 @@ const BarChart = ({ params }) => {
 
   return (
     <Grid item xs={12} md={12} xl={12} lg={12}>
-      <Grid item className="cardbox chartbox" style={{ padding: "0px 10px" }}>
+      <Grid item className="cardbox" style={{ padding: "0px 10px" }}>
         <Chartheader />
         <div
           style={{
             backgroundColor: params.Barswatch === "show" ? params.BGColor : "",
           }}
+          id="Charts"
         >
           <div ref={div} className="boxcenter"></div>
-        </div>
-      </Grid>
-
-      <Grid
-        item
-        className="cardbox chartbox"
-        style={{
-          padding: "5px 15px 0px 15px",
-          display: params.Width_ === null ? "none" : "block",
-        }}
-      >
-        {/* <input id="last" className="btn" type="Button" value="Last" />
-          <input id="next" className="btn" type="button" value="Next" /> */}
-        <div id="table-scroll" className="table-scroll">
-          <div className="table-wrap">
-            <table ref={div1} className="main-table"></table>
-          </div>
-          <div id="paging" style={{ float: "right" }}>
-            Showing <span id="begin"></span>-<span id="end"></span> of{" "}
-            <span id="size"></span>{" "}
-            <span id="totalsize" style={{ display: "none" }}></span>
-          </div>
         </div>
       </Grid>
     </Grid>

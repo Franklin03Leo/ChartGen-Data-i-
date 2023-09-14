@@ -8,7 +8,7 @@ import d3tip from "d3-tip";
 import { legend } from "dc";
 const BarLineChart = ({ params }) => {
   const div = React.useRef(null);
-  const div1 = React.useRef(null);
+  // const div1 = React.useRef(null);
   const d3 = {
     ...d3module,
     tip: d3tip,
@@ -29,7 +29,7 @@ const BarLineChart = ({ params }) => {
       );
 
     var ndx;
-    var datatabel = new dc.dataTable(div1.current);
+    // var datatabel = new dc.dataTable(div1.current);
 
     // var experiments = params.Uploaded_file;
     var experiments = {};
@@ -284,8 +284,13 @@ const BarLineChart = ({ params }) => {
             "text-anchor",
             params.Rotate === undefined || params.Rotate === "" ? "" : "end"
           )
-         // .attr("transform", `rotate(${params.Rotate})`)
-          .attr("transform",  params.Rotate === undefined || params.Rotate === "" ? "" : `rotate(${params.Rotate})`)
+          // .attr("transform", `rotate(${params.Rotate})`)
+          .attr(
+            "transform",
+            params.Rotate === undefined || params.Rotate === ""
+              ? ""
+              : `rotate(${params.Rotate})`
+          )
           .style("font-family", params.xFont)
           .style("color", params.xColor)
           .style("font-size", params.xSize + "px");
@@ -346,19 +351,19 @@ const BarLineChart = ({ params }) => {
       .tickFormat(function (v) {
         return v;
       });
-    datatabel
-      .width(300)
-      .height(480)
-      .dimension(table_)
-      .size(Infinity)
-      .showSections(false)
-      .columns(
-        params.GroupByCopy_.map((e) => e.split(" ").slice(1, 30).join(" "))
-      )
-      .order(d3.ascending)
-      .on("preRender", update_offset)
-      .on("preRedraw", update_offset)
-      .on("pretransition", display);
+    // datatabel
+    //   .width(300)
+    //   .height(480)
+    //   .dimension(table_)
+    //   .size(Infinity)
+    //   .showSections(false)
+    //   .columns(
+    //     params.GroupByCopy_.map((e) => e.split(" ").slice(1, 30).join(" "))
+    //   )
+    //   .order(d3.ascending)
+    //   .on("preRender", update_offset)
+    //   .on("preRedraw", update_offset)
+    //   .on("pretransition", display);
 
     if (params.Width_ !== null) dc.renderAll();
     else dc.renderAll("BarLineChart");
@@ -386,7 +391,7 @@ const BarLineChart = ({ params }) => {
               "<div><div><b>" +
                 params.XAxis +
                 "</b> : " +
-                d.target.__data__.x.toFixed(2) +
+                Number(d.target.__data__.x).toFixed(2) +
                 "</div><div>"
             );
           } else if (params.TooltipContent === "Y") {
@@ -423,7 +428,7 @@ const BarLineChart = ({ params }) => {
                 "<div><div><b>" +
                   params.XAxis +
                   "</b> : " +
-                  d.target.__data__.x.toFixed(2) +
+                  Number(d.target.__data__.x).toFixed(2) +
                   "</div><div><b>" +
                   params.YAxis +
                   "</b> : " +
@@ -564,39 +569,39 @@ const BarLineChart = ({ params }) => {
     var ofs = 0,
       pag = 100;
 
-    function update_offset() {
-      var totFilteredRecs = ndx.groupAll().value();
-      // pag = totFilteredRecs;
-      var end = ofs + pag > totFilteredRecs ? totFilteredRecs : ofs + pag;
-      if (ofs == undefined || pag == undefined) {
-        ofs = 0;
-        pag = totFilteredRecs;
-      }
-      ofs =
-        ofs >= totFilteredRecs
-          ? Math.floor((totFilteredRecs - 1) / pag) * pag
-          : ofs;
-      ofs = ofs < 0 ? 0 : ofs;
-      datatabel.beginSlice(ofs);
-      datatabel.endSlice(ofs + pag);
-    }
-    function display() {
-      var totFilteredRecs = ndx.groupAll().value();
-      var end = ofs + pag > totFilteredRecs ? totFilteredRecs : ofs + pag;
-      d3.select("#begin").text(end === 0 ? ofs : ofs + 1);
-      d3.select("#end").text(end);
-      d3.select("#last").attr("disabled", ofs - pag < 0 ? "true" : null);
-      d3.select("#next").attr(
-        "disabled",
-        ofs + pag >= totFilteredRecs ? "true" : null
-      );
-      d3.select("#size").text(totFilteredRecs);
-      if (totFilteredRecs != ndx.size()) {
-        d3.select("#totalsize").text("(filtered Total: " + ndx.size() + " )");
-      } else {
-        d3.select("#totalsize").text("");
-      }
-    }
+    // function update_offset() {
+    //   var totFilteredRecs = ndx.groupAll().value();
+    //   // pag = totFilteredRecs;
+    //   var end = ofs + pag > totFilteredRecs ? totFilteredRecs : ofs + pag;
+    //   if (ofs == undefined || pag == undefined) {
+    //     ofs = 0;
+    //     pag = totFilteredRecs;
+    //   }
+    //   ofs =
+    //     ofs >= totFilteredRecs
+    //       ? Math.floor((totFilteredRecs - 1) / pag) * pag
+    //       : ofs;
+    //   ofs = ofs < 0 ? 0 : ofs;
+    //   datatabel.beginSlice(ofs);
+    //   datatabel.endSlice(ofs + pag);
+    // }
+    // function display() {
+    //   var totFilteredRecs = ndx.groupAll().value();
+    //   var end = ofs + pag > totFilteredRecs ? totFilteredRecs : ofs + pag;
+    //   d3.select("#begin").text(end === 0 ? ofs : ofs + 1);
+    //   d3.select("#end").text(end);
+    //   d3.select("#last").attr("disabled", ofs - pag < 0 ? "true" : null);
+    //   d3.select("#next").attr(
+    //     "disabled",
+    //     ofs + pag >= totFilteredRecs ? "true" : null
+    //   );
+    //   d3.select("#size").text(totFilteredRecs);
+    //   if (totFilteredRecs != ndx.size()) {
+    //     d3.select("#totalsize").text("(filtered Total: " + ndx.size() + " )");
+    //   } else {
+    //     d3.select("#totalsize").text("");
+    //   }
+    // }
     // function next() {
     //   ofs += pag;
     //   update_offset();
@@ -643,18 +648,17 @@ const BarLineChart = ({ params }) => {
           style={{
             backgroundColor: params.Barswatch === "show" ? params.BGColor : "",
           }}
+          id="Charts"
         >
           <div ref={div} className="boxcenter"></div>
         </div>
       </Grid>
 
-      <Grid
+      {/* <Grid
         item
         className="cardbox chartbox"
         style={{ display: params.Width_ === null ? "none" : "block" }}
       >
-        {/* <input id="last" className="btn" type="Button" value="Last" />
-              <input id="next" className="btn" type="button" value="Next" /> */}
         <div id="table-scroll" className="table-scroll">
           <div className="table-wrap">
             <table ref={div1} className="main-table"></table>
@@ -665,7 +669,7 @@ const BarLineChart = ({ params }) => {
             <span id="totalsize" style={{ display: "none" }}></span>
           </div>
         </div>
-      </Grid>
+      </Grid> */}
     </Grid>
   );
 };

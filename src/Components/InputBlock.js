@@ -108,7 +108,7 @@ const InputArea = ({
 }) => {
   // Global variables declaration
   const ChartType = [
-    "Select",
+    // "Select",
     "Pie Chart",
     "Bar Chart",
     "ScatterPlot",
@@ -222,9 +222,21 @@ const InputArea = ({
   const [disable, isDisable] = React.useState(true);
   const [error, setError] = React.useState({});
   const [state, setState] = React.useState({
+    Chart: "Select",
+    XAxisCopy: "Select",
+    xFont: null,
+    xSize: null,
+    yFont: null,
+    ySize: null,
+    YAxisCopy: "Select",
+
+    TooltipFont: "Arial",
+    TooltipSize: "14",
+    LabelsFont: "Arial",
+    LabelsSize: "14",
     InputType: "Enter Inputs",
     Heigth_: 280,
-    Width_: 600,
+    Width_: 850,
     YAxisPadding: "10",
     SlicesCap: 10,
     Innerradius: 10,
@@ -311,9 +323,9 @@ const InputArea = ({
   const [enablesavebutton, setEnablesavebutton] = React.useState(false);  
   const [path, setPath] = React.useState({
     Location: window.location.hostname,
-  }); //49.204.124.69/
+    Port: process.env.REACT_APP_PORT,
+  });
   const [Dataset, setDataset] = React.useState({});
-  // const [projectAssigning, setProjectAssigning] = React.useState({});
 
   // React state to track order of items
   const [ItemOrderList, setItemOrderList] = React.useState([]);
@@ -322,6 +334,8 @@ const InputArea = ({
   const [filedata, setData] = React.useState({});
   const [play, setPlay] = React.useState({});
   const [show, setIsshow] = React.useState({});
+  // to displays the background color based on click
+  const [clickedIndex, setClickedIndex] = React.useState(null);
   // custom styles
   const BootstrapTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -693,6 +707,11 @@ const InputArea = ({
     if (event.target.name === "Chart") {
       showValidAxis(event.target.value);
     }
+  };
+
+  // to change the background color based on user click
+  const handleBackgroundChange = (index) => {
+    setClickedIndex(index);
   };
 
   //Validations
@@ -1425,14 +1444,6 @@ const InputArea = ({
 
   //Import input process
   const importInputs = (event) => {
-    // if (event.target.files[0] === undefined) {
-    //     setState({
-    //         ...state, 'Uploaded_file': undefined,
-    //         'XAxis_': '',
-    //         'YAxis_': ''
-    //     })
-    // }
-    // else {
     const reader = new FileReader();
     reader.onload = (e) => {
       var data = JSON.parse(e.target.result);
@@ -1594,7 +1605,7 @@ const InputArea = ({
   };
   //Template Save/Cancel
   const saveTemplate = (action) => {
-    alert('hi')
+    debugger;
     if (action !== "cancel") {
       setTemplate({ ...template, [state.TempName]: state });
       setDashboard({
@@ -1610,6 +1621,13 @@ const InputArea = ({
           hideProgressBar: true,
           autoClose: 2000,
         });
+        ChildtoParentHandshake(undefined);
+        setNavbar({ bar: "Templates" });
+        chartReset("Chart_Reset");
+        setState((previous) => ({
+          ...previous,
+          Uploaded_file: undefined,
+        }));
       } else {
         if (formValues.TempName === true || state.TempName === undefined) {
           // Enable validation
@@ -1630,10 +1648,24 @@ const InputArea = ({
         hideProgressBar: true,
         autoClose: 2000,
       });
-      setNavbar({ bar: "Templates" });
       ChildtoParentHandshake(undefined);
+      chartReset("Chart_Reset");
+      setState((previous) => ({
+        ...previous,
+        Uploaded_file: undefined,
+      }));
+      setNavbar({ bar: "Templates" });
     }
   };
+
+  // const handlechageColor = (e) => {
+  //   document
+  //     .querySelectorAll(".dashboard-layout")
+  //     .forEach((element) => (element.style.backgroundColor = "white"));
+  //   let elementid = document.getElementById(e);
+  //   elementid.style.backgroundColor = "rgb(234 234 243)";
+  // };
+
   //Template Edit/Delete
   const handleTemplate = (name, action) => {
     if (action === "Edit") {
@@ -1664,7 +1696,7 @@ const InputArea = ({
       });
 
       axios
-        .post(`http://${path.Location}:3012/DeleteTemplate`, {
+        .post(`http://${path.Location}:${path.Port}/DeleteTemplate`, {
           TempName: name,
           userID: user.userID,
         })
@@ -1917,13 +1949,16 @@ const InputArea = ({
     try {
       if (action === "Update") {
         axios
-          .post(`http://${path.Location}:3012/DeleteTemplate`, {
+          .post(`http://${path.Location}:${path.Port}/DeleteTemplate`, {
             TempName: state.TempName,
             userID: user.userID,
           })
           .then((response) => {
             axios
-              .post(`http://${path.Location}:3012/InsertTemplate`, state)
+              .post(
+                `http://${path.Location}:${path.Port}/InsertTemplate`,
+                state
+              )
               .then((response) => {
                 console.log("data", response.data);
                 GetTemplate();
@@ -1936,7 +1971,7 @@ const InputArea = ({
         const Result = state;
         delete Result._id;
         axios
-          .post(`http://${path.Location}:3012/InsertTemplate`, Result)
+          .post(`http://${path.Location}:${path.Port}/InsertTemplate`, Result)
           .then((response) => {
             console.log("data", response.data);
             GetTemplate();
@@ -1961,7 +1996,7 @@ const InputArea = ({
     )
       document.querySelector(".loader").style.display = "block";
     axios
-      .post(`http://${path.Location}:3012/GetTemplate`, {
+      .post(`http://${path.Location}:${path.Port}/GetTemplate`, {
         userID: user.userID,
         Flag: { action: "All" },
       })
@@ -2009,11 +2044,11 @@ const InputArea = ({
         return;
       }
       axios
-        .post(`http://${path.Location}:3012/InsertFeedback`, feedback)
+        .post(`http://${path.Location}:${path.Port}/InsertFeedback`, feedback)
         .then((response) => {
           console.log("data", response.data);
           axios
-            .get(`http://${path.Location}:3012/GetFeedback`)
+            .get(`http://${path.Location}:${path.Port}/GetFeedback`)
             .then((response) => {
               let data = response.data;
               setPlay({ isPlay: undefined });
@@ -2025,7 +2060,7 @@ const InputArea = ({
         });
     } else {
       axios
-        .get(`http://${path.Location}:3012/GetFeedback/`)
+        .get(`http://${path.Location}:${path.Port}/GetFeedback/`)
         .then((response) => {
           let data = response.data;
           setPlay({ isPlay: undefined });
@@ -2038,10 +2073,6 @@ const InputArea = ({
   };
 
   const handleDashboard = (action, e) => {
-    document
-      .querySelectorAll(".container-template")
-      .forEach((element) => (element.style.backgroundColor = "white"));
-
     if (action === "Save") {
       setOpen({ Dashboard: false });
       PostDashboard("Insert");
@@ -2126,7 +2157,7 @@ const InputArea = ({
       setpostProject(obj);
       document.querySelector(".loader").style.display = "block";
       axios
-        .post(`http://${path.Location}:3012/UpdateDashboard`, obj)
+        .post(`http://${path.Location}:${path.Port}/UpdateDashboard`, obj)
         .then((response) => {
           toast.success("Your Project has been Updated.", {
             position: toast.POSITION.BOTTOM_RIGHT,
@@ -2138,7 +2169,7 @@ const InputArea = ({
     } else if (action === "Delete") {
       document.querySelector(".loader").style.display = "block";
       axios
-        .post(`http://${path.Location}:3012/DeleteDashboard`, {
+        .post(`http://${path.Location}:${path.Port}/DeleteDashboard`, {
           userID: user.userID,
           DashboardName: e.currentTarget.id,
         })
@@ -2160,7 +2191,7 @@ const InputArea = ({
       if (user["Role"] !== "Admin" || Object.keys(dashboard).length === 0) {
         GetTemplate("Dashboard");
         axios
-          .post(`http://${path.Location}:3012/GetTemplate`, {
+          .post(`http://${path.Location}:${path.Port}/GetTemplate`, {
             userID: user.userID,
             Flag: { action: "Specific", charts: Object.values(data.charts) },
           })
@@ -2231,16 +2262,6 @@ const InputArea = ({
       obj.userID = user.userID;
       obj.DashboardName = e.currentTarget.id;
       setpostProject(obj);
-      // let targetClassName =
-      //   e.currentTarget.parentElement.parentElement.parentElement.className;
-      // document
-      //   .querySelectorAll("." + targetClassName)
-      //   .forEach((element) => (element.style.backgroundColor = "white"));
-
-      let element = e.currentTarget.parentElement.parentElement.parentElement;
-      // Change the background color
-      element.style.backgroundColor = "rgb(234 234 243)";
-
       setPlay({ isPlay: undefined });
       setIssues(undefined);
       setIsshow({ ...show, isShow: true, Build: false });
@@ -2286,7 +2307,7 @@ const InputArea = ({
       obj.IndividualFilter = indivialFilter_;
     }
     axios
-      .post(`http://${path.Location}:3012/InsertDashboard`, obj)
+      .post(`http://${path.Location}:${path.Port}/InsertDashboard`, obj)
       .then((response) => {
         GetDashboard();
       });
@@ -2295,7 +2316,7 @@ const InputArea = ({
     if (Object.keys(project).length === 0)
       document.querySelector(".loader").style.display = "block";
     axios
-      .post(`http://${path.Location}:3012/GetDashboard`, {
+      .post(`http://${path.Location}:${path.Port}/GetDashboard`, {
         userID: user["Role"] === "User" ? user["userName"] : user["userID"],
         flag: user["Role"] === "User" ? 1 : 0,
       })
@@ -2329,7 +2350,7 @@ const InputArea = ({
       if (Object.keys(TemplatesCollections).length === 0) {
         document.querySelector(".loader").style.display = "block";
         axios
-          .post(`http://${path.Location}:3012/GetPreDefinedTemplate`)
+          .post(`http://${path.Location}:${path.Port}/GetPreDefinedTemplate`)
           .then((response) => {
             let data = response.data;
             let obj = {};
@@ -2373,14 +2394,16 @@ const InputArea = ({
     obj.filename = name;
     obj.data = data;
     axios
-      .post(`http://${path.Location}:3012/InsertDataSet`, obj)
+      .post(`http://${path.Location}:${path.Port}/InsertDataSet`, obj)
       .then((response) => {
         getDataSet();
       });
   };
   const getDataSet = () => {
     axios
-      .post(`http://${path.Location}:3012/GetDataSet`, { userID: user.userID })
+      .post(`http://${path.Location}:${path.Port}/GetDataSet`, {
+        userID: user.userID,
+      })
       .then((response) => {
         let data = response.data;
         let obj = {};
@@ -2393,7 +2416,7 @@ const InputArea = ({
   const handleDataSet = (action, id) => {
     if (action === "Delete") {
       axios
-        .post(`http://${path.Location}:3012/DeleteDataSet`, {
+        .post(`http://${path.Location}:${path.Port}/DeleteDataSet`, {
           userID: user.userID,
           id: id,
         })
@@ -2407,7 +2430,7 @@ const InputArea = ({
   };
   const handleGetUsers = () => {
     axios
-      .post(`http://${path.Location}:3012/GetUsers`)
+      .post(`http://${path.Location}:${path.Port}/GetUsers`)
       .then((res) => {
         if (res.status === 200) {
           console.log("Users==>", res.data);
@@ -2756,7 +2779,8 @@ const InputArea = ({
         )}
         {param === "Templates" && (
           <div className="" style={{ float: "right" }}>
-            <Button
+            {/*  Commented by Franklin - for phase-1 release */}
+            {/* <Button
               variant="contained"
               margin="normal"
               className="input-field button"
@@ -2773,7 +2797,7 @@ const InputArea = ({
               }}
             >
               New Template
-            </Button>
+            </Button> */}
           </div>
         )}
       </div>
@@ -2810,6 +2834,119 @@ const InputArea = ({
         </Droppable>
       </DragDropContext>
     );
+  };
+
+  // reset the chart details when click the cancel button
+  const chartReset = (action) => {
+    if (action === "Chart_Reset") {
+      setState((prevState) => ({
+        ...prevState,
+        Heigth_: 280,
+        Width_: 850,
+        Chart: "Select", // Reset the value to the default value
+        XAxisCopy: "Select",
+        YAxisCopy: "Select",
+        GroupByCol: "Sum",
+        Rotate: "",
+        xFont: null,
+        xSize: null,
+        yFont: null,
+        ySize: null,
+        xColor: "#000000",
+        YAxisPadding: "10",
+        yColor: "#000000",
+
+        //axes lable
+        Axesswatch_: false,
+        XAxisLabel: "",
+        xlFont: "Arial",
+        xlSize: "14",
+        xlColor: "#000000",
+        YAxisLabel: "",
+        ylFont: "Arial",
+        ylSize: "14",
+        ylColor: "#000000",
+
+        // Title toggle
+        Titleswatch_: false,
+        Title: "",
+        TitleFont: "Arial",
+        TitleSize: "14",
+        TitleColor: "#000000",
+
+        //Lagend
+        Legendswatch_: false,
+        LengendPosition: false,
+        LegendFont: "Arial",
+        LegendSize: "14",
+        LegendColor: "#000000",
+
+        // Tooltip
+        Tooltipswatch_: false,
+        TooltipContent: "All",
+        TooltipFont: "Arial",
+        TooltipSize: "14",
+        TooltipColor: "#ffffff",
+        TooltipBGColor: "#6282b3",
+        TooltipThickness: 0,
+        TooltipTickColor: "#000000",
+
+        //Data Label
+        Labelsswatch_: false,
+        LabelsContent: "X",
+        LabelsFont: "Arial",
+        LabelsSize: "14",
+        LabelsColor: "#000000",
+
+        //pie
+        Innerradius: 10,
+        SlicesCap: 10,
+        ExternalRadiusPadding: 60,
+        Pieswatch_: false,
+        BGColor: "#ffffff",
+
+        // bar
+        Barswatch_: false,
+        PadTop: "",
+        PadBottom: "",
+        PadRight: "",
+        PadLeft: "",
+        Color: "#8495e6",
+
+        //scater
+        SymbolSize: 7,
+        Scatterswatch_: false,
+        Seriesswatch_: false,
+        Compositeswatch_: false,
+        BarLineswatch_: false,
+        LineColor: "#FF0000",
+
+        // barline
+        GroupByCopy: "Select",
+        ryFont: null,
+        ryColor: "#000000",
+        rySize: null,
+
+        //sunbuster
+        SunBurstX_Axis: [],
+        pFont: null,
+        pSize: null,
+        pColor: "#000000",
+      }));
+      ChildtoParentHandshake(undefined);
+    } else {
+      // get the details from database based on id
+      axios
+        .post(`http://${path.Location}:${path.Port}/GetSingleTemplate`, {
+          id: state._id,
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            setState(res.data);
+          }
+        })
+        .catch((error) => {});
+    }
   };
 
   return (
@@ -3076,15 +3213,25 @@ const InputArea = ({
                             handleChange(e);
                             setFlag(false);
                           }}
+                          defaultValue={"Select"}
+                          disabled={flag === true ? true : false}
                         >
+                          <MenuItem key={-1} value={"Select"}>
+                            {"Select"}
+                          </MenuItem>
                           {ChartType.map((option, index) => (
-                            <MenuItem key={option} value={option}>
+                            <MenuItem
+                              key={option}
+                              value={option}
+                              style={{ maxHeight: " 250px !important" }}
+                            >
                               {option}
                             </MenuItem>
                           ))}
                         </TextField>
                       </div>
-                      {/* </div> */}
+
+                      {/* Chart width, height block*/}
                       <div className="row-parent">
                         <div className="row width-lg">
                           <TextField
@@ -3234,7 +3381,7 @@ const InputArea = ({
                                         <MenuItem key={-1} value={"Select"}>
                                           {"Select"}
                                         </MenuItem>
-                                        {state.XAxis_.map((option, index) => (
+                                        {state.XAxis_?.map((option, index) => (
                                           <MenuItem key={option} value={option}>
                                             {option}
                                           </MenuItem>
@@ -3612,14 +3759,16 @@ const InputArea = ({
                                           <MenuItem key={-1} value={"Select"}>
                                             {"Select"}
                                           </MenuItem>
-                                          {state.XAxis_.map((option, index) => (
-                                            <MenuItem
-                                              key={option}
-                                              value={option}
-                                            >
-                                              {option}
-                                            </MenuItem>
-                                          ))}
+                                          {state.XAxis_?.map(
+                                            (option, index) => (
+                                              <MenuItem
+                                                key={option}
+                                                value={option}
+                                              >
+                                                {option}
+                                              </MenuItem>
+                                            )
+                                          )}
                                         </TextField>
                                       </div>
                                       <div
@@ -3776,14 +3925,16 @@ const InputArea = ({
                                           <MenuItem key={-1} value={"Select"}>
                                             {"Select"}
                                           </MenuItem>
-                                          {state.YAxis_.map((option, index) => (
-                                            <MenuItem
-                                              key={option}
-                                              value={option}
-                                            >
-                                              {option}
-                                            </MenuItem>
-                                          ))}
+                                          {state.YAxis_?.map(
+                                            (option, index) => (
+                                              <MenuItem
+                                                key={option}
+                                                value={option}
+                                              >
+                                                {option}
+                                              </MenuItem>
+                                            )
+                                          )}
                                         </TextField>
                                       </div>
                                       <div className="row width-lg removeGutter">
@@ -3991,7 +4142,7 @@ const InputArea = ({
                                           <MenuItem key={-1} value={"Select"}>
                                             {"Select"}
                                           </MenuItem>
-                                          {state.GroupByCopy_.map(
+                                          {state.GroupByCopy_?.map(
                                             (option, index) => (
                                               <MenuItem
                                                 key={option}
@@ -5172,7 +5323,7 @@ const InputArea = ({
                                         <TextField
                                           id="Font"
                                           select
-                                          name="Labelsize"
+                                          name="LabelsSize"
                                           label="Size"
                                           className="input-field "
                                           onChange={(e) => {
@@ -6397,7 +6548,7 @@ const InputArea = ({
                       flag === false ? (
                         <div
                           className="row width-lg"
-                          style={{ marginLeft: "10px" }}
+                          style={{ marginLeft: "3px" }}
                         >
                           <Button
                             id="saveTemp"
@@ -6420,24 +6571,42 @@ const InputArea = ({
                       {navbar.bar === "Charts" &&
                       state.Uploaded_file !== undefined &&
                       flag !== true ? (
-                        <div
-                          className="row width-lg"
-                          style={{ marginLeft: "10px" }}
-                        >
-                          <Button
-                            disabled={disable}
-                            variant="contained"
-                            id="ChartGen"
-                            className="input-field button btn-transparant"
-                            style={{ backgroundColor: "#6282b3" }}
-                            onClick={(e) => {
-                              setProgress({ loader: true });
-                              GenerateChart();
-                            }}
+                        <>
+                          <div
+                            className="row width-lg"
+                            style={{ marginLeft: "10px" }}
                           >
-                            Generate Chart
-                          </Button>
-                        </div>
+                            <Button
+                              disabled={disable}
+                              variant="contained"
+                              id="ChartGen"
+                              className="input-field button btn-transparant"
+                              style={{ backgroundColor: "#6282b3" }}
+                              onClick={(e) => {
+                                setProgress({ loader: true });
+                                GenerateChart();
+                              }}
+                            >
+                              Generate Chart
+                            </Button>
+                          </div>
+                          <div
+                            className="row width-lg"
+                            style={{ marginLeft: "10px" }}
+                          >
+                            <Button
+                              disabled={disable}
+                              variant="contained"
+                              id="CancelChartGen"
+                              className="input-field button btn-transparant"
+                              size="small"
+                              style={{ backgroundColor: "#6282b3" }}
+                              onClick={(e) => chartReset("Chart_Reset")}
+                            >
+                              Reset
+                            </Button>
+                          </div>
+                        </>
                       ) : (
                         ""
                       )}
@@ -6445,8 +6614,18 @@ const InputArea = ({
                       state.Chart !== undefined &&
                       navbar.bar === "Charts" &&
                       flag === true ? (
-                        <>
-                          <div className="row width-mid-md">
+                        <div
+                          style={{
+                            display: "flex",
+                            marginTop: "10px",
+                            flexWrap: "wrap",
+                            width: "100%",
+                          }}
+                        >
+                          <div
+                            className="row width-mid-md"
+                            style={{ width: "22%" }}
+                          >
                             <Button
                               id="saveTemp"
                               variant="contained"
@@ -6462,7 +6641,10 @@ const InputArea = ({
                               Update
                             </Button>
                           </div>
-                          <div className="row width-mid-md">
+                          <div
+                            className="row width-mid-md"
+                            style={{ width: "22%" }}
+                          >
                             <Button
                               id="saveTemp"
                               variant="contained"
@@ -6478,7 +6660,39 @@ const InputArea = ({
                               Cancel
                             </Button>
                           </div>
-                        </>
+                          <div
+                            className="row width-lg"
+                            style={{ marginLeft: "10px", width: "22%" }}
+                          >
+                            <Button
+                              disabled={disable}
+                              variant="contained"
+                              id="CancelChartGen"
+                              className="input-field button btn-transparant"
+                              size="small"
+                              style={{ backgroundColor: "#6282b3" }}
+                              onClick={(e) => chartReset("TemplateReset")}
+                            >
+                              Reset
+                            </Button>
+                          </div>
+                          <div
+                            className="row width-lg"
+                            style={{ marginLeft: "10px", width: "22%" }}
+                          >
+                            <Button
+                              disabled={disable}
+                              variant="contained"
+                              id="CancelChartGen"
+                              className="input-field button btn-transparant"
+                              size="small"
+                              style={{ backgroundColor: "#6282b3" }}
+                              onClick={(e) => GenerateChart()}
+                            >
+                              Preview
+                            </Button>
+                          </div>
+                        </div>
                       ) : (
                         ""
                       )}
@@ -6513,9 +6727,18 @@ const InputArea = ({
                               let Item = [],
                                 AllCharts = [];
                               for (let a in template) {
+                                console.log("template ==> ", a);
                                 if (template[a] !== undefined) {
                                   Item.push(
-                                    <div className="col-lg-12 dashboard-layout">
+                                    <div
+                                      // className="col-lg-12 dashboard-layout"
+                                      className={`col-lg-12 dashboard-layout ${
+                                        clickedIndex === a ? "clicked" : ""
+                                      }`}
+                                      id={a}
+                                      key={a}
+                                      onClick={(e) => handleBackgroundChange(a)}
+                                    >
                                       <div className="row col-lg-12 template-container-title">
                                         <div
                                           className="col-lg-2"
@@ -7616,10 +7839,14 @@ const InputArea = ({
                     if (project[a] !== undefined) {
                       Item.push(
                         <div
-                          className="container-template"
                           id={a}
+                          key={a}
+                          className={`container-template ${
+                            clickedIndex === a ? "clicked" : ""
+                          }`}
                           onClick={(e) => {
                             handleDashboard("Preview", e);
+                            handleBackgroundChange(a);
                           }}
                           style={{ marginLeft: "6px", width: "100%" }}
                         >
@@ -7714,6 +7941,7 @@ const InputArea = ({
                                   className="temp-icon"
                                   onClick={(e) => {
                                     handleDashboard("AssignUser", e);
+                                    handleBackgroundChange(a);
                                   }}
                                 />
                               </BootstrapTooltip>
