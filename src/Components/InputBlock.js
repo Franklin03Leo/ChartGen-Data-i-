@@ -94,6 +94,7 @@ import Bar_outlined from "../../src/Images/Bar-chart-outlined.svg";
 import Pie from "../../src/Images/Pie-chart.svg";
 import Line from "../../src/Images/LineIcon.svg";
 import Scatter from "../../src/Images/Scatter-chart.svg";
+import info from "../../src/Images/icons-info.png";
 
 const InputArea = ({
   ChildtoParentHandshake,
@@ -307,6 +308,7 @@ const InputArea = ({
   const [project, setProject] = React.useState({});
   const [postProject, setpostProject] = React.useState({});
   const [TemplatesCollections, setTemplatesCollections] = React.useState({});
+  const [enablesavebutton, setEnablesavebutton] = React.useState(false);  
   const [path, setPath] = React.useState({
     Location: window.location.hostname,
   }); //49.204.124.69/
@@ -365,6 +367,7 @@ const InputArea = ({
   //useEffects for re-rendering the component
 
   React.useEffect(() => {
+    setEnablesavebutton(false);
     currentPage(navbar["bar"]);
   }, [navbar]);
 
@@ -424,8 +427,8 @@ const InputArea = ({
 
   //Every fields onChange for store the inputs
   const handleChange = (event) => {   
-    sessionStorage.setItem("uploadfilename", '');
-    sessionStorage.setItem("uploadfilename", event.target.files[0].name);
+    setEnablesavebutton(false);   
+    
     if (event.target.name === "file") {
       document.querySelector(".loader").style.display = "block";
 
@@ -438,6 +441,9 @@ const InputArea = ({
         });
         document.querySelector(".loader").style.display = "none";
       } else {
+        sessionStorage.setItem("uploadfilename", '');
+        sessionStorage.setItem("uploadfilename", event.target.files[0].name);
+        setEnablesavebutton(true);
         if (event.target.files[0].type === "text/csv") {
           Papa.parse(event.target.files[0], {
             header: true,
@@ -546,7 +552,6 @@ const InputArea = ({
             const sheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[sheetName];
             const json = xlsx.utils.sheet_to_json(worksheet);
-            debugger;
             var Type = [];
             var Key_ = [];
             Object.values(json[0]).map((value) => {
@@ -1461,6 +1466,51 @@ const InputArea = ({
     reader.readAsText(event.target.files[0]);
     //  }
   };
+  //Save Data..F
+  const SaveData = (event, action) => {
+    try {
+      if (action === "Update") {
+        axios
+          .post(`http://${path.Location}:3012/DeleteTemplate`, {
+            SrcName: sessionStorage.getItem("uploadfilename"),
+            userID: user.userID,
+          })
+          .then((response) => {           
+            state.SrcName = sessionStorage.getItem("uploadfilename");
+            axios
+              .post(`http://${path.Location}:3012/InsertTemplate`, state)
+              .then((response) => {
+                toast.success("Your Data has been Updated", {
+                  position: toast.POSITION.BOTTOM_RIGHT,
+                  hideProgressBar: true,
+                  autoClose: 2000,
+                });
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+          });
+      } else if (action === "Insert") {
+        const Result = state;
+        Result.SrcName = sessionStorage.getItem("uploadfilename");
+        delete Result._id;
+        axios
+          .post(`http://${path.Location}:3012/InsertTemplate`, Result)
+          .then((response) => {
+            toast.success("Your Data has been Saved", {
+              position: toast.POSITION.BOTTOM_RIGHT,
+              hideProgressBar: true,
+              autoClose: 2000,
+            });
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    } catch (error) {
+      console.log("error", error.message);
+    }
+  }
   // Sidebar navigation
   const handleNavbarChange = (event) => {
     var data = event.target.name;
@@ -1544,6 +1594,7 @@ const InputArea = ({
   };
   //Template Save/Cancel
   const saveTemplate = (action) => {
+    alert('hi')
     if (action !== "cancel") {
       setTemplate({ ...template, [state.TempName]: state });
       setDashboard({
@@ -2815,7 +2866,7 @@ const InputArea = ({
               className="row col-xs-12 col-sm-12 col-md-12 col-lg-12"
               style={{ margin: "15px 0px 15px 13px" }}
             >
-              <div className="row col-sm-6 col-md-6 col-lg-5">
+              <div className="row col-sm-6 col-md-6 col-lg-5"  style={{ width: "200px" }}>
                 <TextField
                   error={formValues.InputType.error}
                   helperText={
@@ -2887,7 +2938,10 @@ const InputArea = ({
                   ></input>
                 </label>
               </div>
-
+              <div>
+                <img src={info} style={{ width: "25px" ,margin:"5px" }}></img>
+                {/* <b style={{ color: "#2E89FF" }}>Note: </b> */}
+                Only upload an Excel, CSV, or JSON file.</div>
               {error.invalidFile !== undefined && (
                 <div
                   className="col-xs-3 col-sm-10 col-md-10 col-lg-10"
@@ -2908,8 +2962,11 @@ const InputArea = ({
                   if (Dataset[a] !== undefined) {
                     Item.push(
                       <div className="row col-lg-12 divdataset-body">
-                        <div className="col-lg-5 dataset-name">{a}</div>
-                        <div className="row col-lg-5 dataset-icon">
+                    <BootstrapTooltip title={a} TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom" >
+                        <div className="col-lg-6 dataset-name" style={{ width: "187px" }}>{a}</div>
+                        </BootstrapTooltip>
+                         <div className="row col-lg-4 dataset-icon">
+                        
                           <div
                             className="col-lg-5 dataset-icon_ buttonwid"
                             onClick={(e) => {
@@ -2966,6 +3023,16 @@ const InputArea = ({
                 >
                   Show Data
                 </Button> */}
+                   {enablesavebutton ? (
+                  <Button
+                      variant="contained"
+                      className="input-field button"
+                      style={{ backgroundColor: "#6282b3", float: "right" }}
+                      onClick={(e) => {SaveData(e,"Insert");}}>Save Data</Button>
+                ) : (
+                  ""
+                )}
+                  
               </div>
             </>
           ) : (

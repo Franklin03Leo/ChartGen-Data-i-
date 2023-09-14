@@ -6,5 +6,31 @@
   border: 0 solid rgba(0, 0, 0, .125);
   border-radius: 0.2rem;
 }
+/* Default styles */
+.container {
+  max-height: 420px; /* Set a default max-height */
+  overflow-y: auto; /* Enable vertical scrolling if content overflows */
+}
+
+/* Media query for smaller screens */
+@media (max-width: 768px) {
+  .container {
+    max-height: 300px; /* Adjust max-height for smaller screens */
+  }
+}
+
+/* Media query for even smaller screens */
+@media (max-width: 576px) {
+  .container {
+    max-height: 200px; /* Adjust max-height for even smaller screens */
+  }
+}
+/* Media query for medium-sized screens */
+@media (max-width: 992px) {
+  .container {
+    max-height: 400px; /* Adjust max-height for medium-sized screens */
+      }
+}
+
 
 

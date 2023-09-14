@@ -1,13 +1,15 @@
 import React, { Component } from 'react'
 import * as dc from 'dc';
-import { Tooltip,BarChart, Bar, XAxis, YAxis, Legend } from 'recharts';
+import { Tooltip, BarChart, Bar, XAxis, YAxis, Legend } from 'recharts';
+import "../App.css";
 // import Tooltip from "@mui/material/Tooltip";
 // import BarChart from "../Charts/BarChart";
+
 
 const HistogramChart = ({ params }) => {   
   const chartOptions = {
     //title: 'Charges of subatomic particles',
-    legend: { position: 'top', maxLines: 2 },
+    //legend: { position: 'top', maxLines: 2 },
     colors: ['#5C3292', '#1A8763', '#871B47', '#999999'],
     interpolateNulls: false,
  }

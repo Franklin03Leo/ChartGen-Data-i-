@@ -11,11 +11,12 @@ import TablePagination from "@mui/material/TablePagination";
 import * as statis from "simple-statistics";
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
+import "../Styles/Custom.css";
+
 const Statistics = ({ params }) => {
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [page, setPage] = React.useState(0);
   const [datatype, setDataType] = React.useState({ type: "All" });
-  const [uploadfilename, setuploadfilename] = React.useState({ name: sessionStorage.getItem("uploadfilename") });
   const methods = [
     "Min",
     "Max",
@@ -64,20 +65,24 @@ const Statistics = ({ params }) => {
   let value = {};
   var tabledata = [];
   cols.forEach((event) => {
-    let data = params.map((e) => parseInt(e[event]));
+    let data = params.map((e) => e[event]);
     value.min = formatFixedRate(statis.min(data));
     value.max = formatFixedRate(statis.max(data));
-    value.uniqueCountSorted = formatFixedRate(statis.uniqueCountSorted(data));
+    let sorteddata = data.sort((a, b) => b - a); 
+    value.uniqueCountSorted = formatFixedRate(new Set(data).size);
+    //value.uniqueCountSorted = formatFixedRate(statis.uniqueCountSorted(sorteddata));    
     value.mean = formatFixedRate(statis.mean(data));
     value.median = formatFixedRate(statis.median(data));
     value.mode = formatFixedRate(statis.mode(data));
     value.standardDeviation = formatFixedRate(statis.standardDeviation(data));
-    value.useCount = formatFixedRate(data.length);
-    const nanCount = data.filter(valueCount => isNaN(valueCount)).length;
-    const emptyCount = data.filter(valueCount => valueCount === '' || valueCount === null).length;
-    const undefinedCount = data.filter(valueCount => valueCount === undefined).length;
-    const missCount = nanCount + emptyCount + undefinedCount;
-    value.missingCount = missCount;
+    value.useCount = formatFixedRate(data.length);  
+    // const nanCount = data.filter(valueCount => isNaN(valueCount)).length;
+    // const emptyCount = data.filter(valueCount => valueCount === '' || valueCount === null).length;
+    // const undefinedCount = data.filter(valueCount => valueCount === undefined).length;
+    // const missCount = nanCount + emptyCount + undefinedCount;
+    const missCount = data.filter((val) => val);
+    const missingCount =  data.length =missCount.length
+    value.missingCount = missingCount;
     tabledata.push(value);
     tabledata.map(item => {
        for (const key in item) {
@@ -91,6 +96,7 @@ const Statistics = ({ params }) => {
   });
   return (
     <>
+      <div className="container">
       <div
         className="row col-sm-4 col-md-4 col-lg-3"
         style={{ float: "right" }}
@@ -116,7 +122,9 @@ const Statistics = ({ params }) => {
           ))}
         </TextField>
       </div>
-      <div className="custom-title"><b>Source: {uploadfilename.name} </b></div>
+      
+      <div className="custom-title"><b style={{ color: "#2E89FF" }}>Source:  </b>{sessionStorage.getItem("uploadfilename")}</div>
+    
       <TableContainer component={Paper}>
         <Table
           stickyHeader
@@ -166,7 +174,8 @@ const Statistics = ({ params }) => {
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+        />
+        </div>
     </>
   );
 };

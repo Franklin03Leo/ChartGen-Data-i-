@@ -14,6 +14,7 @@ function CountPlot({ data }) {
     const svg = d3.select(svgRef.current)
       .attr('width', width + margin.left + margin.right)
       .attr('height', height + margin.top + margin.bottom)
+      .attr('color', 'grey') 
       .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
@@ -33,6 +34,7 @@ function CountPlot({ data }) {
       .data(Array.from(counts.entries()))
       .enter().append('rect')
       .attr('class', 'bar')
+      .attr('fill','#8884d8')
       .attr('x', d => xScale(d[0]))
       .attr('y', d => yScale(d[1]))
       .attr('width', xScale.bandwidth())

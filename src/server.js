@@ -138,6 +138,28 @@ app.post("/DeleteTemplate", (req, res) => {
       ); // Failure
     });
 });
+
+app.post("/GetDict/", (req, res) => {
+  connect();
+  console.log('connected')
+  db.collection("charts")
+  .find({SrcName: req.body.SrcName, userID: req.body.userID })
+    .toArray(function (err, result) {
+      if (err) {
+        res
+          .status(400)
+          .send(
+            `${err} ===> Error fethcing projects on ` +
+              new Date().toLocaleString()
+          );
+      } else {
+        res.json(result);
+        console.log("Dictionary Data Fetched");
+      }
+    });
+});
+
+   
 // =================== FEEDBACK =======================
 app.get("/GetFeedback/", (req, res) => {
   connect();
@@ -155,6 +177,30 @@ app.get("/GetFeedback/", (req, res) => {
         res.json(result);
         console.log("Feedback fetched");
       }
+    });
+});
+
+// update the assigned user details
+app.post("/InsertDataDict/", (req, res) => {
+  let data = req.body;
+  connect();
+  db.collection("charts")
+    .updateOne(
+      { SrcName: data[0].SrcName, userID: data[0].userID },
+      {
+        $set: {
+          DictionaryDataSet: data[1]
+        },
+      }
+    )
+    .then(function () {
+      res.status(200).send("Success");
+    })
+    .catch(function (error) {
+      console.log(
+        `${error} ===> Error while Assigning User on ` +
+          new Date().toLocaleString()
+      );
     });
 });
 app.post("/InsertFeedback/", (req, res) => {
@@ -251,14 +297,13 @@ app.post("/SigninUser/", (req, res) => {
           );
             } else {
               // Authentication failed
-              res.status(400).send("Error fetching listings!");
-        console.log(
-          `${err} ===> Error while signin on ` + new Date().toLocaleString()
-        );
+              res.status(404).send("Password Incorrect");
+        console.log("Sign in attempt on " + new Date().toLocaleString());
+        
             }
           });          
         } else {
-          res.status(404).send("User not found");
+          res.status(422).send("UserDetails not found");
           console.log("Sign in attempt on " + new Date().toLocaleString());
         }
       }

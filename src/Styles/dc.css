@@ -1262,7 +1262,13 @@ input:checked + .slider:before {
   visibility: visible;
   opacity: 1;
 }
-
+.divdataset-body:hover div.dataset-icon {
+  visibility: visible;
+  opacity: 1;
+}
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
 .dataset-icon_ {
   margin: 0px 5px;
   background-color: #b8c3ff;
@@ -1279,7 +1285,6 @@ input:checked + .slider:before {
   text-overflow: ellipsis;
   overflow: hidden;
 }
-
 .MuiList-root.MuiList-padding {
   padding-top: 0 !important;
   padding-bottom: 0 !important;

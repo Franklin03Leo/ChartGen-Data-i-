@@ -277,3 +277,10 @@ li.MuiMenuItem-root > span {
 .custom-title{
   text-align: initial;
 }
+.recharts-legend-wrapper{
+  display: none;
+}
+.recharts-surface{
+  width: 90px !important;
+  height: 50px !important;
+}
