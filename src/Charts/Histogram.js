@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import * as dc from 'dc';
-import { Tooltip, BarChart, Bar, XAxis, YAxis, Legend } from 'recharts';
+import { Tooltip, BarChart, Bar, XAxis, YAxis, Legend, ResponsiveContainer } from 'recharts';
 import "../App.css";
 // import Tooltip from "@mui/material/Tooltip";
 // import BarChart from "../Charts/BarChart";
@@ -48,56 +48,18 @@ for (let i = 0; i < numberOfBins; i++) {
    else  dc.renderAll("HistogramChart");
    //render() {
   return (
-    <BarChart width={200} height={100} data={bins}>
+    <ResponsiveContainer  width="100%" height= {600} >
+      <BarChart data={bins}>
             <XAxis dataKey="binStart" />
             <YAxis />
-            <Tooltip />
+            <Tooltip cursor={false} />
             <Legend />
             <Bar dataKey="count" fill="#8884d8" />
         </BarChart>
-      
-    // <div className="container mt-5">
-    //    {/* <div>{HistogramData}</div> */}
-    //         <Chart
-    //            width={'150px'}
-    //            height={'75px'}
-    //            chartType="Histogram"
-    //            loader={<div>Loading Chart</div>}
-    //            data={HistogramData}
-    //            options={chartOptions}
-    //            rootProps={{ 'data-testid': '5' }}
-    //         />
-    //          {/* <BarChart width={150} height={100} data={params}  options={chartOptions}>
-    //         <XAxis dataKey="name" />
-    //         <YAxis />
-    //         <Tooltip />
-    //         <Legend />           
-           
-    //     </BarChart> */}
-    //    {/* <Chart/> */}
-    //      </div>
-      )
-   //}
+    </ResponsiveContainer>
+    )
+  }
 
-  
-}
-// class HistogramChart extends Component {
-//   render() {
-//     return (
-//       <div className="container mt-5">
-//         <Chart
-//           width={'150px'}
-//           height={'75px'}
-//           chartType="Histogram"
-//           loader={<div>Loading Chart</div>}
-//           data={HistogramData}
-//           options={chartOptions}
-//           rootProps={{ 'data-testid': '5' }}
-//         />
-//       </div>
-//     )
-//   }
-// }
 export default HistogramChart;
 //export default React.memo(HistogramChart);
 // //****************************** */

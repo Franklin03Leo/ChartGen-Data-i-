@@ -1512,3 +1512,8 @@ input:checked + .slider:before {
 .clicked {
   background-color: rgb(234 234 243);
 }
+
+.recharts-surface{
+  width: 1200px !important;
+    height: 600px !important;
+}

@@ -5,15 +5,15 @@ function CountPlot({ data }) {
   const svgRef = useRef(null);
 
   useEffect(() => {
-    if (data.length === 0) return;
+    if (data?.length === 0) return;
 
     const margin = { top: 20, right: 30, bottom: 40, left: 40 };
-    const width = 250 - margin.left - margin.right;
-    const height = 150 - margin.top - margin.bottom;
+    const width = 1300 //- margin.left - margin.right;
+    const height = 500 //- margin.top - margin.bottom;
 
     const svg = d3.select(svgRef.current)
-      .attr('width', width + margin.left + margin.right)
-      .attr('height', height + margin.top + margin.bottom)
+      .attr('width', 1300)
+      .attr('height', 700)
       .attr('color', 'grey') 
       .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);

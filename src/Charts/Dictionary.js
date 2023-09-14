@@ -93,6 +93,7 @@ const Dictionary = ({ params }) => {
     displayname: "",
     column: "",
   });
+  const [countplotdata, setcountplotdata] = React.useState([]);
   const [path, setPath] = React.useState({
     Location: window.location.hostname,
   }); //49.204.124.69/
@@ -118,8 +119,7 @@ const Dictionary = ({ params }) => {
   const handleOpen_Count = (index, data) => {
     setOpencount({ CountPlot: true });
     setIndex({ i: index });
-    sethistogramdata(data);
-    console.log("sethistogramdata ==>", histogramdata);
+    setcountplotdata(data);
     // PreviewDataSet("count", data);
   };
 
@@ -189,8 +189,13 @@ const Dictionary = ({ params }) => {
                 />
               </div>
             </Typography>
-            <div className="row col-lg-12">
-              <CountPlot params={histogramdata} />
+            <div className="row col-lg-12"
+            style={{
+              height: "80vh",
+              width: "100%",
+              alignItems: "center"
+            }}>
+              <CountPlot data={countplotdata} />
             </div>
           </Box>
         </Modal>

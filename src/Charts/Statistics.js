@@ -40,7 +40,7 @@ const Statistics = ({ params }) => {
   const formatFixedRate = (fixeddata) => {    
     const stringData = fixeddata.toString();
     if (stringData.includes('.')) {
-      return fixeddata.toFixed(2);  // Format price to two decimal places
+      return Number(fixeddata).toFixed(2);  // Format price to two decimal places
     }
     return fixeddata;   
   };
@@ -65,6 +65,7 @@ const Statistics = ({ params }) => {
   let value = {};
   var tabledata = [];
   cols.forEach((event) => {
+    console.log("eventevent", event)
     let data = params.map((e) => e[event]);
     value.min = formatFixedRate(statis.min(data));
     value.max = formatFixedRate(statis.max(data));
@@ -81,7 +82,7 @@ const Statistics = ({ params }) => {
     // const undefinedCount = data.filter(valueCount => valueCount === undefined).length;
     // const missCount = nanCount + emptyCount + undefinedCount;
     const missCount = data.filter((val) => val);
-    const missingCount =  data.length =missCount.length
+    const missingCount =  data.length - missCount.length
     value.missingCount = missingCount;
     tabledata.push(value);
     tabledata.map(item => {
