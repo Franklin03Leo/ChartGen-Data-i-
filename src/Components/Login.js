@@ -171,6 +171,16 @@ const Login = () => {
 
     window.addEventListener("keydown", handleKeyPress);
 
+    if (window.location.pathname === "/Forgot") {
+        setPage("Forgot");
+      // const iduser = window.location.search.split('=')
+      // const key = generateRandomKey();
+      // console.log('key '+key)
+      // const emailadd = decryptEmail(iduser[1],key);    
+      // alert(emailadd)
+      // console.log('testtt '+JSON.stringify(emailadd))
+    }
+    else {  setPage("Login"); }
     // return () => {
     //     window.removeEventListener('keydown', handleKeyPress);
     // };
@@ -354,6 +364,29 @@ const Login = () => {
       setError({ ...error, Disable: false });
     }
   };
+  function generateRandomKey() {
+    // Generate a random key (you can use a more secure method)
+    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+  } 
+  function encrypt(text, key) {
+    // Perform encryption logic (replace with your encryption algorithm)
+    // For simplicity, we'll use a basic XOR operation here
+    let encryptedText = '';
+    for (let i = 0; i < text.length; i++) {
+      encryptedText += String.fromCharCode(text.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+    }
+    return encryptedText;
+  }
+  function decryptEmail(encryptedEmail, key) {
+    // Decrypt the email address using the provided key
+    const decryptedEmail = decrypt(encryptedEmail, key);
+  
+    return decryptedEmail;
+  }
+  function decrypt(text, key) {
+    // Perform decryption logic (must be the inverse of the encryption algorithm)
+    return encrypt(text, key); // In this example, decryption is the same as encryption (XOR operation)
+  }
 
   const handlePost = (page) => {
     if (page === "Sign Up") {
@@ -538,6 +571,68 @@ const Login = () => {
           }
         });
     }
+    else if (page === "Reset") {
+      if (!forgotuser?.["FuserID"]) {
+        setvalidation({
+          ...validation,
+          FuserID: {
+            ...validation.FuserID,
+            error: true,
+            errorMessage: "Please Enter the UserId",
+          },
+        });
+      } else {
+        setvalidation({
+          ...validation,
+          FuserID: {
+            ...validation.FuserID,
+            error: false,
+            errorMessage: "Please enter",
+          },
+        });
+      }
+      if (
+        !forgotuser?.["FuserID"]
+      ) {
+        setError({ ...error, Disable: true });
+        return;
+      } else {
+        setError({ ...error, Disable: false });
+      }
+      axios
+      .post(`http://${path.Location}:${path.Port}/sendMail`, forgotuser)
+        .then((res) => {
+          debugger
+            if (res.status === 2) {
+          toast.error("User is InActive, Unable to Reset your Password.", {
+            position: toast.POSITION.BOTTOM_RIGHT,
+            hideProgressBar: true,
+            autoClose: 2000,
+          });          
+        }          
+        if (res.status === 200) {
+          toast.success("Please check your mail.", {
+            position: toast.POSITION.BOTTOM_RIGHT,
+            hideProgressBar: true,
+            autoClose: 2000,
+          });          
+        }
+       }
+      )
+      .catch((error) => {
+        if (error.response.status === 404) {
+          alert("Please contact administrator!!!");
+        }
+        if (error.response.status === 303) { 
+          toast.error("Email Id does not exist.", {
+        position: toast.POSITION.BOTTOM_RIGHT,
+        hideProgressBar: true,
+        autoClose: 2000,
+      });
+      }
+      });
+      
+     }
   };
 
   const CheckUser = () => {
@@ -655,7 +750,7 @@ const Login = () => {
                     className="forgot"
                     color="#717171"
                     onClick={(e) => {
-                      setPage("Forgot");
+                      setPage("Reset");
                     }}
                   >
                     Forgot your Password?
@@ -690,6 +785,65 @@ const Login = () => {
                       }}
                     >
                       Sign up
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+             {page === "Reset" && (
+              <div className="container-page">
+                <h5 className="page-title">Reset password</h5>
+                <div className="row col-lg-12">
+                  <TextField
+                    error={validation.FuserID.error}
+                    helperText={
+                      validation.FuserID.error &&
+                      validation.FuserID.errorMessage
+                    }
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton edge="end" tabIndex={-1}>
+                            <User />
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                    id="userId"
+                    className="input-field"
+                    name="FuserID"
+                    label="Email Address"
+                    variant="outlined"
+                    margin="dense"
+                    onChange={(e) => {
+                      handleDetails(e, "Forgot");
+                    }}
+                  />
+                </div> 
+                <div className="row col-lg-12 login-btn">
+                  <Button
+                    id="saveTemp"
+                    variant="contained"
+                    disableRipple
+                    className="input-field button"
+                    style={{ backgroundColor: "#6282b3" }}
+                    disabled={error["Disable"]}
+                    onClick={(e) => {
+                      handlePost("Reset");
+                    }}
+                  >
+                    Reset Password
+                  </Button>
+                </div>
+                <div className="row line-space" style={{ float: "right" }}>
+                  <div style={{ fontSize: "11px" }}>
+                    <span
+                      className="forgot"
+                      onClick={(e) => {
+                        setPage("Login");
+                      }}
+                    >
+                      Sign in
                     </span>
                   </div>
                 </div>
