@@ -1486,14 +1486,14 @@ const InputArea = ({
     try {
       if (action === "Update") {
         axios
-          .post(`http://${path.Location}:3012/DeleteTemplate`, {
+          .post(`http://${path.Location}:${path.Port}/DeleteTemplate`, {
             SrcName: sessionStorage.getItem("uploadfilename"),
             userID: user.userID,
           })
           .then((response) => {           
             state.SrcName = sessionStorage.getItem("uploadfilename");
             axios
-              .post(`http://${path.Location}:3012/InsertTemplate`, state)
+              .post(`http://${path.Location}:${path.Port}/InsertTemplate`, state)
               .then((response) => {
                 toast.success("Your Data has been Updated", {
                   position: toast.POSITION.BOTTOM_RIGHT,
@@ -1510,7 +1510,7 @@ const InputArea = ({
         Result.SrcName = sessionStorage.getItem("uploadfilename");
         delete Result._id;
         axios
-          .post(`http://${path.Location}:3012/InsertTemplate`, Result)
+          .post(`http://${path.Location}:${path.Port}/InsertTemplate`, Result)
           .then((response) => {
             toast.success("Your Data has been Saved", {
               position: toast.POSITION.BOTTOM_RIGHT,

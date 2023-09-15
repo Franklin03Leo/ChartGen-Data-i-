@@ -256,7 +256,7 @@ const Dictionary = ({ params }) => {
   const init = () => {
     //Assinging the data to Table Data...
     axios
-      .post(`http://${path.Location}:3012/GetDict`, {
+      .post(`http://${path.Location}:${path.Port}/GetDict`, {
         SrcName: sessionStorage.getItem("uploadfilename"),
         userID: user.userID,
       })
@@ -356,7 +356,7 @@ const Dictionary = ({ params }) => {
   };
   const SaveChangeData = (tabledata) => {
     axios
-      .post(`http://${path.Location}:3012/GetDict`, {
+      .post(`http://${path.Location}:${path.Port}/GetDict`, {
         SrcName: sessionStorage.getItem("uploadfilename"),
         userID: user.userID,
       })
@@ -379,7 +379,7 @@ const Dictionary = ({ params }) => {
           });
           finaltabledata.push(tabledata);
           axios
-            .post(`http://${path.Location}:3012/InsertDataDict`, finaltabledata)
+            .post(`http://${path.Location}:${path.Port}/InsertDataDict`, finaltabledata)
             .then((response) => {
               if (response.status === 200) {
                 toast.success("Saved Sucessfully", {
