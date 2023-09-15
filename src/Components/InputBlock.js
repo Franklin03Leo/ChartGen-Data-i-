@@ -336,6 +336,7 @@ const InputArea = ({
   const [show, setIsshow] = React.useState({});
   // to displays the background color based on click
   const [clickedIndex, setClickedIndex] = React.useState(null);
+  const [fileevent, setfileevent] = React.useState(null);
   // custom styles
   const BootstrapTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -441,6 +442,7 @@ const InputArea = ({
 
   //Every fields onChange for store the inputs
   const handleChange = (event) => {   
+    setfileevent(event)
     setEnablesavebutton(false);   
     
     if (event.target.name === "file") {
@@ -2414,7 +2416,19 @@ const InputArea = ({
       });
   };
   const handleDataSet = (action, id) => {
+    if (fileevent != null && fileevent != '' && fileevent != undefined) {
+      if (fileevent.target.files[0] != '' && fileevent.target.files[0] != undefined) {
+        setState({
+          ...state,
+          Uploaded_file: undefined,
+          XAxis_: "",
+          YAxis_: "",
+        });
+        document.querySelector(".loader").style.display = "none";
+      }
+    }
     if (action === "Delete") {
+      setEnablesavebutton(false);
       axios
         .post(`http://${path.Location}:${path.Port}/DeleteDataSet`, {
           userID: user.userID,
@@ -2424,6 +2438,8 @@ const InputArea = ({
           getDataSet();
         });
     } else if (action === "Use") {
+      setEnablesavebutton(true);
+      sessionStorage.setItem("uploadfilename", id);
       setState({ ...state, Uploaded_file: Dataset[id] });
       setData({ data: Dataset[id] });
     }
@@ -3004,7 +3020,7 @@ const InputArea = ({
               style={{ margin: "15px 0px 15px 13px" }}
             >
               <div className="row col-sm-6 col-md-6 col-lg-5"  style={{ width: "200px" }}>
-                <TextField
+                {/* <TextField
                   error={formValues.InputType.error}
                   helperText={
                     formValues.InputType.error &&
@@ -3026,13 +3042,13 @@ const InputArea = ({
                   {/* <MenuItem key={1} value={"Import Inputs"}>
                     Import Inputs
                   </MenuItem> */}
-                  <MenuItem key={2} value={"Enter Inputs"}>
+                  {/* <MenuItem key={2} value={"Enter Inputs"}>
                     Enter Inputs
                   </MenuItem>
                   <MenuItem key={3} value={"Available Dataset"}>
                     Available Dataset
                   </MenuItem>
-                </TextField>
+                </TextField> */} 
               </div>
               {state.InputType === "Import Inputs" ||
               state.InputType === undefined ? (
@@ -3140,10 +3156,29 @@ const InputArea = ({
           ) : (
             ""
           )}
-          {state.Uploaded_file !== undefined &&
-          state.InputType === "Enter Inputs" &&
+          {//state.Uploaded_file !== undefined &&
+          // state.InputType === "Enter Inputs" &&
           navbar.bar === "Data" ? (
-            <>
+              <>
+                {/* <div className="row width-lg" style={{ marginLeft: "10px" }}>
+                <Button
+                        variant="contained"
+                        className="input-field button"
+                        style={{ backgroundColor: "#6282b3", float: "left" }}
+                        onClick={(e) => {SaveData(e,"Insert");}}>Available Dataset</Button>
+                          </div>
+                <div className="row width-lg" style={{ marginLeft: "10px" }}>
+                {enablesavebutton ? (                    
+                    <Button
+                        variant="contained"
+                        className="input-field button"
+                        style={{ backgroundColor: "#6282b3", float: "right" }}
+                        onClick={(e) => {SaveData(e,"Insert");}}>Save Data</Button>
+                  ) : (
+                    ""
+                  )}
+                            
+                          </div> */}
               <div
                 className="row col-sm-6 col-md-3 col-lg-5"
                 style={{ margin: "15px" }}
@@ -3171,6 +3206,50 @@ const InputArea = ({
                 )}
                   
               </div>
+                <div className="custom-title"><b>Available Dataset</b>
+                {(() => {
+                let Item = [];
+                for (let a in Dataset) {
+                  if (Dataset[a] !== undefined) {
+                    Item.push(
+                      <div className="row col-lg-12 divdataset-body">
+                    <BootstrapTooltip title={a} TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom" >
+                        <div className="col-lg-6 dataset-name" style={{ width: "187px" }}>{a}</div>
+                        </BootstrapTooltip>
+                         <div className="row col-lg-4 dataset-icon">
+                        
+                          <div
+                            className="col-lg-5 dataset-icon_ buttonwid"
+                            onClick={(e) => {
+                              handleDataSet("Use", a);
+                            }}
+                          >
+                            Use
+                          </div>
+                          <div
+                            className="col-lg-5 dataset-icon_ buttonwid"
+                            onClick={(e) => {
+                              handleDataSet("Delete", a);
+                            }}
+                          >
+                            Delete
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }
+                }
+                if (Item.length === 0) {
+                  Item.push(
+                    <div className="row col-lg-12 divdataset-body">
+                      <div className="col-lg-10 dataset-name">
+                        No Dataset Found !!!
+                      </div>
+                    </div>
+                  );
+                }
+                return Item;
+              })()}</div>
             </>
           ) : (
             ""
