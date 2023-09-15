@@ -602,16 +602,36 @@ const Login = () => {
       axios
       .post(`http://${path.Location}:${path.Port}/sendMail`, forgotuser)
         .then((res) => {
-          debugger
-            if (res.status === 2) {
-          toast.error("User is InActive, Unable to Reset your Password.", {
+          if (res.data === 'InActive') {
+            toast.error("User is InActive, Unable to Reset your Password.", {
             position: toast.POSITION.BOTTOM_RIGHT,
             hideProgressBar: true,
             autoClose: 2000,
           });          
-        }          
-        if (res.status === 200) {
-          toast.success("Please check your mail.", {
+          }  
+          if (res.data === 'Registered') {
+              toast.error("User is UnApproved, Unable to Reset your Password.", {
+              position: toast.POSITION.BOTTOM_RIGHT,
+              hideProgressBar: true,
+              autoClose: 2000,
+            });          
+          }   
+          if (res.data === 'Rejected') {
+              toast.error("User is Rejected, Unable to Reset your Password.", {
+              position: toast.POSITION.BOTTOM_RIGHT,
+              hideProgressBar: true,
+              autoClose: 2000,
+            });          
+          } 
+          if (res.data === 'Not Found') {
+              toast.error("Email Id does not exist.", {
+              position: toast.POSITION.BOTTOM_RIGHT,
+              hideProgressBar: true,
+              autoClose: 2000,
+            });          
+          } 
+        if (res.data === 'Success') {
+            toast.success("Please check your mail.", {
             position: toast.POSITION.BOTTOM_RIGHT,
             hideProgressBar: true,
             autoClose: 2000,

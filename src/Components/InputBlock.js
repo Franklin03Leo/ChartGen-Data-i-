@@ -1919,6 +1919,7 @@ const InputArea = ({
   };
   //Expand/Collapse
   const ExpandCollapse = (action) => {
+    navigate("/");
     setTimeout(() => {
       if (navopen && !isMobile) {
         setNavWidth({ navArea: "70px", inuptArea: "0%", ChartArea: "95%" });
@@ -3214,6 +3215,7 @@ const InputArea = ({
                   
               </div>
                 <div className="custom-title"><b>Available Dataset</b>
+                <div style={{ marginBottom:"15px" }}></div>
                 {(() => {
                 let Item = [];
                 for (let a in Dataset) {

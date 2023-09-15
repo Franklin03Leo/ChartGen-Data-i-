@@ -642,20 +642,10 @@ app.post("/SaveUsers/", (req, res) => {
       ); // Failure
     });
 });
-//======================CAMELIZE======================
-function camelize(str) {
-  console.log('name**** '+str)
-  if(str != undefined && str != null){
-    return str.split(' ')
-      .map(a => a.trim())
-      .map(a =>{
-        if(a[0] != undefined ){
-          a[0].toUpperCase()
-        }
-      }).join(" ")
-  }
+//======================CAPITALIZE======================
+function capitalizeWords(str) {
+  return str.replace(/\b\w/g, (match) => match.toUpperCase());
 }
-
 //======================RANDOMSTRING GENERATE======================
 function generateRandomKey() {
   // Generate a random key (you can use a more secure method)
@@ -685,31 +675,42 @@ app.post("/sendMail", (req, res, next) => {
       );
       } else {
         if (result) {
-          if(result.Status == "InActive") {
-            res.status(2).send("InActive");
+          if(result.Status == "Inactive") {
+            res.send("InActive");
+            return;
           }
-          if (result.Status == "Active") { 
+          else if(result.Status == 'Registered') {
+            res.send("Registered");
+            return;
+          }
+          else if(result.Status == 'Rejected') {
+            res.send("Rejected");
+            return;
+          }
+          else if (result.Status == "Active") {
             //url = process.env.FORGOT_EMAIL_URL +'='+decryptCode
             // Generate a random encryption key
             const key = generateRandomKey();
             // Encrypt the email address
-            const encryptedEmail = encrypt(email, key);                     
-           const url = process.env.FORGOT_EMAIL_URL +'='+encryptedEmail            
-            content = 'Dear ' + camelize(result.Name) + ',<br/><br/> Kindly <a href="' + url + '">Click here</a> to set a new password.<br/><br/>Please feel free to reach our Admin, in case of any issues. <br/><br/> Thanking you. <br/>SpectraIQ Team <br/><br />*** This is an automatically generated email, please do not reply ***'
+            const encryptedEmail = encrypt(email, key);
+            const url = process.env.FORGOT_EMAIL_URL + '=' + encryptedEmail
+            content = 'Dear ' + capitalizeWords(result.Name) + ',<br/><br/> Kindly <a href="' + url + '">Click here</a> to set a new password.<br/><br/>Please feel free to reach our Admin, in case of any issues. <br/><br/> Thanking you. <br/>SpectraIQ Team <br/><br />*** This is an automatically generated email, please do not reply ***'
             //Sending mail
             try {
-             mailService(email,'Password Reset Request',content,'');
-             res.status(200).send("Success");
-             console.log("Reset Request"); // Success
-             return;
+              mailService(email,'Password Reset Request',content,'');
+              res.status(200).send("Success");
+              console.log("Reset Request"); // Success
+              return;
             } catch (error) {
-                res.send(error);
+              res.send(error);
             }
           }
+          else { res.send("This is not a valid User ID"); return; }
         }
         else if (result == null) {
-          res.status(303).send("Not Found");
-          console.log("User details Not Found");
+          res.send("Not Found");
+         console.log("User details Not Found");
+         return;
         }
       }
     })

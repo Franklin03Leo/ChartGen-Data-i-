@@ -18,14 +18,13 @@ const mailService =( toEmail, subject, content, copyTo) =>
     });
 		
    const mailOptions = {
-       from:'"SpectraIQ Team " <mahendrandeepa@gmail.com>',
-         to: 'mahendrandeepa@gmail.com',
+       from:'"SpectraIQ Team " <spectraiquat@gmail.com>',
+         to: toEmail,
          cc:copyTo,
          subject: subject,
          html: content
  };
    const newTransportPromise = new Promise((resolve, reject) => {
-    console.log('mailOptions '+mailOptions)
  transporter.sendMail(mailOptions, function (err, info) { 
  if (err) { 
 console.log(err); 
