@@ -287,19 +287,22 @@ const Compose = ({ params }) => {
 
       charts.push(window["Chart" + i]);
     }
-    let PadTop,
-      PadRight,
-      PadBottom,
+    
+    let PadTop = 0,
+      PadRight = 0,
+      PadBottom = 0,
       PadLeft = 0;
-    if (params.PadTop === undefined || params.PadTop === "") PadTop = 0;
-    else PadTop = params.PadTop;
-    if (params.PadRight === undefined || params.PadRight === "") PadRight = 0;
-    else PadRight = params.PadRight;
-    if (params.PadBottom === undefined || params.PadBottom === "")
-      PadBottom = 0;
-    else PadBottom = params.PadBottom;
-    if (params.PadLeft === undefined || params.PadLeft === "") PadLeft = 0;
-    else PadLeft = params.PadLeft;
+      if(params.Compositeswatch_){
+        if (params.PadTop === undefined || params.PadTop === "") PadTop = 0;
+        else PadTop = params.PadTop;
+        if (params.PadRight === undefined || params.PadRight === "") PadRight = 0;
+        else PadRight = params.PadRight;
+        if (params.PadBottom === undefined || params.PadBottom === "")
+          PadBottom = 0;
+        else PadBottom = params.PadBottom;
+        if (params.PadLeft === undefined || params.PadLeft === "") PadLeft = 0;
+        else PadLeft = params.PadLeft;
+      }
     compositeChart
       .margins({
         top: parseInt(10) + parseInt(PadTop),
@@ -437,58 +440,61 @@ const Compose = ({ params }) => {
     d3.select("body").on("mouseover", function () {
       d3.selectAll("rect.bar")
         .on("mouseover", function (d) {
-          div2
-            .transition()
-            .duration(500)
-            .style("opacity", params.Tooltipswatch);
-          // .style("font-family", params.TooltipFont)
-          // .style("color", params.TooltipColor)
-          // .style("font-size", params.TooltipSize + "px")
-          // .style("background-color", params.TooltipBGColor)
-          // .style("border", params.TooltipThickness + 'px ' + params.TooltipTickColor + ' solid')
-          if (params.TooltipContent === "X") {
-            div2.html(
-              "<div><div><b>" +
-                params.XAxis +
-                "</b> : " +
-                d.target.__data__.x +
-                "</div><div"
-            );
-          } else if (params.TooltipContent === "Y") {
-            div2.html(
-              "<div><div><b>" +
-                params.YAxis +
-                "</b> : " +
-                d.target.__data__.y.toFixed(2) +
-                "</div><div"
-            );
-          } else if (params.TooltipContent === "Group") {
-            div2.html(
-              "<div><div><b>" +
-                params.GroupBy +
-                "</b> : " +
-                d.target.__data__.layer +
-                "</div><div>"
-            );
-          } else if (params.TooltipContent === "All") {
-            div2.html(
-              "<div><div><b>" +
-                params.GroupBy +
-                "</b> : " +
-                d.target.__data__.layer +
-                "</div><div><b>" +
-                params.XAxis +
-                "</b> : " +
-                d.target.__data__.x +
-                "</div><div><b>" +
-                params.YAxis +
-                "</b> : " +
-                d.target.__data__.y.toFixed(2) +
-                "</div></div>"
-            );
-          }
+          if(params.Tooltipswatch_){
 
-          div2.style("left", d.pageX + "px").style("top", d.pageY - 70 + "px");
+            div2
+              .transition()
+              .duration(500)
+              .style("opacity", params.Tooltipswatch);
+            // .style("font-family", params.TooltipFont)
+            // .style("color", params.TooltipColor)
+            // .style("font-size", params.TooltipSize + "px")
+            // .style("background-color", params.TooltipBGColor)
+            // .style("border", params.TooltipThickness + 'px ' + params.TooltipTickColor + ' solid')
+            if (params.TooltipContent === "X") {
+              div2.html(
+                "<div><div><b>" +
+                  params.XAxis +
+                  "</b> : " +
+                  d.target.__data__.x +
+                  "</div><div"
+              );
+            } else if (params.TooltipContent === "Y") {
+              div2.html(
+                "<div><div><b>" +
+                  params.YAxis +
+                  "</b> : " +
+                  d.target.__data__.y.toFixed(2) +
+                  "</div><div"
+              );
+            } else if (params.TooltipContent === "Group") {
+              div2.html(
+                "<div><div><b>" +
+                  params.GroupBy +
+                  "</b> : " +
+                  d.target.__data__.layer +
+                  "</div><div>"
+              );
+            } else if (params.TooltipContent === "All") {
+              div2.html(
+                "<div><div><b>" +
+                  params.GroupBy +
+                  "</b> : " +
+                  d.target.__data__.layer +
+                  "</div><div><b>" +
+                  params.XAxis +
+                  "</b> : " +
+                  d.target.__data__.x +
+                  "</div><div><b>" +
+                  params.YAxis +
+                  "</b> : " +
+                  d.target.__data__.y.toFixed(2) +
+                  "</div></div>"
+              );
+            }
+  
+            div2.style("left", d.pageX + "px").style("top", d.pageY - 70 + "px");
+          }
         })
         .on("mouseout", function (d) {
           div2.transition().duration(500).style("opacity", 0);

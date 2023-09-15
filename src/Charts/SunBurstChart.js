@@ -70,7 +70,7 @@ const SunBurstChart = ({ params }) => {
       .title(function (y) {
         return "";
       });
-    if (params.Legendswatch !== undefined) {
+    if (params.Legendswatch !== undefined && params.Legendswatch_ !== false) {
       SunBurst.legend(
         new legend()
           .x(10)

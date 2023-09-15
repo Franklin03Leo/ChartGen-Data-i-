@@ -1467,7 +1467,7 @@ input:checked + .slider:before {
 }
 /* set the chart minsize for chart menu */
  div.chart-container > div > div > div:nth-child(2) > div > svg{
-  min-height: 84vh;
+  min-height: 80vh;
 }
 .chart-boxcenter > svg {
   min-height: 84vh;
@@ -1516,4 +1516,8 @@ input:checked + .slider:before {
 .recharts-surface{
   width: 1200px !important;
     height: 600px !important;
+}
+
+.chart-container > div > div > div:nth-child(1){
+  padding: 14px;
 }

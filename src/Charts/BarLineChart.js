@@ -7,6 +7,7 @@ import * as d3module from "d3";
 import d3tip from "d3-tip";
 import { legend } from "dc";
 const BarLineChart = ({ params }) => {
+  console.log(" Barline chart ", params)
   const div = React.useRef(null);
   // const div1 = React.useRef(null);
   const d3 = {
@@ -173,19 +174,21 @@ const BarLineChart = ({ params }) => {
     var table_ = ndx.dimension(function (d) {
       return [fmt(+d[params.XAxis]), fmt(+d[params.YAxis])];
     });
-    let PadTop,
-      PadRight,
-      PadBottom,
+    let PadTop = 0,
+      PadRight = 0,
+      PadBottom = 0,
       PadLeft = 0;
-    if (params.PadTop === undefined || params.PadTop === "") PadTop = 0;
-    else PadTop = params.PadTop;
-    if (params.PadRight === undefined || params.PadRight === "") PadRight = 0;
-    else PadRight = params.PadRight;
-    if (params.PadBottom === undefined || params.PadBottom === "")
-      PadBottom = 0;
-    else PadBottom = params.PadBottom;
-    if (params.PadLeft === undefined || params.PadLeft === "") PadLeft = 0;
-    else PadLeft = params.PadLeft;
+      if(params.BarLineswatch_){
+        if (params.PadTop === undefined || params.PadTop === "") PadTop = 0;
+        else PadTop = params.PadTop;
+        if (params.PadRight === undefined || params.PadRight === "") PadRight = 0;
+        else PadRight = params.PadRight;
+        if (params.PadBottom === undefined || params.PadBottom === "")
+          PadBottom = 0;
+        else PadBottom = params.PadBottom;
+        if (params.PadLeft === undefined || params.PadLeft === "") PadLeft = 0;
+        else PadLeft = params.PadLeft;
+      }
 
     let barchart = new dc.barChart(compositeChart)
       .dimension(runDimension)

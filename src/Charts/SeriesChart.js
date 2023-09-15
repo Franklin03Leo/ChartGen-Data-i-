@@ -4,6 +4,7 @@ import * as d3 from "d3";
 import * as crossfilter from "crossfilter2/crossfilter";
 import Grid from "@material-ui/core/Grid";
 const SeriesChart = ({ params }) => {
+  console.log("SeriesChart", params)
   const div = React.useRef(null);
   // const div1 = React.useRef(null);
 
@@ -192,19 +193,21 @@ const SeriesChart = ({ params }) => {
     var chart = new dc.seriesChart(div.current);
     // var datatabel = new dc.dataTable(div1.current);
     //  const volumeChart = new dc.barChart(div3.current);
-    let PadTop,
-      PadRight,
-      PadBottom,
-      PadLeft = 0;
-    if (params.PadTop === undefined || params.PadTop === "") PadTop = 0;
-    else PadTop = params.PadTop;
-    if (params.PadRight === undefined || params.PadRight === "") PadRight = 0;
-    else PadRight = params.PadRight;
-    if (params.PadBottom === undefined || params.PadBottom === "")
-      PadBottom = 0;
-    else PadBottom = params.PadBottom;
-    if (params.PadLeft === undefined || params.PadLeft === "") PadLeft = 0;
-    else PadLeft = params.PadLeft;
+    let PadTop = 0,
+      PadRight = 0,
+      PadBottom = 0,
+      PadLeft = 0; 
+      if(params.Seriesswatch_){
+        if (params.PadTop === undefined || params.PadTop === "") PadTop = 0;
+        else PadTop = params.PadTop;
+        if (params.PadRight === undefined || params.PadRight === "") PadRight = 0;
+        else PadRight = params.PadRight;
+        if (params.PadBottom === undefined || params.PadBottom === "")
+          PadBottom = 0;
+        else PadBottom = params.PadBottom;
+        if (params.PadLeft === undefined || params.PadLeft === "") PadLeft = 0;
+        else PadLeft = params.PadLeft;
+      }
     chart
       .width(params.Width_)
       .height(params.Height_)

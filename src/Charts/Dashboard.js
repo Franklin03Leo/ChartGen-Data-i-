@@ -23,6 +23,7 @@ import DatasetIcon from "@mui/icons-material/Dataset";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import CloseIcon from "@mui/icons-material/Close";
+import FilteredIcon from "../Images/Filtered-Icon.svg"
 
 //Components
 import BarChart from "../Charts/BarChart";
@@ -415,6 +416,18 @@ const Dashboard = ({ params }) => {
                                     filterModelOpen(i, "Project Menu");
                                   }}
                                 />
+                                {/* <img
+                                  src={FilteredIcon}
+                                  name="Filter"
+                                  color="black"
+                                  alt="Logo"
+                                  height= "18px"
+                                  style={{
+                                    float: "right",
+                                    cursor: "pointer",
+                                    padding:" 4px 5px 0 0",
+                                  }}
+                                ></img> */}
                               </BootstrapTooltip>
                               {isBublished ||
                                 (menuName === "Project Menu" && (
@@ -1020,7 +1033,7 @@ const Dashboard = ({ params }) => {
                 </div>
               </div>
             </Typography>
-            {menuName === "Dashboard Menu" && !isBublished && (
+            {(menuName === "Dashboard Menu" && !isBublished)  && ( // || params.action === "Edit"
               <div>
                 <div style={{ width: "80%" }}>
                   <FormControl sx={{ m: 1, width: 300 }}>
@@ -1137,6 +1150,7 @@ const Dashboard = ({ params }) => {
                   display: "flex",
                   flexDirection: "row-reverse",
                   marginTop: "10px",
+                  width: "90%"
                 }}
               >
                 <Button

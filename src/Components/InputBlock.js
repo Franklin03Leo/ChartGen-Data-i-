@@ -250,6 +250,9 @@ const InputArea = ({
     LabelsContent: "X",
     userID: sessionStorage.getItem("UserName") !== null && user.userID,
   });
+
+  const [tempState, setTempState] = React.useState(JSON.parse(JSON.stringify(state)));
+
   const [enable, setEnable] = React.useState({});
   const [colors, setColors] = React.useState([]);
   const [navbar, setNavbar] = React.useState({
@@ -445,7 +448,6 @@ const InputArea = ({
     
     if (event.target.name === "file") {
       document.querySelector(".loader").style.display = "block";
-
       if (event.target.files[0] === undefined) {
         setState({
           ...state,
@@ -482,7 +484,7 @@ const InputArea = ({
               var newArray = Type.map((e, i) => e + " " + Key_[i]);
 
               setState({
-                ...state,
+                ...tempState,
                 Uploaded_file: results.data,
                 XAxis_: newArray,
                 YAxis_: newArray,
@@ -1605,7 +1607,6 @@ const InputArea = ({
   };
   //Template Save/Cancel
   const saveTemplate = (action) => {
-    debugger;
     if (action !== "cancel") {
       setTemplate({ ...template, [state.TempName]: state });
       setDashboard({
@@ -1640,6 +1641,7 @@ const InputArea = ({
         setOpen(false);
         setNavbar({ bar: "Templates" });
         PostTemplate("Insert");
+        ChildtoParentHandshake(undefined);
       }
     } else {
       setFlag(false);
@@ -1830,23 +1832,28 @@ const InputArea = ({
     }
     if (chart === "Series Chart" || chart === "Composite Chart") {
       setState({
-        ...state,
+        ...tempState,
         XAxis_: validXAxis,
         YAxis_: validYAxis,
         GroupByCopy_: validGroupAxis,
         Chart: chart,
+        Uploaded_file: state.Uploaded_file,
+        CheckType : state["CheckType"]
       });
     } else {
       setState({
-        ...state,
+        ...tempState,
         XAxis_: validXAxis,
         YAxis_: validYAxis,
         Chart: chart,
+        Uploaded_file: state.Uploaded_file,
+        CheckType : state["CheckType"]
       });
     }
     validXAxis = [];
     validYAxis = [];
     validGroupAxis = [];
+    ChildtoParentHandshake(undefined)
   };
   //Dynamic filtering for dashboard
   const handleFilter = (action) => {
@@ -2517,7 +2524,7 @@ const InputArea = ({
               </BootstrapTooltip>
             </div>
           </div>
-          {state.Uploaded_file !== undefined && user["Role"] !== "User" && (
+          {state.Uploaded_file !== undefined && navbar.bar !== "Templates" && user["Role"] !== "User" && (
             <div className="Icon">
               <div
                 className={navbar.bar === "Charts" ? "NavBar-active" : "NavBar"}

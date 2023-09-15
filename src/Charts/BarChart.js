@@ -10,6 +10,7 @@ const d3 = {
 };
 
 const BarChart = ({ params }) => {
+  console.log("Bar chart ==>", params)
   const [isString, setString] = React.useState(false);
   const div = React.useRef(null);
 
@@ -266,73 +267,75 @@ const BarChart = ({ params }) => {
     d3.select("body").on("mouseover", function () {
       d3.selectAll("rect.bar")
         .on("mouseover", function (d) {
-          div2
-            .transition()
-            .duration(500)
-            .style("opacity", params.Tooltipswatch)
-            .style("font-family", params.TooltipFont)
-            .style("color", params.TooltipColor)
-            .style("font-size", params.TooltipSize + "px")
-            .style("background-color", params.TooltipBGColor)
-            .style(
-              "border",
-              params.TooltipThickness +
-                "px " +
-                params.TooltipTickColor +
-                " solid"
-            );
-          if (params.TooltipContent === "X") {
-            div2.html(
-              "<div><div><b>" +
-                params.XAxis +
-                "</b> : " +
-                d.target.__data__.x +
-                "</div><div>"
-            );
-          } else if (params.TooltipContent === "Y") {
-            if (params.YAxis === undefined || params.YAxis === "Select") {
-              div2.html(
-                "<div><div><b>" +
-                  "Count </b> : " +
-                  parseFloat(d.target.__data__.y).toFixed(2) +
-                  "</div><div>"
+          if(params.Tooltipswatch_){
+            div2
+              .transition()
+              .duration(500)
+              .style("opacity", params.Tooltipswatch)
+              .style("font-family", params.TooltipFont)
+              .style("color", params.TooltipColor)
+              .style("font-size", params.TooltipSize + "px")
+              .style("background-color", params.TooltipBGColor)
+              .style(
+                "border",
+                params.TooltipThickness +
+                  "px " +
+                  params.TooltipTickColor +
+                  " solid"
               );
-            } else {
-              div2.html(
-                "<div><div><b>" +
-                  params.YAxis +
-                  "</b> : " +
-                  parseFloat(d.target.__data__.y).toFixed(2) +
-                  "</div><div>"
-              );
-            }
-          } else if (params.TooltipContent === "All") {
-            if (params.YAxis === undefined || params.YAxis === "Select") {
+            if (params.TooltipContent === "X") {
               div2.html(
                 "<div><div><b>" +
                   params.XAxis +
                   "</b> : " +
                   d.target.__data__.x +
-                  "</div><div><b>" +
-                  "Count </b> : " +
-                  parseFloat(d.target.__data__.y).toFixed(2) +
-                  "</div></div>"
+                  "</div><div>"
               );
-            } else {
-              div2.html(
-                "<div><div><b>" +
-                  params.XAxis +
-                  "</b> : " +
-                  d.target.__data__.x +
-                  "</div><div><b>" +
-                  params.YAxis +
-                  "</b> : " +
-                  parseFloat(d.target.__data__.y).toFixed(2) +
-                  "</div></div>"
-              );
+            } else if (params.TooltipContent === "Y") {
+              if (params.YAxis === undefined || params.YAxis === "Select") {
+                div2.html(
+                  "<div><div><b>" +
+                    "Count </b> : " +
+                    parseFloat(d.target.__data__.y).toFixed(2) +
+                    "</div><div>"
+                );
+              } else {
+                div2.html(
+                  "<div><div><b>" +
+                    params.YAxis +
+                    "</b> : " +
+                    parseFloat(d.target.__data__.y).toFixed(2) +
+                    "</div><div>"
+                );
+              }
+            } else if (params.TooltipContent === "All") {
+              if (params.YAxis === undefined || params.YAxis === "Select") {
+                div2.html(
+                  "<div><div><b>" +
+                    params.XAxis +
+                    "</b> : " +
+                    d.target.__data__.x +
+                    "</div><div><b>" +
+                    "Count </b> : " +
+                    parseFloat(d.target.__data__.y).toFixed(2) +
+                    "</div></div>"
+                );
+              } else {
+                div2.html(
+                  "<div><div><b>" +
+                    params.XAxis +
+                    "</b> : " +
+                    d.target.__data__.x +
+                    "</div><div><b>" +
+                    params.YAxis +
+                    "</b> : " +
+                    parseFloat(d.target.__data__.y).toFixed(2) +
+                    "</div></div>"
+                );
+              }
             }
+            div2.style("left", d.pageX + "px").style("top", d.pageY - 50 + "px");
           }
-          div2.style("left", d.pageX + "px").style("top", d.pageY - 50 + "px");
         })
         .on("mouseout", function (d) {
           div2.transition().duration(500).style("opacity", 0);
