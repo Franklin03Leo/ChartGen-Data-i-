@@ -12,6 +12,7 @@ const DatasetTable = ({ params, filter }) => {
   }, 100);
 
   React.useEffect(() => {
+    setuploadfilename({ name: sessionStorage.getItem("uploadfilename") });
     setCols(Object.keys(params[0]).map((e) => ({ ["name"]: e })));
   }, [params]);
 
@@ -40,9 +41,10 @@ const DatasetTable = ({ params, filter }) => {
           id="dataset"
           title={
             <div className="custom-title">
-              {filter === undefined && <b>Source: {uploadfilename.name} </b>}
+              {filter === undefined &&<div> <b style={{ color: "#2E89FF" }}>Source: </b>{uploadfilename.name} </div>}
             </div>
           }
+         
           data={params}
           columns={cols}
           options={options}

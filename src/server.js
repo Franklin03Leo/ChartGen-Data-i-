@@ -5,10 +5,12 @@ const nodemailer = require("nodemailer");
 const app = express();
 const bcrypt = require("bcrypt");
 const ObjectId = require("mongodb").ObjectID;
+var mailService = require('./Mail.js');
 const saltRounds = 10; // Number of salt rounds
 // const { Charts } = require('./Config/Models');
 mongoose.set("strictQuery", true);
 const cors = require("cors");
+require('dotenv').config({path: "./.env"})
 
 app.use(
   cors({
@@ -338,9 +340,17 @@ app.post("/SigninUser/", (req, res) => {
 });
 app.post("/ForgotUser/", (req, res) => {
   let data = req.body;
-  connect();
-  db.collection("UserDetails")
-    .updateOne({ userID: data.FuserID }, { $set: { password: data.password } })
+  bcrypt.hash(data["password"], saltRounds, function (err, hash) { 
+    if (err) {
+      console.log(
+        `${error} ===> Error while User Details insertion on ` +
+        new Date().toLocaleString()
+      );
+      res.send("Error"); // Failure
+    } else {
+      connect();
+    db.collection("UserDetails")
+    .updateOne({ userID: data.FuserID }, { $set: { password: hash } })
     .then(function () {
       console.log("User Details updated"); // Success
       res.send("Success");
@@ -352,6 +362,9 @@ app.post("/ForgotUser/", (req, res) => {
           new Date().toLocaleString()
       ); // Failure
     });
+     }
+  })
+  
 });
 app.post("/CheckSignupUser/", (req, res) => {
   let data = req.body;
@@ -629,28 +642,75 @@ app.post("/SaveUsers/", (req, res) => {
       ); // Failure
     });
 });
+//======================CAMELIZE======================
+function camelize(str) {
+  console.log('name**** '+str)
+  if(str != undefined && str != null){
+    return str.split(' ')
+      .map(a => a.trim())
+      .map(a =>{
+        if(a[0] != undefined ){
+          a[0].toUpperCase()
+        }
+      }).join(" ")
+  }
+}
+
+//======================RANDOMSTRING GENERATE======================
+function generateRandomKey() {
+  // Generate a random key (you can use a more secure method)
+  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+}
+function encrypt(text, key) {
+  // Perform encryption logic (replace with your encryption algorithm)
+  // For simplicity, we'll use a basic XOR operation here
+  let encryptedText = '';
+  for (let i = 0; i < text.length; i++) {
+    encryptedText += String.fromCharCode(text.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+  }
+  return encryptedText;
+}
 
 //======================MAIL======================
 
 app.post("/sendMail", (req, res, next) => {
-  const name = req.body.name;
-  const message = req.body.messageHtml;
-  var mail = {
-    from: "naveenkumarm572@gmail.com",
-    to: "antoxavier44@gmail.com",
-    subject: "SpectraIQ",
-    html: message,
-  };
-
-  transporter.sendMail(mail, (err, data) => {
-    if (err) {
-      res.json({
-        msg: "fail",
-      });
-    } else {
-      res.json({
-        msg: "success",
-      });
-    }
-  });
+  const email = req.body.FuserID;
+  db.collection("UserDetails").findOne(
+    { userID: email },
+    function (err, result) {
+     if (err) {
+      res.status(400).send("Error fetching listings!");
+        console.log(
+          `${err} ===> Error while signin on ` + new Date().toLocaleString()
+      );
+      } else {
+        if (result) {
+          if(result.Status == "InActive") {
+            res.status(2).send("InActive");
+          }
+          if (result.Status == "Active") { 
+            //url = process.env.FORGOT_EMAIL_URL +'='+decryptCode
+            // Generate a random encryption key
+            const key = generateRandomKey();
+            // Encrypt the email address
+            const encryptedEmail = encrypt(email, key);                     
+           const url = process.env.FORGOT_EMAIL_URL +'='+encryptedEmail            
+            content = 'Dear ' + camelize(result.Name) + ',<br/><br/> Kindly <a href="' + url + '">Click here</a> to set a new password.<br/><br/>Please feel free to reach our Admin, in case of any issues. <br/><br/> Thanking you. <br/>SpectraIQ Team <br/><br />*** This is an automatically generated email, please do not reply ***'
+            //Sending mail
+            try {
+             mailService(email,'Password Reset Request',content,'');
+             res.status(200).send("Success");
+             console.log("Reset Request"); // Success
+             return;
+            } catch (error) {
+                res.send(error);
+            }
+          }
+        }
+        else if (result == null) {
+          res.status(303).send("Not Found");
+          console.log("User details Not Found");
+        }
+      }
+    })
 });
