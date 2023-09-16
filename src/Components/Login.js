@@ -208,7 +208,10 @@ const Login = () => {
   //     });
   //   }
   // };
-
+  const handleClickClose = () => { 
+    setPage('Login');
+    navigate('/');
+  }
   const handleDetails = (e, page) => {
     if (page === "Sign Up") {
       if (e.target.name === "Confirmpassword") {
@@ -572,27 +575,27 @@ const Login = () => {
         });
     }
     else if (page === "Reset") {
-      if (!forgotuser?.["FuserID"]) {
+      if (!forgotuser?.["RuserID"]) {
         setvalidation({
           ...validation,
-          FuserID: {
-            ...validation.FuserID,
+          RuserID: {
+            ...validation.RuserID,
             error: true,
-            errorMessage: "Please Enter the UserId",
+            errorMessage: "Please Enter the Email Address",
           },
         });
       } else {
         setvalidation({
           ...validation,
-          FuserID: {
-            ...validation.FuserID,
+          RuserID: {
+            ...validation.RuserID,
             error: false,
             errorMessage: "Please enter",
           },
         });
       }
       if (
-        !forgotuser?.["FuserID"]
+        !forgotuser?.["RuserID"]
       ) {
         setError({ ...error, Disable: true });
         return;
@@ -602,53 +605,36 @@ const Login = () => {
       axios
       .post(`http://${path.Location}:${path.Port}/sendMail`, forgotuser)
         .then((res) => {
-          if (res.data === 'InActive') {
-            toast.error("User is InActive, Unable to Reset your Password.", {
-            position: toast.POSITION.BOTTOM_RIGHT,
-            hideProgressBar: true,
-            autoClose: 2000,
-          });          
+          document.getElementById("userId").value = '';
+          if (res.data === 'InActive') {            
+            setPage("InActive");            
           }  
-          if (res.data === 'Registered') {
-              toast.error("User is UnApproved, Unable to Reset your Password.", {
-              position: toast.POSITION.BOTTOM_RIGHT,
-              hideProgressBar: true,
-              autoClose: 2000,
-            });          
+            if (res.data === 'Registered') {
+              setPage("Registered");        
           }   
           if (res.data === 'Rejected') {
-              toast.error("User is Rejected, Unable to Reset your Password.", {
-              position: toast.POSITION.BOTTOM_RIGHT,
-              hideProgressBar: true,
-              autoClose: 2000,
-            });          
+            setPage("Rejected");                      
           } 
-          if (res.data === 'Not Found') {
-              toast.error("Email Id does not exist.", {
-              position: toast.POSITION.BOTTOM_RIGHT,
-              hideProgressBar: true,
-              autoClose: 2000,
-            });          
+            if (res.data === 'Not Found') {
+              setPage("Not Found");
           } 
-        if (res.data === 'Success') {
-            toast.success("Please check your mail.", {
-            position: toast.POSITION.BOTTOM_RIGHT,
-            hideProgressBar: true,
-            autoClose: 2000,
-          });          
-        }
+              if (res.data === 'Success') {
+                setPage("Success");                    
+            }            
        }
       )
       .catch((error) => {
         if (error.response.status === 404) {
-          alert("Please contact administrator!!!");
+          setPage("Error404");
+          //alert("Please contact administrator!!!");
         }
         if (error.response.status === 303) { 
-          toast.error("Email Id does not exist.", {
-        position: toast.POSITION.BOTTOM_RIGHT,
-        hideProgressBar: true,
-        autoClose: 2000,
-      });
+          setPage("Error303");
+      //     toast.error("Email Id does not exist.", {
+      //   position: toast.POSITION.BOTTOM_RIGHT,
+      //   hideProgressBar: true,
+      //   autoClose: 2000,
+      // });
       }
       });
       
@@ -815,10 +801,10 @@ const Login = () => {
                 <h5 className="page-title">Reset password</h5>
                 <div className="row col-lg-12">
                   <TextField
-                    error={validation.FuserID.error}
+                    error={validation.RuserID.error}
                     helperText={
-                      validation.FuserID.error &&
-                      validation.FuserID.errorMessage
+                      validation.RuserID.error &&
+                      validation.RuserID.errorMessage
                     }
                     InputProps={{
                       endAdornment: (
@@ -831,7 +817,7 @@ const Login = () => {
                     }}
                     id="userId"
                     className="input-field"
-                    name="FuserID"
+                    name="RuserID"
                     label="Email Address"
                     variant="outlined"
                     margin="dense"
@@ -855,7 +841,7 @@ const Login = () => {
                     Reset Password
                   </Button>
                 </div>
-                <div className="row line-space" style={{ float: "right" }}>
+                {/* <div className="row line-space" style={{ float: "right" }}>
                   <div style={{ fontSize: "11px" }}>
                     <span
                       className="forgot"
@@ -866,7 +852,7 @@ const Login = () => {
                       Sign in
                     </span>
                   </div>
-                </div>
+                </div> */}
               </div>
             )}
 
@@ -988,7 +974,7 @@ const Login = () => {
                     Change
                   </Button>
                 </div>
-                <div className="row line-space" style={{ float: "right" }}>
+                {/* <div className="row line-space" style={{ float: "right" }}>
                   <div style={{ fontSize: "11px" }}>
                     <span
                       className="forgot"
@@ -999,7 +985,7 @@ const Login = () => {
                       Sign in
                     </span>
                   </div>
-                </div>
+                </div> */}
               </div>
             )}
 
@@ -1167,7 +1153,84 @@ const Login = () => {
                 </div>
               </div>
             )}
-
+            {page === "InActive" && (
+              <div className="container-page">
+                <button type="button" class="close" aria-label="Close"
+                  style={{
+                  width: "25px",float:"right", marginLeft:"267px"}}  onClick={handleClickClose}>
+                  <span aria-hidden="true">&times;</span>
+                  </button>  
+                <p className="page-title">InActive User</p>                
+              <div className="div-welcome" style={{color:'red'}}>
+               User is InActive, Unable to Reset your Password.
+                  </div>  
+                  
+              </div>    
+             )}  
+            {page === "Registered" && (
+              <div className="container-page">
+                <button type="button" class="close" aria-label="Close"
+                  style={{
+                  width: "25px",float:"right", marginLeft:"267px"}}  onClick={handleClickClose}>
+                  <span aria-hidden="true">&times;</span>
+                  </button> 
+              <p className="page-title">Registered User</p>
+              <div className="div-welcome" style={{color:'green'}}>
+              User is UnApproved, Unable to Reset your Password.
+              </div>
+                </div>  
+                 )}  
+            {page === "Rejected" && (
+              <div className="container-page">
+                <button type="button" class="close" aria-label="Close"
+                  style={{
+                  width: "25px",float:"right", marginLeft:"267px"}}  onClick={handleClickClose}>
+                  <span aria-hidden="true">&times;</span>
+                  </button> 
+            <p className="page-title">Rejected User</p>
+            <div className="div-welcome" style={{color:'red'}}>
+            User is Rejected, Unable to Reset your Password.
+            </div>
+              </div>  
+               )}    
+           {page === "Not Found" || page === "Error303"  && (
+            <div className="container-page">
+              <button type="button" class="close" aria-label="Close"
+                  style={{
+                  width: "25px",float:"right", marginLeft:"267px"}}  onClick={handleClickClose}>
+                  <span aria-hidden="true">&times;</span>
+                  </button> 
+            {/* <p className="page-title">Rejected User</p> */}
+            <div className="div-welcome" style={{color:'red'}}>
+            Email Id does not exist.
+            </div>
+                </div>  )}
+            {page === "Success" && (
+              <div className="container-page">
+                <button type="button" class="close" aria-label="Close"
+                  style={{
+                  width: "25px",float:"right", marginLeft:"267px"}}  onClick={handleClickClose}>
+                  <span aria-hidden="true">&times;</span>
+                  </button> 
+                      {/* <p className="page-title">Rejected User</p> */}
+                <div className="div-welcome" style={{color:'blue'}}>
+                      <p>Please check your mail.To Reset the Password</p>  
+                      </div>
+                    </div>
+            )}
+            {page === "Error404" && (
+              <div className="container-page">
+                <button type="button" class="close" aria-label="Close"
+                  style={{
+                  width: "25px",float:"right", marginLeft:"267px"}}  onClick={handleClickClose}>
+                  <span aria-hidden="true">&times;</span>
+                  </button> 
+                      {/* <p className="page-title">Rejected User</p> */}
+                <div className="div-welcome" style={{color:'red'}}>
+                      <p>Please Contact Administrator</p>  
+                      </div>
+                    </div>
+                  )}
             {error["Restiction"] && page === "Login" && (
               <div className="row" style={{ margin: "15px 0px 0px 0px" }}>
                 <Alert severity="error">{error["Restiction"]}</Alert>
