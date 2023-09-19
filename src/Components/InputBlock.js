@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 
 //MUI
 import "../Styles/Custom.css";
@@ -94,6 +94,7 @@ import Bar_outlined from "../../src/Images/Bar-chart-outlined.svg";
 import Pie from "../../src/Images/Pie-chart.svg";
 import Line from "../../src/Images/LineIcon.svg";
 import Scatter from "../../src/Images/Scatter-chart.svg";
+import ConfirmBox from "./ConfirmBox";
 
 const InputArea = ({
   ChildtoParentHandshake,
@@ -276,6 +277,7 @@ const InputArea = ({
     Dashboard: false,
     deleteTemplate: false,
     AxisOrder: false,
+    DialogBox: false,
   });
   const [progress, setProgress] = React.useState({ loader: false });
   const [filter, setFilter] = React.useState({});
@@ -438,6 +440,7 @@ const InputArea = ({
 
   //Every fields onChange for store the inputs
   const handleChange = (event) => {
+    // debugger;
     if (event.target.name === "file") {
       document.querySelector(".loader").style.display = "block";
 
@@ -560,7 +563,7 @@ const InputArea = ({
             const sheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[sheetName];
             const json = xlsx.utils.sheet_to_json(worksheet);
-            debugger;
+            // debugger;
             var Type = [];
             var Key_ = [];
             Object.values(json[0]).map((value) => {
@@ -1555,7 +1558,6 @@ const InputArea = ({
   };
   //Template Save/Cancel
   const saveTemplate = (action) => {
-    debugger;
     if (action !== "cancel") {
       setTemplate({ ...template, [state.TempName]: state });
       setDashboard({
@@ -2731,23 +2733,23 @@ const InputArea = ({
           <div className="" style={{ float: "right" }}>
             {/*  Commented by Franklin - for phase-1 release */}
             {/* <Button
-              variant="contained"
-              margin="normal"
-              className="input-field button"
-              style={{
-                backgroundColor: "#6282b3",
-                float: "left",
-                marginTop: "10px",
-              }}
-              onClick={(e) => {
-                setNavbar({ bar: "Data" });
-                setTimeout(() => {
-                  document.getElementById("uploadFile").click();
-                }, 0);
-              }}
-            >
-              New Template
-            </Button> */}
+            variant="contained"
+            margin="normal"
+            className="input-field button"
+            style={{
+              backgroundColor: "#6282b3",
+              float: "left",
+              marginTop: "10px",
+            }}
+            onClick={(e) => {
+              setNavbar({ bar: "Data" });
+              setTimeout(() => {
+                document.getElementById("uploadFile").click();
+              }, 0);
+            }}
+          >
+            New Template
+          </Button> */}
           </div>
         )}
       </div>
@@ -2899,11 +2901,23 @@ const InputArea = ({
     }
   };
 
+  const [deleteDate, setDeleteData] = useState({});
+  const [openDialog, setOpenDialog] = useState(false);
+
+  function openDelete() {
+    setOpenDialog(true);
+  }
+
+  function deleteTemplateFunction(a) {
+    handleTemplate(a, "templeDelete");
+    setOpenDialog(false);
+  }
+
   return (
     <>
       {/* {progress.loader &&
-                < LoadingSpinner />
-            } */}
+              < LoadingSpinner />
+          } */}
       <div
         className="nav-bar col-xs-1  col-sm-1 col-md-1 col-lg-1"
         style={{
@@ -2974,8 +2988,8 @@ const InputArea = ({
                 >
                   {/* Import Inputs-Removed that option for Now. */}
                   {/* <MenuItem key={1} value={"Import Inputs"}>
-                    Import Inputs
-                  </MenuItem> */}
+                  Import Inputs
+                </MenuItem> */}
                   <MenuItem key={2} value={"Enter Inputs"}>
                     Enter Inputs
                   </MenuItem>
@@ -3093,26 +3107,26 @@ const InputArea = ({
                 style={{ margin: "15px" }}
               >
                 {/* <Button
-                  variant="contained"
-                  className="input-field button"
-                  style={{ backgroundColor: "#6282b3", float: "right" }}
-                  onClick={(e) => {
-                    setData({ data: state.Uploaded_file });
-                    setIsshow({ isShow: undefined });
-                    setIssues(undefined);
-                  }}
-                >
-                  Show Data
-                </Button> */}
+                variant="contained"
+                className="input-field button"
+                style={{ backgroundColor: "#6282b3", float: "right" }}
+                onClick={(e) => {
+                  setData({ data: state.Uploaded_file });
+                  setIsshow({ isShow: undefined });
+                  setIssues(undefined);
+                }}
+              >
+                Show Data
+              </Button> */}
               </div>
             </>
           ) : (
             ""
           )}
           {/* {state.Uploaded_file === undefined && state.InputType === 'Enter Inputs' && navbar.bar === 'Data' ?
-                        <div style={{ color: 'red' }}>Use the file with the less than 300 records for better experience, We are working on for boosting up.</div>
-                        : ''
-                    } */}
+                      <div style={{ color: 'red' }}>Use the file with the less than 300 records for better experience, We are working on for boosting up.</div>
+                      : ''
+                  } */}
           {(state.Uploaded_file !== undefined &&
             error.invalidInputs === undefined) ||
           template !== undefined ? (
@@ -6733,14 +6747,25 @@ const InputArea = ({
                                               color="white"
                                               alt="Logo"
                                               style={{ height: "20px" }}
-                                              onClick={(e) => {
-                                                handleTemplate(
-                                                  a,
-                                                  "templeDelete"
-                                                );
-                                              }}
+                                              // onClick={(e) => {
+                                              //   handleTemplate(
+                                              //     a,
+                                              //     "templeDelete"
+                                              //   );
+                                              // }}
+                                              onClick={(e) => openDelete()}
                                             ></img>
                                           </BootstrapTooltip>
+                                          <ConfirmBox
+                                            open={openDialog}
+                                            message = {'Are you sure you want to delete?'}
+                                            closeDialog={() => {
+                                              setOpenDialog(false);
+                                            }}
+                                            deleteFunction={() => {
+                                              deleteTemplateFunction(a);
+                                            }}
+                                          />
                                         </div>
                                       </div>
                                     </div>
@@ -7332,28 +7357,28 @@ const InputArea = ({
                                     </div>
                                     {/* This is for having sum, count, avg and total */}
                                     {/* <div className="row col-sm-4 col-md-4 col-lg-4 inputfield">
-                                      <TextField
-                                        id="GroupBy"
-                                        select
-                                        name="GroupByCol"
-                                        label="Group By"
-                                        margin="dense"
-                                        value={state.GroupByCol}
-                                        className="input-field "
-                                        defaultValue={"Sum"}
-                                        onChange={(e) => {
-                                          handleValidation(e);
-                                          handleChange(e);
-                                          setFlag(false);
-                                        }}
-                                      >
-                                        {GroupByCol.map((option, index) => (
-                                          <MenuItem key={option} value={option}>
-                                            {option}
-                                          </MenuItem>
-                                        ))}
-                                      </TextField>
-                                    </div> */}
+                                    <TextField
+                                      id="GroupBy"
+                                      select
+                                      name="GroupByCol"
+                                      label="Group By"
+                                      margin="dense"
+                                      value={state.GroupByCol}
+                                      className="input-field "
+                                      defaultValue={"Sum"}
+                                      onChange={(e) => {
+                                        handleValidation(e);
+                                        handleChange(e);
+                                        setFlag(false);
+                                      }}
+                                    >
+                                      {GroupByCol.map((option, index) => (
+                                        <MenuItem key={option} value={option}>
+                                          {option}
+                                        </MenuItem>
+                                      ))}
+                                    </TextField>
+                                  </div> */}
                                   </div>
                                 );
                               }
@@ -7558,91 +7583,91 @@ const InputArea = ({
                 {others.EditDashboard && (
                   <>
                     {/* <div className="col-lg-12 borderstyle">
-                      <div
-                        className="col-lg-8 semi-bold"
-                        style={{ display: "contents" }}
-                      >
-                        <span>Project Assigning</span>
-                      </div>
-                    </div>
-
                     <div
-                      className="row col-lg-12 borderdivstyle"
-                      style={{ margin: "0px" }}
+                      className="col-lg-8 semi-bold"
+                      style={{ display: "contents" }}
                     >
-                      <div className="row col-lg-6" style={{ padding: "0px" }}>
-                        <FormControl sx={{ m: 1, paddingRight: 2, width: 300 }}>
-                          <InputLabel id="filter">Users</InputLabel>
-                          <Select
-                            labelId="Users"
-                            id="Users"
-                            multiple
-                            value={
-                              projectAssigning.Users === undefined
-                                ? []
-                                : projectAssigning.Users
-                            }
-                            name="Users"
-                            onChange={handleMultiselect}
-                            input={<OutlinedInput label="Tag" />}
-                            renderValue={(selected) => selected.join(", ")}
-                            MenuProps={MenuProps}
-                          >
-                            {user.Users.map((name) => (
-                              <MenuItem key={name["Name"]} value={name["Name"]}>
-                                <Checkbox
-                                  checked={
-                                    projectAssigning.Users === undefined
-                                      ? false
-                                      : projectAssigning.Users.indexOf(
-                                          name["Name"]
-                                        ) > -1
-                                  }
-                                />
-                                <ListItemText
-                                  key={name["Name"]}
-                                  primary={name["Name"]}
-                                />
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
-                      </div>
-                      <div className="row col-lg-6" style={{ padding: "0px" }}>
-                        <FormControl sx={{ m: 1, paddingRight: 2, width: 300 }}>
-                          <InputLabel id="filter">Group</InputLabel>
-                          <Select
-                            labelId="Users"
-                            id="Users"
-                            multiple
-                            value={
-                              projectAssigning.Groups === undefined
-                                ? []
-                                : projectAssigning.Groups
-                            }
-                            name="Groups"
-                            onChange={handleMultiselect}
-                            input={<OutlinedInput label="Tag" />}
-                            renderValue={(selected) => selected.join(", ")}
-                            MenuProps={MenuProps}
-                          >
-                            {Group.map((name) => (
-                              <MenuItem key={name} value={name}>
-                                <Checkbox
-                                  checked={
-                                    projectAssigning.Groups === undefined
-                                      ? false
-                                      : projectAssigning.Groups.indexOf(name) >
-                                        -1
-                                  }
-                                />
-                                <ListItemText key={name} primary={name} />
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
-                      </div>
-                    </div> */}
+                      <span>Project Assigning</span>
+                    </div>
+                  </div>
+
+                  <div
+                    className="row col-lg-12 borderdivstyle"
+                    style={{ margin: "0px" }}
+                  >
+                    <div className="row col-lg-6" style={{ padding: "0px" }}>
+                      <FormControl sx={{ m: 1, paddingRight: 2, width: 300 }}>
+                        <InputLabel id="filter">Users</InputLabel>
+                        <Select
+                          labelId="Users"
+                          id="Users"
+                          multiple
+                          value={
+                            projectAssigning.Users === undefined
+                              ? []
+                              : projectAssigning.Users
+                          }
+                          name="Users"
+                          onChange={handleMultiselect}
+                          input={<OutlinedInput label="Tag" />}
+                          renderValue={(selected) => selected.join(", ")}
+                          MenuProps={MenuProps}
+                        >
+                          {user.Users.map((name) => (
+                            <MenuItem key={name["Name"]} value={name["Name"]}>
+                              <Checkbox
+                                checked={
+                                  projectAssigning.Users === undefined
+                                    ? false
+                                    : projectAssigning.Users.indexOf(
+                                        name["Name"]
+                                      ) > -1
+                                }
+                              />
+                              <ListItemText
+                                key={name["Name"]}
+                                primary={name["Name"]}
+                              />
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </div>
+                    <div className="row col-lg-6" style={{ padding: "0px" }}>
+                      <FormControl sx={{ m: 1, paddingRight: 2, width: 300 }}>
+                        <InputLabel id="filter">Group</InputLabel>
+                        <Select
+                          labelId="Users"
+                          id="Users"
+                          multiple
+                          value={
+                            projectAssigning.Groups === undefined
+                              ? []
+                              : projectAssigning.Groups
+                          }
+                          name="Groups"
+                          onChange={handleMultiselect}
+                          input={<OutlinedInput label="Tag" />}
+                          renderValue={(selected) => selected.join(", ")}
+                          MenuProps={MenuProps}
+                        >
+                          {Group.map((name) => (
+                            <MenuItem key={name} value={name}>
+                              <Checkbox
+                                checked={
+                                  projectAssigning.Groups === undefined
+                                    ? false
+                                    : projectAssigning.Groups.indexOf(name) >
+                                      -1
+                                }
+                              />
+                              <ListItemText key={name} primary={name} />
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </div>
+                  </div> */}
                     {/* Description */}
                     <div
                       className="row col-xs-12 col-sm-12 col-md-12 col-lg-12 borderstyle"
@@ -8127,14 +8152,14 @@ const InputArea = ({
               >
                 Template
               </Typography>
-              {open.deleteTemplate ? (
-                <>
-                  <Typography
-                    id="transition-modal-description"
-                    sx={{ mt: 2 }}
-                    style={{ marginTop: "10%" }}
-                  >
-                    {/* <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12"> */}
+{open.deleteTemplate ? (
+              <>
+                <Typography
+                  id="transition-modal-description"
+                  sx={{ mt: 2 }}
+                  style={{ marginTop: "10%" }}
+                >
+{/* <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12"> */}
                     <Alert severity="warning">
                       Are you sure want to delete{" "}
                       <strong>"{open.tempName}"</strong> Template? This will
@@ -8179,74 +8204,75 @@ const InputArea = ({
                     sx={{ mt: 2 }}
                     style={{ marginTop: "10%" }}
                   >
+                  <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                      <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <TextField
-                          id="Template"
-                          error={formValues.TempName.error}
-                          helperText={
-                            formValues.TempName.error &&
-                            formValues.TempName.errorMessage
-                          }
-                          margin="dense"
-                          fullWidth
-                          className="input-field"
-                          name="TempName"
-                          label="Template Name"
-                          variant="outlined"
-                          // value={state.YAxisLabel}
-                          onChange={(e) => {
-                            handleValidation(e);
-                            handleChange(e);
-                          }}
-                        />
-                      </div>
-                      <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12 inputfield">
-                        <TextField
-                          id="TempDescription"
-                          className="Description"
-                          label="Description"
-                          name="TempDescription"
-                          fullWidth
-                          margin="dense"
-                          multiline
-                          maxRows={4}
-                          onChange={handleChange}
-                        />
-                      </div>
-                    </div>
-                  </Typography>
-                  <Typography
-                    id="transition-modal-description"
-                    sx={{ mt: 5 }}
-                    style={{ marginTop: "5%" }}
-                  >
-                    <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                      <Button
-                        variant="contained"
-                        margin="normal"
-                        className="input-field button"
-                        style={{ marginRight: "10px" }}
-                        onClick={(e) => {
-                          saveTemplate("save");
+                      <TextField
+                        id="Template"
+                        error={formValues.TempName.error}
+                        helperText={
+                          formValues.TempName.error &&
+                          formValues.TempName.errorMessage
+                        }
+                        margin="dense"
+                        fullWidth
+                        className="input-field"
+                        name="TempName"
+                        label="Template Name"
+                        variant="outlined"
+                        // value={state.YAxisLabel}
+                        onChange={(e) => {
+                          handleValidation(e);
+                          handleChange(e);
                         }}
-                      >
-                        Save
-                      </Button>
-                      <Button
-                        variant="contained"
-                        margin="normal"
-                        className="input-field button btn-transparant"
-                        onClick={(e) => {
-                          setOpen({ ...open, Template: false });
-                        }}
-                      >
-                        Cancel
-                      </Button>
+                      />
                     </div>
-                  </Typography>
-                </>
-              )}
+                    <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12 inputfield">
+                      <TextField
+                        id="TempDescription"
+                        className="Description"
+                        label="Description"
+                        name="TempDescription"
+                        fullWidth
+                        margin="dense"
+                        multiline
+                        maxRows={4}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+                </Typography>
+                <Typography
+                  id="transition-modal-description"
+                  sx={{ mt: 5 }}
+                  style={{ marginTop: "5%" }}
+                >
+                  <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <Button
+                      variant="contained"
+                      margin="normal"
+                      className="input-field button"
+                      style={{ marginRight: "10px" }}
+                      onClick={(e) => {
+                        // debugger;
+                        saveTemplate("save");
+                      }}
+                    >
+                      Save
+                    </Button>
+                    <Button
+                      variant="contained"
+                      margin="normal"
+                      className="input-field button btn-transparant"
+                      onClick={(e) => {
+                        setOpen({ ...open, Template: false });
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </Typography>
+              </>
+)}
             </Box>
           </Fade>
         </Modal>
