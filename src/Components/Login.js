@@ -450,18 +450,18 @@ const Login = () => {
       axios
         .post(`http://${path.Location}:${path.Port}/SignupUser`, userDetails)
         .then((response) => {
-          toast.success("Registered successfully.", {
-            position: toast.POSITION.BOTTOM_RIGHT,
-            hideProgressBar: true,
-            autoClose: 2000,
-          });
+          // toast.success("Registered successfully.", {
+          //   position: toast.POSITION.BOTTOM_RIGHT,
+          //   hideProgressBar: true,
+          //   autoClose: 2000,
+          // });
           setPage("Welcome");
 
-          setTimeout(() => {
-            setPage("Login");
-            setUserDetails({});
-            // userDetails = {};// Commented by Franklin due to invalid assignment for cont variable.
-          }, 10000);
+          // setTimeout(() => {
+          //   setPage("Login");
+          //   setUserDetails({});
+          //   // userDetails = {};// Commented by Franklin due to invalid assignment for cont variable.
+          // }, 10000);
         })
         .catch((error) => {
           console.log(error);
@@ -606,36 +606,21 @@ const Login = () => {
       .post(`http://${path.Location}:${path.Port}/sendMail`, forgotuser)
         .then((res) => {
           document.getElementById("userId").value = '';
-          if (res.data === 'InActive') {            
-            setPage("InActive");            
-          }  
-            if (res.data === 'Registered') {
-              setPage("Registered");        
-          }   
-          if (res.data === 'Rejected') {
-            setPage("Rejected");                      
-          } 
-            if (res.data === 'Not Found') {
-              setPage("Not Found");
-          } 
-              if (res.data === 'Success') {
+          if (res.data === 'InActive' || res.data === 'Registered' || res.data === 'Rejected'
+            || res.data === 'Not Found') {            
+            setPage("Unsuccess");            
+          }     
+           if (res.data === 'Success') {
                 setPage("Success");                    
             }            
        }
       )
       .catch((error) => {
         if (error.response.status === 404) {
-          setPage("Error404");
-          //alert("Please contact administrator!!!");
+          setPage("Unsuccess"); 
         }
         if (error.response.status === 303) { 
-          setPage("Error303");
-      //     toast.error("Email Id does not exist.", {
-      //   position: toast.POSITION.BOTTOM_RIGHT,
-      //   hideProgressBar: true,
-      //   autoClose: 2000,
-      // });
-      }
+          setPage("Unsuccess");      }
       });
       
      }
@@ -1144,67 +1129,27 @@ const Login = () => {
 
             {page === "Welcome" && (
               <div className="container-page">
-                <p className="page-title">Thank You!!!</p>
+                <p className="page-title">User Registration</p>
                 <div className="div-welcome">
-                  Thank you for signing up! Your registration is complete. Your
-                  login access awaits admin approval to ensure a secure and
-                  efficient user experience. Upon approval, a confirmation email
-                  will be sent to you
+                  Your registration is successful. You will receive an email, once your registration is approved. Thanks.
                 </div>
+                <span className="forgot" onClick={(e) => {setPage("Login");}}>{" "} Sign in</span>
               </div>
             )}
-            {page === "InActive" && (
+            {page === "Unsuccess" && (
               <div className="container-page">
                 <button type="button" class="close" aria-label="Close"
                   style={{
                   width: "25px",float:"right", marginLeft:"267px"}}  onClick={handleClickClose}>
                   <span aria-hidden="true">&times;</span>
                   </button>  
-                <p className="page-title">InActive User</p>                
+              <p className="page-title">Reset Password</p>                
               <div className="div-welcome" style={{color:'red'}}>
-               User is InActive, Unable to Reset your Password.
+              Unable to reset your password. Please contact admin for further details.
                   </div>  
                   
               </div>    
              )}  
-            {page === "Registered" && (
-              <div className="container-page">
-                <button type="button" class="close" aria-label="Close"
-                  style={{
-                  width: "25px",float:"right", marginLeft:"267px"}}  onClick={handleClickClose}>
-                  <span aria-hidden="true">&times;</span>
-                  </button> 
-              <p className="page-title">Registered User</p>
-              <div className="div-welcome" style={{color:'green'}}>
-              User is UnApproved, Unable to Reset your Password.
-              </div>
-                </div>  
-                 )}  
-            {page === "Rejected" && (
-              <div className="container-page">
-                <button type="button" class="close" aria-label="Close"
-                  style={{
-                  width: "25px",float:"right", marginLeft:"267px"}}  onClick={handleClickClose}>
-                  <span aria-hidden="true">&times;</span>
-                  </button> 
-            <p className="page-title">Rejected User</p>
-            <div className="div-welcome" style={{color:'red'}}>
-            User is Rejected, Unable to Reset your Password.
-            </div>
-              </div>  
-               )}    
-           {page === "Not Found" || page === "Error303"  && (
-            <div className="container-page">
-              <button type="button" class="close" aria-label="Close"
-                  style={{
-                  width: "25px",float:"right", marginLeft:"267px"}}  onClick={handleClickClose}>
-                  <span aria-hidden="true">&times;</span>
-                  </button> 
-            {/* <p className="page-title">Rejected User</p> */}
-            <div className="div-welcome" style={{color:'red'}}>
-            Email Id does not exist.
-            </div>
-                </div>  )}
             {page === "Success" && (
               <div className="container-page">
                 <button type="button" class="close" aria-label="Close"
@@ -1212,25 +1157,13 @@ const Login = () => {
                   width: "25px",float:"right", marginLeft:"267px"}}  onClick={handleClickClose}>
                   <span aria-hidden="true">&times;</span>
                   </button> 
-                      {/* <p className="page-title">Rejected User</p> */}
+                  <p className="page-title">Reset Password</p>
                 <div className="div-welcome" style={{color:'blue'}}>
-                      <p>Please check your mail.To Reset the Password</p>  
+                      <p>Please check your mail.To reset the password</p>  
                       </div>
                     </div>
             )}
-            {page === "Error404" && (
-              <div className="container-page">
-                <button type="button" class="close" aria-label="Close"
-                  style={{
-                  width: "25px",float:"right", marginLeft:"267px"}}  onClick={handleClickClose}>
-                  <span aria-hidden="true">&times;</span>
-                  </button> 
-                      {/* <p className="page-title">Rejected User</p> */}
-                <div className="div-welcome" style={{color:'red'}}>
-                      <p>Please Contact Administrator</p>  
-                      </div>
-                    </div>
-                  )}
+            
             {error["Restiction"] && page === "Login" && (
               <div className="row" style={{ margin: "15px 0px 0px 0px" }}>
                 <Alert severity="error">{error["Restiction"]}</Alert>

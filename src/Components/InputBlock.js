@@ -3024,10 +3024,10 @@ const InputArea = ({
           <Chartheader param={navbar.bar} />
           {navbar.bar === "Data" && (
             <div
-              className="row col-xs-12 col-sm-12 col-md-12 col-lg-12"
-              style={{ margin: "15px 0px 15px 13px" }}
+              //className="row col-xs-12 col-sm-12 col-md-12 col-lg-12"
+              //style={{ margin: "15px 0px 15px 13px" }}
             >
-              <div className="row col-sm-6 col-md-6 col-lg-5"  style={{ width: "200px" }}>
+              {/* <div className="row col-sm-6 col-md-6 col-lg-5"  style={{ width: "200px" }}> */}
                 {/* <TextField
                   error={formValues.InputType.error}
                   helperText={
@@ -3057,7 +3057,7 @@ const InputArea = ({
                     Available Dataset
                   </MenuItem>
                 </TextField> */} 
-              </div>
+              {/* </div> */}
               {state.InputType === "Import Inputs" ||
               state.InputType === undefined ? (
                 <div className="row col-sm-6 col-md-6 col-lg-7">
@@ -3089,7 +3089,7 @@ const InputArea = ({
               <div className=" col-lg-12" style={{ margin: "15px" }}>
                 <label className="drop-container">
                   <span className="drop-title">Drop files here</span>
-                  <span style={{ padding: "10px 0px" }}>OR</span>
+                  <span style={{ padding: "0px 0px" }}>OR</span>
                   <input
                     type="file"
                     name="file"
@@ -3097,12 +3097,13 @@ const InputArea = ({
                     accept=".csv, .json, .xlsx, .xls"
                     onChange={handleChange}
                   ></input>
-                </label>
-              </div>
-              <div>
+                <div style={{ margin: "-8px" }}>
                 <img src={info} style={{ width: "25px" ,margin:"5px" }}></img>
-                {/* <b style={{ color: "#2E89FF" }}>Note: </b> */}
                 Only upload an Excel, CSV, or JSON file.</div>
+                </label>
+               
+              </div>
+             
               {error.invalidFile !== undefined && (
                 <div
                   className="col-xs-3 col-sm-10 col-md-10 col-lg-10"
@@ -3189,7 +3190,7 @@ const InputArea = ({
                           </div> */}
               <div
                 className="row col-sm-6 col-md-3 col-lg-5"
-                style={{ margin: "15px" }}
+                style={{ margin: "4px" }}
               >
                 {/* <Button
                   variant="contained"
@@ -3215,7 +3216,7 @@ const InputArea = ({
                   
               </div>
                 <div className="custom-title"><b>Available Dataset</b>
-                <div style={{ marginBottom:"15px" }}></div>
+                <div style={{ marginBottom:"3px" }}></div>
                 {(() => {
                 let Item = [];
                 for (let a in Dataset) {
@@ -3223,12 +3224,12 @@ const InputArea = ({
                     Item.push(
                       <div className="row col-lg-12 divdataset-body">
                     <BootstrapTooltip title={a} TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom" >
-                        <div className="col-lg-6 dataset-name" style={{ width: "187px" }}>{a}</div>
+                        <div className="col-lg-6 dataset-name" style={{ marginRight:"2px" }}>{a}</div>
                         </BootstrapTooltip>
-                         <div className="row col-lg-4 dataset-icon">
+                         {/* <div className="row col-lg-4 dataset-icon"> */}
                         
                           <div
-                            className="col-lg-5 dataset-icon_ buttonwid"
+                            className="dataset-icon dataset-icon_ buttonwid"
                             onClick={(e) => {
                               handleDataSet("Use", a);
                             }}
@@ -3236,7 +3237,7 @@ const InputArea = ({
                             Use
                           </div>
                           <div
-                            className="col-lg-5 dataset-icon_ buttonwid"
+                            className="dataset-icon dataset-icon_ buttonwid"
                             onClick={(e) => {
                               handleDataSet("Delete", a);
                             }}
@@ -3244,7 +3245,7 @@ const InputArea = ({
                             Delete
                           </div>
                         </div>
-                      </div>
+                      // </div>
                     );
                   }
                 }

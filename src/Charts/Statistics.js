@@ -95,6 +95,7 @@ const Statistics = ({ params }) => {
     });
     value = {};
   });
+  document.querySelector(".loader").style.display = "none";
   return (
     <>
       <div className="container">
@@ -126,7 +127,7 @@ const Statistics = ({ params }) => {
       
       <div className="custom-title"><b style={{ color: "#2E89FF" }}>Source:  </b>{sessionStorage.getItem("uploadfilename")}</div>
     
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} className="TableContainer">
         <Table
           stickyHeader
           aria-label="sticky table"

@@ -96,6 +96,7 @@ const Dictionary = ({ params }) => {
   const [countplotdata, setcountplotdata] = React.useState([]);
   const [path, setPath] = React.useState({
     Location: window.location.hostname,
+    Port: process.env.REACT_APP_PORT,
   }); //49.204.124.69/
   const [user, setUser] = React.useState({
     userName: sessionStorage.getItem("UserName").split(",")[0],
@@ -435,6 +436,7 @@ const Dictionary = ({ params }) => {
       }
     });
   };
+  document.querySelector(".loader").style.display = "none";
   return (
     <>
       <div className="container">
@@ -442,7 +444,7 @@ const Dictionary = ({ params }) => {
           className="row col-sm-4 col-md-4 col-lg-3"
           style={{ float: "right" }}
         >
-          <TextField
+          {/* <TextField
             id="XAxis"
             select
             name="DataTypes"
@@ -460,13 +462,13 @@ const Dictionary = ({ params }) => {
                 {option}
               </MenuItem>
             ))}
-          </TextField>
+          </TextField> */}
         </div>
         <div className="custom-title">
           <b style={{ color: "#2E89FF" }}>Source: </b>
           {sessionStorage.getItem("uploadfilename")}
         </div>
-        <TableContainer component={Paper}>
+        <TableContainer component={Paper} style={{ marginTop:"10px" }}  className="TableContainer">
           <Table
             stickyHeader
             aria-label="sticky table"
