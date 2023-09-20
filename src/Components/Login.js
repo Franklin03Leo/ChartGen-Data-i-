@@ -72,8 +72,6 @@ const Login = () => {
   });
   const [user, setUser] = React.useState({});
   const [forgotuser, setForgotUser] = React.useState({});
-  const [name, setName] = useState({});
-  const [userID, setUserID] = useState({});
   const [password, setPassword] = useState({});
   const [confpassval, setconfpassval] = React.useState({});
   const [path, setPath] = React.useState({
@@ -450,30 +448,6 @@ const Login = () => {
       setError({ ...error, Disable: false });
     }
   };
-  function generateRandomKey() {
-    // Generate a random key (you can use a more secure method)
-    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-  } 
-  function encrypt(text, key) {
-    // Perform encryption logic (replace with your encryption algorithm)
-    // For simplicity, we'll use a basic XOR operation here
-    let encryptedText = '';
-    for (let i = 0; i < text.length; i++) {
-      encryptedText += String.fromCharCode(text.charCodeAt(i) ^ key.charCodeAt(i % key.length));
-    }
-    return encryptedText;
-  }
-  function decryptEmail(encryptedEmail, key) {
-    // Decrypt the email address using the provided key
-    const decryptedEmail = decrypt(encryptedEmail, key);
-  
-    return decryptedEmail;
-  }
-  function decrypt(text, key) {
-    // Perform decryption logic (must be the inverse of the encryption algorithm)
-    return encrypt(text, key); // In this example, decryption is the same as encryption (XOR operation)
-  }
-
   const handlePost = (page) => {
     if (page === "Sign Up") {
       //Popping the toast when required fields is not filled up..
@@ -737,12 +711,12 @@ const Login = () => {
         .post(`http://${path.Location}:${path.Port}/ForgotUser`, forgotuser)
         .then((res) => {
           if (res.status === 200) {
-            toast.success("Your password has been updated", {
-              position: toast.POSITION.BOTTOM_RIGHT,
-              hideProgressBar: true,
-              autoClose: 2000,
-            });
-            setPage("Login");
+            // toast.success("Your password has been updated", {
+            //   position: toast.POSITION.BOTTOM_RIGHT,
+            //   hideProgressBar: true,
+            //   autoClose: 2000,
+            // });
+            setPage("PasswordUpdate");
           }
         })
         .catch((error) => {
@@ -1323,7 +1297,15 @@ const Login = () => {
                 </div>
               </div>
             )}
-
+            {page === "PasswordUpdate" && (
+              <div className="container-page">
+                <p className="page-title">Forgot Password</p>
+                <div className="div-welcome">
+                  Your Password has been updated.
+                </div>
+                <span className="forgot" onClick={(e) => {setPage("Login");  window.location.href = '/';}}>{" "} Sign in</span>
+              </div>
+            )}
             {page === "Welcome" && (
               <div className="container-page">
                 <p className="page-title">User Registration</p>
