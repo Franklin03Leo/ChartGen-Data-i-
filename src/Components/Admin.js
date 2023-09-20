@@ -154,7 +154,6 @@ const AdminView = () => {
         sort: true,
         customBodyRender: (value, tableMeta) => {
           const options = [
-            "Registered",
             "Rejected",
             "Suspended",
             "Active",
@@ -332,6 +331,8 @@ const AdminView = () => {
         ...updatedValues[rowIndex],
         [columns[columnIndex].name]: value,
         ["_id"]: data["RowData"][rowIndex][0],
+        ["_userEmail"]: data["RowData"][rowIndex][2],
+        ["_userName"]: data["RowData"][rowIndex][1],
       };
       return updatedValues;
     });
@@ -383,6 +384,10 @@ const AdminView = () => {
       .post(`http://${path.Location}:${path.Port}/SaveUsers`, obj)
       .then((res) => {
         if (res.status === 200) {
+          let emailObj = {'username':selectedValues[index]._userName,'userstatus':selectedValues[index].Status,'useremail':selectedValues[index]._userEmail}
+          axios
+          .post(`http://${path.Location}:${path.Port}/userDetailsEmail`, emailObj)
+            .then((res1) => { 
           toast.success("User detail is updated.", {
             position: toast.POSITION.BOTTOM_RIGHT,
             hideProgressBar: true,
@@ -396,6 +401,10 @@ const AdminView = () => {
 
             return { ...prevState, RowData: newRowData };
           });
+          }).catch((error) => { })
+         
+          
+          
         }
       })
       .catch((error) => {});

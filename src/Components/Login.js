@@ -79,6 +79,24 @@ const Login = () => {
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
+  //Decryption Function...
+  const decryptedEmail =(encryptedEmail) => {
+    return encryptEmail(encryptedEmail); // ROT13 is self-reversible
+  }
+  const encryptEmail =(email) => {
+    let encryptedEmail = '';
+    for (let i = 0; i < email.length; i++) {
+      let charCode = email.charCodeAt(i);
+      if (charCode >= 65 && charCode <= 90) {
+        encryptedEmail += String.fromCharCode(((charCode - 65 + 13) % 26) + 65);
+      } else if (charCode >= 97 && charCode <= 122) {
+        encryptedEmail += String.fromCharCode(((charCode - 97 + 13) % 26) + 97);
+      } else {
+        encryptedEmail += email[i];
+      }
+    }
+    return encryptedEmail;
+  }
   //handleKeyDown is for to restrict the special characters.
   const handleKeyDown = (e) => {
     if (e.key === " ") {
@@ -292,28 +310,28 @@ const Login = () => {
       }
       setUser({ ...user, [e.target.name]: e.target.value });
     } else if (page === "Forgot") {
-      if (e.target.name === "FuserID") {
-        //forgotValidation(e.target.name, "Please Enter the User");
-        if (!forgotuser?.["FuserID"]) {
-          setvalidation({
-            ...validation,
-            FuserID: {
-              ...validation.FuserID,
-              error: true,
-              errorMessage: "Please Enter the UserId",
-            },
-          });
-        } else {
-          setvalidation({
-            ...validation,
-            FuserID: {
-              ...validation.FuserID,
-              error: false,
-              errorMessage: "Please enter",
-            },
-          });
-        }
-      }
+      // if (e.target.name === "FuserID") {
+      //   //forgotValidation(e.target.name, "Please Enter the User");
+      //   if (!forgotuser?.["FuserID"]) {
+      //     setvalidation({
+      //       ...validation,
+      //       FuserID: {
+      //         ...validation.FuserID,
+      //         error: true,
+      //         errorMessage: "Please Enter the UserId",
+      //       },
+      //     });
+      //   } else {
+      //     setvalidation({
+      //       ...validation,
+      //       FuserID: {
+      //         ...validation.FuserID,
+      //         error: false,
+      //         errorMessage: "Please enter",
+      //       },
+      //     });
+      //   }
+      // }
 
       if (e.target.name === "password") {
         if (
@@ -527,27 +545,31 @@ const Login = () => {
           }
         });
     } else if (page === "Forgot") {
-      if (!forgotuser?.["FuserID"]) {
-        setvalidation({
-          ...validation,
-          FuserID: {
-            ...validation.FuserID,
-            error: true,
-            errorMessage: "Please Enter the UserId",
-          },
-        });
-      } else {
-        setvalidation({
-          ...validation,
-          FuserID: {
-            ...validation.FuserID,
-            error: false,
-            errorMessage: "Please enter",
-          },
-        });
-      }
+      let linkA = window.location.href.split('userid=');     
+      // Decrypt the email address
+      const encryptedEmail = linkA[1];
+      forgotuser["FuserID"] = decryptedEmail(encryptedEmail);
+      // if (!forgotuser?.["FuserID"]) {
+      //   setvalidation({
+      //     ...validation,
+      //     FuserID: {
+      //       ...validation.FuserID,
+      //       error: true,
+      //       errorMessage: "Please Enter the UserId",
+      //     },
+      //   });
+      // } else {
+      //   setvalidation({
+      //     ...validation,
+      //     FuserID: {
+      //       ...validation.FuserID,
+      //       error: false,
+      //       errorMessage: "Please enter",
+      //     },
+      //   });
+      // }
       if (
-        !forgotuser?.["FuserID"] ||
+       // !forgotuser?.["FuserID"] ||
         !forgotuser?.["password"] ||
         !forgotuser?.["FConfirmpassword"]
       ) {
@@ -844,7 +866,7 @@ const Login = () => {
             {page === "Forgot" && (
               <div className="container-page">
                 <h5 className="page-title">Forgot password</h5>
-                <div className="row col-lg-12">
+                {/* <div className="row col-lg-12">
                   <TextField
                     error={validation.FuserID.error}
                     helperText={
@@ -870,7 +892,7 @@ const Login = () => {
                       handleDetails(e, "Forgot");
                     }}
                   />
-                </div>
+                </div> */}
                 <div className="row col-lg-12 line-space">
                   <FormControl variant="outlined">
                     <InputLabel htmlFor="outlined-adornment-password">
