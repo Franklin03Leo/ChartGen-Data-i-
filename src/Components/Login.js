@@ -636,7 +636,19 @@ const Login = () => {
       axios
         .post(`http://${path.Location}:${path.Port}/SigninUser`, user)
         .then((res) => {
-          if (res.status === 200) {
+          if (res.data === 'User Not Found') {
+            setError({
+              Restiction: "Email ID does not exist.",
+            });
+            return;
+          }   
+          else if (res.data === 'IncorrectPassword') {           
+            setError({
+              Restiction: "Incorrect Password",
+            });
+            return;
+           }  
+           else if (res.status === 200) {
             const { Name, userID, Role, Status } = res.data;
             sessionStorage.setItem("UserName", [Name, userID]);
             sessionStorage.setItem("Role", Role || "User");
@@ -649,14 +661,16 @@ const Login = () => {
               setError({
                 Restiction: "Access denied. Admin approval needed for login",
               });
-            } else {
+            }           
+             else if (Status === "Rejected" || Status === "Inactive" ||
+               Status === "Suspended" || Status === "Deleted") {
               setError({
                 Restiction: "Login restricted. Awaiting admin approval.",
               });
             }
             setTimeout(() => {
               setError({ Restiction: "" });
-            }, 4000);
+            }, 5000);
           }
           //}
         })

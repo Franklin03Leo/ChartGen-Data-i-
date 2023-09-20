@@ -307,7 +307,8 @@ app.post("/SigninUser/", (req, res) => {
           `${err} ===> Error while signin on ` + new Date().toLocaleString()
         );
       } else {
-        if (result) {
+        if (result == null) { res.send("User Not Found");}       
+        else if (result != null) {
           bcrypt.compare(
             data.password,
             result.password,
@@ -322,7 +323,7 @@ app.post("/SigninUser/", (req, res) => {
                 );
               } else {
                 // Authentication failed
-                res.status(400).send("Error fetching listings!");
+                res.send("IncorrectPassword");
                 console.log(
                   `${err} ===> Error while signin on ` +
                     new Date().toLocaleString()
