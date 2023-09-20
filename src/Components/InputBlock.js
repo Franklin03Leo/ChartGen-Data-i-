@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 
 //MUI
 import "../Styles/Custom.css";
@@ -95,6 +95,7 @@ import Pie from "../../src/Images/Pie-chart.svg";
 import Line from "../../src/Images/LineIcon.svg";
 import Scatter from "../../src/Images/Scatter-chart.svg";
 import info from "../../src/Images/icons-info.png";
+import ConfirmBox from "./ConfirmBox";
 
 const InputArea = ({
   ChildtoParentHandshake,
@@ -251,7 +252,9 @@ const InputArea = ({
     userID: sessionStorage.getItem("UserName") !== null && user.userID,
   });
 
-  const [tempState, setTempState] = React.useState(JSON.parse(JSON.stringify(state)));
+  const [tempState, setTempState] = React.useState(
+    JSON.parse(JSON.stringify(state))
+  );
 
   const [enable, setEnable] = React.useState({});
   const [colors, setColors] = React.useState([]);
@@ -280,6 +283,7 @@ const InputArea = ({
     Dashboard: false,
     deleteTemplate: false,
     AxisOrder: false,
+    DialogBox: false,
   });
   const [progress, setProgress] = React.useState({ loader: false });
   const [filter, setFilter] = React.useState({});
@@ -323,7 +327,7 @@ const InputArea = ({
   const [project, setProject] = React.useState({});
   const [postProject, setpostProject] = React.useState({});
   const [TemplatesCollections, setTemplatesCollections] = React.useState({});
-  const [enablesavebutton, setEnablesavebutton] = React.useState(false);  
+  const [enablesavebutton, setEnablesavebutton] = React.useState(false);
   const [path, setPath] = React.useState({
     Location: window.location.hostname,
     Port: process.env.REACT_APP_PORT,
@@ -444,10 +448,9 @@ const InputArea = ({
   const navigate = useNavigate();
 
   //Every fields onChange for store the inputs
-  const handleChange = (event) => {   
-    setfileevent(event)
-    setEnablesavebutton(false);   
-    
+  const handleChange = (event) => {
+    setfileevent(event);
+    setEnablesavebutton(false);
     if (event.target.name === "file") {
       document.querySelector(".loader").style.display = "block";
       if (event.target.files[0] === undefined) {
@@ -459,7 +462,7 @@ const InputArea = ({
         });
         document.querySelector(".loader").style.display = "none";
       } else {
-        sessionStorage.setItem("uploadfilename", '');
+        sessionStorage.setItem("uploadfilename", "");
         sessionStorage.setItem("uploadfilename", event.target.files[0].name);
         setEnablesavebutton(true);
         if (event.target.files[0].type === "text/csv") {
@@ -570,6 +573,7 @@ const InputArea = ({
             const sheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[sheetName];
             const json = xlsx.utils.sheet_to_json(worksheet);
+            // debugger;
             var Type = [];
             var Key_ = [];
             Object.values(json[0]).map((value) => {
@@ -1490,10 +1494,13 @@ const InputArea = ({
             SrcName: sessionStorage.getItem("uploadfilename"),
             userID: user.userID,
           })
-          .then((response) => {           
+          .then((response) => {
             state.SrcName = sessionStorage.getItem("uploadfilename");
             axios
-              .post(`http://${path.Location}:${path.Port}/InsertTemplate`, state)
+              .post(
+                `http://${path.Location}:${path.Port}/InsertTemplate`,
+                state
+              )
               .then((response) => {
                 toast.success("Your Data has been Updated", {
                   position: toast.POSITION.BOTTOM_RIGHT,
@@ -1525,7 +1532,7 @@ const InputArea = ({
     } catch (error) {
       console.log("error", error.message);
     }
-  }
+  };
   // Sidebar navigation
   const handleNavbarChange = (event) => {
     var data = event.target.name;
@@ -1840,7 +1847,7 @@ const InputArea = ({
         GroupByCopy_: validGroupAxis,
         Chart: chart,
         Uploaded_file: state.Uploaded_file,
-        CheckType : state["CheckType"]
+        CheckType: state["CheckType"],
       });
     } else {
       setState({
@@ -1849,13 +1856,13 @@ const InputArea = ({
         YAxis_: validYAxis,
         Chart: chart,
         Uploaded_file: state.Uploaded_file,
-        CheckType : state["CheckType"]
+        CheckType: state["CheckType"],
       });
     }
     validXAxis = [];
     validYAxis = [];
     validGroupAxis = [];
-    ChildtoParentHandshake(undefined)
+    ChildtoParentHandshake(undefined);
   };
   //Dynamic filtering for dashboard
   const handleFilter = (action) => {
@@ -2424,8 +2431,11 @@ const InputArea = ({
       });
   };
   const handleDataSet = (action, id) => {
-    if (fileevent != null && fileevent != '' && fileevent != undefined) {
-      if (fileevent.target.files[0] != '' && fileevent.target.files[0] != undefined) {
+    if (fileevent != null && fileevent != "" && fileevent != undefined) {
+      if (
+        fileevent.target.files[0] != "" &&
+        fileevent.target.files[0] != undefined
+      ) {
         setState({
           ...state,
           Uploaded_file: undefined,
@@ -2541,30 +2551,34 @@ const InputArea = ({
               </BootstrapTooltip>
             </div>
           </div>
-          {state.Uploaded_file !== undefined && navbar.bar !== "Templates" && user["Role"] !== "User" && (
-            <div className="Icon">
-              <div
-                className={navbar.bar === "Charts" ? "NavBar-active" : "NavBar"}
-              >
-                <BootstrapTooltip
-                  title="Chart"
-                  TransitionComponent={Fade}
-                  TransitionProps={{ timeout: 600 }}
-                  placement="right"
+          {state.Uploaded_file !== undefined &&
+            navbar.bar !== "Templates" &&
+            user["Role"] !== "User" && (
+              <div className="Icon">
+                <div
+                  className={
+                    navbar.bar === "Charts" ? "NavBar-active" : "NavBar"
+                  }
                 >
-                  <img
-                    src={Bar_outlined}
-                    name="Charts"
-                    color="white"
-                    alt="Logo"
-                    style={{ height: "16px" }}
-                    onClick={handleNavbarChange}
-                  ></img>
-                  {/* <SignalCellularAltIcon className="Icon_" fontSize="large" color={navbar.bar === 'Charts' ? 'primary' : '#979A9B'} onClick={handleNavbarChange} /> */}
-                </BootstrapTooltip>
+                  <BootstrapTooltip
+                    title="Chart"
+                    TransitionComponent={Fade}
+                    TransitionProps={{ timeout: 600 }}
+                    placement="right"
+                  >
+                    <img
+                      src={Bar_outlined}
+                      name="Charts"
+                      color="white"
+                      alt="Logo"
+                      style={{ height: "16px" }}
+                      onClick={handleNavbarChange}
+                    ></img>
+                    {/* <SignalCellularAltIcon className="Icon_" fontSize="large" color={navbar.bar === 'Charts' ? 'primary' : '#979A9B'} onClick={handleNavbarChange} /> */}
+                  </BootstrapTooltip>
+                </div>
               </div>
-            </div>
-          )}
+            )}
           <div
             className="Icon"
             style={{ display: user["Role"] === "User" && "None" }}
@@ -2805,23 +2819,23 @@ const InputArea = ({
           <div className="" style={{ float: "right" }}>
             {/*  Commented by Franklin - for phase-1 release */}
             {/* <Button
-              variant="contained"
-              margin="normal"
-              className="input-field button"
-              style={{
-                backgroundColor: "#6282b3",
-                float: "left",
-                marginTop: "10px",
-              }}
-              onClick={(e) => {
-                setNavbar({ bar: "Data" });
-                setTimeout(() => {
-                  document.getElementById("uploadFile").click();
-                }, 0);
-              }}
-            >
-              New Template
-            </Button> */}
+            variant="contained"
+            margin="normal"
+            className="input-field button"
+            style={{
+              backgroundColor: "#6282b3",
+              float: "left",
+              marginTop: "10px",
+            }}
+            onClick={(e) => {
+              setNavbar({ bar: "Data" });
+              setTimeout(() => {
+                document.getElementById("uploadFile").click();
+              }, 0);
+            }}
+          >
+            New Template
+          </Button> */}
           </div>
         )}
       </div>
@@ -2973,11 +2987,23 @@ const InputArea = ({
     }
   };
 
+  const [deleteDate, setDeleteData] = useState({});
+  const [openDialog, setOpenDialog] = useState(false);
+
+  function openDelete() {
+    setOpenDialog(true);
+  }
+
+  function deleteTemplateFunction(a) {
+    handleTemplate(a, "templeDelete");
+    setOpenDialog(false);
+  }
+
   return (
     <>
       {/* {progress.loader &&
-                < LoadingSpinner />
-            } */}
+              < LoadingSpinner />
+          } */}
       <div
         className="nav-bar col-xs-1  col-sm-1 col-md-1 col-lg-1"
         style={{
@@ -3024,11 +3050,11 @@ const InputArea = ({
           <Chartheader param={navbar.bar} />
           {navbar.bar === "Data" && (
             <div
-              //className="row col-xs-12 col-sm-12 col-md-12 col-lg-12"
-              //style={{ margin: "15px 0px 15px 13px" }}
+            //className="row col-xs-12 col-sm-12 col-md-12 col-lg-12"
+            //style={{ margin: "15px 0px 15px 13px" }}
             >
               {/* <div className="row col-sm-6 col-md-6 col-lg-5"  style={{ width: "200px" }}> */}
-                {/* <TextField
+              {/* <TextField
                   error={formValues.InputType.error}
                   helperText={
                     formValues.InputType.error &&
@@ -3047,16 +3073,16 @@ const InputArea = ({
                   value={state.InputType}
                 >
                   {/* Import Inputs-Removed that option for Now. */}
-                  {/* <MenuItem key={1} value={"Import Inputs"}>
+              {/* <MenuItem key={1} value={"Import Inputs"}>
                     Import Inputs
                   </MenuItem> */}
-                  {/* <MenuItem key={2} value={"Enter Inputs"}>
+              {/* <MenuItem key={2} value={"Enter Inputs"}>
                     Enter Inputs
                   </MenuItem>
                   <MenuItem key={3} value={"Available Dataset"}>
                     Available Dataset
                   </MenuItem>
-                </TextField> */} 
+                </TextField> */}
               {/* </div> */}
               {state.InputType === "Import Inputs" ||
               state.InputType === undefined ? (
@@ -3097,13 +3123,16 @@ const InputArea = ({
                     accept=".csv, .json, .xlsx, .xls"
                     onChange={handleChange}
                   ></input>
-                <div style={{ margin: "-8px" }}>
-                <img src={info} style={{ width: "25px" ,margin:"5px" }}></img>
-                Only upload an Excel, CSV, or JSON file.</div>
+                  <div style={{ margin: "-8px" }}>
+                    <img
+                      src={info}
+                      style={{ width: "25px", margin: "5px" }}
+                    ></img>
+                    Only upload an Excel, CSV, or JSON file.
+                  </div>
                 </label>
-               
               </div>
-             
+
               {error.invalidFile !== undefined && (
                 <div
                   className="col-xs-3 col-sm-10 col-md-10 col-lg-10"
@@ -3124,11 +3153,20 @@ const InputArea = ({
                   if (Dataset[a] !== undefined) {
                     Item.push(
                       <div className="row col-lg-12 divdataset-body">
-                    <BootstrapTooltip title={a} TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom" >
-                        <div className="col-lg-6 dataset-name" style={{ width: "187px" }}>{a}</div>
+                        <BootstrapTooltip
+                          title={a}
+                          TransitionComponent={Fade}
+                          TransitionProps={{ timeout: 600 }}
+                          placement="bottom"
+                        >
+                          <div
+                            className="col-lg-6 dataset-name"
+                            style={{ width: "187px" }}
+                          >
+                            {a}
+                          </div>
                         </BootstrapTooltip>
-                         <div className="row col-lg-4 dataset-icon">
-                        
+                        <div className="row col-lg-4 dataset-icon">
                           <div
                             className="col-lg-5 dataset-icon_ buttonwid"
                             onClick={(e) => {
@@ -3165,9 +3203,10 @@ const InputArea = ({
           ) : (
             ""
           )}
-          {//state.Uploaded_file !== undefined &&
-          // state.InputType === "Enter Inputs" &&
-          navbar.bar === "Data" ? (
+          {
+            //state.Uploaded_file !== undefined &&
+            // state.InputType === "Enter Inputs" &&
+            navbar.bar === "Data" ? (
               <>
                 {/* <div className="row width-lg" style={{ marginLeft: "10px" }}>
                 <Button
@@ -3188,11 +3227,11 @@ const InputArea = ({
                   )}
                             
                           </div> */}
-              <div
-                className="row col-sm-6 col-md-3 col-lg-5"
-                style={{ margin: "4px" }}
-              >
-                {/* <Button
+                <div
+                  className="row col-sm-6 col-md-3 col-lg-5"
+                  style={{ margin: "4px" }}
+                >
+                  {/* <Button
                   variant="contained"
                   className="input-field button"
                   style={{ backgroundColor: "#6282b3", float: "right" }}
@@ -3204,70 +3243,87 @@ const InputArea = ({
                 >
                   Show Data
                 </Button> */}
-                   {enablesavebutton ? (
-                  <Button
+                  {enablesavebutton ? (
+                    <Button
                       variant="contained"
                       className="input-field button"
                       style={{ backgroundColor: "#6282b3", float: "right" }}
-                      onClick={(e) => {SaveData(e,"Insert");}}>Save Data</Button>
-                ) : (
-                  ""
-                )}
-                  
-              </div>
-                <div className="custom-title"><b>Available Dataset</b>
-                <div style={{ marginBottom:"3px" }}></div>
-                {(() => {
-                let Item = [];
-                for (let a in Dataset) {
-                  if (Dataset[a] !== undefined) {
-                    Item.push(
-                      <div className="row col-lg-12 divdataset-body">
-                    <BootstrapTooltip title={a} TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom" >
-                        <div className="col-lg-6 dataset-name" style={{ marginRight:"2px" }}>{a}</div>
-                        </BootstrapTooltip>
-                         {/* <div className="row col-lg-4 dataset-icon"> */}
-                        
-                          <div
-                            className="dataset-icon dataset-icon_ buttonwid"
-                            onClick={(e) => {
-                              handleDataSet("Use", a);
-                            }}
-                          >
-                            Use
+                      onClick={(e) => {
+                        SaveData(e, "Insert");
+                      }}
+                    >
+                      Save Data
+                    </Button>
+                  ) : (
+                    ""
+                  )}
+                </div>
+                <div className="custom-title">
+                  <b>Available Dataset</b>
+                  <div style={{ marginBottom: "3px" }}></div>
+                  {(() => {
+                    let Item = [];
+                    for (let a in Dataset) {
+                      if (Dataset[a] !== undefined) {
+                        Item.push(
+                          <div className="row col-lg-12 divdataset-body">
+                            <BootstrapTooltip
+                              title={a}
+                              TransitionComponent={Fade}
+                              TransitionProps={{ timeout: 600 }}
+                              placement="bottom"
+                            >
+                              <div
+                                className="col-lg-6 dataset-name"
+                                style={{ marginRight: "2px" }}
+                              >
+                                {a}
+                              </div>
+                            </BootstrapTooltip>
+                            {/* <div className="row col-lg-4 dataset-icon"> */}
+
+                            <div
+                              className="dataset-icon dataset-icon_ buttonwid"
+                              onClick={(e) => {
+                                handleDataSet("Use", a);
+                              }}
+                            >
+                              Use
+                            </div>
+                            <div
+                              className="dataset-icon dataset-icon_ buttonwid"
+                              onClick={(e) => {
+                                handleDataSet("Delete", a);
+                              }}
+                            >
+                              Delete
+                            </div>
                           </div>
-                          <div
-                            className="dataset-icon dataset-icon_ buttonwid"
-                            onClick={(e) => {
-                              handleDataSet("Delete", a);
-                            }}
-                          >
-                            Delete
+                          // </div>
+                        );
+                      }
+                    }
+                    if (Item.length === 0) {
+                      Item.push(
+                        <div className="row col-lg-12 divdataset-body">
+                          <div className="col-lg-10 dataset-name">
+                            No Dataset Found !!!
                           </div>
                         </div>
-                      // </div>
-                    );
-                  }
-                }
-                if (Item.length === 0) {
-                  Item.push(
-                    <div className="row col-lg-12 divdataset-body">
-                      <div className="col-lg-10 dataset-name">
-                        No Dataset Found !!!
-                      </div>
-                    </div>
-                  );
-                }
-                return Item;
-              })()}</div>
-            </>
-          ) : (
-            ""
-          )}
+                      );
+                    }
+                    return Item;
+                  })()}
+                </div>
+              </>
+            ) : (
+              ""
+            )
+          }
           {/* {state.Uploaded_file === undefined && state.InputType === 'Enter Inputs' && navbar.bar === 'Data' ?
-                        <div style={{ color: 'red' }}>Use the file with the less than 300 records for better experience, We are working on for boosting up.</div>
-                        : ''
-                    } */}
+                      <div style={{ color: 'red' }}>Use the file with the less than 300 records for better experience, We are working on for boosting up.</div>
+                      : ''
+                  } */}
           {(state.Uploaded_file !== undefined &&
             error.invalidInputs === undefined) ||
           template !== undefined ? (
@@ -6888,14 +6944,27 @@ const InputArea = ({
                                               color="white"
                                               alt="Logo"
                                               style={{ height: "20px" }}
-                                              onClick={(e) => {
-                                                handleTemplate(
-                                                  a,
-                                                  "templeDelete"
-                                                );
-                                              }}
+                                              // onClick={(e) => {
+                                              //   handleTemplate(
+                                              //     a,
+                                              //     "templeDelete"
+                                              //   );
+                                              // }}
+                                              onClick={(e) => openDelete()}
                                             ></img>
                                           </BootstrapTooltip>
+                                          <ConfirmBox
+                                            open={openDialog}
+                                            message={
+                                              "Are you sure you want to delete?"
+                                            }
+                                            closeDialog={() => {
+                                              setOpenDialog(false);
+                                            }}
+                                            deleteFunction={() => {
+                                              deleteTemplateFunction(a);
+                                            }}
+                                          />
                                         </div>
                                       </div>
                                     </div>
@@ -7487,28 +7556,28 @@ const InputArea = ({
                                     </div>
                                     {/* This is for having sum, count, avg and total */}
                                     {/* <div className="row col-sm-4 col-md-4 col-lg-4 inputfield">
-                                      <TextField
-                                        id="GroupBy"
-                                        select
-                                        name="GroupByCol"
-                                        label="Group By"
-                                        margin="dense"
-                                        value={state.GroupByCol}
-                                        className="input-field "
-                                        defaultValue={"Sum"}
-                                        onChange={(e) => {
-                                          handleValidation(e);
-                                          handleChange(e);
-                                          setFlag(false);
-                                        }}
-                                      >
-                                        {GroupByCol.map((option, index) => (
-                                          <MenuItem key={option} value={option}>
-                                            {option}
-                                          </MenuItem>
-                                        ))}
-                                      </TextField>
-                                    </div> */}
+                                    <TextField
+                                      id="GroupBy"
+                                      select
+                                      name="GroupByCol"
+                                      label="Group By"
+                                      margin="dense"
+                                      value={state.GroupByCol}
+                                      className="input-field "
+                                      defaultValue={"Sum"}
+                                      onChange={(e) => {
+                                        handleValidation(e);
+                                        handleChange(e);
+                                        setFlag(false);
+                                      }}
+                                    >
+                                      {GroupByCol.map((option, index) => (
+                                        <MenuItem key={option} value={option}>
+                                          {option}
+                                        </MenuItem>
+                                      ))}
+                                    </TextField>
+                                  </div> */}
                                   </div>
                                 );
                               }
@@ -7713,91 +7782,91 @@ const InputArea = ({
                 {others.EditDashboard && (
                   <>
                     {/* <div className="col-lg-12 borderstyle">
-                      <div
-                        className="col-lg-8 semi-bold"
-                        style={{ display: "contents" }}
-                      >
-                        <span>Project Assigning</span>
-                      </div>
-                    </div>
-
                     <div
-                      className="row col-lg-12 borderdivstyle"
-                      style={{ margin: "0px" }}
+                      className="col-lg-8 semi-bold"
+                      style={{ display: "contents" }}
                     >
-                      <div className="row col-lg-6" style={{ padding: "0px" }}>
-                        <FormControl sx={{ m: 1, paddingRight: 2, width: 300 }}>
-                          <InputLabel id="filter">Users</InputLabel>
-                          <Select
-                            labelId="Users"
-                            id="Users"
-                            multiple
-                            value={
-                              projectAssigning.Users === undefined
-                                ? []
-                                : projectAssigning.Users
-                            }
-                            name="Users"
-                            onChange={handleMultiselect}
-                            input={<OutlinedInput label="Tag" />}
-                            renderValue={(selected) => selected.join(", ")}
-                            MenuProps={MenuProps}
-                          >
-                            {user.Users.map((name) => (
-                              <MenuItem key={name["Name"]} value={name["Name"]}>
-                                <Checkbox
-                                  checked={
-                                    projectAssigning.Users === undefined
-                                      ? false
-                                      : projectAssigning.Users.indexOf(
-                                          name["Name"]
-                                        ) > -1
-                                  }
-                                />
-                                <ListItemText
-                                  key={name["Name"]}
-                                  primary={name["Name"]}
-                                />
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
-                      </div>
-                      <div className="row col-lg-6" style={{ padding: "0px" }}>
-                        <FormControl sx={{ m: 1, paddingRight: 2, width: 300 }}>
-                          <InputLabel id="filter">Group</InputLabel>
-                          <Select
-                            labelId="Users"
-                            id="Users"
-                            multiple
-                            value={
-                              projectAssigning.Groups === undefined
-                                ? []
-                                : projectAssigning.Groups
-                            }
-                            name="Groups"
-                            onChange={handleMultiselect}
-                            input={<OutlinedInput label="Tag" />}
-                            renderValue={(selected) => selected.join(", ")}
-                            MenuProps={MenuProps}
-                          >
-                            {Group.map((name) => (
-                              <MenuItem key={name} value={name}>
-                                <Checkbox
-                                  checked={
-                                    projectAssigning.Groups === undefined
-                                      ? false
-                                      : projectAssigning.Groups.indexOf(name) >
-                                        -1
-                                  }
-                                />
-                                <ListItemText key={name} primary={name} />
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
-                      </div>
-                    </div> */}
+                      <span>Project Assigning</span>
+                    </div>
+                  </div>
+
+                  <div
+                    className="row col-lg-12 borderdivstyle"
+                    style={{ margin: "0px" }}
+                  >
+                    <div className="row col-lg-6" style={{ padding: "0px" }}>
+                      <FormControl sx={{ m: 1, paddingRight: 2, width: 300 }}>
+                        <InputLabel id="filter">Users</InputLabel>
+                        <Select
+                          labelId="Users"
+                          id="Users"
+                          multiple
+                          value={
+                            projectAssigning.Users === undefined
+                              ? []
+                              : projectAssigning.Users
+                          }
+                          name="Users"
+                          onChange={handleMultiselect}
+                          input={<OutlinedInput label="Tag" />}
+                          renderValue={(selected) => selected.join(", ")}
+                          MenuProps={MenuProps}
+                        >
+                          {user.Users.map((name) => (
+                            <MenuItem key={name["Name"]} value={name["Name"]}>
+                              <Checkbox
+                                checked={
+                                  projectAssigning.Users === undefined
+                                    ? false
+                                    : projectAssigning.Users.indexOf(
+                                        name["Name"]
+                                      ) > -1
+                                }
+                              />
+                              <ListItemText
+                                key={name["Name"]}
+                                primary={name["Name"]}
+                              />
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </div>
+                    <div className="row col-lg-6" style={{ padding: "0px" }}>
+                      <FormControl sx={{ m: 1, paddingRight: 2, width: 300 }}>
+                        <InputLabel id="filter">Group</InputLabel>
+                        <Select
+                          labelId="Users"
+                          id="Users"
+                          multiple
+                          value={
+                            projectAssigning.Groups === undefined
+                              ? []
+                              : projectAssigning.Groups
+                          }
+                          name="Groups"
+                          onChange={handleMultiselect}
+                          input={<OutlinedInput label="Tag" />}
+                          renderValue={(selected) => selected.join(", ")}
+                          MenuProps={MenuProps}
+                        >
+                          {Group.map((name) => (
+                            <MenuItem key={name} value={name}>
+                              <Checkbox
+                                checked={
+                                  projectAssigning.Groups === undefined
+                                    ? false
+                                    : projectAssigning.Groups.indexOf(name) >
+                                      -1
+                                }
+                              />
+                              <ListItemText key={name} primary={name} />
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </div>
+                  </div> */}
                     {/* Description */}
                     <div
                       className="row col-xs-12 col-sm-12 col-md-12 col-lg-12 borderstyle"
@@ -8383,6 +8452,7 @@ const InputArea = ({
                         className="input-field button"
                         style={{ marginRight: "10px" }}
                         onClick={(e) => {
+                          // debugger;
                           saveTemplate("save");
                         }}
                       >

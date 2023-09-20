@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
 import IconButton from "@mui/material/IconButton";
 import { InputAdornment } from "@material-ui/core";
@@ -26,6 +26,7 @@ import "../Styles/Login.css";
 
 import ABlogo from "../../src/Analytic_Brains_Logo.png";
 import SpectraIQlogo from "../../src/Spectra_logo.png";
+
 const Login = () => {
   const buttonRef = React.useRef(null);
 
@@ -63,9 +64,17 @@ const Login = () => {
   });
   const [showPassword, setShowPassword] = React.useState(false);
   const [page, setPage] = React.useState("Login");
-  const [userDetails, setUserDetails] = React.useState({});
+  const [userDetails, setUserDetails] = React.useState({
+    Name: "",
+    userID: "",
+    password: "",
+    Confirmpassword: "",
+  });
   const [user, setUser] = React.useState({});
   const [forgotuser, setForgotUser] = React.useState({});
+  const [name, setName] = useState({});
+  const [userID, setUserID] = useState({});
+  const [password, setPassword] = useState({});
   const [confpassval, setconfpassval] = React.useState({});
   const [path, setPath] = React.useState({
     Location: window.location.hostname,
@@ -81,10 +90,12 @@ const Login = () => {
   };
   //handleKeyDown is for to restrict the special characters.
   const handleKeyDown = (e) => {
-    if (e.key === " ") {
-      e.preventDefault(); // Prevent default behavior (space insertion)
-    }
+    // if (e.key === " ") {
+    //   e.preventDefault();  // Prevent default behavior (space insertion)
+    // }
+
     // List of special characters you want to restrict
+
     if (e.target.name === "Name") {
       const restrictedCharacters_Name = [
         "!",
@@ -115,8 +126,8 @@ const Login = () => {
         "/",
         ",",
         ".",
-        "_",
         "~",
+        "_",
       ];
       if (restrictedCharacters_Name.includes(e.key)) {
         e.preventDefault(); // Prevent default behavior (character insertion)
@@ -150,7 +161,6 @@ const Login = () => {
         "?",
         "/",
         ",",
-        "_",
         "~",
       ];
       if (restrictedCharacters_Email.includes(e.key)) {
@@ -214,6 +224,72 @@ const Login = () => {
   }
   const handleDetails = (e, page) => {
     if (page === "Sign Up") {
+      if (e.target.name === "Name") {
+        let abc = /^[a-zA-Z ]*$/;
+        if (!abc.test(e.target.value)) {
+          setvalidation({
+            ...validation,
+            Name: {
+              ...validation.Name,
+              error: true,
+              errorMessage: "Name should contain only alphabets",
+            },
+          });
+          setError({ ...error, Disable: true });
+          return;
+        } else if (e.target.value === undefined) {
+          setvalidation({
+            ...validation,
+            [e.target.name]: {
+              ...validation[e.target.name],
+              error: true,
+              errorMessage: "Please enter",
+            },
+          });
+          setError({ ...error, Disable: true });
+          return;
+        } else {
+          setvalidation({
+            ...validation,
+            Name: {
+              ...validation.Name,
+              error: false,
+              errorMessage: "",
+            },
+          });
+
+          setError({ ...error, Disable: false });
+        }
+      }
+
+      if (e.target.name === "password") {
+        password[e.target.name] = e.target.value;
+        setPassword({ ...password, [e.target.name]: e.target.value });
+        const passwordRegex =
+          /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?!.*\s).{8,}$/;
+        if (!passwordRegex.test(e.target.value)) {
+          setvalidation({
+            ...validation,
+            password: {
+              ...validation.password,
+              error: true,
+              errorMessage: "Password is not valid",
+            },
+          });
+          setError({ ...error, Disable: true });
+        } else {
+          setvalidation({
+            ...validation,
+            password: {
+              ...validation.password,
+              error: false,
+              errorMessage: "",
+            },
+          });
+          setError({ ...error, Disable: false });
+        }
+      }
+
       if (e.target.name === "Confirmpassword") {
         confpassval[e.target.name] = e.target.value;
         setconfpassval({ ...confpassval, [e.target.name]: e.target.value });
@@ -237,17 +313,6 @@ const Login = () => {
             },
           });
           setError({ ...error, Disable: false });
-        }
-      } else {
-        if (e.target.value !== undefined) {
-          setvalidation({
-            ...validation,
-            [e.target.name]: {
-              ...validation[e.target.name],
-              error: false,
-              errorMessage: "Please enter",
-            },
-          });
         }
       }
 
@@ -286,7 +351,7 @@ const Login = () => {
           [e.target.name]: {
             ...validation[e.target.name],
             error: false,
-            errorMessage: "Please enter",
+            errorMessage: "Please Enter ",
           },
         });
       }
@@ -394,58 +459,125 @@ const Login = () => {
   const handlePost = (page) => {
     if (page === "Sign Up") {
       //Popping the toast when required fields is not filled up..
-      if (Object.getOwnPropertyNames(userDetails).length === 0) {
-        toast.error("Please fill in all required fields.", {
-          position: toast.POSITION.BOTTOM_RIGHT,
-          hideProgressBar: true,
-          autoClose: 2000,
-        });
-        return;
-      }
-      if (!Object.keys(userDetails).includes("Name")) {
-        toast.error("Name field cannot be empty.", {
-          position: toast.POSITION.BOTTOM_RIGHT,
-          hideProgressBar: true,
-          autoClose: 2000,
-        });
-        return;
-      }
-      if (!Object.keys(userDetails).includes("userID")) {
-        toast.error("Email address field cannot be empty.", {
-          position: toast.POSITION.BOTTOM_RIGHT,
-          hideProgressBar: true,
-          autoClose: 2000,
-        });
-        return;
-      }
-      if (!Object.keys(userDetails).includes("password")) {
-        toast.error("Password field cannot be empty.", {
-          position: toast.POSITION.BOTTOM_RIGHT,
-          hideProgressBar: true,
-          autoClose: 2000,
-        });
-        return;
-      }
-      if (!Object.keys(userDetails).includes("password")) {
-        toast.error("Password field cannot be empty.", {
-          position: toast.POSITION.BOTTOM_RIGHT,
-          hideProgressBar: true,
-          autoClose: 2000,
-        });
-        return;
-      }
+
       if (
+        userDetails.Name === "" ||
+        userDetails.Name === null ||
+        userDetails.Name === undefined
+      ) {
+        // toast.error("Name field cannot be empty.", {
+        //   position: toast.POSITION.BOTTOM_RIGHT,
+        //   hideProgressBar: true,
+        //   autoClose: 2000,
+        // }); if (user.userID === undefined || user.userID === "") {
+        setvalidation({
+          ...validation,
+          Name: {
+            ...validation.Name,
+            error: true,
+            errorMessage: "Name field cannot be empty.",
+          },
+        });
+        return;
+      } else if (
+        userDetails.userID === "" ||
+        userDetails.userID === null ||
+        userDetails.userID === undefined
+      ) {
+        // toast.error("Email field cannot be empty.", {
+        //   position: toast.POSITION.BOTTOM_RIGHT,
+        //   hideProgressBar: true,
+        //   autoClose: 2000,
+        // });
+        setvalidation({
+          ...validation,
+          RuserID: {
+            ...validation.RuserID,
+            error: true,
+            errorMessage: "Email field cannot be empty.",
+          },
+        });
+        return;
+      } else if (
+        userDetails.password === "" ||
+        userDetails.password === null ||
+        userDetails.password === undefined
+      ) {
+        // toast.error("Password field cannot be empty.", {
+        //   position: toast.POSITION.BOTTOM_RIGHT,
+        //   hideProgressBar: true,
+        //   autoClose: 2000,
+        // });
+        setvalidation({
+          ...validation,
+          password: {
+            ...validation.password,
+            error: true,
+            errorMessage: "Password field cannot be empty.",
+          },
+        });
+        return;
+      } else if (
         confpassval.Confirmpassword === undefined ||
         confpassval.Confirmpassword === "" ||
         confpassval.Confirmpassword === null
       ) {
-        toast.error("Confirm Password field cannot be empty.", {
-          position: toast.POSITION.BOTTOM_RIGHT,
-          hideProgressBar: true,
-          autoClose: 2000,
+        // toast.error("Confirm Password field cannot be empty.", {
+        //   position: toast.POSITION.BOTTOM_RIGHT,
+        //   hideProgressBar: true,
+        //   autoClose: 2000,
+        // });
+        setvalidation({
+          ...validation,
+          Confirmpassword: {
+            ...validation.Confirmpassword,
+            error: true,
+            errorMessage: "Confirm password field cannot be empty.",
+          },
         });
         return;
       }
+
+      // if (Object.getOwnPropertyNames(userDetails).length === 0) {
+      //   toast.error("Please fill in all required fields.", {
+      //     position: toast.POSITION.BOTTOM_RIGHT,
+      //     hideProgressBar: true,
+      //     autoClose: 2000,
+      //   });
+      //   return;
+      // }
+      // if (!Object.keys(userDetails).includes("Name")) {
+      //   toast.error("Name field cannot be empty.", {
+      //     position: toast.POSITION.BOTTOM_RIGHT,
+      //     hideProgressBar: true,
+      //     autoClose: 2000,
+      //   });
+      //   return;
+      // }
+      // if (!Object.keys(userDetails).includes("userID")) {
+      //   toast.error("Email address field cannot be empty.", {
+      //     position: toast.POSITION.BOTTOM_RIGHT,
+      //     hideProgressBar: true,
+      //     autoClose: 2000,
+      //   });
+      //   return;
+      // }
+      // if (!Object.keys(userDetails).includes("password")) {
+      //   toast.error("Password field cannot be empty.", {
+      //     position: toast.POSITION.BOTTOM_RIGHT,
+      //     hideProgressBar: true,
+      //     autoClose: 2000,
+      //   });
+      //   return;
+      // }
+      // if (!Object.keys(userDetails).includes("password")) {
+      //   toast.error("Password field cannot be empty.", {
+      //     position: toast.POSITION.BOTTOM_RIGHT,
+      //     hideProgressBar: true,
+      //     autoClose: 2000,
+      //   });
+      //   return;
+      // }
 
       axios
         .post(`http://${path.Location}:${path.Port}/SignupUser`, userDetails)
@@ -473,7 +605,7 @@ const Login = () => {
           userID: {
             ...validation.userID,
             error: true,
-            errorMessage: "Please enter",
+            errorMessage: "Please Enter User ID",
           },
         });
         return;
@@ -487,6 +619,28 @@ const Login = () => {
           },
         });
       }
+
+      if (user.password === undefined || user.password === "") {
+        setvalidation({
+          ...validation,
+          password: {
+            ...validation.password,
+            error: true,
+            errorMessage: "Please Enter Password",
+          },
+        });
+        return;
+      } else {
+        setvalidation({
+          ...validation,
+          password: {
+            ...validation.password,
+            error: false,
+            errorMessage: "Please enter",
+          },
+        });
+      }
+
       axios
         .post(`http://${path.Location}:${path.Port}/SigninUser`, user)
         .then((res) => {
@@ -516,6 +670,7 @@ const Login = () => {
         })
         .catch((error) => {
           if (error.response.status === 404) {
+            console.log("eeeeee", error.response.status);
             setvalidation({
               ...validation,
               password: {
@@ -700,6 +855,11 @@ const Login = () => {
                       handleDetails(e, "Login");
                     }}
                   />
+                  {/* {validation.userID.error && (
+                    <FormHelperText error id="username-error">
+                      {validation.userID.errorMessage}
+                    </FormHelperText>
+                  )} */}
                 </div>
                 <div className="row col-lg-12 line-space">
                   <FormControl variant="outlined">
@@ -708,6 +868,10 @@ const Login = () => {
                     </InputLabel>
                     <OutlinedInput
                       error={validation.password.error}
+                      helperText={
+                        validation.password.error &&
+                        validation.password.errorMessage
+                      }
                       id="password"
                       name="password"
                       type={showPassword ? "text" : "password"}
@@ -980,9 +1144,9 @@ const Login = () => {
                 <div className="row col-lg-12">
                   <TextField
                     error={validation.Name.error}
-                    helperText={
-                      validation.Name.error && validation.Name.errorMessage
-                    }
+                    // helperText={
+                    //   validation.Name.error && validation.Name.errorMessage
+                    // }
                     id="Name"
                     className="input-field"
                     name="Name"
@@ -994,8 +1158,13 @@ const Login = () => {
                       handleDetails(e, "Sign Up");
                     }}
                     onKeyDown={handleKeyDown}
-                    //onBlur={(e) => { handleValidation(e) }}
+                    // onBlur={(e) => { handleValidation(e) }}
                   />
+                  {validation.Name.error && (
+                    <FormHelperText error id="username-error">
+                      {validation.Name.errorMessage}
+                    </FormHelperText>
+                  )}
                 </div>
                 <div className="row col-lg-12">
                   <TextField
@@ -1025,6 +1194,7 @@ const Login = () => {
                       Password
                     </InputLabel>
                     <OutlinedInput
+                      error={validation.password.error}
                       id="password"
                       name="password"
                       type={showPassword ? "text" : "password"}
@@ -1047,6 +1217,11 @@ const Login = () => {
                       }}
                       onKeyDown={handleKeyDown}
                     />
+                    {validation.password.error && (
+                      <FormHelperText error id="username-error">
+                        {validation.password.errorMessage}
+                      </FormHelperText>
+                    )}
                   </FormControl>
                 </div>
                 <div className="row col-lg-12" style={{ marginTop: "10px" }}>
