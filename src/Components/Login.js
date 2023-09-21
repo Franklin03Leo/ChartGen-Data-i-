@@ -73,8 +73,6 @@ const Login = () => {
   });
   const [user, setUser] = React.useState({});
   const [forgotuser, setForgotUser] = React.useState({});
-  const [name, setName] = useState({});
-  const [userID, setUserID] = useState({});
   const [password, setPassword] = useState({});
   const [confpassval, setconfpassval] = React.useState({});
   const [path, setPath] = React.useState({
@@ -88,6 +86,24 @@ const Login = () => {
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
+  };
+  //Decryption Function...
+  const decryptedEmail = (encryptedEmail) => {
+    return encryptEmail(encryptedEmail); // ROT13 is self-reversible
+  };
+  const encryptEmail = (email) => {
+    let encryptedEmail = "";
+    for (let i = 0; i < email.length; i++) {
+      let charCode = email.charCodeAt(i);
+      if (charCode >= 65 && charCode <= 90) {
+        encryptedEmail += String.fromCharCode(((charCode - 65 + 13) % 26) + 65);
+      } else if (charCode >= 97 && charCode <= 122) {
+        encryptedEmail += String.fromCharCode(((charCode - 97 + 13) % 26) + 97);
+      } else {
+        encryptedEmail += email[i];
+      }
+    }
+    return encryptedEmail;
   };
   //handleKeyDown is for to restrict the special characters.
   const handleKeyDown = (e) => {
@@ -359,28 +375,28 @@ const Login = () => {
       }
       setUser({ ...user, [e.target.name]: e.target.value });
     } else if (page === "Forgot") {
-      if (e.target.name === "FuserID") {
-        //forgotValidation(e.target.name, "Please Enter the User");
-        if (!forgotuser?.["FuserID"]) {
-          setvalidation({
-            ...validation,
-            FuserID: {
-              ...validation.FuserID,
-              error: true,
-              errorMessage: "Please Enter the UserId",
-            },
-          });
-        } else {
-          setvalidation({
-            ...validation,
-            FuserID: {
-              ...validation.FuserID,
-              error: false,
-              errorMessage: "Please enter",
-            },
-          });
-        }
-      }
+      // if (e.target.name === "FuserID") {
+      //   //forgotValidation(e.target.name, "Please Enter the User");
+      //   if (!forgotuser?.["FuserID"]) {
+      //     setvalidation({
+      //       ...validation,
+      //       FuserID: {
+      //         ...validation.FuserID,
+      //         error: true,
+      //         errorMessage: "Please Enter the UserId",
+      //       },
+      //     });
+      //   } else {
+      //     setvalidation({
+      //       ...validation,
+      //       FuserID: {
+      //         ...validation.FuserID,
+      //         error: false,
+      //         errorMessage: "Please enter",
+      //       },
+      //     });
+      //   }
+      // }
 
       if (e.target.name === "password") {
         if (
@@ -651,7 +667,17 @@ const Login = () => {
       axios
         .post(`http://${path.Location}:${path.Port}/SigninUser`, user)
         .then((res) => {
-          if (res.status === 200) {
+          if (res.data === "User Not Found") {
+            setError({
+              Restiction: "Email ID does not exist.",
+            });
+            return;
+          } else if (res.data === "IncorrectPassword") {
+            setError({
+              Restiction: "Incorrect Password",
+            });
+            return;
+          } else if (res.status === 200) {
             const { Name, userID, Role, Status } = res.data;
             sessionStorage.setItem("UserName", [Name, userID]);
             sessionStorage.setItem("Role", Role || "User");
@@ -664,14 +690,19 @@ const Login = () => {
               setError({
                 Restiction: "Access denied. Admin approval needed for login",
               });
-            } else {
+            } else if (
+              Status === "Rejected" ||
+              Status === "Inactive" ||
+              Status === "Suspended" ||
+              Status === "Deleted"
+            ) {
               setError({
                 Restiction: "Login restricted. Awaiting admin approval.",
               });
             }
             setTimeout(() => {
               setError({ Restiction: "" });
-            }, 4000);
+            }, 5000);
           }
           //}
         })
@@ -689,27 +720,31 @@ const Login = () => {
           }
         });
     } else if (page === "Forgot") {
-      if (!forgotuser?.["FuserID"]) {
-        setvalidation({
-          ...validation,
-          FuserID: {
-            ...validation.FuserID,
-            error: true,
-            errorMessage: "Please Enter the UserId",
-          },
-        });
-      } else {
-        setvalidation({
-          ...validation,
-          FuserID: {
-            ...validation.FuserID,
-            error: false,
-            errorMessage: "Please enter",
-          },
-        });
-      }
+      let linkA = window.location.href.split("userid=");
+      // Decrypt the email address
+      const encryptedEmail = linkA[1];
+      forgotuser["FuserID"] = decryptedEmail(encryptedEmail);
+      // if (!forgotuser?.["FuserID"]) {
+      //   setvalidation({
+      //     ...validation,
+      //     FuserID: {
+      //       ...validation.FuserID,
+      //       error: true,
+      //       errorMessage: "Please Enter the UserId",
+      //     },
+      //   });
+      // } else {
+      //   setvalidation({
+      //     ...validation,
+      //     FuserID: {
+      //       ...validation.FuserID,
+      //       error: false,
+      //       errorMessage: "Please enter",
+      //     },
+      //   });
+      // }
       if (
-        !forgotuser?.["FuserID"] ||
+        // !forgotuser?.["FuserID"] ||
         !forgotuser?.["password"] ||
         !forgotuser?.["FConfirmpassword"]
       ) {
@@ -722,12 +757,12 @@ const Login = () => {
         .post(`http://${path.Location}:${path.Port}/ForgotUser`, forgotuser)
         .then((res) => {
           if (res.status === 200) {
-            toast.success("Your password has been updated", {
-              position: toast.POSITION.BOTTOM_RIGHT,
-              hideProgressBar: true,
-              autoClose: 2000,
-            });
-            setPage("Login");
+            // toast.success("Your password has been updated", {
+            //   position: toast.POSITION.BOTTOM_RIGHT,
+            //   hideProgressBar: true,
+            //   autoClose: 2000,
+            // });
+            setPage("PasswordUpdate");
           }
         })
         .catch((error) => {
@@ -1015,7 +1050,7 @@ const Login = () => {
             {page === "Forgot" && (
               <div className="container-page">
                 <h5 className="page-title">Forgot password</h5>
-                <div className="row col-lg-12">
+                {/* <div className="row col-lg-12">
                   <TextField
                     error={validation.FuserID.error}
                     helperText={
@@ -1041,7 +1076,7 @@ const Login = () => {
                       handleDetails(e, "Forgot");
                     }}
                   />
-                </div>
+                </div> */}
                 <div className="row col-lg-12 line-space">
                   <FormControl variant="outlined">
                     <InputLabel htmlFor="outlined-adornment-password">
@@ -1308,7 +1343,24 @@ const Login = () => {
                 </div>
               </div>
             )}
-
+            {page === "PasswordUpdate" && (
+              <div className="container-page">
+                <p className="page-title">Forgot Password</p>
+                <div className="div-welcome">
+                  Your Password has been updated.
+                </div>
+                <span
+                  className="forgot"
+                  onClick={(e) => {
+                    setPage("Login");
+                    window.location.href = "/";
+                  }}
+                >
+                  {" "}
+                  Sign in
+                </span>
+              </div>
+            )}
             {page === "Welcome" && (
               <div className="container-page">
                 <p className="page-title">User Registration</p>

@@ -307,7 +307,8 @@ app.post("/SigninUser/", (req, res) => {
           `${err} ===> Error while signin on ` + new Date().toLocaleString()
         );
       } else {
-        if (result) {
+        if (result == null) { res.send("User Not Found");}       
+        else if (result != null) {
           bcrypt.compare(
             data.password,
             result.password,
@@ -322,7 +323,7 @@ app.post("/SigninUser/", (req, res) => {
                 );
               } else {
                 // Authentication failed
-                res.status(400).send("Error fetching listings!");
+                res.send("IncorrectPassword");
                 console.log(
                   `${err} ===> Error while signin on ` +
                     new Date().toLocaleString()
@@ -660,11 +661,24 @@ function encrypt(text, key) {
   }
   return encryptedText;
 }
-
+function encryptEmail(email) {
+  let encryptedEmail = '';
+  for (let i = 0; i < email.length; i++) {
+    let charCode = email.charCodeAt(i);
+    if (charCode >= 65 && charCode <= 90) {
+      encryptedEmail += String.fromCharCode(((charCode - 65 + 13) % 26) + 65);
+    } else if (charCode >= 97 && charCode <= 122) {
+      encryptedEmail += String.fromCharCode(((charCode - 97 + 13) % 26) + 97);
+    } else {
+      encryptedEmail += email[i];
+    }
+  }
+  return encryptedEmail;
+}
 //======================MAIL======================
 
 app.post("/sendMail", (req, res, next) => {
-  const email = req.body.FuserID;
+  const email = req.body.RuserID;
   db.collection("UserDetails").findOne(
     { userID: email },
     function (err, result) {
@@ -688,11 +702,10 @@ app.post("/sendMail", (req, res, next) => {
             return;
           }
           else if (result.Status == "Active") {
-            //url = process.env.FORGOT_EMAIL_URL +'='+decryptCode
             // Generate a random encryption key
             const key = generateRandomKey();
             // Encrypt the email address
-            const encryptedEmail = encrypt(email, key);
+            const encryptedEmail = encryptEmail(email);
             const url = process.env.FORGOT_EMAIL_URL + '=' + encryptedEmail
             content = 'Dear ' + capitalizeWords(result.Name) + ',<br/><br/> Kindly <a href="' + url + '">Click here</a> to set a new password.<br/><br/>Please feel free to reach our Admin, in case of any issues. <br/><br/> Thanking you. <br/>SpectraIQ Team <br/><br />*** This is an automatically generated email, please do not reply ***'
             //Sending mail
@@ -715,3 +728,31 @@ app.post("/sendMail", (req, res, next) => {
       }
     })
 });
+//======================USER DETAILS MAIL======================
+
+app.post("/userDetailsEmail", (req, res, next) => {
+  const useremail = req.body.useremail;  
+  let content = '';
+  if (req.body.userstatus == 'Active') {
+    const url = process.env.LOGIN_URL
+    content = 'Dear ' + capitalizeWords(req.body.username) + ',<br/><br/> We are delighted to inform you that your registration has been successfully <b>Approved!</b> You are now ready to access our system and enjoy its benefits.<br/><br/><b> Login Page:</b><a href="' + url + '">Click here</a><br/><br/>Please feel free to reach our Admin, in case of any issues. <br/><br/> Thanking you. <br/>SpectraIQ Team <br/><br />*** This is an automatically generated email, please do not reply ***'
+   }
+  else if (req.body.userstatus == 'Inactive') { 
+    content = 'Dear ' + capitalizeWords(req.body.username) + ',<br/><br/> Your user account has been changed to <b>Inactive</b>. Please contact admin for further details. <br/><br/> Thanking you. <br/>SpectraIQ Team <br/><br />*** This is an automatically generated email, please do not reply ***'
+  }
+  else if (req.body.userstatus == 'Rejected') { 
+    content = 'Dear ' + capitalizeWords(req.body.username) + ',<br/><br/> We are sorry to inform you that your user account is <b>Rejected</b>. Please contact admin for further details. <br/><br/> Thanking you. <br/>SpectraIQ Team <br/><br />*** This is an automatically generated email, please do not reply ***'
+  }
+  else if (req.body.userstatus == 'Suspended') { 
+    content = 'Dear ' + capitalizeWords(req.body.username) + ',<br/><br/> We are sorry to inform you that your user account is <b>Suspended</b>. Please contact admin for further details. <br/><br/> Thanking you. <br/>SpectraIQ Team <br/><br />*** This is an automatically generated email, please do not reply ***'
+  }
+  try {
+    mailService(useremail,'User Registration Status',content,'');
+    res.status(200).send("Success");
+    console.log("Reset Request"); // Success
+    return;
+  } catch (error) {
+    res.send(error);
+  }
+  return;
+})
