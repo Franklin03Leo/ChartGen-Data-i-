@@ -23,7 +23,7 @@ import DatasetIcon from "@mui/icons-material/Dataset";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import CloseIcon from "@mui/icons-material/Close";
-import FilteredIcon from "../Images/Filtered-Icon.svg"
+import FilteredIcon from "../Images/Filtered-Icon.svg";
 
 //Components
 import BarChart from "../Charts/BarChart";
@@ -67,6 +67,7 @@ const Dashboard = ({ params }) => {
   });
   const [index, Setindex] = React.useState({});
   const [template, SetTemplate] = React.useState({});
+  const [projectTemplate, setProjectTemplate] = React.useState({});
   const [filteredtemplate, Setfilteredtemplate] = React.useState({
     Render: true,
   });
@@ -83,8 +84,10 @@ const Dashboard = ({ params }) => {
     DataSet: false, // to open dataset model
     filterMenu: false, // to open Filter Menu Model
   });
+  const [chartOpen, setchartOpen] = useState({
+    Chart: false,
+  });
   const [other, setOther] = React.useState({});
-  const [cardValue, setCardValue] = React.useState({});
   const [dashFilterData, setDashFilterData] = useState([]);
   const [filterHeaderData, setFilterHeaderData] = useState([]);
   const [filterDetailedData, setFilterDetailedData] = useState([]);
@@ -93,14 +96,33 @@ const Dashboard = ({ params }) => {
 
   const [individualFilter, setIndividualFilter] = useState([]);
   const [storeFilterData, setstoreFilterData] = useState([]);
+  const [managePreview, setmanagePreview] = React.useState({});
 
   useEffect(() => {
+    if (
+      params.IndividualFilter !== undefined &&
+      params.IndividualFilter?.length !== 0
+    ) {
+      // setstoreFilterData();
+      setFilterDetailedData(params.IndividualFilter);
+      params.IndividualFilter.map((val, i) => {
+        val["chart" + i] === null
+          ? sessionStorage.removeItem(["chart" + i])
+          : sessionStorage.setItem(["chart" + i], val["chart" + i]);
+      });
+    }
+
     if (params.dashboard !== undefined) {
       SetTemplate(params.dashboard);
       if (params.dashboard !== template) Setfilteredtemplate(params.dashboard);
       //if (params.action === 'Edit')
       SetDetails({ ProjectName: params.DashboardName });
+    } //
+
+    if (params.Projectfilter !== undefined) {
+      setProjectTemplate(params.Projectfilter);
     }
+
     if (params.Filter !== undefined) {
       setFilter(params.Filter);
       setOther({ showFilter: params.Filter.filterSwatch });
@@ -180,25 +202,31 @@ const Dashboard = ({ params }) => {
   const Chart = ({ state }) => {
     //const chart = React.useMemo(() => {
     // to set an chart height when click the preview model
-    if (open.Chart === true) {
-      state.Height_ = window.innerHeight - 200;
-    } else {
-      state.Height_ = 250;
+    if (state !== undefined) {
+      if (chartOpen.Chart === true) {
+        state.Height_ = window.innerHeight - 200;
+      } else {
+        state.Height_ = 250;
+      }
+      return (
+        <>
+          <div>
+            {state.Chart === "Bar Chart" && <BarChart params={state} />}
+            {state.Chart === "Pie Chart" && <PieChart params={state} />}
+            {state.Chart === "ScatterPlot" && <Scatter params={state} />}
+            {state.Chart === "Line Chart" && <LineChart params={state} />}
+            {state.Chart === "Composite Chart" && <Compose params={state} />}
+            {state.Chart === "Series Chart" && <SeriesChart params={state} />}
+            {state.Chart === "Bar Line Chart" && (
+              <BarLineChart params={state} />
+            )}
+            {state.Chart === "Sunburst Chart" && (
+              <SunBurstChart params={state} />
+            )}
+          </div>
+        </>
+      );
     }
-    return (
-      <>
-        <div>
-          {state.Chart === "Bar Chart" && <BarChart params={state} />}
-          {state.Chart === "Pie Chart" && <PieChart params={state} />}
-          {state.Chart === "ScatterPlot" && <Scatter params={state} />}
-          {state.Chart === "Line Chart" && <LineChart params={state} />}
-          {state.Chart === "Composite Chart" && <Compose params={state} />}
-          {state.Chart === "Series Chart" && <SeriesChart params={state} />}
-          {state.Chart === "Bar Line Chart" && <BarLineChart params={state} />}
-          {state.Chart === "Sunburst Chart" && <SunBurstChart params={state} />}
-        </div>
-      </>
-    );
     //   }, [state])
     // return chart
   };
@@ -210,10 +238,13 @@ const Dashboard = ({ params }) => {
   };
 
   // To open the filter Model and funcnalities of filter model
-  const filterModelOpen = (index, pageName) => {
+  const filterModelOpen = (index, pageName, preview) => {
     setMenuName(pageName);
     setOpen({ filterMenu: true });
     Setindex({ i: index });
+    preview
+      ? setmanagePreview({ preview: true })
+      : setmanagePreview({ preview: false });
     let tempfilterArray = [];
     // check wheather the dashboard is bublished
     if (pageName === "Dashboard Menu" || isBublished) {
@@ -258,11 +289,20 @@ const Dashboard = ({ params }) => {
       });
     });
 
-    // Convert Sets to arrays in the groupedData object
+    // Convert Sets to arrays in the newGroupedData object
+    const newGroupedData = {};
     for (const key in groupedData) {
-      groupedData[key] = Array.from(groupedData[key]);
+      newGroupedData[key] = Array.from(groupedData[key]);
     }
-    setFilterDetailedData(groupedData);
+
+    // setFilterDetailedData(newGroupedData);
+
+    setFilterDetailedData({
+      ...filterDetailedData,
+      [`chart${index}`]: newGroupedData,
+    });
+
+    console.log(" filterDetailedData ==>1 ", filterDetailedData);
   };
 
   //chart drop layout
@@ -299,7 +339,8 @@ const Dashboard = ({ params }) => {
                 >
                   {chartsID["chart" + i] !== undefined ? (
                     <div style={{ marginTop: "10px" }}>
-                      {template[chartsID["chart" + i]] !== undefined ? (
+                      {projectTemplate["chart" + i] !== undefined ||
+                      template[chartsID["chart" + i]] !== undefined ? (
                         <>
                           <ZoomOut
                             style={{
@@ -406,28 +447,35 @@ const Dashboard = ({ params }) => {
                                 TransitionProps={{ timeout: 600 }}
                                 placement="bottom"
                               >
-                                <FilterAltOutlinedIcon
-                                  style={{
-                                    float: "right",
-                                    cursor: "pointer",
-                                    paddingTop: "6px",
-                                  }}
-                                  onClick={(e) => {
-                                    filterModelOpen(i, "Project Menu");
-                                  }}
-                                />
-                                {/* <img
-                                  src={FilteredIcon}
-                                  name="Filter"
-                                  color="black"
-                                  alt="Logo"
-                                  height= "18px"
-                                  style={{
-                                    float: "right",
-                                    cursor: "pointer",
-                                    padding:" 4px 5px 0 0",
-                                  }}
-                                ></img> */}
+                                {projectTemplate["chart" + i]["filteApply"] !==
+                                undefined ? (
+                                  <img
+                                    src={FilteredIcon}
+                                    name="Filter"
+                                    color="black"
+                                    alt="Logo"
+                                    height="18px"
+                                    style={{
+                                      float: "right",
+                                      cursor: "pointer",
+                                      padding: " 4px 5px 0 0",
+                                    }}
+                                    onClick={(e) => {
+                                      filterModelOpen(i, "Project Menu");
+                                    }}
+                                  ></img>
+                                ) : (
+                                  <FilterAltOutlinedIcon
+                                    style={{
+                                      float: "right",
+                                      cursor: "pointer",
+                                      paddingTop: "6px",
+                                    }}
+                                    onClick={(e) => {
+                                      filterModelOpen(i, "Project Menu");
+                                    }}
+                                  />
+                                )}
                               </BootstrapTooltip>
                               {isBublished ||
                                 (menuName === "Project Menu" && (
@@ -444,7 +492,7 @@ const Dashboard = ({ params }) => {
                                         paddingTop: "6px",
                                       }}
                                       onClick={(e) => {
-                                        ResetFilter();
+                                        ResetFilter(i);
                                       }}
                                     />
                                   </BootstrapTooltip>
@@ -455,6 +503,8 @@ const Dashboard = ({ params }) => {
                             <Chart
                               state={filteredtemplate[chartsID["chart" + i]]}
                             />
+                          ) : params?.action === "Preview" ? (
+                            <Chart state={projectTemplate["chart" + i]} />
                           ) : (
                             <Chart state={template[chartsID["chart" + i]]} />
                           )}
@@ -516,7 +566,8 @@ const Dashboard = ({ params }) => {
                 >
                   {chartsID["chart" + i] !== undefined ? (
                     <div style={{ marginTop: "10px" }}>
-                      {template[chartsID["chart" + i]] !== undefined ? (
+                      {projectTemplate["chart" + i] !== undefined ||
+                      template[chartsID["chart" + i]] !== undefined ? (
                         <>
                           <ZoomOut
                             style={{
@@ -724,7 +775,8 @@ const Dashboard = ({ params }) => {
                 >
                   {chartsID["chart" + i] !== undefined ? (
                     <div style={{ marginTop: "10px" }}>
-                      {template[chartsID["chart" + i]] !== undefined ? (
+                      {projectTemplate["chart" + i] !== undefined ||
+                      template[chartsID["chart" + i]] !== undefined ? (
                         <>
                           <ZoomOut
                             style={{
@@ -830,7 +882,8 @@ const Dashboard = ({ params }) => {
                 >
                   {chartsID["chart" + i] !== undefined ? (
                     <div style={{ marginTop: "10px" }}>
-                      {template[chartsID["chart" + i]] !== undefined ? (
+                      {projectTemplate["chart" + i] !== undefined ||
+                      template[chartsID["chart" + i]] !== undefined ? (
                         <>
                           <ZoomOut
                             style={{
@@ -916,6 +969,7 @@ const Dashboard = ({ params }) => {
     setOpen({ filterMenu: false });
     // setFilterHeaderData([]);
     setDashFilterData([]);
+    managePreview?.preview && setchartOpen({ Chart: true });
   };
 
   // get the selected dropdown fields in a array
@@ -941,24 +995,29 @@ const Dashboard = ({ params }) => {
     }
   };
 
-  const handleFilteredData = (event, selectedName) => {
+  const handleFilteredData = (event, selectedName, i) => {
     const selectedValues = event.target.value;
-    setSelectedFilters((prevFilters) => ({
-      ...prevFilters,
-      [selectedName]: selectedValues,
-    }));
+    setSelectedFilters((prevFilters) => {
+      const newFilters = { ...prevFilters };
+      newFilters[`chart${index["i"]}`] = {
+        ...newFilters[`chart${index["i"]}`],
+        [selectedName]: selectedValues,
+      };
+      return newFilters;
+    });
+    setchartOpen({ Chart: false });
   };
 
   const ApplyFilter = () => {
     let temp = {};
-    temp = template[chartsID["chart" + index["i"]]];
-    temp.filter = selectedFilters;
+    temp = template[chartsID["chart" + index["i"]]]; //projectTemplate['chart' + index["i"]]
+    // projectTemplate['chart' + index["i"]].filter = selectedFilters;
     let filteredData = [];
-    filteredData = template[chartsID["chart" + index["i"]]]["Uploaded_file"];
+    filteredData = projectTemplate["chart" + index["i"]]["Uploaded_file"];
 
-    for (const filterKey in selectedFilters) {
-      if (selectedFilters.hasOwnProperty(filterKey)) {
-        const filterValues = selectedFilters[filterKey];
+    for (const filterKey in selectedFilters["chart" + index["i"]]) {
+      if (selectedFilters["chart" + index["i"]].hasOwnProperty(filterKey)) {
+        const filterValues = selectedFilters["chart" + index["i"]][filterKey];
 
         filteredData = filteredData.filter((item) =>
           filterValues.includes(item[filterKey])
@@ -966,23 +1025,37 @@ const Dashboard = ({ params }) => {
       }
     }
     temp.data = filteredData;
-    temp.filteApply = "FilterApply";
+    projectTemplate["chart" + index["i"]].filteApply = "FilterApply";
     handleFilter(temp);
     handleFilterClose();
 
     // <Chart state={template[chartsID["chart" + i]]} />
+
+    managePreview?.preview && setchartOpen({ Chart: true });
   };
 
   // reset the chart and refresh action
-  const ResetFilter = () => {
-    filteredtemplate[template[chartsID["chart" + index["i"]]].TempName][
-      "Uploaded_fileTemp"
-    ] = template[chartsID["chart" + index["i"]]]["Uploaded_file"];
-    setSelectedFilters({});
+  const ResetFilter = (i) => {
+    if (i === undefined) {
+      setchartOpen({ Chart: false });
+      i = index["i"];
+    }
+    if (projectTemplate["chart" + i] !== undefined) {
+      projectTemplate["chart" + i]["Uploaded_fileTemp"] =
+        projectTemplate["chart" + i]["Uploaded_file"];
+      projectTemplate["chart" + i].filteApply = undefined;
+    } else {
+      filteredtemplate[template[chartsID["chart" + index["i"]]].TempName][
+        "Uploaded_fileTemp"
+      ] = template[chartsID["chart" + index["i"]]]["Uploaded_file"];
+    }
+
+    setSelectedFilters({ ...selectedFilters, ["chart" + i]: null });
     Setfilteredtemplate({
       ...filteredtemplate,
       Render: !filteredtemplate.Render,
     });
+
     return "Executed";
   };
 
@@ -1033,112 +1106,122 @@ const Dashboard = ({ params }) => {
                 </div>
               </div>
             </Typography>
-            {(menuName === "Dashboard Menu" && !isBublished)  && ( // || params.action === "Edit"
-              <div>
-                <div style={{ width: "80%" }}>
-                  <FormControl sx={{ m: 1, width: 300 }}>
-                    <InputLabel id="demo-multiple-checkbox-label">
-                      Select Filter Data
-                    </InputLabel>
-                    <Select
-                      labelId="demo-multiple-checkbox-label"
-                      id="demo-multiple-checkbox"
-                      multiple
-                      value={dashFilterData}
-                      onChange={(event, index) => handleChange(event, index)}
-                      input={<OutlinedInput label="Select Filter Data" />}
-                      renderValue={(selected) => selected.join(", ")}
-                      style={{
-                        maxHeight: 48 * 4.5 + 0,
-                        width: 250,
-                      }}
-                    >
-                      {filterHeaderData.map((name) => (
-                        <MenuItem key={name} value={name}>
-                          <Checkbox
-                            checked={dashFilterData.indexOf(name) > -1}
-                          />
-                          <ListItemText primary={name} />
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row-reverse",
-                    justifyContent: "space-between",
-                    width: "80%",
-                  }}
-                >
-                  <div style={{ margin: "8px" }}>
-                    <Button
-                      id="saveTemp"
-                      variant="contained"
-                      className="input-field button"
-                      style={{ backgroundColor: "#6282b3" }}
-                      onClick={() => ApplyFilterDropdown("submit")}
-                    >
-                      Submit
-                    </Button>
-                  </div>
-                  <div style={{ margin: "8px" }}>
-                    <Button
-                      id="saveTemp"
-                      variant="contained"
-                      className="input-field button"
-                      style={{ backgroundColor: "#6282b3" }}
-                      onClick={() => ApplyFilterDropdown("reset")}
-                    >
-                      Reset
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {
-              (menuName === "Project Menu" || isBublished) &&
-                // filterDetailedData ?
-                Object.keys(filterDetailedData)?.map((selectedName) => (
-                  <div key={selectedName}>
+            {menuName === "Dashboard Menu" &&
+              !isBublished && ( // || params.action === "Edit"
+                <div>
+                  <div style={{ width: "80%" }}>
                     <FormControl sx={{ m: 1, width: 300 }}>
-                      <InputLabel
-                        id={`demo-multiple-checkbox-label-${selectedName}`}
-                      >
-                        {selectedName}
+                      <InputLabel id="demo-multiple-checkbox-label">
+                        Select Filter Data
                       </InputLabel>
                       <Select
-                        labelId={`demo-multiple-checkbox-label-${selectedName}`}
-                        id={`demo-multiple-checkbox-${selectedName}`}
+                        labelId="demo-multiple-checkbox-label"
+                        id="demo-multiple-checkbox"
                         multiple
-                        value={selectedFilters[selectedName] || []}
-                        onChange={(event) =>
-                          handleFilteredData(event, selectedName)
-                        }
-                        input={<OutlinedInput label="Tag" />}
+                        value={dashFilterData}
+                        onChange={(event, index) => handleChange(event, index)}
+                        input={<OutlinedInput label="Select Filter Data" />}
                         renderValue={(selected) => selected.join(", ")}
                         style={{
                           maxHeight: 48 * 4.5 + 0,
                           width: 250,
                         }}
                       >
-                        {filterDetailedData[selectedName]?.map((item) => (
-                          <MenuItem key={item} value={item}>
+                        {filterHeaderData.map((name) => (
+                          <MenuItem key={name} value={name}>
                             <Checkbox
-                              checked={
-                                selectedFilters[selectedName]?.includes(item) ||
-                                false
-                              }
+                              checked={dashFilterData.indexOf(name) > -1}
                             />
-                            <ListItemText primary={item} />
+                            <ListItemText primary={name} />
                           </MenuItem>
                         ))}
                       </Select>
                     </FormControl>
                   </div>
-                ))
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row-reverse",
+                      justifyContent: "space-between",
+                      width: "80%",
+                    }}
+                  >
+                    <div style={{ margin: "8px" }}>
+                      <Button
+                        id="saveTemp"
+                        variant="contained"
+                        className="input-field button"
+                        style={{ backgroundColor: "#6282b3" }}
+                        onClick={() => ApplyFilterDropdown("submit")}
+                      >
+                        Submit
+                      </Button>
+                    </div>
+                    <div style={{ margin: "8px" }}>
+                      <Button
+                        id="saveTemp"
+                        variant="contained"
+                        className="input-field button"
+                        style={{ backgroundColor: "#6282b3" }}
+                        onClick={() => ApplyFilterDropdown("reset")}
+                      >
+                        Reset
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+            {
+              (menuName === "Project Menu" || isBublished) &&
+                // filterDetailedData ?
+                Object.keys(filterDetailedData[`chart${index["i"]}`])?.map(
+                  (selectedName) => (
+                    <div key={selectedName}>
+                      <FormControl sx={{ m: 1, width: 300 }}>
+                        <InputLabel
+                          id={`demo-multiple-checkbox-label-${selectedName}`}
+                        >
+                          {selectedName}
+                        </InputLabel>
+                        <Select
+                          labelId={`demo-multiple-checkbox-label-${selectedName}`}
+                          id={`demo-multiple-checkbox-${selectedName}`}
+                          multiple
+                          value={
+                            selectedFilters[`chart${index["i"]}`]?.[
+                              selectedName
+                            ] || []
+                          }
+                          onChange={(event) =>
+                            handleFilteredData(event, selectedName)
+                          }
+                          input={<OutlinedInput label="Tag" />}
+                          renderValue={(selected) => selected.join(", ")}
+                          style={{
+                            maxHeight: 48 * 4.5 + 0,
+                            width: 250,
+                          }}
+                        >
+                          {filterDetailedData?.[`chart${index["i"]}`]?.[
+                            selectedName
+                          ]?.map((item) => (
+                            <MenuItem key={item} value={item}>
+                              <Checkbox
+                                checked={
+                                  selectedFilters?.[`chart${index["i"]}`]?.[
+                                    selectedName
+                                  ]?.includes(item) || false
+                                }
+                              />
+                              <ListItemText primary={item} />
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </div>
+                  )
+                )
               // : (menuName !== "Dashboard Menu" || isBublished) &&
               // "No data to filter"
             }
@@ -1150,7 +1233,7 @@ const Dashboard = ({ params }) => {
                   display: "flex",
                   flexDirection: "row-reverse",
                   marginTop: "10px",
-                  width: "90%"
+                  width: "90%",
                 }}
               >
                 <Button
@@ -1168,7 +1251,7 @@ const Dashboard = ({ params }) => {
                   variant="contained"
                   className="input-field button"
                   style={{ backgroundColor: "#6282b3", marginRight: "60px" }}
-                  onClick={ResetFilter}
+                  onClick={() => ResetFilter()}
                 >
                   Reset
                 </Button>
@@ -1206,15 +1289,27 @@ const Dashboard = ({ params }) => {
 
   const PreviewDataSet = () => {
     let tempDataSet = {};
-    if (
-      template[chartsID["chart" + index["i"]]]?.["filteApply"] === "FilterApply"
-    ) {
-      tempDataSet =
-        filteredtemplate[template[chartsID["chart" + index["i"]]].TempName][
-          "Uploaded_fileTemp"
-        ];
+    if (projectTemplate["chart" + index["i"]] === undefined) {
+      if (
+        template[chartsID["chart" + index["i"]]]?.["filteApply"] ===
+        "FilterApply"
+      ) {
+        tempDataSet =
+          filteredtemplate[template[chartsID["chart" + index["i"]]].TempName][
+            "Uploaded_fileTemp"
+          ];
+      } else {
+        tempDataSet = template[chartsID["chart" + index["i"]]]["Uploaded_file"];
+      }
     } else {
-      tempDataSet = template[chartsID["chart" + index["i"]]]["Uploaded_file"];
+      if (
+        projectTemplate["chart" + index["i"]]?.["filteApply"] === "FilterApply"
+      ) {
+        tempDataSet =
+          projectTemplate["chart" + index["i"]]["Uploaded_fileTemp"];
+      } else {
+        tempDataSet = projectTemplate["chart" + index["i"]]["Uploaded_file"]; // template[chartsID["chart" + index["i"]]]["Uploaded_file"];
+      }
     }
 
     return template[chartsID["chart" + index["i"]]]["Uploaded_file"] !==
@@ -1229,9 +1324,9 @@ const Dashboard = ({ params }) => {
     return (
       <div>
         <Modal
-          open={open.Chart}
+          open={chartOpen.Chart}
           onClose={(e) => {
-            setOpen({ Chart: false });
+            setchartOpen({ Chart: false });
           }}
           aria-labelledby="keep-mounted-modal-title"
           aria-describedby="keep-mounted-modal-description"
@@ -1250,8 +1345,18 @@ const Dashboard = ({ params }) => {
               variant="h6"
               component="h2"
             >
-              <div className="row col-lg-12" style={{ margin: "20px" }}>
-                <div className="col-lg-11">Preview</div>
+              <div
+                className="row "
+                style={{
+                  margin: "20px",
+                  margin: "20px",
+                  width: "100%",
+                  display: "flex",
+                }}
+              >
+                <div className="" style={{ width: "85%" }}>
+                  Preview
+                </div>
                 <div
                   className="col-lg-1"
                   style={{
@@ -1260,11 +1365,97 @@ const Dashboard = ({ params }) => {
                     right: "0px",
                     bottom: "10px",
                     textAlign: "center",
+                    display: "flex",
                   }}
                 >
+                  {params.action !== "Edit" && !params.Build && (
+                    <>
+                      <BootstrapTooltip
+                        title="Refresh"
+                        TransitionComponent={Fade}
+                        TransitionProps={{ timeout: 600 }}
+                        placement="bottom"
+                      >
+                        <RefreshIcon
+                          style={{
+                            float: "right",
+                            cursor: "pointer",
+                            marginRight: "15%",
+                          }}
+                          onClick={(e) => {
+                            ResetFilter(index.i);
+                          }}
+                        />
+                      </BootstrapTooltip>
+
+                      <BootstrapTooltip
+                        title="Filter"
+                        TransitionComponent={Fade}
+                        TransitionProps={{ timeout: 600 }}
+                        placement="bottom"
+                      >
+                        {projectTemplate["chart" + index.i]?.["filteApply"] !==
+                        undefined ? (
+                          <img
+                            src={FilteredIcon}
+                            name="Filter"
+                            color="black"
+                            alt="Logo"
+                            height="18px"
+                            style={{
+                              float: "right",
+                              cursor: "pointer",
+                              // padding: " 4px 5px 0 0",
+                              marginRight: "15%",
+                            }}
+                            onClick={(e) => {
+                              filterModelOpen(index.i, "Project Menu", true);
+                            }}
+                          ></img>
+                        ) : (
+                          <FilterAltOutlinedIcon
+                            style={{
+                              float: "right",
+                              cursor: "pointer",
+                              marginRight: "15%",
+                            }}
+                            onClick={(e) => {
+                              filterModelOpen(index.i, "Project Menu");
+                            }}
+                          />
+                        )}
+                      </BootstrapTooltip>
+
+                      <BootstrapTooltip
+                        title="Dataset"
+                        TransitionComponent={Fade}
+                        TransitionProps={{ timeout: 600 }}
+                        placement="bottom"
+                      >
+                        <DatasetIcon
+                          style={{
+                            float: "right",
+                            cursor: "pointer",
+                            // paddingTop: "6px",
+                            marginRight: "50%",
+                          }}
+                          onClick={(e) => {
+                            handleDataSet(index.i);
+                          }}
+                        />
+                      </BootstrapTooltip>
+                    </>
+                  )}
+
                   <CloseIcon
                     onClick={(e) => {
-                      handleClose();
+                      setchartOpen({ Chart: false });
+                      // to rerender chart for come back again same size
+                      !isBublished &&
+                        Setfilteredtemplate({
+                          ...filteredtemplate,
+                          Render: !filteredtemplate.Render,
+                        });
                     }}
                   />
                 </div>
@@ -1278,7 +1469,11 @@ const Dashboard = ({ params }) => {
               <div className="row col-lg-12" style={{ minHeight: "100%" }}>
                 {chartsID["chart" + index.i] !== undefined ? (
                   <Chart
-                    state={template[chartsID["chart" + index.i]]}
+                    state={
+                      projectTemplate["chart" + index.i]
+                        ? projectTemplate["chart" + index.i]
+                        : template[chartsID["chart" + index.i]]
+                    }
                     style={{ minHeight: "100%" }}
                   />
                 ) : (
@@ -1288,11 +1483,17 @@ const Dashboard = ({ params }) => {
             </Typography>
           </Box>
         </Modal>
+      </div>
+    );
+  };
 
+  const PreviewDataSetModal = () => {
+    return (
+      <div>
         <Modal
           open={open.DataSet}
           onClose={(e) => {
-            setOpen({ Chart: false });
+            setchartOpen({ chart: false });
           }}
           aria-labelledby="keep-mounted-modal-title"
           aria-describedby="keep-mounted-modal-description"
@@ -1456,13 +1657,18 @@ const Dashboard = ({ params }) => {
   };
 
   const handleOpen = (index) => {
-    setOpen({ Chart: true });
+    setchartOpen({ Chart: true });
     Setindex({ i: index });
   };
-  const handleClose = () => setOpen({ Chart: false });
+
+  const handleClose = () => {
+    // setchartOpen({ Chart: false });
+    setOpen({ DataSet: false });
+  };
+
   const handleFilter = async (Obj) => {
     document.querySelector(".loader").style.display = "block";
-    filteredtemplate[Obj.TempName]["Uploaded_fileTemp"] = Obj.data;
+    projectTemplate["chart" + index["i"]]["Uploaded_fileTemp"] = Obj.data;
     // for (let i = 0; i < Object.keys(filteredtemplate).length; i++) {
     //   if (Object.keys(filteredtemplate)[i] !== "Render")
     //     // filteredtemplate[Object.keys(filteredtemplate)[i]].Uploaded_file =
@@ -1476,6 +1682,7 @@ const Dashboard = ({ params }) => {
 
     return "Executed";
   };
+
   const RemoveChart = (e) => {
     document.querySelector(".loader").style.display = "block";
     toast.success("Chart has been removed from the dashboard.", {
@@ -1485,6 +1692,7 @@ const Dashboard = ({ params }) => {
     });
     SetChartsID({ ...chartsID, ["chart" + e]: undefined });
   };
+
   const handleTabChange = (action) => {
     // document.querySelector('.loader').style.display = 'block'
     if (action === "Dashboard") setTab({ ...Tab, Dashboard: true });
@@ -1500,7 +1708,7 @@ const Dashboard = ({ params }) => {
   const DashboardArea = React.useMemo(() => {
     const dashboard = CreatingUploadArea();
     return dashboard;
-  }, [template, filteredtemplate, chartsID, layouts]);
+  }, [template, filteredtemplate, chartsID, layouts, projectTemplate]);
 
   const NavTabs = React.useMemo(() => Tabs(), [filter]);
   const getTable = () => {
@@ -1564,8 +1772,8 @@ const Dashboard = ({ params }) => {
             </div>
           )} */}
         </div>
-        {(open.DataSet || open.Chart) && <PreviewModal />}
-
+        {chartOpen.Chart && <PreviewModal />}
+        {open.DataSet && <PreviewDataSetModal />}
         {open.filterMenu === true ? FilterModel() : ""}
         {/* <Chart state={template[chartsID["chart" + index.i]]} /> */}
       </div>

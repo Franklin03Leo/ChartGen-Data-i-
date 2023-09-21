@@ -251,7 +251,9 @@ const InputArea = ({
     userID: sessionStorage.getItem("UserName") !== null && user.userID,
   });
 
-  const [tempState, setTempState] = React.useState(JSON.parse(JSON.stringify(state)));
+  const [tempState, setTempState] = React.useState(
+    JSON.parse(JSON.stringify(state))
+  );
 
   const [enable, setEnable] = React.useState({});
   const [colors, setColors] = React.useState([]);
@@ -323,7 +325,7 @@ const InputArea = ({
   const [project, setProject] = React.useState({});
   const [postProject, setpostProject] = React.useState({});
   const [TemplatesCollections, setTemplatesCollections] = React.useState({});
-  const [enablesavebutton, setEnablesavebutton] = React.useState(false);  
+  const [enablesavebutton, setEnablesavebutton] = React.useState(false);
   const [path, setPath] = React.useState({
     Location: window.location.hostname,
     Port: process.env.REACT_APP_PORT,
@@ -444,10 +446,10 @@ const InputArea = ({
   const navigate = useNavigate();
 
   //Every fields onChange for store the inputs
-  const handleChange = (event) => {   
-    setfileevent(event)
-    setEnablesavebutton(false);   
-    
+  const handleChange = (event) => {
+    setfileevent(event);
+    setEnablesavebutton(false);
+
     if (event.target.name === "file") {
       document.querySelector(".loader").style.display = "block";
       if (event.target.files[0] === undefined) {
@@ -459,7 +461,7 @@ const InputArea = ({
         });
         document.querySelector(".loader").style.display = "none";
       } else {
-        sessionStorage.setItem("uploadfilename", '');
+        sessionStorage.setItem("uploadfilename", "");
         sessionStorage.setItem("uploadfilename", event.target.files[0].name);
         setEnablesavebutton(true);
         if (event.target.files[0].type === "text/csv") {
@@ -1490,10 +1492,13 @@ const InputArea = ({
             SrcName: sessionStorage.getItem("uploadfilename"),
             userID: user.userID,
           })
-          .then((response) => {           
+          .then((response) => {
             state.SrcName = sessionStorage.getItem("uploadfilename");
             axios
-              .post(`http://${path.Location}:${path.Port}/InsertTemplate`, state)
+              .post(
+                `http://${path.Location}:${path.Port}/InsertTemplate`,
+                state
+              )
               .then((response) => {
                 toast.success("Your Data has been Updated", {
                   position: toast.POSITION.BOTTOM_RIGHT,
@@ -1525,7 +1530,7 @@ const InputArea = ({
     } catch (error) {
       console.log("error", error.message);
     }
-  }
+  };
   // Sidebar navigation
   const handleNavbarChange = (event) => {
     var data = event.target.name;
@@ -1840,7 +1845,7 @@ const InputArea = ({
         GroupByCopy_: validGroupAxis,
         Chart: chart,
         Uploaded_file: state.Uploaded_file,
-        CheckType : state["CheckType"]
+        CheckType: state["CheckType"],
       });
     } else {
       setState({
@@ -1849,13 +1854,13 @@ const InputArea = ({
         YAxis_: validYAxis,
         Chart: chart,
         Uploaded_file: state.Uploaded_file,
-        CheckType : state["CheckType"]
+        CheckType: state["CheckType"],
       });
     }
     validXAxis = [];
     validYAxis = [];
     validGroupAxis = [];
-    ChildtoParentHandshake(undefined)
+    ChildtoParentHandshake(undefined);
   };
   //Dynamic filtering for dashboard
   const handleFilter = (action) => {
@@ -1919,7 +1924,7 @@ const InputArea = ({
   };
   //Expand/Collapse
   const ExpandCollapse = (action) => {
-    navigate("/");
+    // navigate("/");
     setTimeout(() => {
       if (navopen && !isMobile) {
         setNavWidth({ navArea: "70px", inuptArea: "0%", ChartArea: "95%" });
@@ -2092,6 +2097,7 @@ const InputArea = ({
         autoClose: 2000,
       });
     } else if (action === "Edit") {
+      e.stopPropagation();
       let data = project[e.currentTarget.id];
       if (data.layoutOption === "Static") {
         setOthers({
@@ -2161,11 +2167,14 @@ const InputArea = ({
       obj.FilterProps = filterProps;
       obj.selectedFilterDimensions = filteringProps.customFilter;
       obj.AvailableDimensions = filteringProps.Dimensions;
-      // obj.Users = projectAssigning.Users;
-      // obj.Groups = projectAssigning.Groups;
       obj.action = "Update";
       setpostProject(obj);
-      document.querySelector(".loader").style.display = "block";
+      // setOthers({
+      //   ...others,
+      //   EditDashboard: false,
+      // });
+      // setNavbar({ bar: "Project" });
+      // document.querySelector(".loader").style.display = "block";
       axios
         .post(`http://${path.Location}:${path.Port}/UpdateDashboard`, obj)
         .then((response) => {
@@ -2230,6 +2239,7 @@ const InputArea = ({
             };
             obj.FilterProps = data.filterProps;
             obj.action = action;
+            obj.others = others.EditDashboard;
             setpostProject(obj);
             setPlay({ isPlay: undefined });
             setIssues(undefined);
@@ -2246,6 +2256,17 @@ const InputArea = ({
         obj.DashboardName = data.DashboardName;
         obj.DashboardDescription = data.DashboardDescription;
         obj.dashboard = dashboard;
+        obj.Projectfilter = JSON.parse(
+          JSON.stringify(
+            Object.fromEntries(
+              Object.keys(data.charts).map((val) => [
+                val,
+                dashboard[data.charts[val]],
+              ])
+            )
+          )
+        );
+        //Object.keys(data.charts).map(val => ({ [val]: dashboard[data.charts[val]] }));
         obj.Filter = {
           filterSwatch: data.filter.filterSwatch,
           data: Uploaded_file !== undefined ? Uploaded_file : "",
@@ -2263,6 +2284,13 @@ const InputArea = ({
         //   Groups: !data.Groups ? [] : data.Groups,
         // });
       }
+    }
+    if (action === "Cancel") {
+      // let obj = {};
+      // obj.action = action;
+      // setpostProject(obj);
+      // setNavbar({ bar: "Project" });
+      setOthers({ ...others, EditDashboard: false });
     }
 
     if (action === "AssignUser") {
@@ -2424,8 +2452,11 @@ const InputArea = ({
       });
   };
   const handleDataSet = (action, id) => {
-    if (fileevent != null && fileevent != '' && fileevent != undefined) {
-      if (fileevent.target.files[0] != '' && fileevent.target.files[0] != undefined) {
+    if (fileevent != null && fileevent != "" && fileevent != undefined) {
+      if (
+        fileevent.target.files[0] != "" &&
+        fileevent.target.files[0] != undefined
+      ) {
         setState({
           ...state,
           Uploaded_file: undefined,
@@ -2541,30 +2572,34 @@ const InputArea = ({
               </BootstrapTooltip>
             </div>
           </div>
-          {state.Uploaded_file !== undefined && navbar.bar !== "Templates" && user["Role"] !== "User" && (
-            <div className="Icon">
-              <div
-                className={navbar.bar === "Charts" ? "NavBar-active" : "NavBar"}
-              >
-                <BootstrapTooltip
-                  title="Chart"
-                  TransitionComponent={Fade}
-                  TransitionProps={{ timeout: 600 }}
-                  placement="right"
+          {state.Uploaded_file !== undefined &&
+            navbar.bar !== "Templates" &&
+            user["Role"] !== "User" && (
+              <div className="Icon">
+                <div
+                  className={
+                    navbar.bar === "Charts" ? "NavBar-active" : "NavBar"
+                  }
                 >
-                  <img
-                    src={Bar_outlined}
-                    name="Charts"
-                    color="white"
-                    alt="Logo"
-                    style={{ height: "16px" }}
-                    onClick={handleNavbarChange}
-                  ></img>
-                  {/* <SignalCellularAltIcon className="Icon_" fontSize="large" color={navbar.bar === 'Charts' ? 'primary' : '#979A9B'} onClick={handleNavbarChange} /> */}
-                </BootstrapTooltip>
+                  <BootstrapTooltip
+                    title="Chart"
+                    TransitionComponent={Fade}
+                    TransitionProps={{ timeout: 600 }}
+                    placement="right"
+                  >
+                    <img
+                      src={Bar_outlined}
+                      name="Charts"
+                      color="white"
+                      alt="Logo"
+                      style={{ height: "16px" }}
+                      onClick={handleNavbarChange}
+                    ></img>
+                    {/* <SignalCellularAltIcon className="Icon_" fontSize="large" color={navbar.bar === 'Charts' ? 'primary' : '#979A9B'} onClick={handleNavbarChange} /> */}
+                  </BootstrapTooltip>
+                </div>
               </div>
-            </div>
-          )}
+            )}
           <div
             className="Icon"
             style={{ display: user["Role"] === "User" && "None" }}
@@ -3027,7 +3062,10 @@ const InputArea = ({
               className="row col-xs-12 col-sm-12 col-md-12 col-lg-12"
               style={{ margin: "15px 0px 15px 13px" }}
             >
-              <div className="row col-sm-6 col-md-6 col-lg-5"  style={{ width: "200px" }}>
+              <div
+                className="row col-sm-6 col-md-6 col-lg-5"
+                style={{ width: "200px" }}
+              >
                 {/* <TextField
                   error={formValues.InputType.error}
                   helperText={
@@ -3047,16 +3085,16 @@ const InputArea = ({
                   value={state.InputType}
                 >
                   {/* Import Inputs-Removed that option for Now. */}
-                  {/* <MenuItem key={1} value={"Import Inputs"}>
+                {/* <MenuItem key={1} value={"Import Inputs"}>
                     Import Inputs
                   </MenuItem> */}
-                  {/* <MenuItem key={2} value={"Enter Inputs"}>
+                {/* <MenuItem key={2} value={"Enter Inputs"}>
                     Enter Inputs
                   </MenuItem>
                   <MenuItem key={3} value={"Available Dataset"}>
                     Available Dataset
                   </MenuItem>
-                </TextField> */} 
+                </TextField> */}
               </div>
               {state.InputType === "Import Inputs" ||
               state.InputType === undefined ? (
@@ -3100,9 +3138,10 @@ const InputArea = ({
                 </label>
               </div>
               <div>
-                <img src={info} style={{ width: "25px" ,margin:"5px" }}></img>
+                <img src={info} style={{ width: "25px", margin: "5px" }}></img>
                 {/* <b style={{ color: "#2E89FF" }}>Note: </b> */}
-                Only upload an Excel, CSV, or JSON file.</div>
+                Only upload an Excel, CSV, or JSON file.
+              </div>
               {error.invalidFile !== undefined && (
                 <div
                   className="col-xs-3 col-sm-10 col-md-10 col-lg-10"
@@ -3123,11 +3162,20 @@ const InputArea = ({
                   if (Dataset[a] !== undefined) {
                     Item.push(
                       <div className="row col-lg-12 divdataset-body">
-                    <BootstrapTooltip title={a} TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom" >
-                        <div className="col-lg-6 dataset-name" style={{ width: "187px" }}>{a}</div>
+                        <BootstrapTooltip
+                          title={a}
+                          TransitionComponent={Fade}
+                          TransitionProps={{ timeout: 600 }}
+                          placement="bottom"
+                        >
+                          <div
+                            className="col-lg-6 dataset-name"
+                            style={{ width: "187px" }}
+                          >
+                            {a}
+                          </div>
                         </BootstrapTooltip>
-                         <div className="row col-lg-4 dataset-icon">
-                        
+                        <div className="row col-lg-4 dataset-icon">
                           <div
                             className="col-lg-5 dataset-icon_ buttonwid"
                             onClick={(e) => {
@@ -3164,9 +3212,10 @@ const InputArea = ({
           ) : (
             ""
           )}
-          {//state.Uploaded_file !== undefined &&
-          // state.InputType === "Enter Inputs" &&
-          navbar.bar === "Data" ? (
+          {
+            //state.Uploaded_file !== undefined &&
+            // state.InputType === "Enter Inputs" &&
+            navbar.bar === "Data" ? (
               <>
                 {/* <div className="row width-lg" style={{ marginLeft: "10px" }}>
                 <Button
@@ -3187,11 +3236,11 @@ const InputArea = ({
                   )}
                             
                           </div> */}
-              <div
-                className="row col-sm-6 col-md-3 col-lg-5"
-                style={{ margin: "15px" }}
-              >
-                {/* <Button
+                <div
+                  className="row col-sm-6 col-md-3 col-lg-5"
+                  style={{ margin: "15px" }}
+                >
+                  {/* <Button
                   variant="contained"
                   className="input-field button"
                   style={{ backgroundColor: "#6282b3", float: "right" }}
@@ -3203,66 +3252,82 @@ const InputArea = ({
                 >
                   Show Data
                 </Button> */}
-                   {enablesavebutton ? (
-                  <Button
+                  {enablesavebutton ? (
+                    <Button
                       variant="contained"
                       className="input-field button"
                       style={{ backgroundColor: "#6282b3", float: "right" }}
-                      onClick={(e) => {SaveData(e,"Insert");}}>Save Data</Button>
-                ) : (
-                  ""
-                )}
-                  
-              </div>
-                <div className="custom-title"><b>Available Dataset</b>
-                <div style={{ marginBottom:"15px" }}></div>
-                {(() => {
-                let Item = [];
-                for (let a in Dataset) {
-                  if (Dataset[a] !== undefined) {
-                    Item.push(
-                      <div className="row col-lg-12 divdataset-body">
-                    <BootstrapTooltip title={a} TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} placement="bottom" >
-                        <div className="col-lg-6 dataset-name" style={{ width: "187px" }}>{a}</div>
-                        </BootstrapTooltip>
-                         <div className="row col-lg-4 dataset-icon">
-                        
-                          <div
-                            className="col-lg-5 dataset-icon_ buttonwid"
-                            onClick={(e) => {
-                              handleDataSet("Use", a);
-                            }}
-                          >
-                            Use
+                      onClick={(e) => {
+                        SaveData(e, "Insert");
+                      }}
+                    >
+                      Save Data
+                    </Button>
+                  ) : (
+                    ""
+                  )}
+                </div>
+                <div className="custom-title">
+                  <b>Available Dataset</b>
+                  <div style={{ marginBottom: "15px" }}></div>
+                  {(() => {
+                    let Item = [];
+                    for (let a in Dataset) {
+                      if (Dataset[a] !== undefined) {
+                        Item.push(
+                          <div className="row col-lg-12 divdataset-body">
+                            <BootstrapTooltip
+                              title={a}
+                              TransitionComponent={Fade}
+                              TransitionProps={{ timeout: 600 }}
+                              placement="bottom"
+                            >
+                              <div
+                                className="col-lg-6 dataset-name"
+                                style={{ width: "187px" }}
+                              >
+                                {a}
+                              </div>
+                            </BootstrapTooltip>
+                            <div className="row col-lg-4 dataset-icon">
+                              <div
+                                className="col-lg-5 dataset-icon_ buttonwid"
+                                onClick={(e) => {
+                                  handleDataSet("Use", a);
+                                }}
+                              >
+                                Use
+                              </div>
+                              <div
+                                className="col-lg-5 dataset-icon_ buttonwid"
+                                onClick={(e) => {
+                                  handleDataSet("Delete", a);
+                                }}
+                              >
+                                Delete
+                              </div>
+                            </div>
                           </div>
-                          <div
-                            className="col-lg-5 dataset-icon_ buttonwid"
-                            onClick={(e) => {
-                              handleDataSet("Delete", a);
-                            }}
-                          >
-                            Delete
+                        );
+                      }
+                    }
+                    if (Item.length === 0) {
+                      Item.push(
+                        <div className="row col-lg-12 divdataset-body">
+                          <div className="col-lg-10 dataset-name">
+                            No Dataset Found !!!
                           </div>
                         </div>
-                      </div>
-                    );
-                  }
-                }
-                if (Item.length === 0) {
-                  Item.push(
-                    <div className="row col-lg-12 divdataset-body">
-                      <div className="col-lg-10 dataset-name">
-                        No Dataset Found !!!
-                      </div>
-                    </div>
-                  );
-                }
-                return Item;
-              })()}</div>
-            </>
-          ) : (
-            ""
-          )}
+                      );
+                    }
+                    return Item;
+                  })()}
+                </div>
+              </>
+            ) : (
+              ""
+            )
+          }
           {/* {state.Uploaded_file === undefined && state.InputType === 'Enter Inputs' && navbar.bar === 'Data' ?
                         <div style={{ color: 'red' }}>Use the file with the less than 300 records for better experience, We are working on for boosting up.</div>
                         : ''
@@ -6815,7 +6880,6 @@ const InputArea = ({
                               let Item = [],
                                 AllCharts = [];
                               for (let a in template) {
-                                console.log("template ==> ", a);
                                 if (template[a] !== undefined) {
                                   Item.push(
                                     <div
@@ -7903,7 +7967,7 @@ const InputArea = ({
                           lineHeight: "1rem",
                         }}
                         onClick={(e) => {
-                          setOthers({ ...others, EditDashboard: false });
+                          handleDashboard("Cancel", e);
                         }}
                       >
                         Cancel

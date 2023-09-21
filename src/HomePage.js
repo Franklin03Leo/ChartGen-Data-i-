@@ -171,10 +171,9 @@ const HomePage = () => {
   };
   //Changing data type for the columns
   const handleChangeDatatype = (event, flag) => {
-    if (flag !== 1){
+    if (flag !== 1) {
       setChangeType({ ...changeType, [event.target.name]: event.target.value });
-    }
-    else {
+    } else {
       let SelectedDimension = changeType.Dimensions_;
       let TypeChanged =
         changeType.DataTypes +
@@ -265,6 +264,8 @@ const HomePage = () => {
       setAssignUser(params);
       Isshow({});
       setData({ data: undefined });
+    } else if (params.action === "Update" || params.action === "Cancel") {
+      Isshow({ isShow: undefined });
     } else {
       if (params.userID !== undefined) {
         Isshow({ ...show, isShow: true, PreviewProject: true });
@@ -350,8 +351,8 @@ const HomePage = () => {
                       <Statistics params={filedata.data} />
                     </TabPanel>
                     <TabPanel value="3">
-                     <Dictionary  params={filedata.data}/>
-                    </TabPanel>                    
+                      <Dictionary params={filedata.data} />
+                    </TabPanel>
                     {/* <TabPanel value="3">
                       <div
                         className="row col-lg-6 borderdivstyle"
