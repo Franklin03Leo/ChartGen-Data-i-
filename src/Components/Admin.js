@@ -10,6 +10,7 @@ import EditIcon from "@mui/icons-material/ModeRounded";
 import { tooltipClasses } from "@mui/material";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Swal from 'sweetalert2';
 import "../App.css";
 const AdminView = () => {
   const [path, setPath] = React.useState({
@@ -388,11 +389,7 @@ const AdminView = () => {
           axios
           .post(`http://${path.Location}:${path.Port}/userDetailsEmail`, emailObj)
             .then((res1) => { 
-          toast.success("User detail is updated.", {
-            position: toast.POSITION.BOTTOM_RIGHT,
-            hideProgressBar: true,
-            autoClose: 2000,
-          });
+              Swal.fire('User detail is updated.');
           handleEditRow(index, false);
           setData((prevState) => {
             let newRowData = [...prevState.RowData];

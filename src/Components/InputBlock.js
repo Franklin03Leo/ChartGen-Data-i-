@@ -30,9 +30,8 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 //NPM's
 import Papa from "papaparse";
 import * as xlsx from "xlsx";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
+import Swal from 'sweetalert2';
 
 //Icons
 import DatasetIcon from "@mui/icons-material/Dataset";
@@ -416,11 +415,6 @@ const InputArea = ({
     project_(postProject);
   }, [postProject]);
   React.useEffect(() => {
-    // toast.success('Welcome back, Xavier', {
-    //     position: toast.POSITION.BOTTOM_RIGHT,
-    //     hideProgressBar: true,
-    //     autoClose: 2000
-    // });
     //GetTemplate('Dashboard')
     GetDashboard();
     getDataSet();
@@ -1488,47 +1482,89 @@ const InputArea = ({
   //Save Data..F
   const SaveData = (event, action) => {
     try {
-      if (action === "Update") {
+      if (action === "Insert") {
         axios
-          .post(`http://${path.Location}:${path.Port}/DeleteTemplate`, {
-            SrcName: sessionStorage.getItem("uploadfilename"),
+          .post(`http://${path.Location}:${path.Port}/GetChartsSrc`, {
             userID: user.userID,
+            filename: sessionStorage.getItem("uploadfilename"),
           })
           .then((response) => {
-            state.SrcName = sessionStorage.getItem("uploadfilename");
-            axios
-              .post(
+            debugger
+            if (response.data.length > 0) {
+              Swal.fire({
+                title: 'Are you sure?',
+                text: "This filename already exists. Would you like to save it with a different name?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  Swal.fire({
+                    title: 'Please submit your new file name.',
+                    input: 'text',
+                    inputAttributes: {
+                      autocapitalize: 'off'
+                    },
+                    showCancelButton: true,
+                    confirmButtonText: 'Save',
+                    showLoaderOnConfirm: true,
+                    preConfirm: (login) => {},
+                    allowOutsideClick: () => !Swal.isLoading()
+                  }).then((result) => {
+                    if (result.isConfirmed) {
+                      
+                      axios.post(`http://${path.Location}:${path.Port}/DeleteTemplate`, {
+                            SrcName: sessionStorage.getItem("uploadfilename"),
+                            userID: user.userID})
+                           .then((response) => {
+                                  state.SrcName = result.value;
+                      axios.post(`http://${path.Location}:${path.Port}/InsertTemplate`,state)
+                        .then((response) => {
+                          Swal.fire('Your Data has been Updated');})
+                        .catch((error) => {console.log(error);});
+                        });
+                    }
+                  })
+                }
+                else { 
+                   //Deletion of Existing file data and Inserting new Data 
+                    axios.post(`http://${path.Location}:${path.Port}/DeleteTemplate`, {
+                    SrcName: sessionStorage.getItem("uploadfilename"),
+                    userID: user.userID,
+                    })
+                  .then((response) => {
+                  state.SrcName = sessionStorage.getItem("uploadfilename");
+                  axios.post(
                 `http://${path.Location}:${path.Port}/InsertTemplate`,
                 state
               )
               .then((response) => {
-                toast.success("Your Data has been Updated", {
-                  position: toast.POSITION.BOTTOM_RIGHT,
-                  hideProgressBar: true,
-                  autoClose: 2000,
-                });
+                Swal.fire('Your Data has been Updated');                
               })
               .catch((error) => {
                 console.log(error);
               });
           });
-      } else if (action === "Insert") {
-        const Result = state;
-        Result.SrcName = sessionStorage.getItem("uploadfilename");
-        delete Result._id;
-        axios
-          .post(`http://${path.Location}:${path.Port}/InsertTemplate`, Result)
-          .then((response) => {
-            toast.success("Your Data has been Saved", {
-              position: toast.POSITION.BOTTOM_RIGHT,
-              hideProgressBar: true,
-              autoClose: 2000,
-            });
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      }
+           }              })  
+
+            }
+            else if (response.data.length == 0) {
+              //Newly insert the file to DB..
+              const Result = state;
+              Result.SrcName = sessionStorage.getItem("uploadfilename");
+              delete Result._id;
+              axios
+              .post(`http://${path.Location}:${path.Port}/InsertTemplate`, Result)
+                .then((response) => {
+                  Swal.fire('Your Data has been Saved')})
+                .catch((error) => {
+                    console.log(error);
+                  });
+            }
+           });
+       }
     } catch (error) {
       console.log("error", error.message);
     }
@@ -1626,11 +1662,7 @@ const InputArea = ({
         document.querySelector(".loader").style.display = "block";
         PostTemplate("Update");
         GenerateChart();
-        toast.success("Your template has been Updated", {
-          position: toast.POSITION.BOTTOM_RIGHT,
-          hideProgressBar: true,
-          autoClose: 2000,
-        });
+        Swal.fire('Your template has been Updated');        
         ChildtoParentHandshake(undefined);
         setNavbar({ bar: "Templates" });
         chartReset("Chart_Reset");
@@ -1642,11 +1674,7 @@ const InputArea = ({
         if (formValues.TempName === true || state.TempName === undefined) {
           // Enable validation
         }
-        toast.success("Your template has been Saved", {
-          position: toast.POSITION.BOTTOM_RIGHT,
-          hideProgressBar: true,
-          autoClose: 2000,
-        });
+        Swal.fire('Your template has been Saved');  
         setOpen(false);
         setNavbar({ bar: "Templates" });
         PostTemplate("Insert");
@@ -1654,11 +1682,7 @@ const InputArea = ({
       }
     } else {
       setFlag(false);
-      toast.success("Your template updation has been cancelled", {
-        position: toast.POSITION.BOTTOM_RIGHT,
-        hideProgressBar: true,
-        autoClose: 2000,
-      });
+      Swal.fire('Your template updation has been cancelled');           
       ChildtoParentHandshake(undefined);
       chartReset("Chart_Reset");
       setState((previous) => ({
@@ -1712,12 +1736,7 @@ const InputArea = ({
           userID: user.userID,
         })
         .then((response) => {
-          //console.log("data", response);
-          toast.success("Your Template has been Deleted", {
-            position: toast.POSITION.BOTTOM_RIGHT,
-            hideProgressBar: true,
-            autoClose: 2000,
-          });
+          Swal.fire('Your Template has been Deleted');          
           setFlag(flag);
         });
       setOpen({ ...open, Template: false });
@@ -2093,11 +2112,7 @@ const InputArea = ({
     if (action === "Save") {
       setOpen({ Dashboard: false });
       PostDashboard("Insert");
-      toast.success("Your Project has been Saved", {
-        position: toast.POSITION.BOTTOM_RIGHT,
-        hideProgressBar: true,
-        autoClose: 2000,
-      });
+      Swal.fire('Your Project has been Saved');      
     } else if (action === "Edit") {
       let data = project[e.currentTarget.id];
       if (data.layoutOption === "Static") {
@@ -2176,11 +2191,7 @@ const InputArea = ({
       axios
         .post(`http://${path.Location}:${path.Port}/UpdateDashboard`, obj)
         .then((response) => {
-          toast.success("Your Project has been Updated.", {
-            position: toast.POSITION.BOTTOM_RIGHT,
-            hideProgressBar: true,
-            autoClose: 2000,
-          });
+          Swal.fire('Your Project has been Updated.');          
           //GetDashboard();
         });
     } else if (action === "Delete") {
@@ -2191,11 +2202,7 @@ const InputArea = ({
           DashboardName: e.currentTarget.id,
         })
         .then((response) => {
-          toast.success("Your Project has been Deleted.", {
-            position: toast.POSITION.BOTTOM_RIGHT,
-            hideProgressBar: true,
-            autoClose: 2000,
-          });
+          Swal.fire('Your Project has been Deleted.');          
           GetDashboard();
           setTimeout(() => {
             document.querySelector(".loader").style.display = "none";

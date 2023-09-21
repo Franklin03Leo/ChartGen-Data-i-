@@ -38,8 +38,7 @@ import DashboardFilter from "../Components/DashboardFilter";
 import DatasetTable from "../Components/DatasetTable";
 import CardLineChart from "./CardLineChart";
 //NPM's
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import Swal from 'sweetalert2';
 
 //tool tip
 import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
@@ -1478,11 +1477,7 @@ const Dashboard = ({ params }) => {
   };
   const RemoveChart = (e) => {
     document.querySelector(".loader").style.display = "block";
-    toast.success("Chart has been removed from the dashboard.", {
-      position: toast.POSITION.BOTTOM_RIGHT,
-      hideProgressBar: true,
-      autoClose: 2000,
-    });
+    Swal.fire('Chart has been removed from the dashboard.');    
     SetChartsID({ ...chartsID, ["chart" + e]: undefined });
   };
   const handleTabChange = (action) => {

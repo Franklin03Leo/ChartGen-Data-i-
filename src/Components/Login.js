@@ -450,18 +450,11 @@ const Login = () => {
   };
   const handlePost = (page) => {
     if (page === "Sign Up") {
-      //Popping the toast when required fields is not filled up..
-
       if (
         userDetails.Name === "" ||
         userDetails.Name === null ||
         userDetails.Name === undefined
       ) {
-        // toast.error("Name field cannot be empty.", {
-        //   position: toast.POSITION.BOTTOM_RIGHT,
-        //   hideProgressBar: true,
-        //   autoClose: 2000,
-        // }); if (user.userID === undefined || user.userID === "") {
         setvalidation({
           ...validation,
           Name: {
@@ -476,11 +469,6 @@ const Login = () => {
         userDetails.userID === null ||
         userDetails.userID === undefined
       ) {
-        // toast.error("Email field cannot be empty.", {
-        //   position: toast.POSITION.BOTTOM_RIGHT,
-        //   hideProgressBar: true,
-        //   autoClose: 2000,
-        // });
         setvalidation({
           ...validation,
           RuserID: {
@@ -495,11 +483,6 @@ const Login = () => {
         userDetails.password === null ||
         userDetails.password === undefined
       ) {
-        // toast.error("Password field cannot be empty.", {
-        //   position: toast.POSITION.BOTTOM_RIGHT,
-        //   hideProgressBar: true,
-        //   autoClose: 2000,
-        // });
         setvalidation({
           ...validation,
           password: {
@@ -514,11 +497,6 @@ const Login = () => {
         confpassval.Confirmpassword === "" ||
         confpassval.Confirmpassword === null
       ) {
-        // toast.error("Confirm Password field cannot be empty.", {
-        //   position: toast.POSITION.BOTTOM_RIGHT,
-        //   hideProgressBar: true,
-        //   autoClose: 2000,
-        // });
         setvalidation({
           ...validation,
           Confirmpassword: {
@@ -530,62 +508,10 @@ const Login = () => {
         return;
       }
 
-      // if (Object.getOwnPropertyNames(userDetails).length === 0) {
-      //   toast.error("Please fill in all required fields.", {
-      //     position: toast.POSITION.BOTTOM_RIGHT,
-      //     hideProgressBar: true,
-      //     autoClose: 2000,
-      //   });
-      //   return;
-      // }
-      // if (!Object.keys(userDetails).includes("Name")) {
-      //   toast.error("Name field cannot be empty.", {
-      //     position: toast.POSITION.BOTTOM_RIGHT,
-      //     hideProgressBar: true,
-      //     autoClose: 2000,
-      //   });
-      //   return;
-      // }
-      // if (!Object.keys(userDetails).includes("userID")) {
-      //   toast.error("Email address field cannot be empty.", {
-      //     position: toast.POSITION.BOTTOM_RIGHT,
-      //     hideProgressBar: true,
-      //     autoClose: 2000,
-      //   });
-      //   return;
-      // }
-      // if (!Object.keys(userDetails).includes("password")) {
-      //   toast.error("Password field cannot be empty.", {
-      //     position: toast.POSITION.BOTTOM_RIGHT,
-      //     hideProgressBar: true,
-      //     autoClose: 2000,
-      //   });
-      //   return;
-      // }
-      // if (!Object.keys(userDetails).includes("password")) {
-      //   toast.error("Password field cannot be empty.", {
-      //     position: toast.POSITION.BOTTOM_RIGHT,
-      //     hideProgressBar: true,
-      //     autoClose: 2000,
-      //   });
-      //   return;
-      // }
-
       axios
         .post(`http://${path.Location}:${path.Port}/SignupUser`, userDetails)
         .then((response) => {
-          // toast.success("Registered successfully.", {
-          //   position: toast.POSITION.BOTTOM_RIGHT,
-          //   hideProgressBar: true,
-          //   autoClose: 2000,
-          // });
           setPage("Welcome");
-
-          // setTimeout(() => {
-          //   setPage("Login");
-          //   setUserDetails({});
-          //   // userDetails = {};// Commented by Franklin due to invalid assignment for cont variable.
-          // }, 10000);
         })
         .catch((error) => {
           console.log(error);
@@ -652,9 +578,6 @@ const Login = () => {
             const { Name, userID, Role, Status } = res.data;
             sessionStorage.setItem("UserName", [Name, userID]);
             sessionStorage.setItem("Role", Role || "User");
-            // if (Role === "Admin") {
-            //   navigate("/admin");
-            // } else {
             if (Status === "Active") {
               navigate("/home");
             } else if (Status === "Registered") {
@@ -725,11 +648,6 @@ const Login = () => {
         .post(`http://${path.Location}:${path.Port}/ForgotUser`, forgotuser)
         .then((res) => {
           if (res.status === 200) {
-            // toast.success("Your password has been updated", {
-            //   position: toast.POSITION.BOTTOM_RIGHT,
-            //   hideProgressBar: true,
-            //   autoClose: 2000,
-            // });
             setPage("PasswordUpdate");
           }
         })

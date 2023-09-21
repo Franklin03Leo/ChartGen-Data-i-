@@ -20,8 +20,6 @@ import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import styled from "@emotion/styled";
 import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
 import HistogramChart from "../Charts/Histogram";
@@ -34,6 +32,7 @@ import "../Styles/Custom.css";
 import axios from "axios";
 import iconcount from "../../src/Images/iconscount.png";
 import histo from "../../src/Images/histogram.png";
+import Swal from 'sweetalert2';
 // Custom styles
 const BootstrapTooltip = styled(({ className, ...props }) => (
   <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -363,14 +362,10 @@ const Dictionary = ({ params }) => {
       })
       .then((response) => {
         if (response.data.length == 0) {
-          toast.error(
-            "Uploaded File is not Saved.Before Changing Save the File",
-            {
-              position: toast.POSITION.BOTTOM_RIGHT,
-              hideProgressBar: true,
-              autoClose: 2000,
-            }
-          );
+          Swal.fire({
+            icon: 'error',
+            text: 'Uploaded File is not Saved.Before Changing Save the File',           
+          });          
           return;
         } else if (response.data.length != 0) {
           var finaltabledata = [];
@@ -383,11 +378,7 @@ const Dictionary = ({ params }) => {
             .post(`http://${path.Location}:${path.Port}/InsertDataDict`, finaltabledata)
             .then((response) => {
               if (response.status === 200) {
-                toast.success("Saved Sucessfully", {
-                  position: toast.POSITION.BOTTOM_RIGHT,
-                  hideProgressBar: true,
-                  autoClose: 2000,
-                });
+                Swal.fire('Saved Sucessfully');                
                 init();
               }
             })
@@ -401,21 +392,11 @@ const Dictionary = ({ params }) => {
   const handleChangeDatatype = (event, index) => {
     tabledata.forEach((eventtab, indextab) => {
       if (indextab == index) {
-        //To Check Data type and new change type is same or not...
-        // if (eventtab.datatype.trim() == eventtab.changetype.trim()) {
-        //   toast.error('Already the type is in ' + eventtab.datatype + ' Only', {
-        //   position: toast.POSITION.BOTTOM_RIGHT,
-        //   hideProgressBar: true,
-        //   autoClose: 2000,
-        // });
-        // return;
-        //   }
         //To Check Display name is Empty or not...
         if (eventtab.displaynames == "" || eventtab.displaynames == null) {
-          toast.error("Display Name Should not be Empty", {
-            position: toast.POSITION.BOTTOM_RIGHT,
-            hideProgressBar: true,
-            autoClose: 2000,
+          Swal.fire({
+            icon: 'error',           
+            text: 'Display Name Should not be Empty',           
           });
           return;
         }

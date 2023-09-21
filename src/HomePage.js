@@ -22,6 +22,7 @@ import Backdrop from "@mui/material/Backdrop";
 //NPM's
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Swal from 'sweetalert2';
 //import axios from "axios";
 import { useNavigate } from "react-router-dom";
 //Components
@@ -95,14 +96,6 @@ const HomePage = () => {
     borderRadius: "5px",
   };
 
-  // React.useEffect(() => {
-  //     toast.success('Welcome back, Xavier', {
-  //         position: toast.POSITION.BOTTOM_RIGHT,
-  //         hideProgressBar: true,
-  //         autoClose: 2000
-  //     });
-  // }, [])
-  // React.useEffect(() => {
   let timeout;
   document.getElementById("root").addEventListener("mousemove", function () {
     clearTimeout(timeout);
@@ -243,12 +236,7 @@ const HomePage = () => {
           return;
         }
       });
-
-      toast.success("Data type has been changed.", {
-        position: toast.POSITION.BOTTOM_RIGHT,
-        hideProgressBar: true,
-        autoClose: 2000,
-      });
+      Swal.fire('Data type has been changed.');
       setState({
         ...state,
         XAxis_: changeType.Dimensions,

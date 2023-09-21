@@ -26,7 +26,7 @@ app.use(
 );
 app.use(bodyParser.json({ limit: `50mb` }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
-const url = "mongodb://localhost:27017/Data(i)";
+const url = "mongodb://localhost:27017/Spectra";
 var transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -551,6 +551,25 @@ app.post("/GetUseDataSet/", (req, res) => {
       } else {
         res.json(result);
         console.log("Dataset Fetched");
+      }
+    });
+});
+// =================== Chart File Check =======================
+app.post("/GetChartsSrc/", (req, res) => {
+  connect();  
+  db.collection("charts")
+    .find({ userID: req.body.userID,SrcName:req.body.filename })
+    .toArray(function (err, result) {
+      if (err) {
+        res
+          .status(400)
+          .send(
+            `${err} ===> Error fethcing dataset on ` +
+              new Date().toLocaleString()
+          );
+      } else {
+        res.json(result);
+        console.log("Fetched");
       }
     });
 });

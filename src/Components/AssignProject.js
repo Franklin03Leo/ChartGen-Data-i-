@@ -17,7 +17,6 @@ import axios from "axios";
 import MUIDataTable from "mui-datatables";
 import { tooltipClasses } from "@mui/material";
 import { Fade, Tooltip, styled } from "@material-ui/core";
-import "react-toastify/dist/ReactToastify.css";
 
 const AssignProject = (params) => {
   const [props] = useState(params["params"]);
