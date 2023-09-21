@@ -25,6 +25,7 @@ import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import { useNavigate } from "react-router-dom";
 import Menu from "@mui/material/Menu";
+import { FormHelperText } from "@mui/material";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 //NPM's
@@ -197,6 +198,16 @@ const InputArea = ({
       errorMessage: "Please Select atleast one",
     },
     TempName: {
+      error: false,
+      errorMessage:
+        "The given name is already exists, Please provide some other name.",
+    },
+    DashboardName: {
+      error: false,
+      errorMessage:
+        "The given name is already exists, Please provide some other name.",
+    },
+    TempDescription: {
       error: false,
       errorMessage:
         "The given name is already exists, Please provide some other name.",
@@ -1117,19 +1128,79 @@ const InputArea = ({
         }
       }
     }
+
     if (event.target.name === "TempName") {
-      if (template[event.target.value] !== undefined) {
+      if (
+        state.TempName === undefined ||
+        state.TempName === "" ||
+        state.TempName === null
+      ) {
         setFormValues({
           ...formValues,
-          TempName: { ...formValues.TempName, error: true },
+          TempName: {
+            ...formValues.TempName,
+            error: true,
+            errorMessage: "Template Name should not be empty",
+          },
         });
         return;
-      } else
+      } else {
         setFormValues({
           ...formValues,
-          TempName: { ...formValues.TempName, error: false },
+          TempName: { ...formValues.TempName, error: false, errorMessage: "" },
         });
+      }
     }
+    if (event.target.name === "DashboardName") {
+      if (
+        event.target.value === undefined ||
+        event.target.value === "" ||
+        event.target.value === null
+      ) {
+        setFormValues({
+          ...formValues,
+          DashboardName: {
+            ...formValues.DashboardName,
+            error: true,
+            errorMessage: "Dashboard Name should not be empty",
+          },
+        });
+        return;
+      } else {
+        setFormValues({
+          ...formValues,
+          DashboardName: {
+            ...formValues.DashboardName,
+            error: false,
+            errorMessage: "",
+          },
+        });
+      }
+    }
+    // if(event.target.name === 'TempDescription'){
+    //   if (
+    //     state.TempDescription === undefined ||
+    //     state.TempDescription === "" ||
+    //     state.TempDescription === null
+    //   ) {
+    //     setFormValues({
+    //       ...formValues,
+    //       TempDescription: {
+    //         ...formValues.TempDescription,
+    //         error: true,
+    //         errorMessage: "Description should not be empty",
+    //       },
+    //     });
+    //     // setTempError({ ...tempError, Disable: true });
+    //     return;
+    //   }
+    // }else{
+    //   setFormValues({
+    //     ...formValues,
+    //     TempName: { ...formValues.TempName, error: false, errorMessage: "" },
+    //   });
+    //   // setTempError({ ...tempError, Disable: false });
+    // }
   };
   //Chart generation
   const GenerateChart = () => {
@@ -1186,6 +1257,19 @@ const InputArea = ({
         setError({
           mandatoryFields: `Please select ${CheckType_} in the YAxis`,
         });
+      } else if (CheckTypeYAxis === "Select") {
+        setFormValues({
+          ...formValues,
+          YAxisCopy: {
+            ...formValues["YAxisCopy"],
+            error: true,
+            errorMessage:
+              CheckTypeYAxis === "Select"
+                ? `Please select the YAxis`
+                : `Please select other than ${CheckType_}`,
+          },
+        });
+        return;
       } else {
         setFormValues({
           ...formValues,
@@ -1252,7 +1336,7 @@ const InputArea = ({
         CheckType_ = "Integer";
         setFormValues({
           ...formValues,
-          XAxisCopy: {
+          YAxisCopy: {
             ...formValues["YAxisCopy"],
             error: true,
             errorMessage: `Please select ${CheckType_}`,
@@ -1617,11 +1701,29 @@ const InputArea = ({
   //Template Save/Cancel
   const saveTemplate = (action) => {
     if (action !== "cancel") {
-      setTemplate({ ...template, [state.TempName]: state });
-      setDashboard({
-        ...dashboard,
-        [state.TempName]: { ...state, Width_: null, Heigth_: 250 },
-      });
+      if (
+        state.TempName === undefined ||
+        state.TempName === "" ||
+        state.TempName === null
+      ) {
+        setFormValues({
+          ...formValues,
+          TempName: {
+            ...formValues.TempName,
+            error: true,
+            errorMessage: "Template Name should not be empty",
+          },
+        });
+        return;
+      }
+      else {
+        setTemplate({ ...template, [state.TempName]: state });
+        setDashboard({
+          ...dashboard,
+          [state.TempName]: { ...state, Width_: null, Heigth_: 250 },
+        });
+      }
+
       if (flag) {
         document.querySelector(".loader").style.display = "block";
         PostTemplate("Update");
@@ -2089,15 +2191,28 @@ const InputArea = ({
     setError({ mandatoryFields: undefined });
   };
 
+  const [dashopen, setDashopen] = useState({});
   const handleDashboard = (action, e) => {
     if (action === "Save") {
-      setOpen({ Dashboard: false });
-      PostDashboard("Insert");
-      toast.success("Your Project has been Saved", {
-        position: toast.POSITION.BOTTOM_RIGHT,
-        hideProgressBar: true,
-        autoClose: 2000,
-      });
+      if (projectDetails.DashboardName) {
+        setOpen({ Dashboard: false });
+        PostDashboard("Insert");
+        toast.success("Your Project has been Saved", {
+          position: toast.POSITION.BOTTOM_RIGHT,
+          hideProgressBar: true,
+          autoClose: 2000,
+        });
+      } else {
+        setFormValues({
+          ...formValues,
+          DashboardName: {
+            ...formValues.DashboardName,
+            error: true,
+            errorMessage: "Dashboard Name should not be empty",
+          },
+        });
+        return;
+      }
     } else if (action === "Edit") {
       let data = project[e.currentTarget.id];
       if (data.layoutOption === "Static") {
@@ -3921,8 +4036,11 @@ const InputArea = ({
                                         style={{ marginLeft: "10px" }}
                                       >
                                         <TextField
-                                          //error={formValues.YAxisPadding.error}
-                                          //helperText={formValues.YAxisPadding.error && formValues.YAxisPadding.errorMessage}
+                                          error={formValues.YAxisPadding.error}
+                                          helperText={
+                                            formValues.YAxisPadding.error &&
+                                            formValues.YAxisPadding.errorMessage
+                                          }
                                           id="Rotate"
                                           className="input-field"
                                           name="Rotate"
@@ -6863,7 +6981,9 @@ const InputArea = ({
                             <span
                               className="txtOrdinary"
                               style={{ marginLeft: "5px" }}
-                            >{`(${Object.keys(template).length})`}</span>
+                            >
+                              {`(${Object.keys(template).length})`}
+                            </span>
                           </Typography>
                         </AccordionSummary>
                         <AccordionDetails>
@@ -6944,16 +7064,16 @@ const InputArea = ({
                                               color="white"
                                               alt="Logo"
                                               style={{ height: "20px" }}
-                                              // onClick={(e) => {
-                                              //   handleTemplate(
-                                              //     a,
-                                              //     "templeDelete"
-                                              //   );
-                                              // }}
-                                              onClick={(e) => openDelete()}
+                                              onClick={(e) => {
+                                                handleTemplate(
+                                                  a,
+                                                  "templeDelete"
+                                                );
+                                              }}
+                                              // onClick={(e) => openDelete()}
                                             ></img>
                                           </BootstrapTooltip>
-                                          <ConfirmBox
+                                          {/* <ConfirmBox
                                             open={openDialog}
                                             message={
                                               "Are you sure you want to delete?"
@@ -6964,7 +7084,7 @@ const InputArea = ({
                                             deleteFunction={() => {
                                               deleteTemplateFunction(a);
                                             }}
-                                          />
+                                          /> */}
                                         </div>
                                       </div>
                                     </div>
@@ -8408,10 +8528,10 @@ const InputArea = ({
                         <TextField
                           id="Template"
                           error={formValues.TempName.error}
-                          helperText={
-                            formValues.TempName.error &&
-                            formValues.TempName.errorMessage
-                          }
+                          // helperText={
+                          //   formValues.TempName.error &&
+                          //   formValues.TempName.errorMessage
+                          // }
                           margin="dense"
                           fullWidth
                           className="input-field"
@@ -8424,10 +8544,16 @@ const InputArea = ({
                             handleChange(e);
                           }}
                         />
+                        {formValues.TempName.error && (
+                          <FormHelperText error id="username-error">
+                            {formValues.TempName.errorMessage}
+                          </FormHelperText>
+                        )}
                       </div>
                       <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12 inputfield">
                         <TextField
                           id="TempDescription"
+                          error={formValues.TempDescription.error}
                           className="Description"
                           label="Description"
                           name="TempDescription"
@@ -8437,6 +8563,11 @@ const InputArea = ({
                           maxRows={4}
                           onChange={handleChange}
                         />
+                        {formValues.TempDescription.error && (
+                          <FormHelperText error id="username-error">
+                            {formValues.TempDescription.errorMessage}
+                          </FormHelperText>
+                        )}
                       </div>
                     </div>
                   </Typography>
@@ -8451,8 +8582,8 @@ const InputArea = ({
                         margin="normal"
                         className="input-field button"
                         style={{ marginRight: "10px" }}
+                        // disabled={tempError["Disable"]}
                         onClick={(e) => {
-                          // debugger;
                           saveTemplate("save");
                         }}
                       >
@@ -8507,8 +8638,11 @@ const InputArea = ({
                   <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <TextField
                       id="Dashboard"
-                      // error={formValues.TempName.error}
-                      //helperText={formValues.TempName.error && formValues.TempName.errorMessage}
+                      error={formValues.DashboardName.error}
+                      // helperText={
+                      //   formValues.DashboardName.error &&
+                      //   formValues.TempName.errorMessage
+                      // }
                       margin="dense"
                       fullWidth
                       className="input-field"
@@ -8521,8 +8655,14 @@ const InputArea = ({
                           ...projectDetails,
                           [e.target.name]: e.target.value,
                         });
+                        handleValidation(e);
                       }}
                     />
+                    {formValues.DashboardName.error && (
+                      <FormHelperText error id="username-error">
+                        {formValues.DashboardName.errorMessage}
+                      </FormHelperText>
+                    )}
                   </div>
                   <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12 inputfield">
                     <TextField
@@ -8555,8 +8695,9 @@ const InputArea = ({
                     margin="normal"
                     className="input-field button"
                     style={{ marginRight: "10px" }}
+                    // disabled={dashopen["Disable"]}
                     onClick={(e) => {
-                      handleDashboard("Save");
+                      handleDashboard("Save", e);
                     }}
                   >
                     Save

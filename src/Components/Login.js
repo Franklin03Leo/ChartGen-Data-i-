@@ -4,6 +4,7 @@ import IconButton from "@mui/material/IconButton";
 import { InputAdornment } from "@material-ui/core";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
+import CloseIcon from "@mui/icons-material/Close";
 import {
   OutlinedInput,
   FormControl,
@@ -182,15 +183,16 @@ const Login = () => {
     window.addEventListener("keydown", handleKeyPress);
 
     if (window.location.pathname === "/Forgot") {
-        setPage("Forgot");
+      setPage("Forgot");
       // const iduser = window.location.search.split('=')
       // const key = generateRandomKey();
       // console.log('key '+key)
-      // const emailadd = decryptEmail(iduser[1],key);    
+      // const emailadd = decryptEmail(iduser[1],key);
       // alert(emailadd)
       // console.log('testtt '+JSON.stringify(emailadd))
+    } else {
+      setPage("Login");
     }
-    else {  setPage("Login"); }
     // return () => {
     //     window.removeEventListener('keydown', handleKeyPress);
     // };
@@ -218,10 +220,10 @@ const Login = () => {
   //     });
   //   }
   // };
-  const handleClickClose = () => { 
-    setPage('Login');
-    navigate('/');
-  }
+  const handleClickClose = () => {
+    setPage("Login");
+    navigate("/");
+  };
   const handleDetails = (e, page) => {
     if (page === "Sign Up") {
       if (e.target.name === "Name") {
@@ -434,21 +436,26 @@ const Login = () => {
   };
   function generateRandomKey() {
     // Generate a random key (you can use a more secure method)
-    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-  } 
+    return (
+      Math.random().toString(36).substring(2, 15) +
+      Math.random().toString(36).substring(2, 15)
+    );
+  }
   function encrypt(text, key) {
     // Perform encryption logic (replace with your encryption algorithm)
     // For simplicity, we'll use a basic XOR operation here
-    let encryptedText = '';
+    let encryptedText = "";
     for (let i = 0; i < text.length; i++) {
-      encryptedText += String.fromCharCode(text.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+      encryptedText += String.fromCharCode(
+        text.charCodeAt(i) ^ key.charCodeAt(i % key.length)
+      );
     }
     return encryptedText;
   }
   function decryptEmail(encryptedEmail, key) {
     // Decrypt the email address using the provided key
     const decryptedEmail = decrypt(encryptedEmail, key);
-  
+
     return decryptedEmail;
   }
   function decrypt(text, key) {
@@ -728,8 +735,7 @@ const Login = () => {
             alert("Please contact administrator!!!");
           }
         });
-    }
-    else if (page === "Reset") {
+    } else if (page === "Reset") {
       if (!forgotuser?.["RuserID"]) {
         setvalidation({
           ...validation,
@@ -749,36 +755,37 @@ const Login = () => {
           },
         });
       }
-      if (
-        !forgotuser?.["RuserID"]
-      ) {
+      if (!forgotuser?.["RuserID"]) {
         setError({ ...error, Disable: true });
         return;
       } else {
         setError({ ...error, Disable: false });
       }
       axios
-      .post(`http://${path.Location}:${path.Port}/sendMail`, forgotuser)
+        .post(`http://${path.Location}:${path.Port}/sendMail`, forgotuser)
         .then((res) => {
-          document.getElementById("userId").value = '';
-          if (res.data === 'InActive' || res.data === 'Registered' || res.data === 'Rejected'
-            || res.data === 'Not Found') {            
-            setPage("Unsuccess");            
-          }     
-           if (res.data === 'Success') {
-                setPage("Success");                    
-            }            
-       }
-      )
-      .catch((error) => {
-        if (error.response.status === 404) {
-          setPage("Unsuccess"); 
-        }
-        if (error.response.status === 303) { 
-          setPage("Unsuccess");      }
-      });
-      
-     }
+          document.getElementById("userId").value = "";
+          if (
+            res.data === "InActive" ||
+            res.data === "Registered" ||
+            res.data === "Rejected" ||
+            res.data === "Not Found"
+          ) {
+            setPage("Unsuccess");
+          }
+          if (res.data === "Success") {
+            setPage("Success");
+          }
+        })
+        .catch((error) => {
+          if (error.response.status === 404) {
+            setPage("Unsuccess");
+          }
+          if (error.response.status === 303) {
+            setPage("Unsuccess");
+          }
+        });
+    }
   };
 
   const CheckUser = () => {
@@ -945,7 +952,7 @@ const Login = () => {
                 </div>
               </div>
             )}
-             {page === "Reset" && (
+            {page === "Reset" && (
               <div className="container-page">
                 <h5 className="page-title">Reset password</h5>
                 <div className="row col-lg-12">
@@ -974,7 +981,7 @@ const Login = () => {
                       handleDetails(e, "Forgot");
                     }}
                   />
-                </div> 
+                </div>
                 <div className="row col-lg-12 login-btn">
                   <Button
                     id="saveTemp"
@@ -1306,39 +1313,69 @@ const Login = () => {
               <div className="container-page">
                 <p className="page-title">User Registration</p>
                 <div className="div-welcome">
-                  Your registration is successful. You will receive an email, once your registration is approved. Thanks.
+                  Your registration is successful. You will receive an email,
+                  once your registration is approved. Thanks.
                 </div>
-                <span className="forgot" onClick={(e) => {setPage("Login");}}>{" "} Sign in</span>
+                <span
+                  className="forgot"
+                  onClick={(e) => {
+                    setPage("Login");
+                  }}
+                >
+                  {" "}
+                  Sign in
+                </span>
               </div>
             )}
             {page === "Unsuccess" && (
               <div className="container-page">
-                <button type="button" class="close" aria-label="Close"
+                <button
+                  type="button"
+                  className="close btn btn-sm btn-light text-center"
+                  aria-label="Close"
                   style={{
-                  width: "25px",float:"right", marginLeft:"267px"}}  onClick={handleClickClose}>
-                  <span aria-hidden="true">&times;</span>
-                  </button>  
-              <p className="page-title">Reset Password</p>                
-              <div className="div-welcome" style={{color:'red'}}>
-              Unable to reset your password. Please contact admin for further details.
-                  </div>  
-                  
-              </div>    
-             )}  
+                    backgroundColor: "#fff",
+                    width: "25px",
+                    float: "right",
+                    marginLeft: "auto",
+                    outline: "none",
+                    border: "none",
+                  }}
+                  onClick={handleClickClose}
+                >
+                  <span aria-hidden="true">
+                    <CloseIcon></CloseIcon>
+                  </span>
+                </button>
+                <p className="page-title">Reset Password</p>
+                <div className="div-welcome" style={{ color: "red" }}>
+                  Unable to reset your password. Please contact admin for
+                  further details.
+                </div>
+              </div>
+            )}
             {page === "Success" && (
               <div className="container-page">
-                <button type="button" class="close" aria-label="Close"
+                <button
+                  type="button"
+                  class="close"
+                  aria-label="Close"
                   style={{
-                  width: "25px",float:"right", marginLeft:"267px"}}  onClick={handleClickClose}>
+                    width: "25px",
+                    float: "right",
+                    marginLeft: "267px",
+                  }}
+                  onClick={handleClickClose}
+                >
                   <span aria-hidden="true">&times;</span>
-                  </button> 
-                  <p className="page-title">Reset Password</p>
-                <div className="div-welcome" style={{color:'blue'}}>
-                      <p>Please check your mail.To reset the password</p>  
-                      </div>
-                    </div>
+                </button>
+                <p className="page-title">Reset Password</p>
+                <div className="div-welcome" style={{ color: "blue" }}>
+                  <p>Please check your mail.To reset the password</p>
+                </div>
+              </div>
             )}
-            
+
             {error["Restiction"] && page === "Login" && (
               <div className="row" style={{ margin: "15px 0px 0px 0px" }}>
                 <Alert severity="error">{error["Restiction"]}</Alert>
