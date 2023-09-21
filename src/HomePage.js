@@ -264,6 +264,8 @@ const HomePage = () => {
       setAssignUser(params);
       Isshow({});
       setData({ data: undefined });
+    } else if (params.action === "Update" || params.action === "Cancel") {
+      Isshow({ isShow: undefined });
     } else {
       setAssignUser(params);
       if (params.userID !== undefined) {

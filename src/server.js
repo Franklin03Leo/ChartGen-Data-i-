@@ -5,12 +5,12 @@ const nodemailer = require("nodemailer");
 const app = express();
 const bcrypt = require("bcrypt");
 const ObjectId = require("mongodb").ObjectID;
-var mailService = require('./Mail.js');
+var mailService = require("./Mail.js");
 const saltRounds = 10; // Number of salt rounds
 // const { Charts } = require('./Config/Models');
 mongoose.set("strictQuery", true);
 const cors = require("cors");
-require('dotenv').config({path: "./.env"})
+require("dotenv").config({ path: "./.env" });
 
 app.use(
   cors({
@@ -165,9 +165,9 @@ app.post("/DeleteTemplate", (req, res) => {
 
 app.post("/GetDict/", (req, res) => {
   connect();
-  console.log('connected')
+  console.log("connected");
   db.collection("charts")
-  .find({SrcName: req.body.SrcName, userID: req.body.userID })
+    .find({ SrcName: req.body.SrcName, userID: req.body.userID })
     .toArray(function (err, result) {
       if (err) {
         res
@@ -183,7 +183,6 @@ app.post("/GetDict/", (req, res) => {
     });
 });
 
-   
 // =================== FEEDBACK =======================
 app.get("/GetFeedback/", (req, res) => {
   connect();
@@ -213,7 +212,7 @@ app.post("/InsertDataDict/", (req, res) => {
       { SrcName: data[0].SrcName, userID: data[0].userID },
       {
         $set: {
-          DictionaryDataSet: data[1]
+          DictionaryDataSet: data[1],
         },
       }
     )
@@ -259,7 +258,7 @@ app.post("/SignupUser/", (req, res) => {
   bcrypt.hash(data["password"], saltRounds, function (err, hash) {
     if (err) {
       console.log(
-        `${error} ===> Error while User Details insertion on ` +
+        `${err} ===> Error while User Details insertion on ` +
           new Date().toLocaleString()
       );
       res.send("Error"); // Failure
@@ -307,8 +306,9 @@ app.post("/SigninUser/", (req, res) => {
           `${err} ===> Error while signin on ` + new Date().toLocaleString()
         );
       } else {
-        if (result == null) { res.send("User Not Found");}       
-        else if (result != null) {
+        if (result == null) {
+          res.send("User Not Found");
+        } else if (result != null) {
           bcrypt.compare(
             data.password,
             result.password,
@@ -341,31 +341,30 @@ app.post("/SigninUser/", (req, res) => {
 });
 app.post("/ForgotUser/", (req, res) => {
   let data = req.body;
-  bcrypt.hash(data["password"], saltRounds, function (err, hash) { 
+  bcrypt.hash(data["password"], saltRounds, function (err, hash) {
     if (err) {
       console.log(
-        `${error} ===> Error while User Details insertion on ` +
-        new Date().toLocaleString()
+        `${err} ===> Error while User Details insertion on ` +
+          new Date().toLocaleString()
       );
       res.send("Error"); // Failure
     } else {
       connect();
-    db.collection("UserDetails")
-    .updateOne({ userID: data.FuserID }, { $set: { password: hash } })
-    .then(function () {
-      console.log("User Details updated"); // Success
-      res.send("Success");
-    })
-    .catch(function (error) {
-      console.log(error);
-      res.send(
-        `${error} ===> Error while User Details updation on ` +
-          new Date().toLocaleString()
-      ); // Failure
-    });
-     }
-  })
-  
+      db.collection("UserDetails")
+        .updateOne({ userID: data.FuserID }, { $set: { password: hash } })
+        .then(function () {
+          console.log("User Details updated"); // Success
+          res.send("Success");
+        })
+        .catch(function (error) {
+          console.log(error);
+          res.send(
+            `${error} ===> Error while User Details updation on ` +
+              new Date().toLocaleString()
+          ); // Failure
+        });
+    }
+  });
 });
 app.post("/CheckSignupUser/", (req, res) => {
   let data = req.body;
@@ -450,6 +449,7 @@ app.post("/UpdateDashboard", (req, res) => {
           filterProps: data.FilterProps,
           filter: data.Filter,
           selectedFilterDimensions: data.selectedFilterDimensions,
+          IndividualFilter: data.IndividualFilter,
           // Users: data.Users,
           // Groups: data.Groups,
         },
@@ -650,19 +650,24 @@ function capitalizeWords(str) {
 //======================RANDOMSTRING GENERATE======================
 function generateRandomKey() {
   // Generate a random key (you can use a more secure method)
-  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+  return (
+    Math.random().toString(36).substring(2, 15) +
+    Math.random().toString(36).substring(2, 15)
+  );
 }
 function encrypt(text, key) {
   // Perform encryption logic (replace with your encryption algorithm)
   // For simplicity, we'll use a basic XOR operation here
-  let encryptedText = '';
+  let encryptedText = "";
   for (let i = 0; i < text.length; i++) {
-    encryptedText += String.fromCharCode(text.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+    encryptedText += String.fromCharCode(
+      text.charCodeAt(i) ^ key.charCodeAt(i % key.length)
+    );
   }
   return encryptedText;
 }
 function encryptEmail(email) {
-  let encryptedEmail = '';
+  let encryptedEmail = "";
   for (let i = 0; i < email.length; i++) {
     let charCode = email.charCodeAt(i);
     if (charCode >= 65 && charCode <= 90) {
@@ -682,72 +687,88 @@ app.post("/sendMail", (req, res, next) => {
   db.collection("UserDetails").findOne(
     { userID: email },
     function (err, result) {
-     if (err) {
-      res.status(400).send("Error fetching listings!");
+      if (err) {
+        res.status(400).send("Error fetching listings!");
         console.log(
           `${err} ===> Error while signin on ` + new Date().toLocaleString()
-      );
+        );
       } else {
         if (result) {
-          if(result.Status == "Inactive") {
+          if (result.Status == "Inactive") {
             res.send("InActive");
             return;
-          }
-          else if(result.Status == 'Registered') {
+          } else if (result.Status == "Registered") {
             res.send("Registered");
             return;
-          }
-          else if(result.Status == 'Rejected') {
+          } else if (result.Status == "Rejected") {
             res.send("Rejected");
             return;
-          }
-          else if (result.Status == "Active") {
+          } else if (result.Status == "Active") {
+            //url = process.env.FORGOT_EMAIL_URL +'='+decryptCode
             // Generate a random encryption key
             const key = generateRandomKey();
             // Encrypt the email address
-            const encryptedEmail = encryptEmail(email);
-            const url = process.env.FORGOT_EMAIL_URL + '=' + encryptedEmail
-            content = 'Dear ' + capitalizeWords(result.Name) + ',<br/><br/> Kindly <a href="' + url + '">Click here</a> to set a new password.<br/><br/>Please feel free to reach our Admin, in case of any issues. <br/><br/> Thanking you. <br/>SpectraIQ Team <br/><br />*** This is an automatically generated email, please do not reply ***'
+            const encryptedEmail = encrypt(email, key);
+            const url = process.env.FORGOT_EMAIL_URL + "=" + encryptedEmail;
+            content =
+              "Dear " +
+              capitalizeWords(result.Name) +
+              ',<br/><br/> Kindly <a href="' +
+              url +
+              '">Click here</a> to set a new password.<br/><br/>Please feel free to reach our Admin, in case of any issues. <br/><br/> Thanking you. <br/>SpectraIQ Team <br/><br />*** This is an automatically generated email, please do not reply ***';
             //Sending mail
             try {
-              mailService(email,'Password Reset Request',content,'');
+              mailService(email, "Password Reset Request", content, "");
               res.status(200).send("Success");
               console.log("Reset Request"); // Success
               return;
             } catch (error) {
               res.send(error);
             }
+          } else {
+            res.send("This is not a valid User ID");
+            return;
           }
-          else { res.send("This is not a valid User ID"); return; }
-        }
-        else if (result == null) {
+        } else if (result == null) {
           res.send("Not Found");
-         console.log("User details Not Found");
-         return;
+          console.log("User details Not Found");
+          return;
         }
       }
-    })
+    }
+  );
 });
 //======================USER DETAILS MAIL======================
 
 app.post("/userDetailsEmail", (req, res, next) => {
-  const useremail = req.body.useremail;  
-  let content = '';
-  if (req.body.userstatus == 'Active') {
-    const url = process.env.LOGIN_URL
-    content = 'Dear ' + capitalizeWords(req.body.username) + ',<br/><br/> We are delighted to inform you that your registration has been successfully <b>Approved!</b> You are now ready to access our system and enjoy its benefits.<br/><br/><b> Login Page:</b><a href="' + url + '">Click here</a><br/><br/>Please feel free to reach our Admin, in case of any issues. <br/><br/> Thanking you. <br/>SpectraIQ Team <br/><br />*** This is an automatically generated email, please do not reply ***'
-   }
-  else if (req.body.userstatus == 'Inactive') { 
-    content = 'Dear ' + capitalizeWords(req.body.username) + ',<br/><br/> Your user account has been changed to <b>Inactive</b>. Please contact admin for further details. <br/><br/> Thanking you. <br/>SpectraIQ Team <br/><br />*** This is an automatically generated email, please do not reply ***'
-  }
-  else if (req.body.userstatus == 'Rejected') { 
-    content = 'Dear ' + capitalizeWords(req.body.username) + ',<br/><br/> We are sorry to inform you that your user account is <b>Rejected</b>. Please contact admin for further details. <br/><br/> Thanking you. <br/>SpectraIQ Team <br/><br />*** This is an automatically generated email, please do not reply ***'
-  }
-  else if (req.body.userstatus == 'Suspended') { 
-    content = 'Dear ' + capitalizeWords(req.body.username) + ',<br/><br/> We are sorry to inform you that your user account is <b>Suspended</b>. Please contact admin for further details. <br/><br/> Thanking you. <br/>SpectraIQ Team <br/><br />*** This is an automatically generated email, please do not reply ***'
+  const useremail = req.body.useremail;
+  let content = "";
+  if (req.body.userstatus == "Active") {
+    const url = process.env.LOGIN_URL;
+    content =
+      "Dear " +
+      capitalizeWords(req.body.username) +
+      ',<br/><br/> We are delighted to inform you that your registration has been successfully <b>Approved!</b> You are now ready to access our system and enjoy its benefits.<br/><br/><b> Login Page:</b><a href="' +
+      url +
+      '">Click here</a><br/><br/>Please feel free to reach our Admin, in case of any issues. <br/><br/> Thanking you. <br/>SpectraIQ Team <br/><br />*** This is an automatically generated email, please do not reply ***';
+  } else if (req.body.userstatus == "Inactive") {
+    content =
+      "Dear " +
+      capitalizeWords(req.body.username) +
+      ",<br/><br/> Your user account has been changed to <b>Inactive</b>. Please contact admin for further details. <br/><br/> Thanking you. <br/>SpectraIQ Team <br/><br />*** This is an automatically generated email, please do not reply ***";
+  } else if (req.body.userstatus == "Rejected") {
+    content =
+      "Dear " +
+      capitalizeWords(req.body.username) +
+      ",<br/><br/> We are sorry to inform you that your user account is <b>Rejected</b>. Please contact admin for further details. <br/><br/> Thanking you. <br/>SpectraIQ Team <br/><br />*** This is an automatically generated email, please do not reply ***";
+  } else if (req.body.userstatus == "Suspended") {
+    content =
+      "Dear " +
+      capitalizeWords(req.body.username) +
+      ",<br/><br/> We are sorry to inform you that your user account is <b>Suspended</b>. Please contact admin for further details. <br/><br/> Thanking you. <br/>SpectraIQ Team <br/><br />*** This is an automatically generated email, please do not reply ***";
   }
   try {
-    mailService(useremail,'User Registration Status',content,'');
+    mailService(useremail, "User Registration Status", content, "");
     res.status(200).send("Success");
     console.log("Reset Request"); // Success
     return;
@@ -755,4 +776,4 @@ app.post("/userDetailsEmail", (req, res, next) => {
     res.send(error);
   }
   return;
-})
+});

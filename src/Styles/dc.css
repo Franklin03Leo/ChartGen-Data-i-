@@ -1521,3 +1521,8 @@ input:checked + .slider:before {
 .chart-container > div > div > div:nth-child(1){
   padding: 14px;
 }
+
+#keep-mounted-modal-title > div > div > div > div > div:nth-child(1){
+  display: flex !important;
+  justify-content: space-evenly;
+}

@@ -1715,8 +1715,7 @@ const InputArea = ({
           },
         });
         return;
-      }
-      else {
+      } else {
         setTemplate({ ...template, [state.TempName]: state });
         setDashboard({
           ...dashboard,
@@ -2028,7 +2027,7 @@ const InputArea = ({
   };
   //Expand/Collapse
   const ExpandCollapse = (action) => {
-    navigate("/");
+    // navigate("/");
     setTimeout(() => {
       if (navopen && !isMobile) {
         setNavWidth({ navArea: "70px", inuptArea: "0%", ChartArea: "95%" });
@@ -2214,6 +2213,7 @@ const InputArea = ({
         return;
       }
     } else if (action === "Edit") {
+      e.stopPropagation();
       let data = project[e.currentTarget.id];
       if (data.layoutOption === "Static") {
         setOthers({
@@ -2283,11 +2283,14 @@ const InputArea = ({
       obj.FilterProps = filterProps;
       obj.selectedFilterDimensions = filteringProps.customFilter;
       obj.AvailableDimensions = filteringProps.Dimensions;
-      // obj.Users = projectAssigning.Users;
-      // obj.Groups = projectAssigning.Groups;
       obj.action = "Update";
       setpostProject(obj);
-      document.querySelector(".loader").style.display = "block";
+      // setOthers({
+      //   ...others,
+      //   EditDashboard: false,
+      // });
+      // setNavbar({ bar: "Project" });
+      // document.querySelector(".loader").style.display = "block";
       axios
         .post(`http://${path.Location}:${path.Port}/UpdateDashboard`, obj)
         .then((response) => {
@@ -2352,6 +2355,7 @@ const InputArea = ({
             };
             obj.FilterProps = data.filterProps;
             obj.action = action;
+            obj.others = others.EditDashboard;
             setpostProject(obj);
             setPlay({ isPlay: undefined });
             setIssues(undefined);
@@ -2368,6 +2372,17 @@ const InputArea = ({
         obj.DashboardName = data.DashboardName;
         obj.DashboardDescription = data.DashboardDescription;
         obj.dashboard = dashboard;
+        obj.Projectfilter = JSON.parse(
+          JSON.stringify(
+            Object.fromEntries(
+              Object.keys(data.charts).map((val) => [
+                val,
+                dashboard[data.charts[val]],
+              ])
+            )
+          )
+        );
+        //Object.keys(data.charts).map(val => ({ [val]: dashboard[data.charts[val]] }));
         obj.Filter = {
           filterSwatch: data.filter.filterSwatch,
           data: Uploaded_file !== undefined ? Uploaded_file : "",
@@ -2385,6 +2400,13 @@ const InputArea = ({
         //   Groups: !data.Groups ? [] : data.Groups,
         // });
       }
+    }
+    if (action === "Cancel") {
+      // let obj = {};
+      // obj.action = action;
+      // setpostProject(obj);
+      // setNavbar({ bar: "Project" });
+      setOthers({ ...others, EditDashboard: false });
     }
 
     if (action === "AssignUser") {
@@ -3247,7 +3269,6 @@ const InputArea = ({
                   </div>
                 </label>
               </div>
-
               {error.invalidFile !== undefined && (
                 <div
                   className="col-xs-3 col-sm-10 col-md-10 col-lg-10"
@@ -6992,7 +7013,6 @@ const InputArea = ({
                               let Item = [],
                                 AllCharts = [];
                               for (let a in template) {
-                                console.log("template ==> ", a);
                                 if (template[a] !== undefined) {
                                   Item.push(
                                     <div
@@ -8093,7 +8113,7 @@ const InputArea = ({
                           lineHeight: "1rem",
                         }}
                         onClick={(e) => {
-                          setOthers({ ...others, EditDashboard: false });
+                          handleDashboard("Cancel", e);
                         }}
                       >
                         Cancel
