@@ -1442,9 +1442,9 @@ const InputArea = ({
     setPlay({ isPlay: undefined });
     setIsshow({ isShow: undefined });
     setIssues(undefined);
-    console.log("Chart Props", state);
-    console.log("Template value", template);
-    console.log("Dashboard value", dashboard);
+    //console.log("Chart Props", state);
+    //console.log("Template value", template);
+    //console.log("Dashboard value", dashboard);
     setTimeout(() => {
       document.querySelector(".loader").style.display = "none";
     }, 100);
@@ -1712,7 +1712,7 @@ const InputArea = ({
           userID: user.userID,
         })
         .then((response) => {
-          console.log("data", response);
+          //console.log("data", response);
           toast.success("Your Template has been Deleted", {
             position: toast.POSITION.BOTTOM_RIGHT,
             hideProgressBar: true,
@@ -1977,7 +1977,7 @@ const InputArea = ({
                 state
               )
               .then((response) => {
-                console.log("data", response.data);
+                //console.log("data", response.data);
                 GetTemplate();
               })
               .catch((error) => {
@@ -1990,7 +1990,7 @@ const InputArea = ({
         axios
           .post(`http://${path.Location}:${path.Port}/InsertTemplate`, Result)
           .then((response) => {
-            console.log("data", response.data);
+            //console.log("data", response.data);
             GetTemplate();
           })
           .catch((error) => {
@@ -2063,7 +2063,7 @@ const InputArea = ({
       axios
         .post(`http://${path.Location}:${path.Port}/InsertFeedback`, feedback)
         .then((response) => {
-          console.log("data", response.data);
+          //console.log("data", response.data);
           axios
             .get(`http://${path.Location}:${path.Port}/GetFeedback`)
             .then((response) => {
@@ -2425,10 +2425,28 @@ const InputArea = ({
         let data = response.data;
         let obj = {};
         for (let i = 0; i < data.length; i++) {
-          obj[data[i].filename] = data[i].data;
+         /// obj[data[i].filename] = data[i].data;
+          obj[data[i].filename] = data[i].filename;
         }
         setDataset(obj);
       });
+  };
+   const getUseDataSet = (filename) => {
+    axios
+      .post(`http://${path.Location}:${path.Port}/GetUseDataSet`, {
+        userID: user.userID,
+        filename: filename,
+      })
+      .then((response) => {
+        let data = response.data; 
+        let obj = {};
+        for (let i = 0; i < data.length; i++) {
+          obj[data[i].filename] = data[i].data; 
+          setData({ data: data[i].data });
+        }
+        
+      });
+      
   };
   const handleDataSet = (action, id) => {
     if (fileevent != null && fileevent != "" && fileevent != undefined) {
@@ -2459,7 +2477,8 @@ const InputArea = ({
       setEnablesavebutton(true);
       sessionStorage.setItem("uploadfilename", id);
       setState({ ...state, Uploaded_file: Dataset[id] });
-      setData({ data: Dataset[id] });
+      getUseDataSet(Dataset[id]);
+      // setData({ data: Dataset[id] });
     }
   };
   const handleGetUsers = () => {
@@ -6872,7 +6891,7 @@ const InputArea = ({
                               let Item = [],
                                 AllCharts = [];
                               for (let a in template) {
-                                console.log("template ==> ", a);
+                               // console.log("template ==> ", a);
                                 if (template[a] !== undefined) {
                                   Item.push(
                                     <div

@@ -536,6 +536,24 @@ app.post("/DeleteDataset", (req, res) => {
       ); // Failure
     });
 });
+app.post("/GetUseDataSet/", (req, res) => {
+  connect();  
+  db.collection("Dataset")
+    .find({ userID: req.body.userID,filename:req.body.filename })
+    .toArray(function (err, result) {
+      if (err) {
+        res
+          .status(400)
+          .send(
+            `${err} ===> Error fethcing dataset on ` +
+              new Date().toLocaleString()
+          );
+      } else {
+        res.json(result);
+        console.log("Dataset Fetched");
+      }
+    });
+});
 
 //====================== ADMIN ===================
 app.post("/GetUsers/", (req, res) => {

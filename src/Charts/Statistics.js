@@ -65,22 +65,16 @@ const Statistics = ({ params }) => {
   let value = {};
   var tabledata = [];
   cols.forEach((event) => {
-    console.log("eventevent", event)
     let data = params.map((e) => e[event]);
     value.min = formatFixedRate(statis.min(data));
     value.max = formatFixedRate(statis.max(data));
     let sorteddata = data.sort((a, b) => b - a); 
     value.uniqueCountSorted = formatFixedRate(new Set(data).size);
-    //value.uniqueCountSorted = formatFixedRate(statis.uniqueCountSorted(sorteddata));    
     value.mean = formatFixedRate(statis.mean(data));
     value.median = formatFixedRate(statis.median(data));
     value.mode = formatFixedRate(statis.mode(data));
     value.standardDeviation = formatFixedRate(statis.standardDeviation(data));
     value.useCount = formatFixedRate(data.length);  
-    // const nanCount = data.filter(valueCount => isNaN(valueCount)).length;
-    // const emptyCount = data.filter(valueCount => valueCount === '' || valueCount === null).length;
-    // const undefinedCount = data.filter(valueCount => valueCount === undefined).length;
-    // const missCount = nanCount + emptyCount + undefinedCount;
     const missCount = data.filter((val) => val);
     const missingCount =  data.length - missCount.length
     value.missingCount = missingCount;
