@@ -7042,7 +7042,7 @@ const InputArea = ({
                               for (let a in template) {
                                 if (template[a] !== undefined) {
                                   Item.push(
-                                    <divs
+                                    <div
                                       // className="col-lg-12 dashboard-layout"
                                       className={`col-lg-12 dashboard-layout ${
                                         clickedIndex === a ? "clicked" : ""
