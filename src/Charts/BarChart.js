@@ -516,7 +516,7 @@ const BarChart = ({ params }) => {
 
   return (
     <Grid item xs={12} md={12} xl={12} lg={12}>
-      <Grid item className="cardbox" style={{ padding: "0px 10px" }}>
+      <Grid item className="cardbox" style={{ padding: "0px 10px",border:"2px solid #D3D3D3" }}>
         <Chartheader />
         <div
           style={{

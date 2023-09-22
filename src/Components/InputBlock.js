@@ -650,8 +650,8 @@ const InputArea = ({
         ...state,
         [event.target.name]: event.target.value,
         TitleFont: "Arial",
-        TitleSize: 14,
-        TitleColor: "#f56b6b",
+        TitleSize: 18,
+        TitleColor: "#000000",
       });
     } else if (event.target.name === "XAxisLabel") {
       setState({
@@ -659,7 +659,7 @@ const InputArea = ({
         [event.target.name]: event.target.value,
         xlFont: "Arial",
         xlSize: 14,
-        xlColor: "#f56b6b",
+        xlColor: "#000000",
       });
     } else if (event.target.name === "YAxisLabel") {
       setState({
@@ -667,7 +667,7 @@ const InputArea = ({
         [event.target.name]: event.target.value,
         ylFont: "Arial",
         ylSize: 14,
-        ylColor: "#f56b6b",
+        ylColor: "#000000",
       });
     } else if (event.target.name === "RYAxisLabel") {
       setState({
@@ -675,7 +675,7 @@ const InputArea = ({
         [event.target.name]: event.target.value,
         rylFont: "Arial",
         rylSize: 14,
-        rylColor: "#f56b6b",
+        rylColor: "#000000",
       });
     } else if (event.target.name === "XAxisCopy") {
       var value = "";
@@ -1926,7 +1926,7 @@ const InputArea = ({
   };
   //Expand/Collapse
   const ExpandCollapse = (action) => {
-    navigate("/");
+    // navigate("/");
     setTimeout(() => {
       if (navopen && !isMobile) {
         setNavWidth({ navArea: "70px", inuptArea: "0%", ChartArea: "95%" });
@@ -2818,7 +2818,8 @@ const InputArea = ({
         {param === "Templates" && (
           <div className="" style={{ float: "right" }}>
             {/*  Commented by Franklin - for phase-1 release */}
-            {/* <Button
+            {/*  UnCommented by Juan*/}
+            <Button
             variant="contained"
             margin="normal"
             className="input-field button"
@@ -2829,13 +2830,13 @@ const InputArea = ({
             }}
             onClick={(e) => {
               setNavbar({ bar: "Data" });
-              setTimeout(() => {
-                document.getElementById("uploadFile").click();
-              }, 0);
+              // setTimeout(() => {
+              //   document.getElementById("uploadFile").focus();
+              // }, 0);
             }}
           >
             New Template
-          </Button> */}
+          </Button>
           </div>
         )}
       </div>
@@ -2909,7 +2910,7 @@ const InputArea = ({
         Titleswatch_: false,
         Title: "",
         TitleFont: "Arial",
-        TitleSize: "14",
+        TitleSize: "18",
         TitleColor: "#000000",
 
         //Lagend
@@ -3050,11 +3051,11 @@ const InputArea = ({
           <Chartheader param={navbar.bar} />
           {navbar.bar === "Data" && (
             <div
-            //className="row col-xs-12 col-sm-12 col-md-12 col-lg-12"
-            //style={{ margin: "15px 0px 15px 13px" }}
+            className="row col-xs-12 col-sm-12 col-md-12 col-lg-12"
+           style={{ margin: "15px 0px 15px 13px" }}
             >
-              {/* <div className="row col-sm-6 col-md-6 col-lg-5"  style={{ width: "200px" }}> */}
-              {/* <TextField
+               <div className="row col-sm-6 col-md-6 col-lg-5"  style={{ width: "200px" }}> 
+              <TextField
                   error={formValues.InputType.error}
                   helperText={
                     formValues.InputType.error &&
@@ -3073,17 +3074,17 @@ const InputArea = ({
                   value={state.InputType}
                 >
                   {/* Import Inputs-Removed that option for Now. */}
-              {/* <MenuItem key={1} value={"Import Inputs"}>
+               <MenuItem key={1} value={"Import Inputs"}>
                     Import Inputs
-                  </MenuItem> */}
-              {/* <MenuItem key={2} value={"Enter Inputs"}>
+                  </MenuItem> 
+               <MenuItem key={2} value={"Enter Inputs"}>
                     Enter Inputs
                   </MenuItem>
                   <MenuItem key={3} value={"Available Dataset"}>
                     Available Dataset
                   </MenuItem>
-                </TextField> */}
-              {/* </div> */}
+                </TextField>
+              </div>
               {state.InputType === "Import Inputs" ||
               state.InputType === undefined ? (
                 <div className="row col-sm-6 col-md-6 col-lg-7">
@@ -3274,7 +3275,7 @@ const InputArea = ({
                               placement="bottom"
                             >
                               <div
-                                className="col-lg-6 dataset-name"
+                                className="col-lg-7 dataset-name"
                                 style={{ marginRight: "2px" }}
                               >
                                 {a}
@@ -3283,7 +3284,7 @@ const InputArea = ({
                             {/* <div className="row col-lg-4 dataset-icon"> */}
 
                             <div
-                              className="dataset-icon dataset-icon_ buttonwid"
+                              className="dataset-icon dataset-icon_ buttonwid text-center use-div-button"
                               onClick={(e) => {
                                 handleDataSet("Use", a);
                               }}
@@ -3291,7 +3292,7 @@ const InputArea = ({
                               Use
                             </div>
                             <div
-                              className="dataset-icon dataset-icon_ buttonwid"
+                              className="dataset-icon dataset-icon_ buttonwid text-center delete-div-button"
                               onClick={(e) => {
                                 handleDataSet("Delete", a);
                               }}
@@ -4943,7 +4944,7 @@ const InputArea = ({
                                             handleChange(e);
                                           }}
                                           value={state.TitleSize}
-                                          defaultValue={"14"}
+                                          defaultValue={"18"}
                                         >
                                           {(() => {
                                             let Item = [];

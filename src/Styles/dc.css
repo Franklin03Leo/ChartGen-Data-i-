@@ -1248,6 +1248,22 @@ input:checked + .slider:before {
   padding: 5px;
 }
 
+/* .use-div-button{
+  background: rgb(104, 160, 104);
+  color:white;
+}
+.use-div-button:hover{
+  box-shadow: rgba(68, 236, 17, 0.329) 0px 7px 29px 0px;
+}
+
+.delete-div-button{
+  background: rgb(204, 67, 67);
+  color:white;
+}
+.delete-div-button:hover{
+  box-shadow: rgba(243, 137, 137, 0.877) 0px 7px 29px 0px;
+} */
+
 .dataset-icon {
   /* padding: 10px; */
   margin: 0px 5px;
@@ -1255,7 +1271,7 @@ input:checked + .slider:before {
   border-radius: 5px;
   visibility: hidden;
   opacity: 0;
-  transition: visibility 0.3s, opacity 0.5s ease-in-out;
+  transition: visibility 0.2s, opacity 0.3s ease-in-out;
 }
 
 .divdataset-body:hover div.dataset-icon {
