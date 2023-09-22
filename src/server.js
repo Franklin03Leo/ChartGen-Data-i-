@@ -26,7 +26,7 @@ app.use(
 );
 app.use(bodyParser.json({ limit: `50mb` }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
-const url = "mongodb://localhost:27017/Spectra";
+const url = "mongodb://localhost:27017/Data(i)";
 var transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
