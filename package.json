@@ -51,6 +51,7 @@
     "react-toastify": "^9.1.1",
     "recharts": "^2.8.0",
     "simple-statistics": "^7.8.0",
+    "sweetalert2": "^11.7.28",
     "web-vitals": "^2.1.4",
     "xlsx": "^0.18.5"
   },

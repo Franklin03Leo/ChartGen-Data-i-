@@ -38,7 +38,7 @@ import DashboardFilter from "../Components/DashboardFilter";
 import DatasetTable from "../Components/DatasetTable";
 import CardLineChart from "./CardLineChart";
 //NPM's
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 
 //tool tip
 import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
@@ -98,11 +98,12 @@ const Dashboard = ({ params }) => {
   const [managePreview, setmanagePreview] = React.useState({});
 
   useEffect(() => {
+    // set the invidual filter details
     if (
       params.IndividualFilter !== undefined &&
       params.IndividualFilter?.length !== 0
     ) {
-      // setstoreFilterData();
+      // setstoreFilterData(params.IndividualFilter);
       setFilterDetailedData(params.IndividualFilter);
       params.IndividualFilter.map((val, i) => {
         val["chart" + i] === null
@@ -133,9 +134,20 @@ const Dashboard = ({ params }) => {
     if (params.FilteringProps !== undefined) {
       setfilteringProps(params.FilteringProps);
     }
+
+    // rerender the component when user colaps the panel,
+    //(why i have render this, if the filter action is apply in preview, need to reset again)
     if (params.isBublished !== undefined) {
       setisBublished(params.isBublished);
+      if (!params.isBublished) {
+        Object.keys(chartsID || {}).map((val) => {
+          projectTemplate[val]
+            ? (projectTemplate[val].filteApply = undefined)
+            : (template[chartsID[val]]["filteApply"] = undefined);
+        });
+      }
     }
+
     if (params.StaticLayouts !== undefined) {
       if (params.StaticLayouts) {
         var layout;
@@ -357,16 +369,19 @@ const Dashboard = ({ params }) => {
                           (params.action !== undefined &&
                             params.action === "Update") ? (
                             <>
-                              <DeleteIcon
-                                style={{
-                                  float: "right",
-                                  cursor: "pointer",
-                                  paddingTop: "6px",
-                                }}
-                                onClick={(e) => {
-                                  RemoveChart(i);
-                                }}
-                              />
+                              {/* publish details cards */}
+                              {!isBublished && (
+                                <DeleteIcon
+                                  style={{
+                                    float: "right",
+                                    cursor: "pointer",
+                                    paddingTop: "6px",
+                                  }}
+                                  onClick={(e) => {
+                                    RemoveChart(i);
+                                  }}
+                                />
+                              )}
                               <BootstrapTooltip
                                 title="Dataset"
                                 TransitionComponent={Fade}
@@ -385,23 +400,33 @@ const Dashboard = ({ params }) => {
                                 />
                               </BootstrapTooltip>
 
-                              <BootstrapTooltip
-                                title="Filter"
-                                TransitionComponent={Fade}
-                                TransitionProps={{ timeout: 600 }}
-                                placement="bottom"
-                              >
-                                <FilterAltOutlinedIcon
-                                  style={{
-                                    float: "right",
-                                    cursor: "pointer",
-                                    paddingTop: "6px",
-                                  }}
-                                  onClick={(e) => {
-                                    filterModelOpen(i, "Dashboard Menu");
-                                  }}
-                                />
-                              </BootstrapTooltip>
+                              {/* dashboard cards */}
+                              {
+                                // (isBublished &&
+                                //   Object.values(
+                                //     filterDetailedData[`chart${i}`] || {}
+                                //   ).length !== 0) ||
+                                !isBublished && (
+                                  <BootstrapTooltip
+                                    title="Filter"
+                                    TransitionComponent={Fade}
+                                    TransitionProps={{ timeout: 600 }}
+                                    placement="bottom"
+                                  >
+                                    <FilterAltOutlinedIcon
+                                      style={{
+                                        float: "right",
+                                        cursor: "pointer",
+                                        paddingTop: "6px",
+                                      }}
+                                      onClick={(e) => {
+                                        filterModelOpen(i, "Dashboard Menu");
+                                      }}
+                                    />
+                                  </BootstrapTooltip>
+                                )
+                              }
+
                               {/* <BootstrapTooltip
                                 title="Refresh"
                                 TransitionComponent={Fade}
@@ -421,7 +446,7 @@ const Dashboard = ({ params }) => {
                               </BootstrapTooltip> */}
                             </>
                           ) : (
-                            // project menu
+                            // publish dashboard and project menu cards start here by franklin
                             <div>
                               <BootstrapTooltip
                                 title="Dataset"
@@ -440,64 +465,77 @@ const Dashboard = ({ params }) => {
                                   }}
                                 />
                               </BootstrapTooltip>
-                              <BootstrapTooltip
-                                title="Filter"
-                                TransitionComponent={Fade}
-                                TransitionProps={{ timeout: 600 }}
-                                placement="bottom"
-                              >
-                                {projectTemplate["chart" + i]?.[
-                                  "filteApply"
-                                ] !== undefined ? (
-                                  <img
-                                    src={FilteredIcon}
-                                    name="Filter"
-                                    color="black"
-                                    alt="Logo"
-                                    height="18px"
-                                    style={{
-                                      float: "right",
-                                      cursor: "pointer",
-                                      padding: " 4px 5px 0 0",
-                                    }}
-                                    onClick={(e) => {
-                                      filterModelOpen(i, "Project Menu");
-                                    }}
-                                  ></img>
-                                ) : (
-                                  <FilterAltOutlinedIcon
-                                    style={{
-                                      float: "right",
-                                      cursor: "pointer",
-                                      paddingTop: "6px",
-                                    }}
-                                    onClick={(e) => {
-                                      filterModelOpen(i, "Project Menu");
-                                    }}
-                                  />
-                                )}
-                              </BootstrapTooltip>
-                              {isBublished ||
-                                (menuName === "Project Menu" && (
+
+                              {((isBublished &&
+                                Object.values(
+                                  storeFilterData[`chart${i}`] || {}
+                                ).length !== 0) ||
+                                (params?.action === "Preview" &&
+                                  individualFilter[i]?.[`chart${i}`])) && (
+                                <>
                                   <BootstrapTooltip
-                                    title="Refresh"
+                                    title="Filter"
                                     TransitionComponent={Fade}
                                     TransitionProps={{ timeout: 600 }}
                                     placement="bottom"
                                   >
-                                    <RefreshIcon
-                                      style={{
-                                        float: "right",
-                                        cursor: "pointer",
-                                        paddingTop: "6px",
-                                      }}
-                                      onClick={(e) => {
-                                        ResetFilter(i);
-                                      }}
-                                    />
+                                    {projectTemplate["chart" + i]?.[
+                                      "filteApply"
+                                    ] !== undefined ? (
+                                      <img
+                                        src={FilteredIcon}
+                                        name="Filter"
+                                        color="black"
+                                        alt="Logo"
+                                        height="18px"
+                                        style={{
+                                          float: "right",
+                                          cursor: "pointer",
+                                          padding: " 4px 5px 0 0",
+                                        }}
+                                        onClick={(e) => {
+                                          filterModelOpen(i, "Project Menu");
+                                        }}
+                                      ></img>
+                                    ) : (
+                                      <FilterAltOutlinedIcon
+                                        style={{
+                                          float: "right",
+                                          cursor: "pointer",
+                                          paddingTop: "6px",
+                                        }}
+                                        onClick={(e) => {
+                                          filterModelOpen(i, "Project Menu");
+                                        }}
+                                      />
+                                    )}
                                   </BootstrapTooltip>
-                                ))}
+
+                                  {projectTemplate["chart" + i]?.[
+                                    "filteApply"
+                                  ] !== undefined && (
+                                    <BootstrapTooltip
+                                      title="Refresh"
+                                      TransitionComponent={Fade}
+                                      TransitionProps={{ timeout: 600 }}
+                                      placement="bottom"
+                                    >
+                                      <RefreshIcon
+                                        style={{
+                                          float: "right",
+                                          cursor: "pointer",
+                                          paddingTop: "6px",
+                                        }}
+                                        onClick={(e) => {
+                                          ResetFilter(i);
+                                        }}
+                                      />
+                                    </BootstrapTooltip>
+                                  )}
+                                </>
+                              )}
                             </div>
+                            // publish dashboard and project menu cards End here by franklin
                           )}
                           {filter.filterSwatch ? (
                             <Chart
@@ -585,16 +623,18 @@ const Dashboard = ({ params }) => {
                           (params.action !== undefined &&
                             params.action === "Update") ? (
                             <>
-                              <DeleteIcon
-                                style={{
-                                  float: "right",
-                                  cursor: "pointer",
-                                  paddingTop: "6px",
-                                }}
-                                onClick={(e) => {
-                                  RemoveChart(i);
-                                }}
-                              />
+                              {!isBublished && (
+                                <DeleteIcon
+                                  style={{
+                                    float: "right",
+                                    cursor: "pointer",
+                                    paddingTop: "6px",
+                                  }}
+                                  onClick={(e) => {
+                                    RemoveChart(i);
+                                  }}
+                                />
+                              )}
                               <BootstrapTooltip
                                 title="Dataset"
                                 TransitionComponent={Fade}
@@ -1055,6 +1095,7 @@ const Dashboard = ({ params }) => {
       filteredtemplate[template[chartsID["chart" + index["i"]]].TempName][
         "Uploaded_fileTemp"
       ] = template[chartsID["chart" + index["i"]]]["Uploaded_file"];
+      template[chartsID["chart" + index["i"]]]["filteApply"] = undefined;
     }
 
     setSelectedFilters({ ...selectedFilters, ["chart" + i]: null });
@@ -1375,63 +1416,79 @@ const Dashboard = ({ params }) => {
                     display: "flex",
                   }}
                 >
-                  {params.action !== "Edit" && params?.action != undefined && (
+                  {((params.action !== "Edit" && params?.action != undefined) ||
+                    isBublished) && (
                     <>
-                      <BootstrapTooltip
-                        title="Refresh"
-                        TransitionComponent={Fade}
-                        TransitionProps={{ timeout: 600 }}
-                        placement="bottom"
-                      >
-                        <RefreshIcon
-                          style={{
-                            float: "right",
-                            cursor: "pointer",
-                            marginRight: "15%",
-                          }}
-                          onClick={(e) => {
-                            ResetFilter(index.i);
-                          }}
-                        />
-                      </BootstrapTooltip>
+                      {projectTemplate["chart" + index.i]?.["filteApply"] !==
+                        undefined ||
+                        (template[chartsID["chart" + index["i"]]]?.[
+                          "filteApply"
+                        ] !== undefined && (
+                          <BootstrapTooltip
+                            title="Refresh"
+                            TransitionComponent={Fade}
+                            TransitionProps={{ timeout: 600 }}
+                            placement="bottom"
+                          >
+                            <RefreshIcon
+                              style={{
+                                float: "right",
+                                cursor: "pointer",
+                                marginRight: "15%",
+                              }}
+                              onClick={(e) => {
+                                ResetFilter(index.i);
+                              }}
+                            />
+                          </BootstrapTooltip>
+                        ))}
 
-                      <BootstrapTooltip
-                        title="Filter"
-                        TransitionComponent={Fade}
-                        TransitionProps={{ timeout: 600 }}
-                        placement="bottom"
-                      >
-                        {projectTemplate["chart" + index.i]?.["filteApply"] !==
-                        undefined ? (
-                          <img
-                            src={FilteredIcon}
-                            name="Filter"
-                            color="black"
-                            alt="Logo"
-                            height="18px"
-                            style={{
-                              float: "right",
-                              cursor: "pointer",
-                              // padding: " 4px 5px 0 0",
-                              marginRight: "15%",
-                            }}
-                            onClick={(e) => {
-                              filterModelOpen(index.i, "Project Menu", true);
-                            }}
-                          ></img>
-                        ) : (
-                          <FilterAltOutlinedIcon
-                            style={{
-                              float: "right",
-                              cursor: "pointer",
-                              marginRight: "15%",
-                            }}
-                            onClick={(e) => {
-                              filterModelOpen(index.i, "Project Menu");
-                            }}
-                          />
-                        )}
-                      </BootstrapTooltip>
+                      {((isBublished &&
+                        Object.values(storeFilterData["chart" + index.i] || {})
+                          .length !== 0) ||
+                        individualFilter[index.i]?.["chart" + index.i]) && (
+                        <BootstrapTooltip
+                          title="Filter"
+                          TransitionComponent={Fade}
+                          TransitionProps={{ timeout: 600 }}
+                          placement="bottom"
+                        >
+                          {projectTemplate["chart" + index.i]?.[
+                            "filteApply"
+                          ] !== undefined ||
+                          template[chartsID["chart" + index["i"]]]?.[
+                            "filteApply"
+                          ] !== undefined ? (
+                            <img
+                              src={FilteredIcon}
+                              name="Filter"
+                              color="black"
+                              alt="Logo"
+                              height="18px"
+                              style={{
+                                float: "right",
+                                cursor: "pointer",
+                                // padding: " 4px 5px 0 0",
+                                marginRight: "15%",
+                              }}
+                              onClick={(e) => {
+                                filterModelOpen(index.i, "Project Menu", true);
+                              }}
+                            ></img>
+                          ) : (
+                            <FilterAltOutlinedIcon
+                              style={{
+                                float: "right",
+                                cursor: "pointer",
+                                marginRight: "15%",
+                              }}
+                              onClick={(e) => {
+                                filterModelOpen(index.i, "Project Menu");
+                              }}
+                            />
+                          )}
+                        </BootstrapTooltip>
+                      )}
 
                       <BootstrapTooltip
                         title="Dataset"
@@ -1697,7 +1754,7 @@ const Dashboard = ({ params }) => {
 
   const RemoveChart = (e) => {
     document.querySelector(".loader").style.display = "block";
-    Swal.fire('Chart has been removed from the dashboard.');    
+    Swal.fire("Chart has been removed from the dashboard.");
     SetChartsID({ ...chartsID, ["chart" + e]: undefined });
   };
 
@@ -1716,7 +1773,7 @@ const Dashboard = ({ params }) => {
   const DashboardArea = React.useMemo(() => {
     const dashboard = CreatingUploadArea();
     return dashboard;
-  }, [template, filteredtemplate, chartsID, layouts]);
+  }, [template, filteredtemplate, chartsID, layouts, isBublished]);
 
   const NavTabs = React.useMemo(() => Tabs(), [filter]);
   const getTable = () => {

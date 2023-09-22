@@ -32,7 +32,7 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import Papa from "papaparse";
 import * as xlsx from "xlsx";
 import axios from "axios";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 
 //Icons
 import DatasetIcon from "@mui/icons-material/Dataset";
@@ -1573,82 +1573,99 @@ const InputArea = ({
             filename: sessionStorage.getItem("uploadfilename"),
           })
           .then((response) => {
-            debugger
             if (response.data.length > 0) {
               Swal.fire({
-                title: 'Are you sure?',
+                title: "Are you sure?",
                 text: "This filename already exists. Would you like to save it with a different name?",
-                icon: 'warning',
+                icon: "warning",
                 showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes'
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes",
               }).then((result) => {
                 if (result.isConfirmed) {
                   Swal.fire({
-                    title: 'Please submit your new file name.',
-                    input: 'text',
+                    title: "Please submit your new file name.",
+                    input: "text",
                     inputAttributes: {
-                      autocapitalize: 'off'
+                      autocapitalize: "off",
                     },
                     showCancelButton: true,
-                    confirmButtonText: 'Save',
+                    confirmButtonText: "Save",
                     showLoaderOnConfirm: true,
                     preConfirm: (login) => {},
-                    allowOutsideClick: () => !Swal.isLoading()
+                    allowOutsideClick: () => !Swal.isLoading(),
                   }).then((result) => {
                     if (result.isConfirmed) {
-                      
-                      axios.post(`http://${path.Location}:${path.Port}/DeleteTemplate`, {
+                      axios
+                        .post(
+                          `http://${path.Location}:${path.Port}/DeleteTemplate`,
+                          {
                             SrcName: sessionStorage.getItem("uploadfilename"),
-                            userID: user.userID})
-                           .then((response) => {
-                                  state.SrcName = result.value;
-                      axios.post(`http://${path.Location}:${path.Port}/InsertTemplate`,state)
+                            userID: user.userID,
+                          }
+                        )
                         .then((response) => {
-                          Swal.fire('Your Data has been Updated');})
-                        .catch((error) => {console.log(error);});
+                          state.SrcName = result.value;
+                          axios
+                            .post(
+                              `http://${path.Location}:${path.Port}/InsertTemplate`,
+                              state
+                            )
+                            .then((response) => {
+                              Swal.fire("Your Data has been Updated");
+                            })
+                            .catch((error) => {
+                              console.log(error);
+                            });
                         });
                     }
-                  })
+                  });
+                } else {
+                  //Deletion of Existing file data and Inserting new Data
+                  axios
+                    .post(
+                      `http://${path.Location}:${path.Port}/DeleteTemplate`,
+                      {
+                        SrcName: sessionStorage.getItem("uploadfilename"),
+                        userID: user.userID,
+                      }
+                    )
+                    .then((response) => {
+                      state.SrcName = sessionStorage.getItem("uploadfilename");
+                      axios
+                        .post(
+                          `http://${path.Location}:${path.Port}/InsertTemplate`,
+                          state
+                        )
+                        .then((response) => {
+                          Swal.fire("Your Data has been Updated");
+                        })
+                        .catch((error) => {
+                          console.log(error);
+                        });
+                    });
                 }
-                else { 
-                   //Deletion of Existing file data and Inserting new Data 
-                    axios.post(`http://${path.Location}:${path.Port}/DeleteTemplate`, {
-                    SrcName: sessionStorage.getItem("uploadfilename"),
-                    userID: user.userID,
-                    })
-                  .then((response) => {
-                  state.SrcName = sessionStorage.getItem("uploadfilename");
-                  axios.post(
-                `http://${path.Location}:${path.Port}/InsertTemplate`,
-                state
-              )
-              .then((response) => {
-                Swal.fire('Your Data has been Updated');                
-              })
-              .catch((error) => {
-                console.log(error);
               });
-          });
-           }              })  
-
-            }
-            else if (response.data.length == 0) {
+            } else if (response.data.length == 0) {
               //Newly insert the file to DB..
               const Result = state;
               Result.SrcName = sessionStorage.getItem("uploadfilename");
               delete Result._id;
               axios
-              .post(`http://${path.Location}:${path.Port}/InsertTemplate`, Result)
+                .post(
+                  `http://${path.Location}:${path.Port}/InsertTemplate`,
+                  Result
+                )
                 .then((response) => {
-                  Swal.fire('Your Data has been Saved')})
+                  Swal.fire("Your Data has been Saved");
+                })
                 .catch((error) => {
-                    console.log(error);
-                  });
+                  console.log(error);
+                });
             }
-           });
-       }
+          });
+      }
     } catch (error) {
       console.log("error", error.message);
     }
@@ -1763,7 +1780,7 @@ const InputArea = ({
         document.querySelector(".loader").style.display = "block";
         PostTemplate("Update");
         GenerateChart();
-        Swal.fire('Your template has been Updated');        
+        Swal.fire("Your template has been Updated");
         ChildtoParentHandshake(undefined);
         setNavbar({ bar: "Templates" });
         chartReset("Chart_Reset");
@@ -1775,7 +1792,7 @@ const InputArea = ({
         if (formValues.TempName === true || state.TempName === undefined) {
           // Enable validation
         }
-        Swal.fire('Your template has been Saved');  
+        Swal.fire("Your template has been Saved");
         setOpen(false);
         setNavbar({ bar: "Templates" });
         PostTemplate("Insert");
@@ -1783,7 +1800,7 @@ const InputArea = ({
       }
     } else {
       setFlag(false);
-      Swal.fire('Your template updation has been cancelled');           
+      Swal.fire("Your template updation has been cancelled");
       ChildtoParentHandshake(undefined);
       chartReset("Chart_Reset");
       setState((previous) => ({
@@ -1837,7 +1854,7 @@ const InputArea = ({
           userID: user.userID,
         })
         .then((response) => {
-          Swal.fire('Your Template has been Deleted');          
+          Swal.fire("Your Template has been Deleted");
           setFlag(flag);
         });
       setOpen({ ...open, Template: false });
@@ -2060,8 +2077,7 @@ const InputArea = ({
       setNavOpen(!navopen);
       if (action === "publish")
         setIsshow({ ...show, isBublished: !show.isBublished, Build: false });
-
-      //else setIsshow({ ...show, isBublished: !show.isBublished });
+      else setIsshow({ ...show, isBublished: !show.isBublished });
     }, 100);
     //ExpandData(navwidth)
   };
@@ -2215,7 +2231,7 @@ const InputArea = ({
       if (projectDetails.DashboardName) {
         setOpen({ Dashboard: false });
         PostDashboard("Insert");
-        Swal.fire('Your Project has been Saved'); 
+        Swal.fire("Your Project has been Saved");
       } else {
         setFormValues({
           ...formValues,
@@ -2309,7 +2325,7 @@ const InputArea = ({
       axios
         .post(`http://${path.Location}:${path.Port}/UpdateDashboard`, obj)
         .then((response) => {
-          Swal.fire('Your Project has been Updated.');          
+          Swal.fire("Your Project has been Updated.");
           //GetDashboard();
         });
     } else if (action === "Delete") {
@@ -2320,7 +2336,7 @@ const InputArea = ({
           DashboardName: e.currentTarget.id,
         })
         .then((response) => {
-          Swal.fire('Your Project has been Deleted.');          
+          Swal.fire("Your Project has been Deleted.");
           GetDashboard();
           setTimeout(() => {
             document.querySelector(".loader").style.display = "none";
@@ -2569,28 +2585,26 @@ const InputArea = ({
         let data = response.data;
         let obj = {};
         for (let i = 0; i < data.length; i++) {
-         /// obj[data[i].filename] = data[i].data;
+          /// obj[data[i].filename] = data[i].data;
           obj[data[i].filename] = data[i].filename;
         }
         setDataset(obj);
       });
   };
-   const getUseDataSet = (filename) => {
+  const getUseDataSet = (filename) => {
     axios
       .post(`http://${path.Location}:${path.Port}/GetUseDataSet`, {
         userID: user.userID,
         filename: filename,
       })
       .then((response) => {
-        let data = response.data; 
+        let data = response.data;
         let obj = {};
         for (let i = 0; i < data.length; i++) {
-          obj[data[i].filename] = data[i].data; 
+          obj[data[i].filename] = data[i].data;
           setData({ data: data[i].data });
         }
-        
       });
-      
   };
   const handleDataSet = (action, id) => {
     if (fileevent != null && fileevent != "" && fileevent != undefined) {
@@ -2984,23 +2998,23 @@ const InputArea = ({
             {/*  Commented by Franklin - for phase-1 release */}
             {/*  UnCommented by Juan*/}
             <Button
-            variant="contained"
-            margin="normal"
-            className="input-field button"
-            style={{
-              backgroundColor: "#6282b3",
-              float: "left",
-              marginTop: "10px",
-            }}
-            onClick={(e) => {
-              setNavbar({ bar: "Data" });
-              // setTimeout(() => {
-              //   document.getElementById("uploadFile").focus();
-              // }, 0);
-            }}
-          >
-            New Template
-          </Button>
+              variant="contained"
+              margin="normal"
+              className="input-field button"
+              style={{
+                backgroundColor: "#6282b3",
+                float: "left",
+                marginTop: "10px",
+              }}
+              onClick={(e) => {
+                setNavbar({ bar: "Data" });
+                // setTimeout(() => {
+                //   document.getElementById("uploadFile").focus();
+                // }, 0);
+              }}
+            >
+              New Template
+            </Button>
           </div>
         )}
       </div>
@@ -3215,11 +3229,14 @@ const InputArea = ({
           <Chartheader param={navbar.bar} />
           {navbar.bar === "Data" && (
             <div
-            className="row col-xs-12 col-sm-12 col-md-12 col-lg-12"
-           style={{ margin: "15px 0px 15px 13px" }}
+              className="row col-xs-12 col-sm-12 col-md-12 col-lg-12"
+              style={{ margin: "15px 0px 15px 13px" }}
             >
-               <div className="row col-sm-6 col-md-6 col-lg-5"  style={{ width: "200px" }}> 
-              <TextField
+              <div
+                className="row col-sm-6 col-md-6 col-lg-5"
+                style={{ width: "200px" }}
+              >
+                <TextField
                   error={formValues.InputType.error}
                   helperText={
                     formValues.InputType.error &&
@@ -3238,10 +3255,10 @@ const InputArea = ({
                   value={state.InputType}
                 >
                   {/* Import Inputs-Removed that option for Now. */}
-               <MenuItem key={1} value={"Import Inputs"}>
+                  <MenuItem key={1} value={"Import Inputs"}>
                     Import Inputs
-                  </MenuItem> 
-               <MenuItem key={2} value={"Enter Inputs"}>
+                  </MenuItem>
+                  <MenuItem key={2} value={"Enter Inputs"}>
                     Enter Inputs
                   </MenuItem>
                   <MenuItem key={3} value={"Available Dataset"}>

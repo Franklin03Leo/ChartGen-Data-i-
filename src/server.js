@@ -506,7 +506,16 @@ app.post("/InsertDataSet", (req, res) => {
 app.post("/GetDataset/", (req, res) => {
   connect();
   db.collection("Dataset")
-    .find({ userID: req.body.userID })
+    // .find({ userID: req.body.userID })
+    .aggregate([
+      { $match: { userID: req.body.userID } },
+      {
+        $project: {
+          filename: "$filename",
+          UserGroup: "$userID",
+        },
+      },
+    ])
     .toArray(function (err, result) {
       if (err) {
         res
@@ -537,9 +546,9 @@ app.post("/DeleteDataset", (req, res) => {
     });
 });
 app.post("/GetUseDataSet/", (req, res) => {
-  connect();  
+  connect();
   db.collection("Dataset")
-    .find({ userID: req.body.userID,filename:req.body.filename })
+    .find({ userID: req.body.userID, filename: req.body.filename })
     .toArray(function (err, result) {
       if (err) {
         res
@@ -556,9 +565,9 @@ app.post("/GetUseDataSet/", (req, res) => {
 });
 // =================== Chart File Check =======================
 app.post("/GetChartsSrc/", (req, res) => {
-  connect();  
+  connect();
   db.collection("charts")
-    .find({ userID: req.body.userID,SrcName:req.body.filename })
+    .find({ userID: req.body.userID, SrcName: req.body.filename })
     .toArray(function (err, result) {
       if (err) {
         res
