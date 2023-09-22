@@ -52,6 +52,7 @@ const toPascalCase = (word) => {
     .join(""); // Join the parts together without spaces
 };
 const Dictionary = ({ params }) => {
+  document.querySelector(".loader").style.display = "block";
   //Custom
   const style = {
     position: "absolute",
