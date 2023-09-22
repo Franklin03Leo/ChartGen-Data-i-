@@ -447,8 +447,9 @@ const Dashboard = ({ params }) => {
                                 TransitionProps={{ timeout: 600 }}
                                 placement="bottom"
                               >
-                                {projectTemplate["chart" + i]["filteApply"] !==
-                                undefined ? (
+                                {projectTemplate["chart" + i]?.[
+                                  "filteApply"
+                                ] !== undefined ? (
                                   <img
                                     src={FilteredIcon}
                                     name="Filter"
@@ -1013,7 +1014,9 @@ const Dashboard = ({ params }) => {
     temp = template[chartsID["chart" + index["i"]]]; //projectTemplate['chart' + index["i"]]
     // projectTemplate['chart' + index["i"]].filter = selectedFilters;
     let filteredData = [];
-    filteredData = projectTemplate["chart" + index["i"]]["Uploaded_file"];
+    filteredData = projectTemplate["chart" + index["i"]]
+      ? projectTemplate["chart" + index["i"]]["Uploaded_file"]
+      : template[chartsID["chart" + index["i"]]]["Uploaded_file"];
 
     for (const filterKey in selectedFilters["chart" + index["i"]]) {
       if (selectedFilters["chart" + index["i"]].hasOwnProperty(filterKey)) {
@@ -1025,7 +1028,12 @@ const Dashboard = ({ params }) => {
       }
     }
     temp.data = filteredData;
-    projectTemplate["chart" + index["i"]].filteApply = "FilterApply";
+    if (projectTemplate["chart" + index["i"]]) {
+      projectTemplate["chart" + index["i"]].filteApply = "FilterApply";
+    } else {
+      template[chartsID["chart" + index["i"]]].filteApply = "FilterApply";
+    }
+
     handleFilter(temp);
     handleFilterClose();
 
@@ -1368,7 +1376,7 @@ const Dashboard = ({ params }) => {
                     display: "flex",
                   }}
                 >
-                  {params.action !== "Edit" && !params.Build && (
+                  {params.action !== "Edit" && params?.action != undefined && (
                     <>
                       <BootstrapTooltip
                         title="Refresh"
@@ -1667,11 +1675,16 @@ const Dashboard = ({ params }) => {
   };
 
   const handleFilter = async (Obj) => {
+    debugger;
     document.querySelector(".loader").style.display = "block";
-    projectTemplate["chart" + index["i"]]["Uploaded_fileTemp"] = Obj.data;
+    if (projectTemplate["chart" + index["i"]]) {
+      projectTemplate["chart" + index["i"]]["Uploaded_fileTemp"] = Obj.data;
+    } else {
+      template[chartsID["chart" + index["i"]]]["Uploaded_fileTemp"] = Obj.data;
+    }
     // for (let i = 0; i < Object.keys(filteredtemplate).length; i++) {
     //   if (Object.keys(filteredtemplate)[i] !== "Render")
-    //     // filteredtemplate[Object.keys(filteredtemplate)[i]].Uploaded_file =
+    // filteredtemplate[Object.keys(filteredtemplate)[i]].Uploaded_file =
     //
     //   // template[Obj.TempName].Uploaded_file = Obj.data;
     // }
@@ -1708,7 +1721,7 @@ const Dashboard = ({ params }) => {
   const DashboardArea = React.useMemo(() => {
     const dashboard = CreatingUploadArea();
     return dashboard;
-  }, [template, filteredtemplate, chartsID, layouts, projectTemplate]);
+  }, [template, filteredtemplate, chartsID, layouts]);
 
   const NavTabs = React.useMemo(() => Tabs(), [filter]);
   const getTable = () => {

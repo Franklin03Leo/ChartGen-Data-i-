@@ -2285,10 +2285,10 @@ const InputArea = ({
       obj.AvailableDimensions = filteringProps.Dimensions;
       obj.action = "Update";
       setpostProject(obj);
-      // setOthers({
-      //   ...others,
-      //   EditDashboard: false,
-      // });
+      setOthers({
+        ...others,
+        EditDashboard: false,
+      });
       // setNavbar({ bar: "Project" });
       // document.querySelector(".loader").style.display = "block";
       axios
@@ -2802,7 +2802,8 @@ const InputArea = ({
             </div>
           </div>
 
-          <div className="Nav-divider">{"   "}────</div>
+          {/* commented start here - remove Menuicon by franklin */}
+          {/* <div className="Nav-divider">{"   "}────</div>
           <div className="Icon">
             <div className={navbar.bar === "Demo" ? "NavBar-active" : "NavBar"}>
               <BootstrapTooltip
@@ -2819,7 +2820,6 @@ const InputArea = ({
                   onClick={handleNavbarChange}
                 ></img>
 
-                {/* <Demo className="Icon_" fontSize="large" color={navbar.bar === 'Demo' ? 'primary' : '#979A9B'} onClick={handleNavbarChange} /> */}
               </BootstrapTooltip>
             </div>
           </div>
@@ -2844,10 +2844,11 @@ const InputArea = ({
                   }}
                 ></img>
 
-                {/* <FeedbackIcon className="Icon_" fontSize="large" color={navbar.bar === 'Feedback' ? 'primary' : '#979A9B'} onClick={(e) => { handleNavbarChange(e); handleFeedback('Fetch') }} /> */}
               </BootstrapTooltip>
             </div>
-          </div>
+          </div> */}
+          {/* commented End here - remove Menuicon */}
+
           {user["Role"] === "Admin" && (
             <div className="Icon">
               <div
@@ -7540,7 +7541,7 @@ const InputArea = ({
                     </>
                   )}
                 </div>
-                {state.Uploaded_file !== undefined && (
+                {/* {state.Uploaded_file !== undefined && (
                   <div className="row" style={{ padding: "0px" }}>
                     <div style={{ display: "flex" }}>
                       <div
@@ -7568,7 +7569,7 @@ const InputArea = ({
                       </div>
                     </div>
                   </div>
-                )}
+                )} */}
                 {others.CustomCards && (
                   <>
                     <div
@@ -7815,7 +7816,8 @@ const InputArea = ({
                     return Item;
                   })()}
                 </div>
-                <div
+                {/* commented start here for adding global filter by franklin   */}
+                {/* <div
                   className="row col-lg-12 filterswt"
                   style={{ borderTop: "4px solid #f4f4f8" }}
                 >
@@ -7918,7 +7920,9 @@ const InputArea = ({
                       )}
                     </>
                   )}
-                </div>
+                </div> */}
+                {/* commented End here for adding global filter by franklin   */}
+
                 {others.EditDashboard && (
                   <>
                     {/* <div className="col-lg-12 borderstyle">
