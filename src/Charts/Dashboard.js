@@ -491,7 +491,7 @@ const Dashboard = ({ params }) => {
                                         style={{
                                           float: "right",
                                           cursor: "pointer",
-                                          padding: " 4px 5px 0 0",
+                                          padding: "6px 0px 0px 0px",
                                         }}
                                         onClick={(e) => {
                                           filterModelOpen(i, "Project Menu");
