@@ -578,7 +578,6 @@ const InputArea = ({
             const sheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[sheetName];
             const json = xlsx.utils.sheet_to_json(worksheet);
-            // debugger;
             var Type = [];
             var Key_ = [];
             Object.values(json[0]).map((value) => {
@@ -2371,6 +2370,16 @@ const InputArea = ({
             obj.DashboardName = data.DashboardName;
             obj.DashboardDescription = data.DashboardDescription;
             obj.dashboard = dashboard_;
+            obj.Projectfilter = JSON.parse(
+              JSON.stringify(
+                Object.fromEntries(
+                  Object.keys(data.charts).map((val) => [
+                    val,
+                    dashboard_[data.charts[val]],
+                  ])
+                )
+              )
+            );
             obj.IndividualFilter = data.IndividualFilter;
             obj.Filter = {
               filterSwatch: data.filter.filterSwatch,
