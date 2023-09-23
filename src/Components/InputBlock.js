@@ -426,10 +426,10 @@ const InputArea = ({
     project_(postProject);
   }, [postProject]);
   React.useEffect(() => {
-    //GetTemplate('Dashboard')
     GetDashboard();
     getDataSet();
     handleGetUsers();
+
     const handleResize = () => {
       if (window.innerWidth < 1010) {
         setNavOpen(false);
@@ -1820,80 +1820,96 @@ const InputArea = ({
 
   //Template Edit/Delete
   const handleTemplate = (name, action) => {
-    if (action === "Edit") {
-      setState(template[name]);
-      setEnable({
-        ...enable,
-        Piechart: false,
-        Barchart: false,
-        Scatter: false,
-        Linechart: false,
-        Compositechart: false,
-        Serieschart: false,
-        Barlinechart: false,
-      });
-      setNavbar({ bar: "Charts" });
-      setFlag(true);
-    } else if (action === "Delete") {
-      setTemplate({ ...template, [name]: undefined });
-      setEnable({
-        ...enable,
-        Piechart: false,
-        Barchart: false,
-        Scatter: false,
-        Linechart: false,
-        Compositechart: false,
-        Serieschart: false,
-        Barlinechart: false,
-      });
-
-      axios
-        .post(`http://${path.Location}:${path.Port}/DeleteTemplate`, {
-          TempName: name,
-          userID: user.userID,
-        })
-        .then((response) => {
-          Swal.fire("Your Template has been Deleted");
-          setFlag(flag);
+    try {
+      if (action === "Edit") {
+        setState(template[name]);
+        setEnable({
+          ...enable,
+          Piechart: false,
+          Barchart: false,
+          Scatter: false,
+          Linechart: false,
+          Compositechart: false,
+          Serieschart: false,
+          Barlinechart: false,
         });
-      setOpen({ ...open, Template: false });
-      return;
-    } else if (action === "templeDelete") {
-      let Index = -1;
-      for (let i = 0; i < Object.keys(project).length; i++) {
-        Index = Object.values(project[Object.keys(project)[i]].charts).indexOf(
-          name
-        );
-        if (Index !== -1) {
-          setOpen({
-            ...open,
-            Template: true,
-            deleteTemplate: true,
-            tempName: name,
-            dashboardName: project[Object.keys(project)[i]].DashboardName,
-          });
-          return;
-        }
-      }
-      if (Index === -1) handleTemplate(name, "Delete");
-    }
+        setNavbar({ bar: "Charts" });
+        setFlag(true);
+      } else if (action === "Delete") {
+        setTemplate({ ...template, [name]: undefined });
+        setEnable({
+          ...enable,
+          Piechart: false,
+          Barchart: false,
+          Scatter: false,
+          Linechart: false,
+          Compositechart: false,
+          Serieschart: false,
+          Barlinechart: false,
+        });
 
-    if (action === "Preview" || action === "Edit") {
-      //GetTemplate()
-      document.querySelector(".loader").style.display = "block";
-      setEnable({
-        ...enable,
-        Piechart: false,
-        Barchart: false,
-        Scatter: false,
-        Linechart: false,
-        Compositechart: false,
-        Serieschart: false,
-        Barlinechart: false,
-      });
-      setEnableTemplate(!enabletemplate);
-      setState(template[name]);
-      if (action === "Preview") setFlag(false);
+        axios
+          .post(`http://${path.Location}:${path.Port}/DeleteTemplate`, {
+            TempName: name,
+            userID: user.userID,
+          })
+          .then((response) => {
+            Swal.fire("Your Template has been Deleted");
+            setFlag(flag);
+          });
+        setOpen({ ...open, Template: false });
+        return;
+      } else if (action === "templeDelete") {
+        let Index = -1;
+        for (let i = 0; i < Object.keys(project).length; i++) {
+          Index = Object.values(
+            project[Object.keys(project)[i]].charts
+          ).indexOf(name);
+          if (Index !== -1) {
+            setOpen({
+              ...open,
+              Template: true,
+              deleteTemplate: true,
+              tempName: name,
+              dashboardName: project[Object.keys(project)[i]].DashboardName,
+            });
+            return;
+          }
+        }
+        if (Index === -1) handleTemplate(name, "Delete");
+      }
+
+      if (action === "Preview" || action === "Edit") {
+        document.querySelector(".loader").style.display = "block";
+        axios
+          .post(`http://${path.Location}:${path.Port}/GetTemplate`, {
+            userID: user.userID,
+            TempName: [name],
+            Flag: { action: "singleTemplate" },
+          })
+          .then((response) => {
+            template[response.data[0]["TempName"]] = response.data[0];
+
+            setEnable({
+              ...enable,
+              Piechart: false,
+              Barchart: false,
+              Scatter: false,
+              Linechart: false,
+              Compositechart: false,
+              Serieschart: false,
+              Barlinechart: false,
+            });
+            setEnableTemplate(!enabletemplate);
+            setState(template[name]);
+            if (action === "Preview") setFlag(false);
+          });
+        setTimeout(() => {
+          document.querySelector(".loader").style.display = "none";
+        }, 0);
+      }
+    } catch (error) {
+      console.log("error in handleTemplate", error);
     }
   };
 
@@ -2062,6 +2078,7 @@ const InputArea = ({
   };
   //Expand/Collapse
   const ExpandCollapse = (action) => {
+    debugger;
     // navigate("/");
     setTimeout(() => {
       if (navopen && !isMobile) {
@@ -2074,8 +2091,11 @@ const InputArea = ({
         setNavWidth({ navArea: "70px", inuptArea: "28%", ChartArea: "63%" });
       }
       setNavOpen(!navopen);
-      if (action === "publish")
+      if (action === "publish") {
+        debugger;
         setIsshow({ ...show, isBublished: !show.isBublished, Build: false });
+      }
+      // else if (action === "AssignUser") setIsshow({ ...show, isBublished: !show.isBublished });
       else setIsshow({ ...show, isBublished: !show.isBublished });
     }, 100);
     //ExpandData(navwidth)
@@ -2181,6 +2201,7 @@ const InputArea = ({
             }, 100);
           }
         }
+        document.querySelector(".loader").style.display = "none";
       });
   };
 
@@ -2345,8 +2366,12 @@ const InputArea = ({
     if (action === "Preview" || action === "Edit") {
       document.querySelector(".loader").style.display = "block";
       let data = project[e.currentTarget.id]; //others.EditingDashboardID
-      if (user["Role"] !== "Admin" || Object.keys(dashboard).length === 0) {
-        GetTemplate("Dashboard");
+      if (
+        user["Role"] === "Admin" ||
+        user["Role"] === "Creator" ||
+        Object.keys(dashboard).length === 0
+      ) {
+        // GetTemplate("Dashboard");
         axios
           .post(`http://${path.Location}:${path.Port}/GetTemplate`, {
             userID: user.userID,
@@ -2404,6 +2429,17 @@ const InputArea = ({
         obj.DashboardName = data.DashboardName;
         obj.DashboardDescription = data.DashboardDescription;
         obj.dashboard = dashboard;
+
+        // axios
+        //   .post(`http://${path.Location}:${path.Port}/GetTemplate`, {
+        //     TempName: Object.values(data.charts).map((val) => val),
+        //     Flag: { action: "Project" },
+        //   })
+        //   .then((response) => {
+        //     console.log(" project retrive details ====> 1 ", response.data);
+        //     let data = response.data;
+        //   });
+
         obj.Projectfilter = JSON.parse(
           JSON.stringify(
             Object.fromEntries(
@@ -2498,6 +2534,7 @@ const InputArea = ({
         GetDashboard();
       });
   };
+
   const GetDashboard = () => {
     if (Object.keys(project).length === 0)
       document.querySelector(".loader").style.display = "block";
@@ -2507,16 +2544,12 @@ const InputArea = ({
         flag: user["Role"] === "User" ? 1 : 0,
       })
       .then((response) => {
-        // console.log("project data", response.data);
+        console.log("project data", response.data);
         let data = response.data;
         let obj = {};
         // let Project = [];
         for (let i = 0; i < data.length; i++) {
           obj[data[i].DashboardName] = data[i];
-          // let Users = data[i].Users
-          // if (Users !== undefined && Users.toString().indexOf(user["userName"]) > 0) {
-          //   project.push(data[i].DashboardName);
-          // }
         }
 
         setProject(obj);
@@ -8191,6 +8224,7 @@ const InputArea = ({
                 {(() => {
                   let Item = [];
                   for (let a in project) {
+                    debugger;
                     if (project[a] !== undefined) {
                       Item.push(
                         <div

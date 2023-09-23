@@ -45,7 +45,14 @@ import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
 import styled from "@emotion/styled";
 import { Fade } from "@material-ui/core";
 
+import axios from "axios";
+
 const Dashboard = ({ params }) => {
+  const [path, setPath] = React.useState({
+    Location: window.location.hostname,
+    Port: process.env.REACT_APP_PORT,
+  });
+
   //Add a Bootstrap Tooltip style
   const BootstrapTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -213,7 +220,7 @@ const Dashboard = ({ params }) => {
   const Chart = ({ state }) => {
     //const chart = React.useMemo(() => {
     // to set an chart height when click the preview model
-    if (state !== undefined) {
+    if (state.Uploaded_file !== undefined) {
       if (chartOpen.Chart === true) {
         state.Height_ = window.innerHeight - 200;
       } else {
@@ -481,6 +488,9 @@ const Dashboard = ({ params }) => {
                                   >
                                     {projectTemplate["chart" + i]?.[
                                       "filteApply"
+                                    ] !== undefined ||
+                                    template[chartsID["chart" + i]]?.[
+                                      "filteApply"
                                     ] !== undefined ? (
                                       <img
                                         src={FilteredIcon}
@@ -511,9 +521,12 @@ const Dashboard = ({ params }) => {
                                     )}
                                   </BootstrapTooltip>
 
-                                  {projectTemplate["chart" + i]?.[
+                                  {(projectTemplate["chart" + i]?.[
                                     "filteApply"
-                                  ] !== undefined && (
+                                  ] !== undefined ||
+                                    template[chartsID["chart" + i]]?.[
+                                      "filteApply"
+                                    ] !== undefined) && (
                                     <BootstrapTooltip
                                       title="Refresh"
                                       TransitionComponent={Fade}
@@ -537,15 +550,26 @@ const Dashboard = ({ params }) => {
                             </div>
                             // publish dashboard and project menu cards End here by franklin
                           )}
-                          {filter.filterSwatch ? (
+                          {
+                            //filter.filterSwatch ? (
+                            // <Chart
+                            //   state={filteredtemplate[chartsID["chart" + i]]}
+                            // />
+
+                            //) :
+                            // params?.action === "Preview" ? (
+                            //   <Chart state={projectTemplate["chart" + i]} />
+                            // ) : (
+                            //   <Chart state={template[chartsID["chart" + i]]} />
+                            // )
                             <Chart
-                              state={filteredtemplate[chartsID["chart" + i]]}
+                              state={
+                                projectTemplate["chart" + i]
+                                  ? projectTemplate["chart" + i]
+                                  : template[chartsID["chart" + i]]
+                              }
                             />
-                          ) : params?.action === "Preview" ? (
-                            <Chart state={projectTemplate["chart" + i]} />
-                          ) : (
-                            <Chart state={template[chartsID["chart" + i]]} />
-                          )}
+                          }
                         </>
                       ) : (
                         <div className="divdashboard">
@@ -707,40 +731,78 @@ const Dashboard = ({ params }) => {
                                   }}
                                 />
                               </BootstrapTooltip>
-                              <BootstrapTooltip
-                                title="Filter"
-                                TransitionComponent={Fade}
-                                TransitionProps={{ timeout: 600 }}
-                                placement="bottom"
-                              >
-                                <FilterAltOutlinedIcon
-                                  style={{
-                                    float: "right",
-                                    cursor: "pointer",
-                                    paddingTop: "6px",
-                                  }}
-                                  onClick={(e) => {
-                                    filterModelOpen(i, "Project Menu");
-                                  }}
-                                />
-                              </BootstrapTooltip>
-                              {/* <BootstrapTooltip
-                                title="Refresh"
-                                TransitionComponent={Fade}
-                                TransitionProps={{ timeout: 600 }}
-                                placement="bottom"
-                              >
-                                <RefreshIcon
-                                  style={{
-                                    float: "right",
-                                    cursor: "pointer",
-                                    paddingTop: "6px",
-                                  }}
-                                  onClick={(e) => {
-                                    ResetFilter();
-                                  }}
-                                />
-                              </BootstrapTooltip> */}
+
+                              {((isBublished &&
+                                Object.values(
+                                  storeFilterData[`chart${i}`] || {}
+                                ).length !== 0) ||
+                                (params?.action === "Preview" &&
+                                  individualFilter[i]?.[`chart${i}`])) && (
+                                <>
+                                  <BootstrapTooltip
+                                    title="Filter"
+                                    TransitionComponent={Fade}
+                                    TransitionProps={{ timeout: 600 }}
+                                    placement="bottom"
+                                  >
+                                    {projectTemplate["chart" + i]?.[
+                                      "filteApply"
+                                    ] !== undefined ? (
+                                      <img
+                                        src={FilteredIcon}
+                                        name="Filter"
+                                        color="black"
+                                        alt="Logo"
+                                        height="18px"
+                                        style={{
+                                          float: "right",
+                                          cursor: "pointer",
+                                          padding: "6px 0px 0px 0px",
+                                        }}
+                                        onClick={(e) => {
+                                          console.log(
+                                            "FilterAltOutlinedIcon ==> 759"
+                                          );
+                                          filterModelOpen(i, "Project Menu");
+                                        }}
+                                      ></img>
+                                    ) : (
+                                      <FilterAltOutlinedIcon
+                                        style={{
+                                          float: "right",
+                                          cursor: "pointer",
+                                          paddingTop: "6px",
+                                        }}
+                                        onClick={(e) => {
+                                          filterModelOpen(i, "Project Menu");
+                                        }}
+                                      />
+                                    )}
+                                  </BootstrapTooltip>
+
+                                  {projectTemplate["chart" + i]?.[
+                                    "filteApply"
+                                  ] !== undefined && (
+                                    <BootstrapTooltip
+                                      title="Refresh"
+                                      TransitionComponent={Fade}
+                                      TransitionProps={{ timeout: 600 }}
+                                      placement="bottom"
+                                    >
+                                      <RefreshIcon
+                                        style={{
+                                          float: "right",
+                                          cursor: "pointer",
+                                          paddingTop: "6px",
+                                        }}
+                                        onClick={(e) => {
+                                          ResetFilter(i);
+                                        }}
+                                      />
+                                    </BootstrapTooltip>
+                                  )}
+                                </>
+                              )}
                             </div>
                           )}
                           {filter.filterSwatch ? (
@@ -748,7 +810,14 @@ const Dashboard = ({ params }) => {
                               state={filteredtemplate[chartsID["chart" + i]]}
                             />
                           ) : (
-                            <Chart state={template[chartsID["chart" + i]]} />
+                            // <Chart state={template[chartsID["chart" + i]]} />
+                            <Chart
+                              state={
+                                projectTemplate["chart" + i]
+                                  ? projectTemplate["chart" + i]
+                                  : template[chartsID["chart" + i]]
+                              }
+                            />
                           )}
                         </>
                       ) : (
@@ -851,7 +920,14 @@ const Dashboard = ({ params }) => {
                               state={filteredtemplate[chartsID["chart" + i]]}
                             />
                           ) : (
-                            <Chart state={template[chartsID["chart" + i]]} />
+                            // <Chart state={template[chartsID["chart" + i]]} />
+                            <Chart
+                              state={
+                                projectTemplate["chart" + i]
+                                  ? projectTemplate["chart" + i]
+                                  : template[chartsID["chart" + i]]
+                              }
+                            />
                           )}
                         </>
                       ) : (
@@ -958,7 +1034,14 @@ const Dashboard = ({ params }) => {
                               state={filteredtemplate[chartsID["chart" + i]]}
                             />
                           ) : (
-                            <Chart state={template[chartsID["chart" + i]]} />
+                            <Chart
+                              state={
+                                projectTemplate["chart" + i]
+                                  ? projectTemplate["chart" + i]
+                                  : template[chartsID["chart" + i]]
+                              }
+                            />
+                            // <Chart state={template[chartsID["chart" + i]]} />
                           )}
                         </>
                       ) : (
@@ -1336,6 +1419,7 @@ const Dashboard = ({ params }) => {
   };
 
   const PreviewDataSet = () => {
+    document.querySelector(".loader").style.display = "block";
     let tempDataSet = {};
     if (projectTemplate["chart" + index["i"]] === undefined) {
       if (
@@ -1615,6 +1699,18 @@ const Dashboard = ({ params }) => {
     );
   };
 
+  const handleGlobelReset = () => {
+    Object.keys(chartsID || {}).map((val) => {
+      projectTemplate[val]
+        ? (projectTemplate[val].filteApply = undefined)
+        : (template[chartsID[val]]["filteApply"] = undefined);
+    });
+    Setfilteredtemplate({
+      ...filteredtemplate,
+      Render: !filteredtemplate.Render,
+    });
+  };
+
   // Layout tabs
   const Tabs = () => {
     return (
@@ -1629,11 +1725,19 @@ const Dashboard = ({ params }) => {
                   handleTabChange("Data");
                 }}
                 style={{
-                  background: `${!Tab.Dashboard ? "#6282b3" : "#e2e2e2"}`,
+                  background: `${Tab.Dashboard ? "#6282b3" : "#e2e2e2"}`,
                 }}
               >
-                <DatasetIcon fontSize="large" />
+                <BootstrapTooltip
+                  title="Dataset"
+                  TransitionComponent={Fade}
+                  TransitionProps={{ timeout: 600 }}
+                  placement="bottom"
+                >
+                  <DatasetIcon fontSize="large" />
+                </BootstrapTooltip>
               </div>
+
               <div
                 className=" Dash-icon"
                 id="dashboard"
@@ -1641,11 +1745,40 @@ const Dashboard = ({ params }) => {
                   handleTabChange("Dashboard");
                 }}
                 style={{
-                  background: `${Tab.Dashboard ? "#6282b3" : "#e2e2e2"}`,
+                  background: `${!Tab.Dashboard ? "#6282b3" : "#e2e2e2"}`,
                 }}
               >
-                <DashboardIcon fontSize="large" />
+                <BootstrapTooltip
+                  title="Charts"
+                  TransitionComponent={Fade}
+                  TransitionProps={{ timeout: 600 }}
+                  placement="bottom"
+                >
+                  <DashboardIcon fontSize="large" />
+                </BootstrapTooltip>
               </div> */}
+
+              {/* {(isBublished || params.action === "Preview") && (
+                <BootstrapTooltip
+                  title="Globle Refresh"
+                  TransitionComponent={Fade}
+                  TransitionProps={{ timeout: 600 }}
+                  placement="bottom"
+                >
+                  <div
+                    className=" Dash-icon"
+                    id="dashboard"
+                    onClick={(e) => {
+                      handleGlobelReset();
+                    }}
+                    style={{
+                      background: `${"#e2e2e2"}`,
+                    }}
+                  >
+                    <RefreshIcon fontSize="large" />
+                  </div>
+                </BootstrapTooltip>
+              )} */}
 
               {other.showFilter ? (
                 <div style={{ marginTop: "15px" }}>
@@ -1699,6 +1832,8 @@ const Dashboard = ({ params }) => {
 
   //Functions
   const drop = (event) => {
+    debugger;
+    let temp = event.currentTarget.id;
     try {
       SetChartsID({
         ...chartsID,
@@ -1710,6 +1845,24 @@ const Dashboard = ({ params }) => {
           data: template[event.dataTransfer.getData("text")].Uploaded_file,
         });
       }
+
+      axios
+        .post(`http://${path.Location}:${path.Port}/GetTemplate`, {
+          userID: params.userID,
+          TempName: [event.dataTransfer.getData("text")],
+          Flag: { action: "singleTemplate" },
+        })
+        .then((response) => {
+          response.data[0].Width_ = null;
+          response.data[0].Heigth_ = 250;
+          template[response.data[0]["TempName"]] = response.data[0];
+          projectTemplate[temp] = response.data[0];
+          // console.log("===================================== >", temp);
+          Setfilteredtemplate({
+            ...filteredtemplate,
+            Render: !filteredtemplate.Render,
+          });
+        });
     } catch (error) {
       console.log("Error while dragging on");
     }
@@ -1760,11 +1913,13 @@ const Dashboard = ({ params }) => {
 
   const handleTabChange = (action) => {
     // document.querySelector('.loader').style.display = 'block'
-    if (action === "Dashboard") setTab({ ...Tab, Dashboard: true });
-    else {
+    if (action === "Dashboard") {
+      setTab({ ...Tab, Dashboard: true, Dataset: false });
+    } else {
       setTab({
         ...Tab,
         Dashboard: false,
+        Dataset: true,
         data: template[chartsID[Object.keys(chartsID)[0]]].Uploaded_file,
       });
     }
@@ -1776,11 +1931,13 @@ const Dashboard = ({ params }) => {
   }, [template, filteredtemplate, chartsID, layouts, isBublished]);
 
   const NavTabs = React.useMemo(() => Tabs(), [filter]);
+
   const getTable = () => {
-    setTimeout(() => {
-      return <DatasetTable params={Tab.data} filter={false} />;
-    }, 0);
+    //setTimeout(() => {
+    return <DatasetTable params={Tab.data} filter={false} />;
+    //}, 0);
   };
+
   return (
     <>
       <div className="row col-lg-12">
@@ -1822,12 +1979,13 @@ const Dashboard = ({ params }) => {
             {DashboardArea}
           </div>
         </>
-        <div
+        {/* <div
           className="row col-lg-12"
           style={{ display: !Tab.Dashboard ? "block" : "none" }}
         >
-          {/* {Tab.data !== undefined ? (
-            <DatasetTable params={Tab.data} filter={false} />
+          {Tab.Dataset === true ? (
+            // <DatasetTable params={Tab.data} filter={false} />
+            getTable()
           ) : (
             <div
               className="col-lg-12"
@@ -1835,8 +1993,8 @@ const Dashboard = ({ params }) => {
             >
               No rows found.
             </div>
-          )} */}
-        </div>
+          )}
+        </div> */}
         {chartOpen.Chart && <PreviewModal />}
         {open.DataSet && <PreviewDataSetModal />}
         {open.filterMenu === true ? FilterModel() : ""}

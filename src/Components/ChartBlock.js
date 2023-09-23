@@ -189,9 +189,11 @@ const ChartBlock = ({ enable, state }) => {
     if (action === "Chart") {
       setTab({ Chart: true, DataSet: false });
     } else {
+      document.querySelector(".loader").style.display = "block";
       setTab({ DataSet: true, Chart: false });
     }
   };
+
   const Chart = useCallback(
     ({ enable, state }) => {
       //console.log('Rendered')

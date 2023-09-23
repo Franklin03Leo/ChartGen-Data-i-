@@ -7,10 +7,6 @@ const DatasetTable = ({ params, filter }) => {
   });
   const [cols, setCols] = React.useState([]);
 
-  setTimeout(() => {
-    document.querySelector(".loader").style.display = "none";
-  }, 100);
-
   React.useEffect(() => {
     setuploadfilename({ name: sessionStorage.getItem("uploadfilename") });
     setCols(Object.keys(params[0]).map((e) => ({ ["name"]: e })));
@@ -33,6 +29,11 @@ const DatasetTable = ({ params, filter }) => {
     // selectToolbarPlacement: "none",
     // rowsPerPageOptions: [10, 20, 40, 80, 100],
   };
+
+  setTimeout(() => {
+    document.querySelector(".loader").style.display = "none";
+  }, 300);
+
   return (
     <>
       {/* change height 165 to 140 for preview model  */}
@@ -41,10 +42,15 @@ const DatasetTable = ({ params, filter }) => {
           id="dataset"
           title={
             <div className="custom-title">
-              {filter === undefined &&<div> <b style={{ color: "#2E89FF" }}>Source: </b>{uploadfilename.name} </div>}
+              {filter === undefined && (
+                <div>
+                  {" "}
+                  <b style={{ color: "#2E89FF" }}>Source: </b>
+                  {uploadfilename.name}{" "}
+                </div>
+              )}
             </div>
           }
-         
           data={params}
           columns={cols}
           options={options}

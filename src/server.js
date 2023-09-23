@@ -77,7 +77,19 @@ app.post("/GetTemplate/", (req, res) => {
   connect();
   if (data.Flag.action === "All") {
     db.collection("charts")
-      .find({ userID: data.userID })
+      .aggregate([
+        { $match: { userID: data.userID } },
+        {
+          $project: {
+            Chart: "$Chart",
+            TempName: "$TempName",
+            TempDescription: "$TempDescription",
+            userID: "$userID",
+            charts: "$charts",
+          },
+        },
+      ])
+      // .find({ userID: data.userID })
       .sort({ _id: 1 })
       .toArray(function (err, result) {
         if (err) {
@@ -89,6 +101,21 @@ app.post("/GetTemplate/", (req, res) => {
         } else {
           res.json(result);
           console.log("All Template Fetched");
+        }
+      });
+  } else if (data.Flag.action === "singleTemplate") {
+    db.collection("charts")
+      .find({ TempName: { $in: data.TempName } })
+      .toArray(function (err, result) {
+        if (err) {
+          res.status(400).send("Error fetching listings!");
+          console.log(
+            `${err} ===> Error while Template Fetching on ` +
+              new Date().toLocaleString()
+          );
+        } else {
+          res.json(result);
+          console.log("project details Fetched");
         }
       });
   } else {
@@ -112,10 +139,13 @@ app.post("/GetTemplate/", (req, res) => {
 
 app.post("/GetSingleTemplate", (req, res) => {
   let data = req.body;
+  // const objectId = ObjectId(data.id);
+  //   console.log("Converted ObjectId:", objectId);
   console.log("result   ====> ", data);
   connect();
   db.collection("charts")
     .findOne({ _id: ObjectId(data.id) })
+    // .findOne({ TempName: { $in: ["pi chart - new AVK"] } })
     .then((result) => {
       if (result) {
         res.status(200).send(result);
@@ -434,6 +464,7 @@ app.post("/GetDashboard/", (req, res) => {
       }
     });
 });
+
 app.post("/UpdateDashboard", (req, res) => {
   let data = req.body;
   connect();
