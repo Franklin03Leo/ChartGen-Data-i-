@@ -10,11 +10,9 @@ const d3 = {
 };
 
 const BarChart = ({ params }) => {
+  console.log("Bar chart =====>", params);
   const [isString, setString] = React.useState(false);
-  const [chartData, setchartData] = React.useState({});
-
   const div = React.useRef(null);
-  const div1 = React.useRef(null);
 
   const IsString_ = (obj) => {
     for (let x in obj) {
@@ -27,7 +25,7 @@ const BarChart = ({ params }) => {
   React.useEffect(() => {
     console.time("bar");
     var div2 = d3
-      .select("#Charts")
+      .selectAll(".boxcenter")
       .append("div")
       .attr("class", "tooltip")
       .style("opacity", 0)
@@ -42,13 +40,83 @@ const BarChart = ({ params }) => {
 
     IsString_(params.Uploaded_file[0]);
     var ndx, datatabel, chart;
-    var experiments = params.Uploaded_file;
+    var experiments = {};
+    if (params?.filteApply === "FilterApply") {
+      experiments = params.Uploaded_fileTemp;
+    } else {
+      experiments = params.Uploaded_file;
+    }
+
+    experiments.sort((x, y) => d3.ascending(x[params.XAxis], y[params.XAxis]));
+
+    const fnLimit = (data, dimensions) => {
+      const filteredData = data.filter((item) =>
+        dimensions.includes(item[params.XAxis])
+      );
+      return filteredData;
+    };
+
+    if (params.Ascending === undefined && params.Descending === undefined) {
+      let unique = [...new Set(experiments.map((item) => item[params.XAxis]))];
+      if (params.limit === "select") unique = unique.slice();
+      else unique = unique.slice(0, params.limit);
+      const finalVal = fnLimit(experiments, unique);
+      experiments = finalVal;
+      params.Sortby = unique;
+    }
+
+    if (params.Ascending) {
+      params["SortbyY"] = undefined;
+      experiments.sort((x, y) =>
+        d3.ascending(x[params.XAxis], y[params.XAxis])
+      );
+      updateTemplateAndRender(experiments, "X");
+    }
+    if (params.Descending) {
+      // experiments = params.Uploaded_file.slice(
+      //   params.Uploaded_file?.length - params?.limit || 0,
+      //   params.Uploaded_file?.length
+      // );
+      params["SortbyY"] = undefined;
+      // experiments.SortbyY = true;
+      experiments.sort((x, y) =>
+        d3.descending(x[params.XAxis], y[params.XAxis])
+      );
+
+      updateTemplateAndRender(experiments, "X");
+    }
+
+    if (params.AscendingY) {
+      updateTemplateAndRender(experiments, "YA");
+    }
+    if (params.DescendingY) {
+      updateTemplateAndRender(experiments, "YD");
+    }
+
+    function updateTemplateAndRender(sortedData, Type) {
+      if (Type === "X") {
+        let unique = [...new Set(sortedData.map((item) => item[params.XAxis]))];
+        params.Sortby = unique;
+        params.SortbyY = undefined;
+        if (params.limit !== "select") {
+          unique = unique.slice(0, params.limit);
+          let finalVal = fnLimit(sortedData, unique);
+          experiments = finalVal;
+          params.Sortby = unique;
+        }
+      } else {
+        //Descending order based on Y-axis
+        params.Sortby = [];
+        if (Type === "YA") params.SortbyY = true;
+        else {
+          params.SortbyY = false;
+        }
+      }
+    }
 
     if (params.Width_ !== null) {
-      datatabel = new dc.dataTable(div1.current);
       chart = new dc.barChart(div.current);
     } else {
-      datatabel = new dc.dataTable(div1.current, "Table");
       chart = new dc.barChart(div.current, "Barchart");
     }
     chart.title(function (y) {
@@ -65,12 +133,16 @@ const BarChart = ({ params }) => {
     var runDimension = ndx.dimension(function (d) {
       return d[params.XAxis];
     });
+
     var YKey = function (d) {
       return +d[params.YAxis];
     };
-    var offsetHeight = document.getElementById("Charts").offsetHeight;
-    var offsetWidth = document.getElementById("Charts").offsetWidth;
     let sizing = (chart) => {
+      let divChart = document.querySelectorAll(".boxcenter");
+      divChart = divChart[divChart.length - 1];
+      let offsetHeight = divChart.offsetHeight,
+        offsetWidth = divChart.offsetWidth;
+      // chart.width(offsetWidth).height(offsetHeight).redraw();
       chart.width(offsetWidth).height(offsetHeight).redraw();
     };
     let resizing = (chart) => (window.onresize = () => sizing(chart));
@@ -102,13 +174,16 @@ const BarChart = ({ params }) => {
       return d3.max(kv.value, YKey);
     }
     var speedSumGroup = "";
+
     if (params.YAxis !== undefined && params.YAxis !== "Select") {
       if (params.GroupByCol === "Sum") {
+        // Assuming you have set up a dimension-based group (speedSumGroup)
         speedSumGroup = runDimension.group().reduceSum(function (d) {
           return d[params.YAxis];
         });
       } else if (params.GroupByCol === "Count") {
-        speedSumGroup = runDimension.group().reduceCount(function (d) {
+        // Create a group for your dimension
+        var speedSumGroup = runDimension.group().reduceCount(function (d) {
           return d[params.YAxis];
         });
       } else if (params.GroupByCol === "Average") {
@@ -154,16 +229,35 @@ const BarChart = ({ params }) => {
           .group()
           .reduce(groupArrayAdd(YKey), groupArrayRemove(YKey), groupArrayInit);
       }
+
+      var sortedGroups = speedSumGroup.all().sort(function (a, b) {
+        if (params.AscendingY) return a.value - b.value;
+        // Sort in ascending order
+        else return b.value - a.value;
+      });
+
+      // To set the bar limit
+      var barLimit = sortedGroups.slice(
+        0,
+        parseInt(params.limit == "select" ? 0 : params.limit)
+      );
+
+      // Create a new group with the limited group
+      var customGroup = {
+        all: function () {
+          return barLimit;
+        },
+      };
     } else {
       speedSumGroup = runDimension.group().reduceCount(function (d) {
         return d[params.XAxis];
       });
     }
-
     var fmt = d3.format("02d");
     var table_ = ndx.dimension(function (d) {
       return [fmt(+d[params.XAxis]), fmt(+d[params.YAxis])];
     });
+
     let PadTop,
       PadRight,
       PadBottom,
@@ -180,7 +274,6 @@ const BarChart = ({ params }) => {
 
     chart
       .ordinalColors([params.Barswatch === "show" ? params.Color : "#6282b3"])
-      // .margins({top: 10, right: 50, bottom: 30, left: 40})
       .margins({
         top: 10 + parseInt(PadTop),
         right: 20 + parseInt(PadRight),
@@ -188,9 +281,7 @@ const BarChart = ({ params }) => {
         left: 40 + parseInt(PadLeft),
       })
       .width(params.Width_ === null ? null : params.Width_)
-      //.height(params.Heigth_)
-      .height(null);
-    //.useViewBoxResizing(true)
+      .height(params.Height_);
     if (isString === true) {
       chart
         .x(
@@ -201,25 +292,40 @@ const BarChart = ({ params }) => {
         .x(d3.scaleBand())
         .xUnits(dc.units.ordinal);
     } else {
-      chart.xUnits(dc.units.ordinal).x(d3.scaleBand());
+      chart
+        .xUnits(dc.units.ordinal)
+        .x(d3.scaleBand().domain(params["Sortby"] || []));
     }
     chart
       .brushOn(false)
       .barPadding(0.4)
       .outerPadding(0.2)
       .ordinalColors([params.Barswatch === "show" ? params.Color : "#6282b3"])
-      .yAxisPadding(params.YAxisPadding)
-      .group(speedSumGroup)
-      .dimension(runDimension)
-      .elasticY(true)
-      .yAxisLabel(params.YAxisLabel)
-      .xAxisLabel(params.XAxisLabel);
+      .yAxisPadding(params.YAxisPadding);
+    try {
+      chart.group(
+        params.limit !== undefined && params.limit !== "select"
+          ? customGroup
+          : speedSumGroup
+      );
+    } catch (error) {
+      chart.group(speedSumGroup);
+    }
+    chart.dimension(runDimension).elasticY(true);
+    if (params.SortbyY !== undefined) {
+      chart.ordering(function (d) {
+        return params.SortbyY ? d.value : -d.value;
+      });
+    }
+    chart.yAxisLabel(params.YAxisLabel).xAxisLabel(params.XAxisLabel);
+
     if (params.Labelsswatch !== undefined)
       chart.renderLabel(true).label(function (d) {
         if (params.LabelsContent === "X") return d.x;
         else if (params.LabelsContent === "Y") return d.y.toFixed(2);
         else if (params.LabelsContent === "Title") return params.YAxis;
       });
+
     if (params.GroupByCol === "Average") {
       chart.valueAccessor(function (d) {
         return d.value.average;
@@ -232,107 +338,90 @@ const BarChart = ({ params }) => {
     chart.yAxis().tickFormat(function (v) {
       return BMK(v);
     });
-    // }
 
-    datatabel
-      .width(300)
-      .height(480)
-      .dimension(table_)
-      .size(Infinity)
-      .showSections(false)
-      .columns(
-        params.GroupByCopy_.map((e) => e.split(" ").slice(1, 20).join(" "))
-      )
-      .order(d3.ascending)
-      .on("preRender", update_offset)
-      .on("preRedraw", update_offset)
-      .on("pretransition", display);
-
-    if (params.Width_ !== null) dc.renderAll();
-    else dc.renderAll("Barchart");
-
-    // resizing(chart);
+    // Render the chart
+    // chart.render();
 
     d3.select("body").on("mouseover", function () {
       d3.selectAll("rect.bar")
         .on("mouseover", function (d) {
-          div2
-            .transition()
-            .duration(500)
-            .style("opacity", params.Tooltipswatch)
-            .style("font-family", params.TooltipFont)
-            .style("color", params.TooltipColor)
-            .style("font-size", params.TooltipSize + "px")
-            .style("background-color", params.TooltipBGColor)
-            .style(
-              "border",
-              params.TooltipThickness +
-                "px " +
-                params.TooltipTickColor +
-                " solid"
-            );
-          if (params.TooltipContent === "X") {
-            div2.html(
-              "<div><div><b>" +
-                params.XAxis +
-                "</b> : " +
-                d.target.__data__.x +
-                "</div><div>"
-            );
-          } else if (params.TooltipContent === "Y") {
-            if (params.YAxis === undefined || params.YAxis === "Select") {
-              div2.html(
-                "<div><div><b>" +
-                  "Count </b> : " +
-                  parseFloat(d.target.__data__.y).toFixed(2) +
-                  "</div><div>"
+          if (params.Tooltipswatch_) {
+            div2
+              .transition()
+              .duration(500)
+              .style("opacity", params.Tooltipswatch)
+              .style("font-family", params.TooltipFont)
+              .style("color", params.TooltipColor)
+              .style("font-size", params.TooltipSize + "px")
+              .style("background-color", params.TooltipBGColor)
+              .style(
+                "border",
+                params.TooltipThickness +
+                  "px " +
+                  params.TooltipTickColor +
+                  " solid"
               );
-            } else {
-              div2.html(
-                "<div><div><b>" +
-                  params.YAxis +
-                  "</b> : " +
-                  parseFloat(d.target.__data__.y).toFixed(2) +
-                  "</div><div>"
-              );
-            }
-          } else if (params.TooltipContent === "All") {
-            if (params.YAxis === undefined || params.YAxis === "Select") {
+            if (params.TooltipContent === "X") {
               div2.html(
                 "<div><div><b>" +
                   params.XAxis +
                   "</b> : " +
                   d.target.__data__.x +
-                  "</div><div><b>" +
-                  "Count </b> : " +
-                  parseFloat(d.target.__data__.y).toFixed(2) +
-                  "</div></div>"
+                  "</div><div>"
               );
-            } else {
-              div2.html(
-                "<div><div><b>" +
-                  params.XAxis +
-                  "</b> : " +
-                  d.target.__data__.x +
-                  "</div><div><b>" +
-                  params.YAxis +
-                  "</b> : " +
-                  parseFloat(d.target.__data__.y).toFixed(2) +
-                  "</div></div>"
-              );
+            } else if (params.TooltipContent === "Y") {
+              if (params.YAxis === undefined || params.YAxis === "Select") {
+                div2.html(
+                  "<div><div><b>" +
+                    "Count </b> : " +
+                    parseFloat(d.target.__data__.y).toFixed(2) +
+                    "</div><div>"
+                );
+              } else {
+                div2.html(
+                  "<div><div><b>" +
+                    params.YAxis +
+                    "</b> : " +
+                    parseFloat(d.target.__data__.y).toFixed(2) +
+                    "</div><div>"
+                );
+              }
+            } else if (params.TooltipContent === "All") {
+              if (params.YAxis === undefined || params.YAxis === "Select") {
+                div2.html(
+                  "<div><div><b>" +
+                    params.XAxis +
+                    "</b> : " +
+                    d.target.__data__.x +
+                    "</div><div><b>" +
+                    "Count </b> : " +
+                    parseFloat(d.target.__data__.y).toFixed(2) +
+                    "</div></div>"
+                );
+              } else {
+                div2.html(
+                  "<div><div><b>" +
+                    params.XAxis +
+                    "</b> : " +
+                    d.target.__data__.x +
+                    "</div><div><b>" +
+                    params.YAxis +
+                    "</b> : " +
+                    parseFloat(d.target.__data__.y).toFixed(2) +
+                    "</div></div>"
+                );
+              }
             }
+            div2
+              .style("left", d.pageX + "px")
+              .style("top", d.pageY - 50 + "px");
           }
-          div2.style("left", d.pageX + "px").style("top", d.pageY - 50 + "px");
         })
         .on("mouseout", function (d) {
           div2.transition().duration(500).style("opacity", 0);
         });
-
-      // Bar Border Radius
-      // chart.selectAll("rect")
-      //   .attr("rx", "20")
-      //   .attr("ry", "20");
     });
+
     chart.renderlet(function (chart) {
       //X-Axis
       chart
@@ -393,13 +482,16 @@ const BarChart = ({ params }) => {
         .selectAll(".barLabel")
         .style("font-family", params.LabelsFont)
         .style("fill", params.LabelsColor)
-        .style("font-size", params.Labelsize + "px")
+        .style("font-size", params.LabelsSize + "px")
         .style(
           "display",
           params.Labelsswatch !== undefined ? params.Labelsswatch : "none"
         );
     });
-    //});
+
+    if (params.Width_ !== null) dc.renderAll();
+    else dc.renderAll("Barchart");
+
     function BMK(labelValue) {
       // Nine Zeroes for Billions
       return Math.abs(Number(labelValue)) >= 1.0e9
@@ -412,69 +504,7 @@ const BarChart = ({ params }) => {
         ? Math.abs(Number(labelValue)) / 1.0e3 + "K"
         : Math.abs(Number(labelValue));
     }
-
-    function BMKlabel(labelValue) {
-      // Nine Zeroes for Billions
-      return Math.abs(Number(labelValue)) >= 1.0e9
-        ? (Math.abs(Number(labelValue)) / 1.0e9).toFixed(1) + "B"
-        : // Six Zeroes for Millions
-        Math.abs(Number(labelValue)) >= 1.0e6
-        ? (Math.abs(Number(labelValue)) / 1.0e6).toFixed(1) + "M"
-        : // Three Zeroes for Thousands
-        Math.abs(Number(labelValue)) >= 1.0e3
-        ? (Math.abs(Number(labelValue)) / 1.0e3).toFixed(1) + "K"
-        : Math.abs(Number(labelValue)).toFixed(1);
-    }
-
-    var ofs = 0,
-      pag = 100;
-
-    function update_offset() {
-      var totFilteredRecs = ndx.groupAll().value();
-      pag = totFilteredRecs;
-      var end = ofs + pag > totFilteredRecs ? totFilteredRecs : ofs + pag;
-      if (ofs == undefined || pag == undefined) {
-        ofs = 0;
-        pag = totFilteredRecs;
-      }
-      ofs =
-        ofs >= totFilteredRecs
-          ? Math.floor((totFilteredRecs - 1) / pag) * pag
-          : ofs;
-      ofs = ofs < 0 ? 0 : ofs;
-      datatabel.beginSlice(ofs);
-      datatabel.endSlice(ofs + pag);
-    }
-    function display() {
-      var totFilteredRecs = ndx.groupAll().value();
-      var end = ofs + pag > totFilteredRecs ? totFilteredRecs : ofs + pag;
-      d3.select("#begin").text(end === 0 ? ofs : ofs + 1);
-      d3.select("#end").text(end);
-      d3.select("#last").attr("disabled", ofs - pag < 0 ? "true" : null);
-      d3.select("#next").attr(
-        "disabled",
-        ofs + pag >= totFilteredRecs ? "true" : null
-      );
-      d3.select("#size").text(totFilteredRecs);
-      if (totFilteredRecs != ndx.size()) {
-        d3.select("#totalsize").text("(filtered Total: " + ndx.size() + " )");
-      } else {
-        d3.select("#totalsize").text("");
-      }
-    }
-    // function next() {
-    //   ofs += pag;
-    //   update_offset();
-    //   datatabel.redraw();
-    // }
-    // function last() {
-    //   ofs -= pag;
-    //   update_offset();
-    //   datatabel.redraw();
-    // }
-
-    // last();
-    // next()
+    // resizing(chart);  Commit by Lokesh
     console.timeEnd("bar");
   }, [params]);
 
@@ -484,54 +514,60 @@ const BarChart = ({ params }) => {
         style={{
           backgroundColor: params.Barswatch === "show" ? params.BGColor : "",
           display:
-            params.Titleswatch === undefined ? "none" : params.Titleswatch,
+            params.Title === undefined ||
+            params.Title === "" ||
+            params.Title === null
+              ? "none"
+              : "block", // Set the display to "block" when the conditions are false
+          marginLeft:
+            params.Title === undefined ||
+            params.Title === "" ||
+            params.Title === null
+              ? "0"
+              : "20px", // Set marginLeft to 0 when the conditions are false
+          marginTop:
+            params.Title === undefined ||
+            params.Title === "" ||
+            params.Title === null
+              ? "0"
+              : "30px", // Set marginTop to 0 when the conditions are false
         }}
       >
-        <span
-          style={{
-            fontFamily: params.TitleFont,
-            fontSize: params.TitleSize,
-            color: params.TitleColor,
-          }}
-        >
-          {params.Title}
-        </span>
+        {params.Titleswatch_ && (
+          <span
+            style={{
+              fontFamily: params.TitleFont,
+              fontSize: params.TitleSize,
+              color: params.TitleColor,
+              marginTop: "40px",
+            }}
+          >
+            {params.Title}
+          </span>
+        )}
       </div>
     );
   };
 
   return (
     <Grid item xs={12} md={12} xl={12} lg={12}>
-      <Grid item className="cardbox chartbox" style={{ padding: "0px 10px" }}>
+      <Grid
+        item
+        className="cardbox"
+        style={{ padding: "0px 10px", border: "2px solid #D3D3D3" }}
+      >
         <Chartheader />
         <div
           style={{
             backgroundColor: params.Barswatch === "show" ? params.BGColor : "",
           }}
+          id="Charts"
         >
-          <div id="Charts" ref={div} className="boxcenter"></div>
-        </div>
-      </Grid>
-
-      <Grid
-        item
-        className="cardbox chartbox"
-        style={{
-          padding: "5px 15px 0px 15px",
-          display: params.Width_ === null ? "none" : "block",
-        }}
-      >
-        {/* <input id="last" className="btn" type="Button" value="Last" />
-          <input id="next" className="btn" type="button" value="Next" /> */}
-        <div id="table-scroll" className="table-scroll">
-          <div className="table-wrap">
-            <table ref={div1} className="main-table"></table>
-          </div>
-          <div id="paging" style={{ float: "right" }}>
-            Showing <span id="begin"></span>-<span id="end"></span> of{" "}
-            <span id="size"></span>{" "}
-            <span id="totalsize" style={{ display: "none" }}></span>
-          </div>
+          <div
+            ref={div}
+            className="boxcenter"
+            style={{ marginTop: params.Title === undefined ? "50px" : "none" }}
+          ></div>
         </div>
       </Grid>
     </Grid>

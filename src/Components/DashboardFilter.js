@@ -9,7 +9,13 @@ import ListItemText from "@mui/material/ListItemText";
 import Checkbox from "@mui/material/Checkbox";
 import FormControl from "@mui/material/FormControl";
 
+import { useMyContext } from "../MyContext";
+
 const DashboardFilter = ({ params, paramfn }) => {
+  console.log("DashboardFilter is params => ", params);
+  const { message, updateMessage } = useMyContext();
+
+  console.log("DashboardFilter is message => ", message);
   const [filter, setFilter] = React.useState({});
   const [filteredValue, setfilteredValue] = React.useState({});
   const [filterProps, setfilterProps] = React.useState([]);
@@ -37,6 +43,10 @@ const DashboardFilter = ({ params, paramfn }) => {
         params.filteredProp.length !== customFilterProps.length)
     )
       setcustomFilterProps(params.filteredProp);
+    if (typeof message === "object") {
+      // i have used same Context in another place in dashboard as string
+      setfilteredValue(message);
+    }
   }, [params]);
 
   const handleChange = (event) => {
@@ -62,6 +72,7 @@ const DashboardFilter = ({ params, paramfn }) => {
     if (parseInt(event.target.name) < customFilterProps.length - 1)
       handleProgressiveFilter(temp, event.target.name);
   };
+
   const handleFilter = (event, action) => {
     document.querySelector(".loader").style.display = "block";
     let data = filter.data;
@@ -73,15 +84,18 @@ const DashboardFilter = ({ params, paramfn }) => {
             return a.indexOf(e[customFilterProps[event[i]].Dimensions]) !== -1;
           });
       }
+      updateMessage(filteredValue);
     } else {
       setfilteredValue({});
       setfilterProps([]);
       setcustomFilterProps({});
+      updateMessage({});
     }
     setTimeout(() => {
       paramfn({ data: data, isFiltered: action });
     }, 0);
   };
+
   const handleProgressiveFilter = (Data, Index) => {
     let result = [];
     if (!progressiveFilteredData.Rows) {
@@ -97,6 +111,7 @@ const DashboardFilter = ({ params, paramfn }) => {
         );
       });
     }
+
     setProgressiveFilteredData({ Rows: result });
     console.log("progressiveFilteredData ====>", result);
     const progressiveData = fnGetValueForKey(
@@ -104,16 +119,17 @@ const DashboardFilter = ({ params, paramfn }) => {
       params.filteredProp[parseInt(Index) + 1].Dimensions
     );
 
-    setcustomFilterProps((prevState) => {
-      const newRowData = [...prevState];
-      const updatedItem = {
-        ...newRowData[parseInt(Index) + 1],
-        [params.filteredProp[parseInt(Index) + 1].Dimensions]: progressiveData,
-      };
-      newRowData[parseInt(Index) + 1] = updatedItem;
-      return newRowData;
-    });
+    // setcustomFilterProps((prevState) => {
+    //   const newRowData = [...prevState];
+    //   const updatedItem = {
+    //     ...newRowData[parseInt(Index) + 1],
+    //     [params.filteredProp[parseInt(Index) + 1].Dimensions]: progressiveData,
+    //   };
+    //   newRowData[parseInt(Index) + 1] = updatedItem;
+    //   return newRowData;
+    // });
   };
+
   const fnGetValueForKey = (Data, key) => {
     const uniqueValues = new Set();
     for (const obj of Data) {
@@ -140,13 +156,15 @@ const DashboardFilter = ({ params, paramfn }) => {
                   Filter
                 </div>
               </div>
-              <div className="Prt-filteredProp">
+
+              {/* Displays the filter selected value */}
+              {/* <div className="Prt-filteredProp">
                 {filterProps.map((e) => (
                   <div key={e} className="filteredProp">
                     {e}
                   </div>
                 ))}
-              </div>
+              </div> */}
               {(() => {
                 let Item = [];
                 for (let a in customFilterProps) {
@@ -205,6 +223,7 @@ const DashboardFilter = ({ params, paramfn }) => {
                 return Item;
               })()}
             </div>
+
             {customFilterProps.length !== 0 && (
               <div
                 className="row col-sm-12 col-md-12 col-lg-12"

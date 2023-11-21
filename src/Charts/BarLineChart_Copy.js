@@ -277,21 +277,53 @@ const BarLineChart = ({ params }) => {
 
     const Chartheader = () => {
         return (
-            <div style={{ backgroundColor: params.Seriesswatch === 'show' ? params.BGColor : '', display: params.Titleswatch === undefined ? 'none' : params.Titleswatch }}>
-                <span style={{ fontFamily: params.TitleFont, fontSize: params.TitleSize, color: params.TitleColor }}>{params.Title}</span>
-            </div>
+          <div
+            style={{
+              backgroundColor: params.Barswatch === "show" ? params.BGColor : "",
+              display:
+                params.Title === undefined ||
+                params.Title === "" ||
+                params.Title === null
+                  ? "none"
+                  : "block", // Set the display to "block" when the conditions are false
+              marginLeft:
+                params.Title === undefined ||
+                params.Title === "" ||
+                params.Title === null
+                  ? "0"
+                  : "20px", // Set marginLeft to 0 when the conditions are false
+              marginTop:
+                params.Title === undefined ||
+                params.Title === "" ||
+                params.Title === null
+                  ? "0"
+                  : "30px", // Set marginTop to 0 when the conditions are false
+            }}
+          >
+            {params.Titleswatch_ && (
+          <span
+            style={{
+              fontFamily: params.TitleFont,
+              fontSize: params.TitleSize,
+              color: params.TitleColor,
+              marginTop: "40px",
+            }}
+          >
+            {params.Title}
+          </span>
+        )}
+          </div>
         );
-    };
-
+      };
     return (
         <Grid item xs={12} sm={12} md={12} xl={4} lg={12}>
             <Grid item className="cardbox" xs={12} sm={12} md={12} xl={4} lg={12} >
                 <Chartheader />
                 <div style={{ backgroundColor: params.Seriesswatch === 'show' ? params.BGColor : '' }} id="Charts">
-                    <div ref={div} className="boxcenter">
+                    <div ref={div} className="boxcenter" style={{marginTop: params.Title === undefined ? '50px' : '0px'}}>
                     </div>
 
-                    <div ref={div3} className="boxcenter">
+                    <div ref={div3} className="boxcenter" style={{marginTop: params.Title === undefined ? '50px' : '0px'}}>
                     </div>
                 </div>
             </Grid>

@@ -7,7 +7,7 @@ import TabPanel from "@mui/lab/TabPanel";
 import Tab from "@mui/material/Tab";
 const Feedback = ({ params }) => {
   const [value, setValue] = React.useState("1");
-  if (params[0] === undefined) params = [{}];
+  if (!params) params = [{}];
 
   const KnownIssues = [
     { "Reported By": "Venky", Issue: "Perfomance Issue" },

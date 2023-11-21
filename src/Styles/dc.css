@@ -414,7 +414,7 @@ thead tr {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 200px;
+  height: 180px;
   padding: 20px;
   /* border-radius: 10px; */
   /* border: 2px dashed #555; */
@@ -525,6 +525,7 @@ html,
 body {
   height: 100%;
   width: 100%;
+  overflow: hidden;
 }
 
 /* body {
@@ -818,7 +819,8 @@ input:checked + .slider:before {
 
 .container-title > div > img {
   filter: brightness(0.1);
-  height: 16px;
+  height: 14px;
+  /* height: 16px; */
 }
 
 .container-template .container-title > div {
@@ -835,7 +837,7 @@ input:checked + .slider:before {
   padding: 0% 2% 2% 0%;
   overflow-wrap: break-word;
   max-height: 100px;
-  overflow-y: auto;
+  /* overflow-y: auto; */
   text-align: start;
   font-size: 12px !important;
   /* border-top: 1px #c7c0c0 solid; */
@@ -850,7 +852,7 @@ input:checked + .slider:before {
   letter-spacing: 0px;
   color: #1c252d !important;
   font-size: 12px !important;
-  margin-left: 15%;
+  margin-left: 30px;
   opacity: 0.7;
   max-width: 98%;
 }
@@ -864,6 +866,7 @@ input:checked + .slider:before {
   padding: 6px 0px 6px 9px !important;
   font-size: 14px !important;
   background: white;
+  text-wrap: balance;
 }
 
 .tss-131sses-MUIDataTable-responsiveScroll {
@@ -908,7 +911,7 @@ input:checked + .slider:before {
 .chartbox {
   /* box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px !important;
     padding: 7px 12px 0px 12px !important; */
-  max-height: 43.5vh;
+  /* max-height: 43.5vh; */
   /* height: 43.5vh; */
 
   background: #ffffff 0% 0% no-repeat padding-box;
@@ -999,9 +1002,17 @@ input:checked + .slider:before {
   height: 38vh;
   padding: 10px;
   margin: 10px 0px;
-  /* border: 3px dotted #7c7c7c; */
   background: #ffffff4d !important;
   border: 2px dashed #b0b4bf;
+}
+
+/* dashboard cards section */
+.carddashboard {
+  height: 15vh;
+  margin: 3px 5px;
+  background: #ffffff4d !important;
+  display: flex;
+  flex-direction: column;
 }
 
 .filterswt {
@@ -1243,23 +1254,28 @@ input:checked + .slider:before {
 }
 
 .divdataset-body {
-  margin-left: 4px;
-  padding: 5px;
+  padding: 5px 0 5px 5px;
 }
 
 .dataset-icon {
-  /* padding: 10px; */
-  margin: 0px 5px;
-  /* background-color: #7984c2; */
   border-radius: 5px;
   visibility: hidden;
   opacity: 0;
-  transition: visibility 0.3s, opacity 0.5s ease-in-out;
+  transition: visibility 0.2s, opacity 0.3s ease-in-out;
 }
 
 .divdataset-body:hover div.dataset-icon {
   visibility: visible;
   opacity: 1;
+}
+
+.divdataset-body:hover div.dataset-icon {
+  visibility: visible;
+  opacity: 1;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
 }
 
 .dataset-icon_ {
@@ -1269,7 +1285,6 @@ input:checked + .slider:before {
   border-radius: 5px;
   cursor: pointer;
 }
-
 .dataset-name {
   padding: 10px;
   background-color: #b1cef9;
@@ -1278,6 +1293,39 @@ input:checked + .slider:before {
   text-overflow: ellipsis;
   overflow: hidden;
 }
+
+/* dataset tooltip start */
+/* Tooltip for dataset name */
+.dataset-tooltip-expand {
+  width: 64%;
+  position: relative;
+}
+
+.dataset-name:hover::before {
+  opacity: 1;
+  z-index: 1;
+  visibility: visible;
+}
+
+/* Hide the tooltip when not hovering */
+
+.dataset-name::before {
+  content: attr(data-title);
+  position: absolute;
+  background: rgba(0, 0, 0, 0.9);
+  color: #fff;
+  font-size: 12px;
+  padding: 5px;
+  border-radius: 4px;
+  left: 10%;
+  /* transform: translateX(-30%); */
+  bottom: -15px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* dataset tooltip end */
 
 .MuiList-root.MuiList-padding {
   padding-top: 0 !important;
@@ -1289,6 +1337,11 @@ input:checked + .slider:before {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 0.5rem;
+}
+
+.div-layout.hideTempDivLayout {
+  pointer-events: none;
+  opacity: 0.6;
 }
 
 .NavBar-active {
@@ -1313,12 +1366,21 @@ input:checked + .slider:before {
   color: #a39e9e;
 }
 
-.dashboard-layout:not(:first-child) {
+.dashboard-layout {
   /* position: relative;
     padding-bottom: 5px;
     width: 96%; */
   animation: 1s ease-out 0s 1 slideInFromTOP;
   border-top: 3px #f4f4f8 solid;
+  /*Commented for saved template impact in dashboard*/
+  /* min-height: 10vh; */
+  cursor: pointer;
+  min-height: 60px;
+}
+
+.dashboard-layout:first-child {
+  animation: 1s ease-out 0s 1 slideInFromTOP;
+  border-top: none;
   /*Commented for saved template impact in dashboard*/
   /* min-height: 10vh; */
   cursor: pointer;
@@ -1344,6 +1406,7 @@ input:checked + .slider:before {
   color: #1d1d1d !important;
   font-size: 11px !important;
   padding: 0;
+  word-wrap: break-word;
 }
 
 .dashboard-layout .container-title > div + div > div:nth-child(2) {
@@ -1352,6 +1415,7 @@ input:checked + .slider:before {
   font-size: 12px !important;
   padding: 0px;
   text-align: left !important;
+  word-wrap: break-word;
 }
 
 .MuiButton-root.MuiButton-containedPrimary.btn-transparant {
@@ -1391,9 +1455,9 @@ input:checked + .slider:before {
 }
 
 .warning-msg {
-  color: #f1843b;
+  color: #ef0c0c;
   font-style: italic !important;
-  font-size: 10px !important;
+  font-size: 11px !important;
   margin-top: 10px;
 }
 
@@ -1437,7 +1501,7 @@ input:checked + .slider:before {
 }
 .div-card {
   /* border: 1px solid #929292; */
-  width: 200px;
+  /* width: 200px;
   height: 100px;
   margin-right: 10px;
   box-shadow: 0px 0px 6px #00000029 !important;
@@ -1448,7 +1512,7 @@ input:checked + .slider:before {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 10px;
+  padding: 10px; */
 }
 .card-container {
   display: flex;
@@ -1458,6 +1522,13 @@ input:checked + .slider:before {
   height: 50vh;
   min-height: 38vh;
   max-height: 38vh;
+}
+/* set the chart minsize for chart menu */
+div.chart-container > div > div > div:nth-child(2) > div > svg {
+  min-height: 80vh;
+}
+.chart-boxcenter > svg {
+  min-height: 84vh;
 }
 .select-dpd {
   border: 1px #a3a3a3 solid;
@@ -1469,4 +1540,96 @@ input:checked + .slider:before {
 }
 .div-welcome {
   line-height: 1.2rem !important;
+}
+.div-project {
+  margin: 0px;
+  --bs-gutter-x: 0;
+  display: contents;
+}
+@media (min-width: 100%) {
+  .buttonwid {
+    width: 60px !important;
+    margin: 1px;
+  }
+}
+@media (min-width: 1100px) {
+  .buttonwid {
+    width: 60px !important;
+    margin: 1px;
+  }
+}
+
+.tss-1cdcmys-MUIDataTable-responsiveBase {
+  position: relative;
+  /* height: auto; */
+  overflow-y: scroll;
+  max-height: 38.5vh;
+  /* height: 305px; */
+}
+
+.clicked {
+  background-color: rgb(234 234 243);
+}
+
+.recharts-surface {
+  width: 900px !important;
+  height: 400px !important;
+}
+
+.chart-container > div > div > div:nth-child(1) {
+  padding: 14px;
+}
+
+#keep-mounted-modal-title > div > div > div > div > div:nth-child(1) {
+  display: flex !important;
+  justify-content: space-evenly;
+}
+
+.dropdownsort {
+  text-align: left;
+  padding: 8px 0px;
+  position: absolute;
+  top: 8.5rem;
+  margin-left: 60px;
+  width: 200px;
+  border-radius: 8px;
+  border: 1px solid gray;
+  background-color: #fff;
+}
+
+.dropdownsort::before {
+  content: "";
+  position: absolute;
+  top: -0.7rem;
+  right: 3.7rem;
+  width: 20px;
+  height: 20px;
+  transform: rotate(45deg);
+  background-color: #fff;
+  border-left: 1px solid gray;
+  border-top: 1px solid gray;
+}
+
+.dropdownsort ul li {
+  list-style: none;
+  padding: 8px;
+  display: flex;
+  justify-content: space-between;
+}
+.dropdownsort ul {
+  margin: 0;
+  padding: 0;
+}
+
+.css-1wc848c-MuiFormHelperText-root {
+  letter-spacing: 0 !important;
+}
+
+.dashboard-layouts > div > div > div > div > div.chartContainer-header {
+  margin-top: 30px;
+}
+
+.tss-oeo5eo-MUIDataTableToolbar-filterPaper {
+  top: 15% !important;
+  bottom: 1%;
 }

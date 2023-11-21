@@ -8,14 +8,15 @@ import d3tip from "d3-tip";
 import { legend } from "dc";
 const BarLineChart = ({ params }) => {
   const div = React.useRef(null);
-  const div1 = React.useRef(null);
+  // const div1 = React.useRef(null);
   const d3 = {
     ...d3module,
     tip: d3tip,
   };
+
   React.useEffect(() => {
     var div2 = d3
-      .select("#Charts")
+      .selectAll(".boxcenter")
       .append("div")
       .attr("class", "tooltip")
       .style("opacity", 0)
@@ -29,9 +30,15 @@ const BarLineChart = ({ params }) => {
       );
 
     var ndx;
-    var datatabel = new dc.dataTable(div1.current);
+    // var datatabel = new dc.dataTable(div1.current);
 
-    var experiments = params.Uploaded_file;
+    // var experiments = params.Uploaded_file;
+    var experiments = {};
+    if (params?.filteApply === "FilterApply") {
+      experiments = params.Uploaded_fileTemp;
+    } else {
+      experiments = params.Uploaded_file;
+    }
     var barwidth = 10;
 
     if (experiments.length < 100) {
@@ -39,9 +46,12 @@ const BarLineChart = ({ params }) => {
     } else if (experiments.length > 100) {
       barwidth = 20;
     }
+
+    // max = map the given xaxis values
     const Max = experiments.map((object) => {
       return object[params.XAxis];
     });
+
     // var chart = new dc.barChart(div.current)
     let compositeChart;
     if (params.Width_ !== null)
@@ -58,8 +68,10 @@ const BarLineChart = ({ params }) => {
     var runDimension = ndx.dimension(function (d) {
         return d[params.XAxis];
       }),
-      //speedSumYAxis = runDimension.group().reduceSum(function (d) { return d[params.YAxis] }),
-
+      speedSumYAxis = runDimension.group().reduceSum(function (d) {
+        return d[params.YAxis];
+      }),
+      // group the value of xaxis and group values
       speedSumGroup = runDimension.group().reduceSum(function (d) {
         return d[params.GroupBy];
       });
@@ -67,6 +79,15 @@ const BarLineChart = ({ params }) => {
     var YKey = function (d) {
       return +d[params.YAxis];
     };
+
+    let sizing = (chart) => {
+      let divChart = document.querySelectorAll(".boxcenter");
+      divChart = divChart[divChart.length - 1];
+      let offsetHeight = divChart.offsetHeight,
+        offsetWidth = divChart.offsetWidth;
+      chart.width(offsetWidth).height(offsetHeight).redraw();
+    };
+    let resizing = (chart) => (window.onresize = () => sizing(chart));
 
     function groupArrayAdd(keyfn) {
       var bisect = d3.bisector(keyfn);
@@ -98,6 +119,7 @@ const BarLineChart = ({ params }) => {
     var speedSumYAxis = "";
     if (params.YAxis !== undefined && params.YAxis !== "Select") {
       if (params.GroupByCol === "Sum") {
+        // group the values of xaxis and group values
         speedSumYAxis = runDimension.group().reduceSum(function (d) {
           return d[params.YAxis];
         });
@@ -154,23 +176,25 @@ const BarLineChart = ({ params }) => {
       });
     }
 
-    var fmt = d3.format("02d");
-    var table_ = ndx.dimension(function (d) {
-      return [fmt(+d[params.XAxis]), fmt(+d[params.YAxis])];
-    });
-    let PadTop,
-      PadRight,
-      PadBottom,
+    // var fmt = d3.format("02d");
+    // var table_ = ndx.dimension(function (d) {
+    //   return [fmt(+d[params.XAxis]), fmt(+d[params.YAxis])];
+    // });
+    let PadTop = 0,
+      PadRight = 0,
+      PadBottom = 0,
       PadLeft = 0;
-    if (params.PadTop === undefined || params.PadTop === "") PadTop = 0;
-    else PadTop = params.PadTop;
-    if (params.PadRight === undefined || params.PadRight === "") PadRight = 0;
-    else PadRight = params.PadRight;
-    if (params.PadBottom === undefined || params.PadBottom === "")
-      PadBottom = 0;
-    else PadBottom = params.PadBottom;
-    if (params.PadLeft === undefined || params.PadLeft === "") PadLeft = 0;
-    else PadLeft = params.PadLeft;
+    if (params.BarLineswatch_) {
+      if (params.PadTop === undefined || params.PadTop === "") PadTop = 0;
+      else PadTop = params.PadTop;
+      if (params.PadRight === undefined || params.PadRight === "") PadRight = 0;
+      else PadRight = params.PadRight;
+      if (params.PadBottom === undefined || params.PadBottom === "")
+        PadBottom = 0;
+      else PadBottom = params.PadBottom;
+      if (params.PadLeft === undefined || params.PadLeft === "") PadLeft = 0;
+      else PadLeft = params.PadLeft;
+    }
 
     let barchart = new dc.barChart(compositeChart)
       .dimension(runDimension)
@@ -183,7 +207,7 @@ const BarLineChart = ({ params }) => {
         var tooltip =
           params.XAxis + ": " + y.key + "\n" + params.YAxis + ": " + y.value;
 
-        return "";
+        // return "";
       });
     if (params.GroupByCol === "Average") {
       barchart.valueAccessor(function (d) {
@@ -194,6 +218,10 @@ const BarLineChart = ({ params }) => {
     } else if (params.GroupByCol === "Maximum") {
       barchart.valueAccessor(maxSpeed);
     }
+
+    // line chart graph
+
+    //
     let linechart = new dc.lineChart(compositeChart)
       .dimension(runDimension)
       .group(speedSumGroup, params.GroupBy)
@@ -211,10 +239,25 @@ const BarLineChart = ({ params }) => {
 
         return "";
       });
+
+    // console.log("line chart data ====> ", linechart.data());
+
+    if (!isNaN(+Max[0])) {
+      compositeChart.x(d3.scaleLinear().domain([0, Math.max(...Max)]));
+    } else {
+      compositeChart.x(
+        d3
+          .scalePoint() //.scaleBand()
+          .domain(Max || []) //[...new Set(Max)]
+          // .range([300, 500])
+          .padding(1)
+      ); //;
+    }
+
     compositeChart
       .width(params.Width_)
-      .height(null)
-      //.height(params.Heigth_)
+      // .height(null)
+      .height(params.Height_)
 
       .margins({
         top: parseInt(10) + parseInt(PadTop),
@@ -223,24 +266,23 @@ const BarLineChart = ({ params }) => {
         left: parseInt(30) + parseInt(PadLeft),
       })
       .dimension(runDimension)
-      //.xAxisPadding(5)
+      .xAxisPadding(5)
       .elasticY(true)
       .brushOn(false)
       .transitionDuration(1000)
       .shareTitle(false)
-      .x(d3.scaleLinear().domain([0, Math.max(...Max)]))
+      // .x(d3.scaleLinear().domain([0, Math.max(...Max)]))
       .xUnits(function () {
         return barwidth;
       })
-      .renderHorizontalGridLines(true)
-      //.renderLabel(true)
 
       .legend(
         new legend()
           .x(0)
           .y(10)
           .itemHeight(13)
-          .gap(5)
+          .gap(params.LengendPosition ? 30 : 5)
+          .autoItemWidth(true)
           .horizontal(params.LengendPosition)
           .legendText(function (d, i) {
             return d.name;
@@ -248,16 +290,11 @@ const BarLineChart = ({ params }) => {
       )
 
       .compose([barchart, linechart])
-      // .on("pretransition", chart => {
-      //     scaleSubChartBarWidth(chart)
-      // })
-      // .on("preRedraw", chart => {
-      //     chart.rescale();
-      // })
-      // .on("preRender", chart => {
-      //     chart.rescale();
-      // })
       .renderlet(function (chart) {
+        params.BarLineswatch_ &&
+          chart.selectAll("rect.bar").style("fill", params.Color);
+        // d3.select("rect.bar").append("text").text("d.value");
+
         //X-Axis
         chart
           .selectAll("g.x g.tick text")
@@ -269,7 +306,13 @@ const BarLineChart = ({ params }) => {
             "text-anchor",
             params.Rotate === undefined || params.Rotate === "" ? "" : "end"
           )
-          .attr("transform", `rotate(${params.Rotate})`)
+          // .attr("transform", `rotate(${params.Rotate})`)
+          .attr(
+            "transform",
+            params.Rotate === undefined || params.Rotate === ""
+              ? ""
+              : `rotate(${params.Rotate})`
+          )
           .style("font-family", params.xFont)
           .style("color", params.xColor)
           .style("font-size", params.xSize + "px");
@@ -277,7 +320,7 @@ const BarLineChart = ({ params }) => {
         //y-Axis
         chart
           .selectAll("g.y g.tick text")
-          .attr("dx", "-10")
+          .attr("dx", "1")
           .attr("text-anchor", "end")
           // .attr('transform', `rotate(${params.Rotate})`)
           .style("font-family", params.yFont)
@@ -330,27 +373,22 @@ const BarLineChart = ({ params }) => {
       .tickFormat(function (v) {
         return v;
       });
-    datatabel
-      .width(300)
-      .height(480)
-      .dimension(table_)
-      .size(Infinity)
-      .showSections(false)
-      .columns(
-        params.GroupByCopy_.map((e) => e.split(" ").slice(1, 30).join(" "))
-      )
-      .order(d3.ascending)
-      .on("preRender", update_offset)
-      .on("preRedraw", update_offset)
-      .on("pretransition", display);
 
     if (params.Width_ !== null) dc.renderAll();
     else dc.renderAll("BarLineChart");
-    d3.selectAll("g.dc-legend-item text")
-      // .style
-      .style("font-family", params.LegendFont)
-      .style("fill", params.LegendColor)
-      .style("font-size", params.LegendSize);
+    if (params.Legendswatch) {
+      d3.selectAll("g.dc-legend-item text")
+        .style("font-family", params.LegendFont)
+        .style("fill", params.LegendColor)
+        .style("font-size", params.LegendSize)
+        .attr("y", "12")
+        .attr(
+          "transform",
+          "rotate(" +
+            (params.LengendPosition && Number(params.LegendSize) > 12 ? 8 : 0) +
+            ")"
+        );
+    }
 
     d3.selectAll(".dc-legend").style(
       "display",
@@ -365,56 +403,59 @@ const BarLineChart = ({ params }) => {
             .duration(500)
             .style("opacity", params.Tooltipswatch);
 
+          let xAxisToolTip = `<div style="
+              font-size: ${params.TooltipSize}px !important; 
+              padding-bottom : 10px !important;
+              font-family: ${params.TooltipFont} !important;">
+              <b>${params.XAxis}</b> : ${
+            !isNaN(d.target.__data__.x)
+              ? Number(d.target.__data__.x).toFixed(2)
+              : d.target.__data__.x
+          }
+            </div>`;
+
+          let yAxisToolTip = `<div style="
+              font-size: ${params.TooltipSize}px !important; 
+              font-family: ${params.TooltipFont} !important;">
+              <b>${params.YAxis}</b> : ${parseFloat(
+            d.target.__data__.y
+          ).toFixed(2)}
+            </div>`;
+
+          let undefindYAxisToolTip = `<div style="
+              font-size: ${params.TooltipSize}px !important; 
+              font-family: ${params.TooltipFont} !important;">
+              <b> Count</b> : ${parseFloat(d.target.__data__.y).toFixed(2)}
+            </div>`;
+
+          let groupByTooltip = `<div style="
+              font-size: ${params.TooltipSize}px !important;
+              font-family: ${params.TooltipFont} !important;
+              padding-bottom : 10px !important;
+              ">
+              <b> ${params.GroupBy}</b> :  ${
+            !isNaN(d.target.__data__.y)
+              ? Number(d.target.__data__.y).toFixed(2)
+              : d.target.__data__.y
+          }
+            </div>`;
+
           if (params.TooltipContent === "X") {
-            div2.html(
-              "<div><div><b>" +
-                params.XAxis +
-                "</b> : " +
-                d.target.__data__.x.toFixed(2) +
-                "</div><div>"
-            );
+            div2.html(`<div>${xAxisToolTip}  </div>`);
           } else if (params.TooltipContent === "Y") {
             if (params.YAxis === undefined || params.YAxis === "Select") {
-              div2.html(
-                "<div><div><b>" +
-                  "Count </b> : " +
-                  d.target.__data__.y +
-                  "</div><div>"
-              );
+              div2.html(`<div>${undefindYAxisToolTip} </div>`);
             } else {
-              div2.html(
-                "<div><div><b>" +
-                  params.YAxis +
-                  "</b> : " +
-                  d.target.__data__.y.toFixed(2) +
-                  "</div><div>"
-              );
+              div2.html(`<div>${yAxisToolTip} </div>`);
             }
           } else if (params.TooltipContent === "All") {
             if (params.YAxis === undefined || params.YAxis === "Select") {
-              div2.html(
-                "<div><div><b>" +
-                  params.XAxis +
-                  "</b> : " +
-                  d.target.__data__.x +
-                  "</div><div><b>" +
-                  "Count </b> : " +
-                  d.target.__data__.y +
-                  "</div></div>"
-              );
+              div2.html(`<div>${xAxisToolTip} ${undefindYAxisToolTip} </div>`);
             } else {
-              div2.html(
-                "<div><div><b>" +
-                  params.XAxis +
-                  "</b> : " +
-                  d.target.__data__.x.toFixed(2) +
-                  "</div><div><b>" +
-                  params.YAxis +
-                  "</b> : " +
-                  d.target.__data__.y.toFixed(2) +
-                  "</div></div>"
-              );
+              div2.html(`<div>${xAxisToolTip} ${yAxisToolTip} </div>`);
             }
+          } else if (params.TooltipContent === "Group") {
+            div2.html(`<div>${groupByTooltip}<div>`);
           }
           div2.style("left", d.pageX + "px").style("top", d.pageY - 50 + "px");
         })
@@ -422,6 +463,74 @@ const BarLineChart = ({ params }) => {
           div2.transition().duration(500).style("opacity", 0);
         });
       d3.selectAll(".dot")
+        .on("mouseover", function (d) {
+          div2
+            .transition()
+            .duration(500)
+            .style("opacity", params.Tooltipswatch);
+
+          let xAxisToolTip = `<div style="
+              font-size: ${params.TooltipSize}px !important; 
+              padding-bottom : 10px !important;
+              height : auto !important;
+              font-family: ${params.TooltipFont} !important;">
+              <b>${params.XAxis}</b> :  ${
+            !isNaN(d.target.__data__.x)
+              ? Number(d.target.__data__.x).toFixed(2)
+              : d.target.__data__.x
+          }
+            </div>`;
+
+          let yAxisToolTip = `<div style="
+              font-size: ${params.TooltipSize}px !important; 
+              font-family: ${params.TooltipFont} !important;">
+              <b>${params.YAxis}</b> : ${parseFloat(
+            d.target.__data__.y
+          ).toFixed(2)}
+            </div>`;
+
+          let undefindYAxisToolTip = `<div style="
+              font-size: ${params.TooltipSize}px !important; 
+              font-family: ${params.TooltipFont} !important;">
+              <b> Count</b> : ${parseFloat(d.target.__data__.y).toFixed(2)}
+            </div>`;
+
+          let groupByTooltip = `<div style="
+              font-size: ${params.TooltipSize}px !important;
+              font-family: ${params.TooltipFont} !important;
+              padding-bottom : 10px !important;
+              ">
+              <b> ${params.GroupBy}</b> : 
+              ${
+                !isNaN(d.target.__data__.y)
+                  ? Number(d.target.__data__.y).toFixed(2)
+                  : d.target.__data__.y
+              }
+            </div>`;
+
+          if (params.TooltipContent === "X") {
+            div2.html(`<div>${xAxisToolTip}  </div>`);
+          } else if (params.TooltipContent === "Y") {
+            if (params.YAxis === undefined || params.YAxis === "Select") {
+              div2.html(`<div>${undefindYAxisToolTip} </div>`);
+            } else {
+              div2.html(`<div>${yAxisToolTip} </div>`);
+            }
+          } else if (params.TooltipContent === "All") {
+            if (params.YAxis === undefined || params.YAxis === "Select") {
+              div2.html(`<div>${xAxisToolTip} ${undefindYAxisToolTip} </div>`);
+            } else {
+              div2.html(`<div>${xAxisToolTip} ${groupByTooltip} </div>`);
+            }
+          }
+          div2.style("left", d.pageX + "px").style("top", d.pageY - 50 + "px");
+        })
+        .on("mouseout", function (d) {
+          div2.transition().duration(500).style("opacity", 0);
+        });
+
+      /* 
+        d3.selectAll(".dot")
         .on("mouseover", function (e) {
           div2
             .transition()
@@ -483,136 +592,49 @@ const BarLineChart = ({ params }) => {
         .on("mouseout", function (e) {
           div2.transition().duration(500).style("opacity", 0);
         });
-      // chart.renderlet(function (chart) {
-      //     //X-Axis
-      //     chart.selectAll("g.x g.tick text")
-      //         .attr('dx', params.Rotate === undefined || params.Rotate === '' ? '' : '-10')
-      //         .attr('text-anchor', params.Rotate === undefined || params.Rotate === '' ? '' : 'end')
-      //         .attr('transform', `rotate(${params.Rotate})`)
-      //         .style("font-family", params.xFont)
-      //         .style("color", params.xColor)
-      //         .style("font-size", params.xSize + "px")
-
-      //     //y-Axis
-      //     chart.selectAll("g.y g.tick text")
-      //         .attr('dx', '-10')
-      //         .attr('text-anchor', 'end')
-      //         // .attr('transform', `rotate(${params.Rotate})`)
-      //         .style("font-family", params.yFont)
-      //         .style("color", params.yColor)
-      //         .style("font-size", params.ySize + "px")
-
-      //     //X-Axis Label
-      //     chart.selectAll(".x-axis-label")
-      //         .style("font-family", params.xlFont)
-      //         .style("fill", params.xlColor)
-      //         .style("font-size", params.xlSize + "px")
-      //         .style("display", params.Axesswatch !== undefined ? params.Axesswatch : 'none')
-
-      //     //Y-Axis Label
-      //     chart.selectAll(".y-axis-label")
-      //         .style("font-family", params.ylFont)
-      //         .style("fill", params.ylColor)
-      //         .style("font-size", params.ylSize + "px")
-      //         .style("display", params.Axesswatch !== undefined ? params.Axesswatch : 'none')
-
-      // })
+        */
     });
-    //});
-    function BMK(labelValue) {
-      // Nine Zeroes for Billions
-      return Math.abs(Number(labelValue)) >= 1.0e9
-        ? Math.abs(Number(labelValue)) / 1.0e9 + "B"
-        : // Six Zeroes for Millions
-        Math.abs(Number(labelValue)) >= 1.0e6
-        ? Math.abs(Number(labelValue)) / 1.0e6 + "M"
-        : // Three Zeroes for Thousands
-        Math.abs(Number(labelValue)) >= 1.0e3
-        ? Math.abs(Number(labelValue)) / 1.0e3 + "K"
-        : Math.abs(Number(labelValue));
-    }
 
-    function BMKlabel(labelValue) {
-      // Nine Zeroes for Billions
-      return Math.abs(Number(labelValue)) >= 1.0e9
-        ? (Math.abs(Number(labelValue)) / 1.0e9).toFixed(1) + "B"
-        : // Six Zeroes for Millions
-        Math.abs(Number(labelValue)) >= 1.0e6
-        ? (Math.abs(Number(labelValue)) / 1.0e6).toFixed(1) + "M"
-        : // Three Zeroes for Thousands
-        Math.abs(Number(labelValue)) >= 1.0e3
-        ? (Math.abs(Number(labelValue)) / 1.0e3).toFixed(1) + "K"
-        : Math.abs(Number(labelValue)).toFixed(1);
-    }
-
-    var ofs = 0,
-      pag = 100;
-
-    function update_offset() {
-      var totFilteredRecs = ndx.groupAll().value();
-      // pag = totFilteredRecs;
-      var end = ofs + pag > totFilteredRecs ? totFilteredRecs : ofs + pag;
-      if (ofs == undefined || pag == undefined) {
-        ofs = 0;
-        pag = totFilteredRecs;
-      }
-      ofs =
-        ofs >= totFilteredRecs
-          ? Math.floor((totFilteredRecs - 1) / pag) * pag
-          : ofs;
-      ofs = ofs < 0 ? 0 : ofs;
-      datatabel.beginSlice(ofs);
-      datatabel.endSlice(ofs + pag);
-    }
-    function display() {
-      var totFilteredRecs = ndx.groupAll().value();
-      var end = ofs + pag > totFilteredRecs ? totFilteredRecs : ofs + pag;
-      d3.select("#begin").text(end === 0 ? ofs : ofs + 1);
-      d3.select("#end").text(end);
-      d3.select("#last").attr("disabled", ofs - pag < 0 ? "true" : null);
-      d3.select("#next").attr(
-        "disabled",
-        ofs + pag >= totFilteredRecs ? "true" : null
-      );
-      d3.select("#size").text(totFilteredRecs);
-      if (totFilteredRecs != ndx.size()) {
-        d3.select("#totalsize").text("(filtered Total: " + ndx.size() + " )");
-      } else {
-        d3.select("#totalsize").text("");
-      }
-    }
-    // function next() {
-    //   ofs += pag;
-    //   update_offset();
-    //   datatabel.redraw();
-    // }
-    // function last() {
-    //   ofs -= pag;
-    //   update_offset();
-    //   datatabel.redraw();
-    // }
-
-    // last();
-    // next()
+    // resizing(linechart);
   });
   const Chartheader = () => {
     return (
       <div
+        className="chartContainer-header"
         style={{
-          backgroundColor: params.Barswatch === "show" ? params.BGColor : "",
+          backgroundColor: params.BarLineswatch_ ? params.BGColor : "",
           display:
-            params.Titleswatch === undefined ? "none" : params.Titleswatch,
+            params.Title === undefined ||
+            params.Title === "" ||
+            params.Title === null
+              ? "none"
+              : "block", // Set the display to "block" when the conditions are false
+          // marginLeft:
+          //   params.Title === undefined ||
+          //   params.Title === "" ||
+          //   params.Title === null
+          //     ? "0"
+          //     : "20px", // Set marginLeft to 0 when the conditions are false
+          // marginTop:
+          //   params.Title === undefined ||
+          //   params.Title === "" ||
+          //   params.Title === null
+          //     ? "0"
+          //     : "30px", // Set marginTop to 0 when the conditions are false
         }}
       >
-        <span
-          style={{
-            fontFamily: params.TitleFont,
-            fontSize: params.TitleSize,
-            color: params.TitleColor,
-          }}
-        >
-          {params.Title}
-        </span>
+        {params.Titleswatch_ && (
+          <span
+            style={{
+              fontFamily: params.TitleFont,
+              fontSize: params.TitleSize,
+              color: params.TitleColor,
+              marginTop: "40px",
+            }}
+          >
+            {params.Title}
+          </span>
+        )}
       </div>
     );
   };
@@ -623,20 +645,29 @@ const BarLineChart = ({ params }) => {
         <Chartheader />
         <div
           style={{
-            backgroundColor: params.Barswatch === "show" ? params.BGColor : "",
+            backgroundColor: params.BarLineswatch_ ? params.BGColor : "",
           }}
+          id="Charts"
         >
-          <div id="Charts" ref={div} className="boxcenter"></div>
+          <div
+            ref={div}
+            className="boxcenter"
+            style={{
+              marginTop:
+                params.Title === undefined || params.Title === ""
+                  ? "50px"
+                  : "0px",
+              backgroundColor: params.BarLineswatch_ ? params.BGColor : "",
+            }}
+          ></div>
         </div>
       </Grid>
 
-      <Grid
+      {/* <Grid
         item
         className="cardbox chartbox"
         style={{ display: params.Width_ === null ? "none" : "block" }}
       >
-        {/* <input id="last" className="btn" type="Button" value="Last" />
-              <input id="next" className="btn" type="button" value="Next" /> */}
         <div id="table-scroll" className="table-scroll">
           <div className="table-wrap">
             <table ref={div1} className="main-table"></table>
@@ -647,7 +678,7 @@ const BarLineChart = ({ params }) => {
             <span id="totalsize" style={{ display: "none" }}></span>
           </div>
         </div>
-      </Grid>
+      </Grid> */}
     </Grid>
   );
 };

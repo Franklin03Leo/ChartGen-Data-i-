@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import HomePage from "./HomePage";
 import Login from "./Components/Login";
-import LoginNew from "./Components/LoginNew";
 import AdminView from "./Components/Admin";
 
 function App() {
@@ -11,9 +10,10 @@ function App() {
     <div className="App">
       <Router>
         <Routes>
-          <Route exact path="/" element={<LoginNew />} />
+          <Route exact path="/" element={<Login />} />
           <Route exact path="/home" element={<HomePage />} />
-          <Route exact path="/admin" element={<AdminView />} />
+          <Route exact path="/Forgot" element={<Login />} />
+          {/* <Route exact path="/admin" element={<AdminView />} /> */}
         </Routes>
       </Router>
     </div>

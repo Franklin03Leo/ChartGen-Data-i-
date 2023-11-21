@@ -7,13 +7,13 @@ import { legend } from "dc";
 
 const PieChart = ({ params }) => {
   const div = React.useRef(null);
-  const div1 = React.useRef(null);
+  // const div1 = React.useRef(null);
 
   React.useEffect(() => {
     console.time("Pie");
 
     var div2 = d3
-      .select("#Charts")
+      .selectAll(".boxcenter")
       .append("div")
       .attr("class", "tooltip")
       .style("opacity", 0)
@@ -25,7 +25,14 @@ const PieChart = ({ params }) => {
         "border",
         params.TooltipThickness + "px " + params.TooltipTickColor + " solid"
       );
-    var experiments = params.Uploaded_file;
+    // var experiments = params.Uploaded_file;
+    var experiments = {};
+    if (params?.filteApply === "FilterApply") {
+      experiments = params.Uploaded_fileTemp;
+    } else {
+      experiments = params.Uploaded_file;
+    }
+
     var ndx = crossfilter(experiments),
       runDimension = ndx.dimension(function (d) {
         return d[params.XAxis];
@@ -35,6 +42,17 @@ const PieChart = ({ params }) => {
     //   speedSumGroup = runDimension.group().reduceSum(function (d) { return d[params.YAxis] });
     // else
     //   speedSumGroup = runDimension.group().reduceCount(function (d) { return d[params.XAxis] });
+
+    let sizing = (chart) => {
+      let divChart = document.querySelectorAll(".boxcenter");
+      divChart = divChart[divChart.length - 1];
+
+      let offsetHeight = divChart.offsetHeight,
+        offsetWidth = divChart.offsetWidth;
+      chart.width(offsetWidth).height(offsetHeight).redraw();
+      chart.width(offsetWidth).height(offsetHeight).redraw();
+    };
+    let resizing = (chart) => (window.onresize = () => sizing(chart));
 
     var YKey = function (d) {
       return +d[params.YAxis];
@@ -126,21 +144,23 @@ const PieChart = ({ params }) => {
     }
 
     var fmt = d3.format("02d");
-    var table_ = ndx.dimension(function (d) {
-      return [fmt(+d[params.XAxis]), fmt(+d[params.YAxis])];
-    });
+    // var table_ = ndx.dimension(function (d) {
+    //   return [fmt(+d[params.XAxis]), fmt(+d[params.YAxis])];
+    // });
     var fileChart, datatabel;
     if (params.Width_ !== null) {
       fileChart = new dc.pieChart(div.current);
-      datatabel = new dc.dataTable(div1.current);
+      // datatabel = new dc.dataTable(div1.current);
     } else {
       fileChart = new dc.pieChart(div.current, "Chart");
-      datatabel = new dc.dataTable(div1.current, "Table");
+      // datatabel = new dc.dataTable(div1.current, "Table");
     }
     fileChart
+      // .width(params.Width_ === null ? null : params.Width_)
+      // .height(params.Width_ === null ? null : params.Height_)
       .width(params.Width_)
-      //.height(params.Heigth_)
-      .height(null)
+      .height(params.Height_)
+      // .height(null)
       .slicesCap(params.SlicesCap)
       .innerRadius(params.Innerradius)
       //.radius(130)
@@ -152,14 +172,47 @@ const PieChart = ({ params }) => {
       .group(speedSumGroup)
       .title(function (y) {
         return "";
-      })
-      .renderlet(function (fileChart) {
-        fileChart
-          .selectAll(".pie-slice.pie-label")
-          .style("font-family", params.pFont)
-          .style("fill", params.pColor)
-          .style("font-size", params.pSize + "px");
       });
+
+    fileChart.renderlet(function (fileChart) {
+      fileChart
+        .selectAll(".pie-slice.pie-label")
+        .style("font-family", params.pFont)
+        .style("fill", params.pColor)
+        .style("font-size", params.pSize + "px")
+        .style("font-family", params.LabelsFont)
+        .style("fill", params.LabelsColor)
+        .style("font-size", params.LabelsSize + "px")
+        .each(function (d) {
+          d3.select(this).text(
+            params.LabelsContent === "Y"
+              ? d.data?.value?.toFixed(2) || d.data?.value
+              : d.data.key === "Others"
+              ? d.data.others[0]
+              : d.data.key
+          );
+        })
+        .style(
+          "display",
+          params.Labelsswatch !== undefined ? params.Labelsswatch : "none"
+        );
+
+        if (params.Legendswatch !== "none") {
+          d3.selectAll("g.dc-legend-item text")
+            .style("font-family", params.LegendFont)
+            .style("fill", params.LegendColor)
+            .style("font-size", params.LegendSize)
+            .attr("y", "12")
+            .attr(
+              "transform",
+              "rotate(" +
+                (params.LengendPosition && Number(params.LegendSize) > 12 ? 8 : 0) +")"
+            );
+        }else {
+          d3.selectAll("g.dc-legend-item").style("display", "none");
+        }
+    });
+
     if (params.GroupByCol === "Average") {
       fileChart.valueAccessor(function (d) {
         return d.value.average;
@@ -174,48 +227,43 @@ const PieChart = ({ params }) => {
         new legend()
           .x(10)
           .y(10)
-          .itemHeight(13)
-          .gap(5)
+          .itemHeight(13) // set the squre broket size
+          .gap(params.LengendPosition ? 30 : 5) // gab between the lagend
           .horizontal(params.LengendPosition)
-          .legendText(function (d, i) {
-            return d.name;
-          })
+          .autoItemWidth(true)
+          .itemWidth(150) // Adjust the width according to your needs
+        // .legendText(function (d, i) {
+        //   return d.name;
+        // })
       );
-
-    datatabel
-      .width(300)
-      .height(480)
-      .dimension(table_)
-      .size(Infinity)
-      .showSections(false)
-      .columns(
-        params.GroupByCopy_.map((e) => e.split(" ").slice(1, 30).join(" "))
-      )
-      .sortBy(function (d) {
-        return [fmt(+d.Expt), fmt(+d.Run)];
-      })
-      .order(d3.ascending)
-
-      .on("preRender", update_offset)
-      .on("preRedraw", update_offset)
-      .on("pretransition", display);
 
     if (params.Width_ !== null) dc.renderAll();
     else dc.renderAll("Chart");
-    d3.selectAll("g.dc-legend-item text")
-      // .style
-      .style("font-family", params.LegendFont)
-      .style("fill", params.LegendColor)
-      .style("font-size", params.LegendSize);
-
-    d3.selectAll(".dc-legend").style(
-      "display",
-      params.Legendswatch === undefined ? "none" : params.Legendswatch
-    );
 
     d3.select("body").on("mouseover", function () {
       d3.selectAll("g.pie-slice")
         .on("mouseover", function (d) {
+          let xAxisToolTip = `<div style="
+              font-size: ${params.TooltipSize}px !important; 
+              padding-bottom : 10px !important;
+              font-family: ${params.TooltipFont} !important;">
+              <b>${params.XAxis}</b> : ${d.target.__data__.data["key"]}
+            </div>`;
+
+          let yAxisToolTip = `<div style="
+              font-size: ${params.TooltipSize}px !important; 
+              font-family: ${params.TooltipFont} !important;">
+              <b>${params.YAxis}</b> : ${parseFloat(
+            d.target.__data__.value
+          ).toFixed(2)}
+            </div>`;
+
+          let undefindYAxisToolTip = `<div style="
+              font-size: ${params.TooltipSize}px !important; 
+              font-family: ${params.TooltipFont} !important;">
+              <b> Count</b> : ${parseFloat(d.target.__data__.value).toFixed(2)}
+            </div>`;
+
           div2
             .transition()
             .duration(500)
@@ -232,53 +280,18 @@ const PieChart = ({ params }) => {
                 " solid"
             );
           if (params.TooltipContent === "X") {
-            div2.html(
-              "<div><div><b>" +
-                params.XAxis +
-                "</b> : " +
-                d.target.__data__.data["key"] +
-                "</div><div>"
-            );
+            div2.html(`<div>${xAxisToolTip}<div>`);
           } else if (params.TooltipContent === "Y") {
             if (params.YAxis === undefined || params.YAxis === "Select") {
-              div2.html(
-                "<div><div><b>Count</b> : " +
-                  parseFloat(d.target.__data__.value).toFixed(2) +
-                  "</div><div>"
-              );
+              div2.html(`<div>${undefindYAxisToolTip}<div>`);
             } else {
-              div2.html(
-                "<div><div><b>" +
-                  params.YAxis +
-                  "</b> : " +
-                  parseFloat(d.target.__data__.value).toFixed(2) +
-                  "</div><div>"
-              );
+              div2.html(`<div>${yAxisToolTip}</div>`);
             }
           } else if (params.TooltipContent === "All") {
             if (params.YAxis === undefined || params.YAxis === "Select") {
-              div2.html(
-                "<div><div><b>" +
-                  params.XAxis +
-                  "</b> : " +
-                  d.target.__data__.data["key"] +
-                  "</div><div><b>" +
-                  "Count </b> : " +
-                  parseFloat(d.target.__data__.value).toFixed(2) +
-                  "</div></div>"
-              );
+              div2.html(`<div> ${xAxisToolTip} ${undefindYAxisToolTip}</div>`);
             } else {
-              div2.html(
-                "<div><div><b>" +
-                  params.XAxis +
-                  "</b> : " +
-                  d.target.__data__.data["key"] +
-                  "</div><div><b>" +
-                  params.YAxis +
-                  "</b> : " +
-                  parseFloat(d.target.__data__.value).toFixed(2) +
-                  "</div></div>"
-              );
+              div2.html(`<div> ${xAxisToolTip} ${yAxisToolTip}</div>`);
             }
           }
           div2.style("left", d.pageX + "px").style("top", d.pageY - 70 + "px");
@@ -300,54 +313,11 @@ const PieChart = ({ params }) => {
       }
       return colors_;
     }
-    var ofs = 0,
-      pag = 100;
-
-    function update_offset() {
-      var totFilteredRecs = ndx.groupAll().value();
-      var end = ofs + pag > totFilteredRecs ? totFilteredRecs : ofs + pag;
-      if (ofs == undefined || pag == undefined) {
-        ofs = 0;
-        pag = totFilteredRecs;
-      }
-      ofs =
-        ofs >= totFilteredRecs
-          ? Math.floor((totFilteredRecs - 1) / pag) * pag
-          : ofs;
-      ofs = ofs < 0 ? 0 : ofs;
-      datatabel.beginSlice(ofs);
-      datatabel.endSlice(ofs + pag);
-    }
-    function display() {
-      var totFilteredRecs = ndx.groupAll().value();
-      var end = ofs + pag > totFilteredRecs ? totFilteredRecs : ofs + pag;
-      d3.select("#begin").text(end === 0 ? ofs : ofs + 1);
-      d3.select("#end").text(end);
-      d3.select("#last").attr("disabled", ofs - pag < 0 ? "true" : null);
-      d3.select("#next").attr(
-        "disabled",
-        ofs + pag >= totFilteredRecs ? "true" : null
-      );
-      d3.select("#size").text(totFilteredRecs);
-      if (totFilteredRecs != ndx.size()) {
-        d3.select("#totalsize").text("(filtered Total: " + ndx.size() + " )");
-      } else {
-        d3.select("#totalsize").text("");
-      }
-    }
-    function next() {
-      ofs += pag;
-      update_offset();
-      datatabel.redraw();
-    }
-    function last() {
-      ofs -= pag;
-      update_offset();
-      datatabel.redraw();
-    }
 
     // last();
     // next()
+    // resizing(fileChart);
+
     console.timeEnd("Pie");
   });
 
@@ -355,50 +325,66 @@ const PieChart = ({ params }) => {
     return (
       <div
         style={{
-          backgroundColor: params.Pieswatch === "show" ? params.BGColor : "",
+          backgroundColor: params.Barswatch === "show" ? params.BGColor : "",
           display:
-            params.Titleswatch === undefined ? "none" : params.Titleswatch,
+            params.Title === undefined ||
+            params.Title === "" ||
+            params.Title === null
+              ? "none"
+              : "block", // Set the display to "block" when the conditions are false
+          marginLeft:
+            params.Title === undefined ||
+            params.Title === "" ||
+            params.Title === null
+              ? "0"
+              : "20px", // Set marginLeft to 0 when the conditions are false
+          marginTop:
+            params.Title === undefined ||
+            params.Title === "" ||
+            params.Title === null
+              ? "0"
+              : "30px", // Set marginTop to 0 when the conditions are false
         }}
       >
-        <span
-          style={{
-            fontFamily: params.TitleFont,
-            fontSize: params.TitleSize,
-            color: params.TitleColor,
-          }}
-        >
-          {params.Title}
-        </span>
+        {params.Titleswatch_ && (
+          <span
+            style={{
+              fontFamily: params.TitleFont,
+              fontSize: params.TitleSize,
+              color: params.TitleColor,
+              marginTop: "40px",
+            }}
+          >
+            {params.Title}
+          </span>
+        )}
       </div>
     );
   };
 
   return (
     <Grid item xs={12} sm={12} md={12} xl={12} lg={12}>
-      <Grid item className="cardbox chartbox">
+      <Grid
+        item
+        className="cardbox chartbox"
+        xs={12}
+        sm={12}
+        md={12}
+        xl={12}
+        lg={12}
+      >
         <Chartheader />
         <div
           style={{
             backgroundColor: params.Pieswatch === "show" ? params.BGColor : "",
           }}
+          id="Charts"
         >
-          <div id="Charts" ref={div} className="boxcenter"></div>
-        </div>
-      </Grid>
-      <Grid
-        item
-        className="cardbox chartbox"
-        style={{ display: params.Width_ === null ? "none" : "block" }}
-      >
-        <div id="table-scroll" className="table-scroll">
-          <div className="table-wrap">
-            <table ref={div1} className="main-table"></table>
-          </div>
-          <div id="paging" style={{ float: "right" }}>
-            Showing <span id="begin"></span>-<span id="end"></span> of{" "}
-            <span id="size"></span>{" "}
-            <span id="totalsize" style={{ display: "none" }}></span>
-          </div>
+          <div
+            ref={div}
+            className="boxcenter"
+            style={{ marginTop: params.Title === undefined ? "50px" : "0px" }}
+          ></div>
         </div>
       </Grid>
     </Grid>

@@ -13,17 +13,21 @@ const d3 = {
 
 const Compose = ({ params }) => {
   const div = React.useRef(null);
-  const div1 = React.useRef(null);
+  // const div1 = React.useRef(null);
   // let compositeChart = null
   React.useEffect(() => {
-    var experiments = params.Uploaded_file;
+    var experiments = {};
+    if (params?.filteApply === "FilterApply") {
+      experiments = params.Uploaded_fileTemp;
+    } else {
+      experiments = params.Uploaded_file;
+    }
     var Groups = [];
     var ndx = crossfilter(experiments),
       runDimension = ndx.dimension(function (d) {
         return d[params.XAxis];
       });
-
-    var value = params.GroupByValues;
+    var value = params.GroupByValues || [""];
 
     var YKey = function (d) {
       return +d[params.YAxis];
@@ -56,7 +60,7 @@ const Compose = ({ params }) => {
       return d3.max(kv.value, YKey);
     }
     //Dynamic Group Creation
-    for (let i = 0; i < value.length; i++) {
+    for (let i = 0; i < value?.length; i++) {
       if (params.GroupByCol === "Sum") {
         window["grps" + i] = runDimension.group().reduceSum(function (d) {
           return d[params.GroupBy] == value[i] ? +d[params.YAxis] : 0;
@@ -169,15 +173,18 @@ const Compose = ({ params }) => {
     if (params.Width_ !== null)
       compositeChart = new dc.compositeChart(div.current);
     else compositeChart = new dc.compositeChart(div.current, "CompositeChart");
-    var datatabel = new dc.dataTable(div1.current);
+    // var datatabel = new dc.dataTable(div1.current);
     var max = Math.max(...experiments);
     let barPadding;
     const BAR_PADDING = 0.1;
     const RANGE_BAND_PADDING = 0;
     const OUTER_RANGE_BAND_PADDING = 0;
-    var offsetHeight = document.getElementById("Charts").offsetHeight;
-    var offsetWidth = document.getElementById("Charts").offsetWidth;
+
     let sizing = (chart) => {
+      let divChart = document.querySelectorAll(".boxcenter");
+      divChart = divChart[divChart.length - 1];
+      let offsetHeight = divChart.offsetHeight,
+        offsetWidth = divChart.offsetWidth;
       chart.width(offsetWidth).height(offsetHeight).redraw();
     };
     let resizing = (chart) => (window.onresize = () => sizing(chart));
@@ -220,7 +227,7 @@ const Compose = ({ params }) => {
       });
     };
     var div2 = d3
-      .select("#Charts")
+      .selectAll(".boxcenter")
       .append("div")
       .attr("class", "tooltip")
       .style("opacity", 0)
@@ -268,7 +275,6 @@ const Compose = ({ params }) => {
         window["Chart" + i].valueAccessor(maxSpeed);
       }
       // .addFilterHandler(function (filters, filter) {
-      //     debugger
       //     return [filter, 'South'];
       // })
 
@@ -281,19 +287,22 @@ const Compose = ({ params }) => {
 
       charts.push(window["Chart" + i]);
     }
-    let PadTop,
-      PadRight,
-      PadBottom,
+
+    let PadTop = 0,
+      PadRight = 0,
+      PadBottom = 0,
       PadLeft = 0;
-    if (params.PadTop === undefined || params.PadTop === "") PadTop = 0;
-    else PadTop = params.PadTop;
-    if (params.PadRight === undefined || params.PadRight === "") PadRight = 0;
-    else PadRight = params.PadRight;
-    if (params.PadBottom === undefined || params.PadBottom === "")
-      PadBottom = 0;
-    else PadBottom = params.PadBottom;
-    if (params.PadLeft === undefined || params.PadLeft === "") PadLeft = 0;
-    else PadLeft = params.PadLeft;
+    if (params.Compositeswatch_) {
+      if (params.PadTop === undefined || params.PadTop === "") PadTop = 0;
+      else PadTop = params.PadTop;
+      if (params.PadRight === undefined || params.PadRight === "") PadRight = 0;
+      else PadRight = params.PadRight;
+      if (params.PadBottom === undefined || params.PadBottom === "")
+        PadBottom = 0;
+      else PadBottom = params.PadBottom;
+      if (params.PadLeft === undefined || params.PadLeft === "") PadLeft = 0;
+      else PadLeft = params.PadLeft;
+    }
     compositeChart
       .margins({
         top: parseInt(10) + parseInt(PadTop),
@@ -302,9 +311,14 @@ const Compose = ({ params }) => {
         left: parseInt(30) + parseInt(PadLeft),
       })
 
+      // .width(params.Width_)
+      // .height(null)
+
+      // .height(params.Width_ === null ? null : params.Height_)
       .width(params.Width_)
-      .height(null)
-      //.height(params.Heigth_);
+      // .height(null)
+      .height(params.Height_)
+
       .elasticY(true)
       .shareTitle(false)
       .dimension(runDimension)
@@ -318,7 +332,8 @@ const Compose = ({ params }) => {
           .x(0)
           .y(10)
           .itemHeight(13)
-          .gap(5)
+          .gap(params.LengendPosition ? 30 : 5)
+          .autoItemWidth(true)
           .horizontal(params.LengendPosition)
           .legendText(function (d, i) {
             return d.name;
@@ -344,13 +359,16 @@ const Compose = ({ params }) => {
           .selectAll("g.x g.tick text")
           .attr(
             "dx",
-            params.Rotate === undefined || params.Rotate === "" ? "" : "-10"
+            params?.Rotate === undefined || params?.Rotate === "" ? "" : "-10"
           )
           .attr(
             "text-anchor",
-            params.Rotate === undefined || params.Rotate === "" ? "" : "end"
+            params?.Rotate === undefined || params?.Rotate === "" ? "" : "end"
           )
-          .attr("transform", `rotate(${params.Rotate})`)
+          .attr(
+            "transform",
+            `rotate(${params?.Rotate !== undefined ? params.Rotate : 0})`
+          )
           .style("font-family", params.xFont)
           .style("color", params.xColor)
           .style("font-size", params.xSize + "px");
@@ -358,7 +376,7 @@ const Compose = ({ params }) => {
         //y-Axis
         chart
           .selectAll("g.y g.tick text")
-          .attr("dx", "-10")
+          .attr("dx", "1")
           .attr("text-anchor", "end")
           // .attr('transform', `rotate(${params.Rotate})`)
           .style("font-family", params.yFont)
@@ -404,30 +422,6 @@ const Compose = ({ params }) => {
         return BMK(v);
       });
 
-    datatabel
-      .width(300)
-      .height(480)
-      .dimension(table_)
-      //  .group(function (d) { return d.Region })
-      .size(Infinity)
-      .group(function (d) {
-        return "";
-      })
-      .showGroups(false)
-      .showSections(false)
-
-      .columns(
-        params.GroupByCopy_.map((e) => e.split(" ").slice(1, 30).join(" "))
-      )
-      .sortBy(function (d) {
-        return [fmt(+d.Region)];
-      })
-      .order(d3.ascending)
-
-      .on("preRender", update_offset)
-      .on("preRedraw", update_offset)
-      .on("pretransition", display);
-
     if (params.Width_ !== null) dc.renderAll();
     else dc.renderAll("CompositeChart");
     // dc.redrawAll();
@@ -435,13 +429,21 @@ const Compose = ({ params }) => {
       barlabelpostion();
     }, 1000);
     // sizing(compositeChart);
-    resizing(compositeChart);
+    // resizing(compositeChart);
 
-    d3.selectAll("g.dc-legend-item text")
-      // .style
-      .style("font-family", params.LegendFont)
-      .style("fill", params.LegendColor)
-      .style("font-size", params.LegendSize);
+    if (params.Legendswatch) {
+      d3.selectAll("g.dc-legend-item text")
+        .style("font-family", params.LegendFont)
+        .style("fill", params.LegendColor)
+        .style("font-size", params.LegendSize)
+        .attr("y", "12")
+        .attr(
+          "transform",
+          "rotate(" +
+            (params.LengendPosition && Number(params.LegendSize) > 12 ? 8 : 0) +
+            ")"
+        );
+    }
 
     d3.selectAll(".dc-legend").style(
       "display",
@@ -451,58 +453,50 @@ const Compose = ({ params }) => {
     d3.select("body").on("mouseover", function () {
       d3.selectAll("rect.bar")
         .on("mouseover", function (d) {
-          div2
-            .transition()
-            .duration(500)
-            .style("opacity", params.Tooltipswatch);
-          // .style("font-family", params.TooltipFont)
-          // .style("color", params.TooltipColor)
-          // .style("font-size", params.TooltipSize + "px")
-          // .style("background-color", params.TooltipBGColor)
-          // .style("border", params.TooltipThickness + 'px ' + params.TooltipTickColor + ' solid')
-          if (params.TooltipContent === "X") {
-            div2.html(
-              "<div><div><b>" +
-                params.XAxis +
-                "</b> : " +
-                d.target.__data__.x +
-                "</div><div"
-            );
-          } else if (params.TooltipContent === "Y") {
-            div2.html(
-              "<div><div><b>" +
-                params.YAxis +
-                "</b> : " +
-                d.target.__data__.y.toFixed(2) +
-                "</div><div"
-            );
-          } else if (params.TooltipContent === "Group") {
-            div2.html(
-              "<div><div><b>" +
-                params.GroupBy +
-                "</b> : " +
-                d.target.__data__.layer +
-                "</div><div>"
-            );
-          } else if (params.TooltipContent === "All") {
-            div2.html(
-              "<div><div><b>" +
-                params.GroupBy +
-                "</b> : " +
-                d.target.__data__.layer +
-                "</div><div><b>" +
-                params.XAxis +
-                "</b> : " +
-                d.target.__data__.x +
-                "</div><div><b>" +
-                params.YAxis +
-                "</b> : " +
-                d.target.__data__.y.toFixed(2) +
-                "</div></div>"
-            );
-          }
+          if (params.Tooltipswatch_) {
+            let xAxisToolTip = `<div style="
+              font-size: ${params.TooltipSize}px !important; 
+              padding-bottom : 10px !important;
+              
+              font-family: ${params.TooltipFont} !important;">
+              <b>${params.XAxis}</b> : ${d.target.__data__.x}
+            </div>`;
 
-          div2.style("left", d.pageX + "px").style("top", d.pageY - 70 + "px");
+            let yAxisToolTip = `<div style="
+              font-size: ${params.TooltipSize}px !important; 
+              font-family: ${params.TooltipFont} !important;">
+              <b>${params.YAxis}</b> : ${d.target.__data__.y.toFixed(2)}
+            </div>`;
+
+            let groupByTooltip = `<div style="
+              font-size: ${params.TooltipSize}px !important; 
+              font-family: ${params.TooltipFont} !important;
+              padding : 10px !important;
+              ">
+              <b> ${params.GroupBy}</b> :  ${d.target.__data__.layer}
+            </div>`;
+
+            div2
+              .transition()
+              .duration(500)
+              .style("opacity", params.Tooltipswatch);
+
+            if (params.TooltipContent === "X") {
+              div2.html(`<div>${xAxisToolTip}<div>`);
+            } else if (params.TooltipContent === "Y") {
+              div2.html(`<div>${yAxisToolTip}</div>`);
+            } else if (params.TooltipContent === "Group") {
+              div2.html(`<div >${groupByTooltip}<div>`);
+            } else if (params.TooltipContent === "All") {
+              div2.html(
+                `<div>${groupByTooltip} ${xAxisToolTip}  ${yAxisToolTip}</div>`
+              );
+            }
+
+            div2
+              .style("left", d.pageX + "px")
+              .style("top", d.pageY - 70 + "px");
+          }
         })
         .on("mouseout", function (d) {
           div2.transition().duration(500).style("opacity", 0);
@@ -532,13 +526,6 @@ const Compose = ({ params }) => {
         color += letters[Math.floor(Math.random() * letters.length)];
       }
       return color;
-
-      // var colorCode = "1234567890abcdef";
-      // var color = "#";
-      // for (var i = 0; i < 6; i++) {
-      //     color += colorCode.charAt(Math.floor(Math.random() * colorCode.length));
-      // }
-      // return color
     }
     function BMK(labelValue) {
       // Nine Zeroes for Billions
@@ -552,58 +539,6 @@ const Compose = ({ params }) => {
         ? Math.abs(Number(labelValue)) / 1.0e3 + "K"
         : Math.abs(Number(labelValue));
     }
-    var ofs = 0,
-      pag = 100;
-
-    function update_offset() {
-      var totFilteredRecs = ndx.groupAll().value();
-      pag = totFilteredRecs;
-      var end = ofs + pag > totFilteredRecs ? totFilteredRecs : ofs + pag;
-      if (ofs == undefined || pag == undefined) {
-        ofs = 0;
-        pag = totFilteredRecs;
-      }
-      ofs =
-        ofs >= totFilteredRecs
-          ? Math.floor((totFilteredRecs - 1) / pag) * pag
-          : ofs;
-      ofs = ofs < 0 ? 0 : ofs;
-      datatabel.beginSlice(ofs);
-      datatabel.endSlice(ofs + pag);
-    }
-    function display() {
-      var totFilteredRecs = ndx.groupAll().value();
-      var end = ofs + pag > totFilteredRecs ? totFilteredRecs : ofs + pag;
-      d3.select("#begin").text(end === 0 ? ofs : ofs + 1);
-      d3.select("#end").text(end);
-      d3.select("#last").attr("disabled", ofs - pag < 0 ? "true" : null);
-      d3.select("#next").attr(
-        "disabled",
-        ofs + pag >= totFilteredRecs ? "true" : null
-      );
-      d3.select("#size").text(totFilteredRecs);
-      if (totFilteredRecs != ndx.size()) {
-        d3.select("#totalsize").text("(filtered Total: " + ndx.size() + " )");
-      } else {
-        d3.select("#totalsize").text("");
-      }
-
-      // d3.selectAll('rect.bar')
-      // .on('click',function(d){
-      //     debugger
-      //     return d.currentTarget.__data__.layer+
-      // })
-    }
-    function next() {
-      ofs += pag;
-      update_offset();
-      datatabel.redraw();
-    }
-    function last() {
-      ofs -= pag;
-      update_offset();
-      datatabel.redraw();
-    }
   });
   React.useEffect(() => {});
 
@@ -611,52 +546,68 @@ const Compose = ({ params }) => {
     return (
       <div
         style={{
-          backgroundColor:
-            params.Compositeswatch === "show" ? params.BGColor : "",
+          backgroundColor: params.Barswatch === "show" ? params.BGColor : "",
           display:
-            params.Titleswatch === undefined ? "none" : params.Titleswatch,
+            params.Title === undefined ||
+            params.Title === "" ||
+            params.Title === null
+              ? "none"
+              : "block", // Set the display to "block" when the conditions are false
+          marginLeft:
+            params.Title === undefined ||
+            params.Title === "" ||
+            params.Title === null
+              ? "0"
+              : "20px", // Set marginLeft to 0 when the conditions are false
+          marginTop:
+            params.Title === undefined ||
+            params.Title === "" ||
+            params.Title === null
+              ? "0"
+              : "30px", // Set marginTop to 0 when the conditions are false
         }}
       >
-        <span
-          style={{
-            fontFamily: params.TitleFont,
-            fontSize: params.TitleSize,
-            color: params.TitleColor,
-          }}
-        >
-          {params.Title}
-        </span>
+        {params.Titleswatch_ && (
+          <span
+            style={{
+              fontFamily: params.TitleFont,
+              fontSize: params.TitleSize,
+              color: params.TitleColor,
+              marginTop: "40px",
+            }}
+          >
+            {params.Title}
+          </span>
+        )}
       </div>
     );
   };
 
   return (
-    <Grid item xs={12} sm={12} md={12} xl={12} lg={12}>
-      <Grid item className="cardbox chartbox">
+    <Grid
+      item
+      xs={12}
+      sm={12}
+      md={12}
+      xl={12}
+      lg={12}
+      style={{ height: "100%" }}
+    >
+      <Grid item className="cardbox chartbox" style={{ height: "100%" }}>
         <Chartheader />
         <div
           style={{
             backgroundColor:
               params.Compositeswatch === "show" ? params.BGColor : "",
           }}
+          id="Charts"
         >
-          <div ref={div} id="Charts" className="boxcenter"></div>
-        </div>
-      </Grid>
-      <Grid
-        item
-        className="cardbox chartbox"
-        style={{ display: params.Width_ === null ? "none" : "block" }}
-      >
-        <div id="table-scroll" className="table-scroll">
-          <div className="table-wrap">
-            <table ref={div1} className="main-table"></table>
-          </div>
-          <div id="paging" style={{ float: "right" }}>
-            Showing <span id="begin"></span>-<span id="end"></span> of{" "}
-            <span id="size"></span>{" "}
-            <span id="totalsize" style={{ display: "none" }}></span>
-          </div>
+          <div
+            ref={div}
+            className="boxcenter"
+            style={{ marginTop: params.Title === undefined ? "50px" : "0px" }}
+          ></div>
+          {/* id="Charts" */}
         </div>
       </Grid>
     </Grid>

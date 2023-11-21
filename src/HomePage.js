@@ -22,18 +22,23 @@ import Backdrop from "@mui/material/Backdrop";
 //NPM's
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-//import axios from "axios";
+import Swal from "sweetalert2";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 //Components
 import InputBlock from "./Components/InputBlock";
 import ChartBlock from "./Components/ChartBlock";
 import Statistics from "./Charts/Statistics";
+import Dictionary from "./Charts/Dictionary";
 import DatasetTable from "./Components/DatasetTable";
 import Demo from "./Components/Demo";
 import Dashboard from "./Charts/Dashboard";
 import Feedback from "./Components/Feedback";
 import Header from "./Components/Header";
-import  ApprovalDetails from "./Components/ApprovalDetails";
+import AdminView from "./Components/Admin";
+import AssignProject from "./Components/AssignProject";
+import CardBlock from "./Components/CardBlock";
+
 import EmptyPage from "../src/Images/EmptyPage.png";
 
 const HomePage = () => {
@@ -44,7 +49,7 @@ const HomePage = () => {
   const [filedata, setData] = React.useState({});
   const [play, setPlay] = React.useState({});
   const [show, Isshow] = React.useState({ NOCharts: 0, isRendered: false });
-  //const [navbar, setNavbar] = React.useState({ 'bar': 'Data' });
+  const [navbar, setNavbar] = React.useState();
   const [navwidth, setNavWidth] = React.useState({
     navArea: "7%",
     inuptArea: "28%",
@@ -58,12 +63,18 @@ const HomePage = () => {
   });
   const [error, setError] = React.useState({});
   const [feedback, setFeedback] = React.useState({ Issues: undefined });
-  const [approvalDetails, setApprovalDetails] = React.useState({});
   // const [anchorEl, setAnchorEl] = React.useState(null);
   const [project, setProject] = React.useState({});
+
   const [open, setOpen] = React.useState({
     SessionExpiry: false,
     StayConnected: false,
+  });
+  const [assignUser, setAssignUser] = React.useState({});
+  const [cardData, setcardData] = React.useState({}); // added for card values maintain
+  const [path, setPath] = React.useState({
+    Location: window.location.hostname,
+    Port: process.env.REACT_APP_PORT,
   });
   //onst [seconds, setSeconds] = React.useState();
   // Custom styles
@@ -78,6 +89,7 @@ const HomePage = () => {
       backgroundColor: "black",
     },
   }));
+
   const style = {
     position: "absolute",
     top: "35%",
@@ -90,52 +102,82 @@ const HomePage = () => {
     borderRadius: "5px",
   };
 
-  // React.useEffect(() => {
-  //     toast.success('Welcome back, Xavier', {
-  //         position: toast.POSITION.BOTTOM_RIGHT,
-  //         hideProgressBar: true,
-  //         autoClose: 2000
-  //     });
-  // }, [])
-  // React.useEffect(() => {
   let timeout;
-  document.getElementById("root").addEventListener("mousemove", function () {
+  document.getElementById("root").addEventListener("mousemove", async () => {
     clearTimeout(timeout);
-    timeout = setTimeout(function () {
+    timeout = setTimeout(() => {
       if (window.location.pathname === "/home") {
         setOpen({ ...open, SessionExpiry: true });
-        // var timeleft = 10;
-        // downloadTimer = setInterval(function () {
-        //     if (timeleft <= 0) {
-        //         clearInterval(downloadTimer);
-        //         if (!open.SessionExpiry) {
-        //             navigate('/');
-        //         }
-        //     } else {
-        //         setSeconds(timeleft);
-        //     }
-        //     timeleft -= 1;
-        // }, 1000);
-        //alert('Your session has been expired !!!')
+        handleLogout(); // update the logoutTime in userDetails collection
+        window.onbeforeunload = (e) => {
+          navigate("/");
+          sessionStorage.clear();
+        };
       }
     }, 1000 * 60 * 30);
-    // restart the timeout
   });
-  // })
-  // These functions which are used to get the data from the other components
-  const data = (state, enable, navbar, file) => {
-    // debugger
-    setState(state);
-    if (state !== undefined) {
-      setEnable(enable);
-      //setNavbar(navbar)
-      setChangeType({
-        ...changeType,
-        Dimensions: file.newArray,
-        file: file.Uploaded_file,
-      });
+
+  // this funtion used to update the logoutTime when user is expired
+  const handleLogout = async () => {
+    // get the current Time
+    let logoutTime = new Date().getTime();
+    const obj = {
+      userID: sessionStorage.getItem("UserName").split(",")[1] || "",
+      logoutTime: logoutTime,
+      flag: "specific",
+    };
+    // update the logout time when the session is logged out
+    let result = await axios.post(
+      `http://${path.Location}:${path.Port}/SaveUsers`,
+      obj
+    );
+    if (result) {
+      console.log("Logout successful");
     }
   };
+
+  // this function call each 5sec, for check the loginTime in back end
+  const checkUserLogin = async () => {
+    if (sessionStorage.getItem("loginTime")) {
+      // get the details from session storge
+      let obj = {
+        userID: sessionStorage.getItem("UserName").split(",")[1],
+        loginTime: sessionStorage.getItem("loginTime"),
+      };
+      // send request to backend for checking the logout time
+      let result = await axios.post(
+        `http://${path.Location}:${path.Port}/checkCurUserLogin`,
+        obj
+      );
+      // if status is success its clear the session details
+      if (result.status === 200) {
+        navigate("/");
+        sessionStorage.clear();
+        console.log("logout successfully");
+      }
+    }
+  };
+  setInterval(checkUserLogin, 5000);
+
+  // These functions which are used to get the data from the other components
+  const data = (state, enable, navbar, file) => {
+    setData({ data: undefined });
+    try {
+      setState(state);
+      if (state !== undefined) {
+        setEnable(enable);
+        //setNavbar(navbar)
+        setChangeType({
+          ...changeType,
+          Dimensions: file.newArray,
+          file: file.Uploaded_file,
+        });
+      }
+    } catch (error) {
+      console.log("Error  ==>1", error);
+    }
+  };
+
   const expand = useCallback(
     (navwidth) => {
       setNavWidth(navwidth);
@@ -144,31 +186,36 @@ const HomePage = () => {
   );
 
   const DataTable = (data) => {
-    setData({ data: data.data });
+    if (data?.Uploaded_fileID) {
+      setData({ data: data?.data, Uploaded_fileID: data?.Uploaded_fileID });
+    } else {
+      setData({ ...filedata, data: data?.data });
+    }
   };
   const video = (play) => {
     setPlay({ isPlay: play.isPlay });
   };
+
   const showDashboard = (param) => {
     Isshow({ ...param, isRendered: !show.isRendered });
+    //setFeedback(undefined)
   };
+
   const handleFeedback = (params) => {
     setFeedback({ Issues: params });
   };
 
-  const handleSignUpDetails = (data) => {
-    console.log( 'Homepage handleSignUpdata', data)
-    setApprovalDetails(data||{});
-  };
   //Tab change
   const handleChange = (event, newValue) => {
+    document.querySelector(".loader").style.display = "block";
     setValue(newValue);
   };
+
   //Changing data type for the columns
   const handleChangeDatatype = (event, flag) => {
-    if (flag !== 1)
+    if (flag !== 1) {
       setChangeType({ ...changeType, [event.target.name]: event.target.value });
-    else {
+    } else {
       let SelectedDimension = changeType.Dimensions_;
       let TypeChanged =
         changeType.DataTypes +
@@ -237,11 +284,9 @@ const HomePage = () => {
           return;
         }
       });
-
-      toast.success("Data type has been changed.", {
-        position: toast.POSITION.BOTTOM_RIGHT,
-        hideProgressBar: true,
-        autoClose: 2000,
+      Swal.fire({
+        icon: 'success',
+        title: "Data type has been changed.",
       });
       setState({
         ...state,
@@ -252,17 +297,42 @@ const HomePage = () => {
       //  event.preven
     }
   };
+
   //Get the project details for preview
   const handleProject = (params) => {
     setProject(params);
-    if (params.userID !== undefined) {
-      Isshow({ ...show, isShow: true, PreviewProject: true });
+    if (params.action === "AssignUser") {
+      setAssignUser(params);
+      Isshow({});
       setData({ data: undefined });
+    } else if (
+      // hide the dashboard based on the action
+      params.action === "Update" ||
+      params.action === "Cancel" ||
+      params.action === "Save" ||
+      params.action === "Delete"
+    ) {
+      Isshow({ isShow: undefined });
+    } else {
+      setAssignUser(params);
+      if (params.userID !== undefined) {
+        Isshow({ ...show, isShow: true, PreviewProject: true });
+        setData({ data: undefined });
+      }
     }
+  };
+  const handlePage = (params) => {
+    console.log("Current page", params);
+    setNavbar(params);
+    setAssignUser({});
+  };
+
+  // it will call when card preview is clicked bu franklin
+  const showCard = (params) => {
+    setcardData(params);
   };
   const navigate = useNavigate();
 
-  // const Dashboard_ = React.useMemo(()=>)
   return (
     <div>
       <div className="col-lg-12" style={{ width: "100%" }}>
@@ -285,8 +355,9 @@ const HomePage = () => {
             demoVideo={video}
             showDashboard={showDashboard}
             feedback_={handleFeedback}
-            approvalDetails_={handleSignUpDetails}
             project_={handleProject}
+            currentPage={handlePage}
+            showCard={showCard} // it will call when card preview is clicked bu franklin
           />
           <div
             className=""
@@ -300,196 +371,85 @@ const HomePage = () => {
               height: "calc(94vh)",
             }}
           >
-            {filedata.data === undefined &&
+            {/* {
+            filedata.data === undefined 
             play.isPlay !== true &&
             show.isShow !== true &&
-            feedback.Issues === undefined &&
-            approvalDetails['Data'] !== undefined? (
-              <>
-                {state !== undefined && (
+           feedback.Issues === undefined 
+            ? ( */}
+            <>
+              {(navbar === "Charts" || navbar === "Templates") &&
+                cardData?.Generate === undefined && ( //  display if the generated card is undefind by franklin
                   <ChartBlock enable={enable} state={state} />
                 )}
-              </>
-            ) : (
-              <>
-                {filedata.data !== undefined && show.isShow !== true ? (
-                  <Box sx={{ width: "100%", typography: "body1" }}>
-                    <TabContext value={value}>
-                      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-                        <TabList
-                          onChange={handleChange}
-                          aria-label="lab API tabs example"
-                        >
-                          <Tab label="Dataset" value="1" />
-                          <Tab label="Statistics" value="2" />
-                          <Tab label="Data Dictionary" value="3" />
-                        </TabList>
-                      </Box>
-                      <TabPanel value="1">
-                        <DatasetTable params={filedata.data} />
-                      </TabPanel>
-                      <TabPanel value="2">
-                        <Statistics params={filedata.data} />
-                      </TabPanel>
-                      <TabPanel value="3">
-                        <div
-                          className="row col-lg-6 borderdivstyle"
-                          style={{ margin: "25px 0px 0px 0px" }}
-                        >
-                          <div className="row col-lg-12">
-                            <div className=" col-lg-12 borderstyle">
-                              Change Type
-                            </div>
-                          </div>
-                          <div className="row col-sm-4 col-md-4 col-lg-5">
-                            <TextField
-                              id="Dimensions_"
-                              select
-                              name="Dimensions_"
-                              label="Dimensions"
-                              className="input-field "
-                              onChange={(e) => {
-                                handleChangeDatatype(e);
-                              }}
-                              //defaultValue={'Select'}
-                              value={changeType.Dimensions_}
-                            >
-                              <MenuItem key={-1} value={"Select"}>
-                                {"Select"}
-                              </MenuItem>
-                              {changeType.Dimensions.map((option, index) => (
-                                <MenuItem key={index} value={option}>
-                                  {option}
-                                </MenuItem>
-                              ))}
-                            </TextField>
-                          </div>
-                          {changeType.enableChange === false ? (
-                            <div className="row col-sm-4 col-md-4 col-lg-6">
-                              <Button
-                                variant="contained"
-                                className="input-field button"
-                                style={{
-                                  backgroundColor: "#6282b3",
-                                  float: "right",
-                                }}
-                                onClick={(e) => {
-                                  setChangeType({
-                                    ...changeType,
-                                    enableChange: true,
-                                  });
-                                }}
-                              >
-                                Change Type
-                              </Button>
-                            </div>
-                          ) : (
-                            <>
-                              <div className="row col-sm-4 col-md-4 col-lg-3">
-                                <TextField
-                                  id="XAxis"
-                                  select
-                                  name="DataTypes"
-                                  label="DataTypes"
-                                  className="input-field "
-                                  onChange={(e) => {
-                                    handleChangeDatatype(e);
-                                  }}
-                                  // onBlur={(e) => { handleValidation(e) }}
-                                  value={changeType.DataTypes}
-                                >
-                                  {DataTypes.map((option, index) => (
-                                    <MenuItem key={option} value={option}>
-                                      {option}
-                                    </MenuItem>
-                                  ))}
-                                </TextField>
-                              </div>
-                              <div className="row col-sm-2 col-md-2 col-lg-2">
-                                <BootstrapTooltip
-                                  title="Change"
-                                  TransitionComponent={Fade}
-                                  TransitionProps={{ timeout: 600 }}
-                                  placement="bottom"
-                                >
-                                  <Check
-                                    className="Datatypeicon"
-                                    style={{ color: "green" }}
-                                    fontSize="small"
-                                    onClick={(e) => {
-                                      handleChangeDatatype(e, 1);
-                                    }}
-                                  />
-                                </BootstrapTooltip>
-                              </div>
-                              <div className="row col-sm-2 col-md-2 col-lg-2">
-                                <BootstrapTooltip
-                                  title="Cancel"
-                                  TransitionComponent={Fade}
-                                  TransitionProps={{ timeout: 600 }}
-                                  placement="bottom"
-                                >
-                                  <Clear
-                                    className="Datatypeicon"
-                                    style={{ color: "red" }}
-                                    fontSize="small"
-                                    onClick={(e) => {
-                                      setChangeType({
-                                        ...changeType,
-                                        enableChange: false,
-                                      });
-                                      setError({ mandatoryFields: undefined });
-                                    }}
-                                  />
-                                </BootstrapTooltip>
-                              </div>
-                            </>
-                          )}
-                          {error.mandatoryFields !== undefined ? (
-                            <div
-                              className="col-xs-3 col-sm-10 col-md-10 col-lg-10"
-                              style={{
-                                margin: "15px 0px 15px  0px",
-                                padding: 0,
-                              }}
-                            >
-                              <Alert severity="error">
-                                {error.mandatoryFields}
-                              </Alert>
-                            </div>
-                          ) : (
-                            ""
-                          )}
-                        </div>
-                      </TabPanel>
-                    </TabContext>
-                  </Box>
-                ) : (
-                  ""
-                )}
-              </>
+            </>
+            {/* ) : ( */}
+            <>
+              {navbar === "Data" && filedata.data !== undefined ? (
+                <Box sx={{ width: "100%", typography: "body1" }}>
+                  <TabContext value={value}>
+                    <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                      <TabList
+                        onChange={handleChange}
+                        aria-label="lab API tabs example"
+                      >
+                        <Tab label="Data" value="1" />
+                        <Tab label="Data Dictionary" value="2" />
+                        <Tab label="Insights" value="3" />
+                      </TabList>
+                    </Box>
+                    <TabPanel value="1">
+                      <DatasetTable params={filedata.data} />
+                    </TabPanel>
+                    <TabPanel value="2">
+                      <Dictionary
+                        params={filedata.data}
+                        renderSetData={DataTable}
+                        Uploaded_fileID={filedata.Uploaded_fileID}
+                      />
+                    </TabPanel>
+                    <TabPanel value="3">
+                      <Statistics
+                        params={filedata.data}
+                        Uploaded_fileID={filedata.Uploaded_fileID}
+                      />
+                    </TabPanel>
+                  </TabContext>
+                </Box>
+              ) : (
+                ""
+              )}
+            </>
+            {/* )} */}
+
+            {navbar === "Demo" ? <Demo /> : ""}
+
+            {(navbar === "Project" || navbar === "Dashboard") &&
+              show.isShow !== undefined && (
+                // assignUser?.action !== "AssignUser" ? (
+                <Dashboard params={show.PreviewProject ? project : show} />
+              )}
+            {assignUser?.action === "AssignUser" && navbar === "Project" && (
+              <AssignProject params={assignUser} />
             )}
-
-            {/* Demo page details display  */}
-            {play.isPlay && filedata.data === undefined ? <Demo /> : ""}
-
-            {show.isShow ? (
-              <Dashboard params={show.PreviewProject ? project : show} />
+            {/* added for cards block by franklin*/}
+            {(navbar === "Cards" || navbar === "Templates") &&
+            cardData?.Generate !== undefined ? (
+              <CardBlock params={cardData} />
             ) : (
               ""
             )}
-            {feedback.Issues !== undefined ? (
-              <Feedback params={feedback.Issues} />
-            ) : (
-              ""
-            )}
+            {/* )} */}
+            {navbar === "Feedback" ? <Feedback params={feedback.Issues} /> : ""}
+            {navbar === "Admin" ? <AdminView /> : ""}
 
             {(state === undefined || Object.keys(state).length === 0) &&
             feedback.Issues === undefined &&
             !show.isShow &&
             !play.isPlay &&
+            assignUser?.action !== "AssignUser" &&
             filedata.data === undefined &&
-            approvalDetails['Data'] === undefined ? (
+            cardData?.Generate === undefined ? (
               <>
                 <div className="emptyPage">
                   <img alt="Loading..." src={EmptyPage}></img>
@@ -498,12 +458,6 @@ const HomePage = () => {
             ) : (
               ""
             )}
-
-            {/* Signup page details display  */}
-            {approvalDetails['Data'] !== undefined ? (
-              <ApprovalDetails />
-            ) : null}
-
           </div>
         </div>
       </div>
@@ -516,6 +470,7 @@ const HomePage = () => {
           onClose={(e) => {
             setOpen({ SessionExpiry: false });
             navigate("/");
+            sessionStorage.clear();
           }}
           closeAfterTransition
           BackdropComponent={Backdrop}
@@ -543,18 +498,6 @@ const HomePage = () => {
                   </div>
                 </div>
               </Typography>
-              {/* <Typography id="transition-modal-description" sx={{ mt: 5 }} style={{ marginTop: '10px' }}>
-                                <div className="col-xs-12 col-sm-12 col-md-12 col-lg-6" >
-                                    <Button variant="contained" margin="normal" className='input-field button' style={{ backgroundColor: '#6282b3', float: 'right' }} onClick={(e) => { navigate('/') }}>
-                                        Sign Out
-                                    </Button>
-                                </div>
-                                <div className="col-xs-12 col-sm-12 col-md-12 col-lg-6" >
-                                    <Button variant="contained" margin="normal" className='input-field button' style={{ backgroundColor: '#6282b3', float: 'right' }} onClick={(e) => { setOpen({ 'SessionExpiry': false, 'StayConnected': true }); }}>
-                                        Stay Connected
-                                    </Button>
-                                </div>
-                            </Typography> */}
             </Box>
           </Fade>
         </Modal>

@@ -1,6 +1,12 @@
 .line-space {
     margin-top: 6px
 }
+.textalign{
+    justify-content: center;
+}
+.fonts>label{
+    font-weight: bold;
+}
 
 .page-title {
     /* margin-right: 20px; */
@@ -33,7 +39,7 @@
 
 .login-card {
     border-radius: 8px;
-    padding: 25px 50px 82px 50px;
+    padding: 25px 50px 37px 50px;
     background: #FFFFFF 0% 0% no-repeat padding-box;
     box-shadow: 0px 6px 20px #0000001A;
     width: 400px;
@@ -41,7 +47,7 @@
 
 .login-btn {
     display: flex;
-    margin-top: 20px !important;
+    margin-top: 14px !important;
     border: 1px solid #2E89FF;
     border-radius: 6px;
 }
@@ -113,3 +119,65 @@
     box-shadow: 0px 2px 4px #0000001A;
     opacity: 1;
 }
+
+
+ 
+  
+  /* Media query for screens with a maximum width of 768px */
+  @media (max-height: 554px) {
+    .login-container {
+        display: flex;
+        -webkit-box-pack: center;
+        justify-content: center;
+        padding-top: 1.9%;
+    }
+    .login-card {
+        border-radius: 8px;
+        padding: 14px 50px 30px 50px;
+        background: #FFFFFF 0% 0% no-repeat padding-box;
+        box-shadow: 0px 6px 20px #0000001A;
+        width: 400px;
+    }
+    #Name #password #UserId {
+      width: 100% !important;
+      font-size: 10px !important;
+      height: 16px !important;
+    }
+    
+    #username-error {
+      font-size: 10px !important;
+    }
+    .login-header{
+        padding: 17px 0px;
+    }
+  }
+  
+  /* Media query for screens with a maximum width of 480px */
+  @media (max-height: 480px) {
+    .login-container {
+        display: flex;
+        -webkit-box-pack: center;
+        justify-content: center;
+        padding-top: 1%;
+    }
+    .login-card {
+        border-radius: 8px;
+        padding: 10px 50px 25px 50px;
+        background: #FFFFFF 0% 0% no-repeat padding-box;
+        box-shadow: 0px 6px 20px #0000001A;
+        width: 400px;
+    }
+    #Name #password #UserId {
+        width: 100% !important;
+        font-size: 10px !important;
+        height: 16px !important;
+      }
+      
+      #username-error {
+        font-size: 10px !important;
+      }
+      .login-header{
+        padding: 10px 0px;
+    }
+  }
+  

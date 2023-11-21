@@ -6,5 +6,61 @@
   border: 0 solid rgba(0, 0, 0, .125);
   border-radius: 0.2rem;
 }
+/* Default styles */
+.TableContainer {
+  /* max-height: 520px; Set a default max-height */
+  max-height: 65vh;
+  overflow-y: auto; /* Enable vertical scrolling if content overflows */
+}
+
+/* sweetalert title properties custom css */
+/* @import url('https://fonts.googleapis.com/css2?family=Martian+Mono&display=swap'); */
+.swal2-title{
+  color:rgb(17, 17, 99);
+  font-family: 'Martian Mono', monospace;
+  font-size:15px;
+}
+div:where(.swal2-container) .swal2-html-container{
+  overflow-y: hidden !important;
+}
+
+/* Dashboard-title alignment */
+.Dashboard-title{
+  font-weight:bold;
+  color:rgb(63, 60, 60);
+  letter-spacing: 2px;
+}
+
+
+/* Media query for smaller screens */
+@media (max-width: 768px) {
+  .TableContainer {
+    max-height: 300px; /* Adjust max-height for smaller screens */
+  }
+}
+
+/* Media query for even smaller screens */
+@media (max-width: 576px) {
+  .TableContainer {
+    max-height: 200px; /* Adjust max-height for even smaller screens */
+  }
+}
+/* Media query for medium-sized screens */
+@media (max-width: 992px) {
+  .TableContainer {
+    max-height: 400px; /* Adjust max-height for medium-sized screens */
+      }
+}
+.tss-bd2lw8-MUIDataTableHeadCell-sortActive,
+.css-dx096b.Mui-active .MuiTableSortLabel-icon{
+  color: white !important;
+}
+
+
+.css-1qgma8u-MuiButtonBase-root-MuiTableSortLabel-root,
+.css-1qgma8u-MuiButtonBase-root-MuiTableSortLabel-root.Mui-active .MuiTableSortLabel-icon{
+  color: white !important;
+}
+
 
 

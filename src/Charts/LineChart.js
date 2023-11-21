@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React from "react";
 import * as dc from "dc";
 import * as d3 from "d3";
 import * as crossfilter from "crossfilter2/crossfilter";
@@ -7,11 +7,10 @@ import { red } from "@material-ui/core/colors";
 
 const LineChart = ({ params }) => {
   const div = React.useRef(null);
-  const div1 = React.useRef(null);
 
   React.useEffect(() => {
     var div2 = d3
-      .select("#Charts")
+      .selectAll(".boxcenter")
       .append("div")
       .attr("class", "tooltip")
       .style("opacity", 0)
@@ -24,7 +23,13 @@ const LineChart = ({ params }) => {
         params.TooltipThickness + "px " + params.TooltipTickColor + " solid"
       );
 
-    var experiments = params.Uploaded_file;
+    // var experiments = params.Uploaded_file;
+    var experiments = {};
+    if (params?.filteApply === "FilterApply") {
+      experiments = params.Uploaded_fileTemp;
+    } else {
+      experiments = params.Uploaded_file;
+    }
 
     var ndx = crossfilter(experiments),
       runDimension = ndx.dimension(function (d) {
@@ -41,6 +46,17 @@ const LineChart = ({ params }) => {
         return elements;
       };
     }
+
+    let sizing = (chart) => {
+      let divChart = document.querySelectorAll(".boxcenter");
+      divChart = divChart[divChart.length - 1];
+
+      let offsetHeight = divChart.offsetHeight,
+        offsetWidth = divChart.offsetWidth;
+      chart.width(offsetWidth).height(offsetHeight).redraw();
+      chart.width(offsetWidth).height(offsetHeight).redraw();
+    };
+    let resizing = (chart) => (window.onresize = () => sizing(chart));
 
     function groupArrayRemove(keyfn) {
       var bisect = d3.bisector(keyfn);
@@ -124,14 +140,14 @@ const LineChart = ({ params }) => {
       return [fmt(+d[params.XAxis]), fmt(+d[params.YAxis])];
     });
 
-    var chart, datatabel;
+    var chart; //, datatabel;
 
     if (params.Width_ !== null) {
-      datatabel = new dc.dataTable(div1.current);
+      // datatabel = new dc.dataTable(div1.current);
       chart = new dc.lineChart(div.current);
     } else {
       chart = new dc.lineChart(div.current, "LineChart");
-      datatabel = new dc.dataTable(div1.current);
+      // datatabel = new dc.dataTable(div1.current);
     }
 
     let PadTop,
@@ -148,9 +164,12 @@ const LineChart = ({ params }) => {
     if (params.PadLeft === undefined || params.PadLeft === "") PadLeft = 0;
     else PadLeft = params.PadLeft;
     chart
-      .width(params.Width_)
-      //.height(params.Heigth_)
-      .height(null)
+    // .width(params.Width_ === null ? null : params.Width_)
+    // .height(params.Width_ === null ? null : params.Height_)
+    .width(params.Width_)
+    // .height(null)
+    .height(params.Height_)
+      // .height(null)
 
       .margins({
         top: parseInt(10) + parseInt(PadTop),
@@ -201,7 +220,7 @@ const LineChart = ({ params }) => {
         //y-Axis
         chart
           .selectAll("g.y g.tick text")
-          .attr("dx", "-10")
+          .attr("dx", "1")
           .attr("text-anchor", "end")
           // .attr('transform', `rotate(${params.Rotate})`)
           .style("font-family", params.yFont)
@@ -234,7 +253,7 @@ const LineChart = ({ params }) => {
           .selectAll(".lineLabel")
           .style("font-family", params.LabelsFont)
           .style("fill", params.LabelsColor)
-          .style("font-size", params.Labelsize + "px")
+          .style("font-size", params.LabelsSize + "px")
           .style(
             "display",
             params.Labelsswatch !== undefined ? params.Labelsswatch : "none"
@@ -255,22 +274,6 @@ const LineChart = ({ params }) => {
       return BMK(v);
     });
 
-    datatabel
-      .width(300)
-      .height(480)
-      .dimension(table_)
-      .size(Infinity)
-      .showSections(false)
-      .columns(
-        params.GroupByCopy_.map((e) => e.split(" ").slice(1, 30).join(" "))
-      )
-      //  .sortBy(function (d) { return [fmt(+d.Expt), fmt(+d.Run)]; })
-      .order(d3.ascending)
-
-      .on("preRender", update_offset)
-      .on("preRedraw", update_offset)
-      .on("pretransition", display);
-
     if (params.Width_ !== null) dc.renderAll();
     else dc.renderAll("LineChart");
     d3.select("body").on("mouseover", function () {
@@ -281,55 +284,40 @@ const LineChart = ({ params }) => {
             .duration(500)
             .style("opacity", params.Tooltipswatch);
 
+          let xAxisToolTip = `<div style="
+              font-size: ${params.TooltipSize}px !important; 
+              padding-bottom : 10px !important;
+              font-family: ${params.TooltipFont} !important;">
+              <b>${params.XAxis}</b> : ${d.target.__data__.x}
+            </div>`;
+
+          let yAxisToolTip = `<div style="
+              font-size: ${params.TooltipSize}px !important; 
+              font-family: ${params.TooltipFont} !important;">
+              <b>${params.YAxis}</b> : ${parseFloat(
+            d.target.__data__.y
+          ).toFixed(2)}
+            </div>`;
+
+          let undefindYAxisToolTip = `<div style="
+              font-size: ${params.TooltipSize}px !important; 
+              font-family: ${params.TooltipFont} !important;">
+              <b> Count</b> : ${parseFloat(d.target.__data__.y).toFixed(2)}
+            </div>`;
+
           if (params.TooltipContent === "X") {
-            div2.html(
-              "<div><div><b>" +
-                params.XAxis +
-                "</b> : " +
-                d.target.__data__.x +
-                "</div><div>"
-            );
+            div2.html(`<div>${xAxisToolTip}<div>`);
           } else if (params.TooltipContent === "Y") {
             if (params.YAxis === undefined || params.YAxis === "Select") {
-              div2.html(
-                "<div><div><b>" +
-                  "Count </b> : " +
-                  parseFloat(d.target.__data__.y).toFixed(2) +
-                  "</div><div>"
-              );
+              div2.html(`<div>${undefindYAxisToolTip}<div>`);
             } else {
-              div2.html(
-                "<div><div><b>" +
-                  params.YAxis +
-                  "</b> : " +
-                  parseFloat(d.target.__data__.y).toFixed(2) +
-                  "</div><div>"
-              );
+              div2.html(`<div>${yAxisToolTip}<div>`);
             }
           } else if (params.TooltipContent === "All") {
             if (params.YAxis === undefined || params.YAxis === "Select") {
-              div2.html(
-                "<div><div><b>" +
-                  params.XAxis +
-                  "</b> : " +
-                  d.target.__data__.x +
-                  "</div><div><b>" +
-                  "Count </b> : " +
-                  parseFloat(d.target.__data__.y).toFixed(2) +
-                  "</div></div>"
-              );
+              div2.html(`<div> ${xAxisToolTip} ${undefindYAxisToolTip}</div>`);
             } else {
-              div2.html(
-                "<div><div><b>" +
-                  params.XAxis +
-                  "</b> : " +
-                  d.target.__data__.x +
-                  "</div><div><b>" +
-                  params.YAxis +
-                  "</b> : " +
-                  parseFloat(d.target.__data__.y).toFixed(2) +
-                  "</div></div>"
-              );
+              div2.html(`<div> ${xAxisToolTip} ${yAxisToolTip}</div>`);
             }
           }
 
@@ -357,75 +345,50 @@ const LineChart = ({ params }) => {
         ? Math.abs(Number(labelValue)) / 1.0e3 + "K"
         : Math.abs(Number(labelValue));
     }
-    var ofs = 0,
-      pag = 100;
 
-    function update_offset() {
-      var totFilteredRecs = ndx.groupAll().value();
-      var end = ofs + pag > totFilteredRecs ? totFilteredRecs : ofs + pag;
-      if (ofs == undefined || pag == undefined) {
-        ofs = 0;
-        pag = totFilteredRecs;
-      }
-      ofs =
-        ofs >= totFilteredRecs
-          ? Math.floor((totFilteredRecs - 1) / pag) * pag
-          : ofs;
-      ofs = ofs < 0 ? 0 : ofs;
-      datatabel.beginSlice(ofs);
-      datatabel.endSlice(ofs + pag);
-    }
-    function display() {
-      var totFilteredRecs = ndx.groupAll().value();
-      var end = ofs + pag > totFilteredRecs ? totFilteredRecs : ofs + pag;
-      d3.select("#begin").text(end === 0 ? ofs : ofs + 1);
-      d3.select("#end").text(end);
-      d3.select("#last").attr("disabled", ofs - pag < 0 ? "true" : null);
-      d3.select("#next").attr(
-        "disabled",
-        ofs + pag >= totFilteredRecs ? "true" : null
-      );
-      d3.select("#size").text(totFilteredRecs);
-      if (totFilteredRecs != ndx.size()) {
-        d3.select("#totalsize").text("(filtered Total: " + ndx.size() + " )");
-      } else {
-        d3.select("#totalsize").text("");
-      }
-    }
-    function next() {
-      ofs += pag;
-      update_offset();
-      datatabel.redraw();
-    }
-    function last() {
-      ofs -= pag;
-      update_offset();
-      datatabel.redraw();
-    }
+    // resizing(chart);  Commit by Lokesh);
   });
 
   const Chartheader = () => {
     return (
       <div
         style={{
-          backgroundColor: params.Lineswatch === "show" ? params.BGColor : "",
+          backgroundColor: params.Barswatch === "show" ? params.BGColor : "",
           display:
-            params.Titleswatch === undefined ? "none" : params.Titleswatch,
+            params.Title === undefined ||
+            params.Title === "" ||
+            params.Title === null
+              ? "none"
+              : "block", // Set the display to "block" when the conditions are false
+          marginLeft:
+            params.Title === undefined ||
+            params.Title === "" ||
+            params.Title === null
+              ? "0"
+              : "20px", // Set marginLeft to 0 when the conditions are false
+          marginTop:
+            params.Title === undefined ||
+            params.Title === "" ||
+            params.Title === null
+              ? "0"
+              : "30px", // Set marginTop to 0 when the conditions are false
         }}
       >
-        <span
-          style={{
-            fontFamily: params.TitleFont,
-            fontSize: params.TitleSize,
-            color: params.TitleColor,
-          }}
-        >
-          {params.Title}
-        </span>
+        {params.Titleswatch_ && (
+          <span
+            style={{
+              fontFamily: params.TitleFont,
+              fontSize: params.TitleSize,
+              color: params.TitleColor,
+              marginTop: "40px",
+            }}
+          >
+            {params.Title}
+          </span>
+        )}
       </div>
     );
   };
-
   return (
     <Grid item xs={12} sm={12} md={12} xl={12} lg={12}>
       <Grid
@@ -442,29 +405,15 @@ const LineChart = ({ params }) => {
           style={{
             backgroundColor: params.Lineswatch === "show" ? params.BGColor : "",
           }}
+          id="Charts"
         >
-          <div id="Charts" ref={div} className="boxcenter"></div>
-        </div>
-      </Grid>
-      <Grid
-        item
-        className="cardbox chartbox"
-        xs={12}
-        sm={12}
-        md={12}
-        xl={12}
-        lg={12}
-        style={{ display: params.Width_ === null ? "none" : "block" }}
-      >
-        <div id="table-scroll" className="table-scroll">
-          <div className="table-wrap">
-            <table ref={div1} className="main-table"></table>
-          </div>
-          <div id="paging" style={{ float: "right" }}>
-            Showing <span id="begin"></span>-<span id="end"></span> of{" "}
-            <span id="size"></span>{" "}
-            <span id="totalsize" style={{ display: "none" }}></span>
-          </div>
+          <div
+            ref={div}
+            className="boxcenter"
+            // style={{ marginTop: params.Title === undefined ? "50px" : "0px" }}
+            style={{ marginTop: params.Title === undefined ? "10px" : "0px" }}
+          ></div>
+          {/* id="Charts" */}
         </div>
       </Grid>
     </Grid>
